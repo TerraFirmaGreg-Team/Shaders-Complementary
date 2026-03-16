@@ -7,7 +7,6 @@ on:
       - main
     paths:
       - 'shaders/**'
-      - 'pakku.json'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
