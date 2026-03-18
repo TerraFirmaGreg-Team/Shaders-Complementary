@@ -1,9 +1,21 @@
 blank_issues_enabled: false
 contact_links:
   - name: TerraFirmaGreg Discord
-    url: https://discord.gg/AEaCzCTUwQ
+    url: https://terrafirmagreg.team/discord
     about: Join us on Discord to discuss questions, bugs, and more.
+
+  - name: TerraFirmaGreg-Shaders Github
+    url: https://terrafirmagreg.team/shaders/github
+    about: Join us on Github to discuss questions, bugs, and more.
+
+  - name: TerraFirmaGreg-Shaders Roadmap
+    url: https://terrafirmagreg.team/shaders/roadmap
+    about: Roadmap for the project.
     
-  - name: TerraFirmaGreg CurseForge
-    url: https://www.curseforge.com/minecraft/modpacks/terrafirmagreg-modern
-    about: Download page.
+  - name: TerraFirmaGreg-Shaders CurseForge
+    url: https://terrafirmagreg.team/shaders/curseforge
+    about: Download page curseforge.
+
+  - name: TerraFirmaGreg-Shaders Modrinth
+    url: https://terrafirmagreg.team/shaders/modrinth
+    about: Download page modrinth.

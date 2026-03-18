@@ -2,7 +2,7 @@ name: "[🐛]: Bug report"
 description: "Report a bug where something is not working as expected."
 title: "[🐛]: "
 labels: [ "Status: Backlog" ]
-projects: ["TerraFirmaGreg-Team/16"]
+projects: ["TerraFirmaGreg-Team/38"]
 type: "Bug"
 
 body:
