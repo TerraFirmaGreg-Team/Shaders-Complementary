@@ -1,6 +1,6 @@
-name: "[🪶]: Feature request"
+name: "[💡]: Feature request"
 description: "Request a new feature or a change to an existing one."
-title: "[🪶]: "
+title: "[💡]: "
 labels: [ "Status: Backlog" ]
 projects: ["TerraFirmaGreg-Team/38"]
 type: "Feature"
