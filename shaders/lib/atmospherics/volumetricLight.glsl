@@ -1,6 +1,9 @@
 // Volumetric tracing from Robobo1221, highly modified
-
+#include "/lib/shaderSettings/volumetricLight.glsl"
+#include "/lib/shaderSettings/endBeams.glsl"
+#include "/lib/shaderSettings/endFlash.glsl"
 #include "/lib/colors/lightAndAmbientColors.glsl"
+//#define BEDROCK_NOISE
 
 float GetDepth(float depth) {
     return 2.0 * near * far / (far + near - (2.0 * depth - 1.0) * (far - near));
@@ -20,6 +23,9 @@ vec4 DistortShadow(vec4 shadowpos, float distortFactor) {
 
 vec4 GetVolumetricLight(inout vec3 color, inout float vlFactor, vec3 translucentMult, float lViewPos0, float lViewPos1, vec3 nViewPos, float VdotL, float VdotU, vec2 texCoord, float z0, float z1, float dither) {
     vec4 volumetricLight = vec4(0.0);
+    #if defined BEDROCK_NOISE && defined OVERWORLD
+        if ((cameraPosition.y < bedrockLevel) && (eyeBrightnessM < 0.4)) return vec4(0.0);
+    #endif
     float vlMult = 1.0 - maxBlindnessDarkness;
 
     #if SHADOW_QUALITY > -1
@@ -46,10 +52,10 @@ vec4 GetVolumetricLight(inout vec3 color, inout float vlFactor, vec3 translucent
 
         if (sunVisibility < 0.5) {
             vlSceneIntensity = 0.0;
-            
+
             float vlMultNightModifier = (0.3 + 0.4 * rainFactor2 + 0.5 * max0(far - lViewPos1) / far);
             #ifdef SPECIAL_PALE_GARDEN_LIGHTSHAFTS
-                vlMultNightModifier = mix(vlMultNightModifier, 1.0, inPaleGarden);
+                vlMultNightModifier = mix(vlMultNightModifier, 1.0, max(inPaleGarden, inPaleBog));
             #endif
             vlMult *= vlMultNightModifier;
 
@@ -59,9 +65,14 @@ vec4 GetVolumetricLight(inout vec3 color, inout float vlFactor, vec3 translucent
             vlColorReducer = 1.0 / sqrt(vlColor);
         }
 
+        #if BLOOD_MOON > 0
+            vec3 hsvVlColor = rgb2hsv(vlColor);
+            vlColor = mix(vlColor, hsv2rgb(vec3(0, max(0.8, hsvVlColor.y), hsvVlColor.z * 1.7)), getBloodMoon(sunVisibility));
+        #endif
+
         #ifdef SPECIAL_PALE_GARDEN_LIGHTSHAFTS
-            vlSceneIntensity = mix(vlSceneIntensity, 1.0, inPaleGarden);
-            vlMult *= 1.0 + (3.0 * inPaleGarden) * (1.0 - sunVisibility);
+            vlSceneIntensity = mix(vlSceneIntensity, 1.0, max(inPaleGarden, inPaleBog));
+            vlMult *= 1.0 + (3.0 * max(inPaleGarden, inPaleBog)) * (1.0 - sunVisibility);
         #endif
 
         float rainyNight = (1.0 - sunVisibility) * rainFactor;
@@ -147,10 +158,13 @@ vec4 GetVolumetricLight(inout vec3 color, inout float vlFactor, vec3 translucent
         viewPos /= viewPos.w;
         vec4 wpos = gbufferModelViewInverse * viewPos;
         vec3 playerPos = wpos.xyz / wpos.w;
-        #ifdef END
+        #if defined END && defined END_BEAMS
             playerPos *= 512.0 / far;
             vec4 enderBeamSample = vec4(DrawEnderBeams(VdotU, playerPos, nViewPos), 1.0);
             enderBeamSample /= sampleCount;
+        #endif
+        #if defined OVERWORLD && defined OVERWORLD_BEAMS
+            vec4 overworldBeamSample = DrawOverworldBeams(VdotU, playerPos, viewPos.xyz);
         #endif
 
         float shadowSample = 1.0;
@@ -177,6 +191,10 @@ vec4 GetVolumetricLight(inout vec3 color, inout float vlFactor, vec3 translucent
                 shadowSample = clamp((shadowSample-shadowPosition.z)*65536.0,0.0,1.0);
 
                 vlSample = vec3(shadowSample);
+
+                #ifdef END_FLASH_SHADOW_INTERNAL
+                    vlSample = mix(vec3(1.0), vlSample, endFlashIntensity);
+                #endif
 
                 #if SHADOW_QUALITY >= 1
                     if (shadowSample == 0.0) {
@@ -223,10 +241,16 @@ vec4 GetVolumetricLight(inout vec3 color, inout float vlFactor, vec3 translucent
                 smoke = smoothstep1(smoothstep1(smoothstep1(smoke)));
                 totalSmoke += smoke * shadowSample * sampleMult;
             #endif
-
-            volumetricLight += vec4(vlSample, shadowSample) * sampleMult;
+                vec4 volumetricLightAdd = vec4(vlSample, shadowSample) * sampleMult;
+            #ifdef OVERWORLD_BEAMS
+                volumetricLight += volumetricLightAdd * mix(vec4(1.0), overworldBeamSample, overworldBeamSample.a);
+            #else
+                volumetricLight += volumetricLightAdd;
+            #endif
         #else
-            volumetricLight += vec4(vlSample, shadowSample) * enderBeamSample;
+            #ifdef END_BEAMS
+                volumetricLight += vec4(vlSample, shadowSample) * enderBeamSample;
+            #endif
         #endif
     }
 
@@ -339,6 +363,12 @@ vec4 GetVolumetricLight(inout vec3 color, inout float vlFactor, vec3 translucent
         #else
             volumetricLight *= min1(lViewPos1 * 3.0 / renderDistance);
         #endif
+    #endif
+
+    #if RETRO_LOOK == 1
+        volumetricLight *= vec4(0.0);
+    #elif RETRO_LOOK == 2
+        volumetricLight *= mix(vec4(1.0), vec4(0.0), nightVision);
     #endif
 
     return volumetricLight;

@@ -22,7 +22,7 @@
         float VdotUM = 1.0 - pow2(VdotU);
         float VdotUM2 = sqrt(VdotUM) + 0.15 * smoothstep1(pow2(pow2(1.0 - abs(VdotU))));
 
-        #if defined IS_IRIS && MC_VERSION >= 12109
+        #if defined IS_IRIS && MC_VERSION >= 12109 && EP_END_FLASH % 2 == 0 && !(defined DISABLE_DEFAULT_FLASH)
             vec3 worldEndFlashPosition = mat3(gbufferModelViewInverse) * endFlashPosition;
             worldEndFlashPosition = normalize(vec3(worldEndFlashPosition.x, 0.0, worldEndFlashPosition.z));
             vec3 nViewPosWorld = mat3(gbufferModelViewInverse) * nViewPos;
@@ -38,7 +38,7 @@
             VdotUM = mix(VdotUM, sqrt2(VdotUM), endFlashFactor);
         #endif
 
-        vec3 beamPurple = normalize(ambientColor * ambientColor * ambientColor) * (2.5 - beamPurpleReducer);
+        vec3 beamPurple = normalize(endColorBeam * endColorBeam * endColorBeam) * (2.5 - beamPurpleReducer) * E_BEAM_I;
         vec3 beamOrange = endOrangeCol * (300.0 + 700.0 * beamOrangeIncreaser);
 
         vec4 beams = vec4(0.0);
@@ -48,7 +48,12 @@
             planeCoord *= (1.0 + i * 6.0 / sampleCount) * 0.0014;
 
             float noise = BeamNoise(planeCoord, wind);
-                  noise = max(0.75 - 1.0 / abs(noise - (4.0 + VdotUM * 2.0)), 0.0) * 3.0;
+            #ifndef BEAMS_NEAR_PLAYER
+                noise = max(0.75 - 1.0 / abs(noise - (4.0 + VdotUM * 2.0)), 0.0) * 3.0;
+            #else
+                noise = max(0.75 - 1.0 / abs(noise - (4.0 + dot(upVec, upVec) * 2.0)), 0.0) * 3.0;
+            #endif
+
 
             if (noise > 0.0) {
                 noise *= 0.65;
@@ -56,7 +61,9 @@
                 noise *= 0.5 * fireNoise + 0.75;
                 //noise = max0(noise); // fix NaNs
                 noise = pow(noise, 1.75) * 2.9 / sampleCount;
-                noise *= VdotUM2;
+                #ifndef BEAMS_NEAR_PLAYER
+                    noise *= VdotUM2;
+                #endif
 
                 vec3 beamColor = beamPurple;
                 beamColor += beamOrange * pow2(pow2(fireNoise - 0.5));
@@ -67,13 +74,19 @@
             }
             gradientMix += 1.0;
         }
-
+        #ifdef RAIN_ATMOSPHERE
+            beams.rgb += 0.2 * isLightningActive();
+        #endif
         beamMult *= pow(beams.a, beamPow) * 3.5;
         beams.rgb = sqrt(beams.rgb) * beamMult;
 
         if(any(isnan(beams.rgb))) beams.rgb = vec3(0.0);
 
-        return beams.rgb;
+        #ifdef (SUBTLER_END_BEAMS == 1 && defined MOD_ENDERSCAPE) || SUBTLER_END_BEAMS == 2
+            return beams.rgb * 0.6;
+        #else
+            return beams.rgb;
+        #endif
     }
 
 #endif //INCLUDE_ENDER_BEAMS

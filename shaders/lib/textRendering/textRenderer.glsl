@@ -1,7 +1,7 @@
 /*
 --------------------------------------------------------------------------------
 
-  GLSL Debug Text Renderer by SixthSurge (updated 2023-04-08)
+  GLSL Debug Text Renderer by SixthSurge (updated 2025-03-18)
 
   Character set based on Monocraft by IdreesInc
   https://github.com/IdreesInc/Monocraft
@@ -129,6 +129,9 @@ const uint _opprn = 0x11084208u; // (
 const uint _clprn = 0x41084220u; // )
 const uint _block = 0xFFFFFFFCu; // █
 const uint _copyr = 0x03AB9AB8u; // ©️
+const uint _equal = 0x01C0703u; // =
+const uint _plus  = 0x21364200u; // + good enough but could be better - tired of trial and error
+const uint _slash = 0x00022220u; // / same as above lol
 
 const int charWidth   = 5;
 const int charHeight  = 6;
@@ -149,6 +152,8 @@ struct Text {
     ivec2 charPos;   // The position of the next character in the text
     int base;        // Number base
     int fpPrecision; // Number of decimal places to print
+    ivec2 charPadding; // Custom character padding
+    ivec2 bgPadding;   // Custom background padding
 } text;
 
 // Fills the global text object with default values
@@ -161,6 +166,8 @@ void beginText(ivec2 fragPos, ivec2 textPos) {
     text.charPos     = ivec2(0);
     text.base        = 10;
     text.fpPrecision = 2;
+    text.charPadding =  ivec2(0); // Paddings by SpacEagle17
+    text.bgPadding   = ivec2(3);
 }
 
 // Applies the rendered text to the fragment
@@ -169,17 +176,28 @@ void endText(inout vec3 fragColor) {
 }
 
 void printChar(uint character) {
-    ivec2 pos = text.fragPos - text.textPos - spaceSize * text.charPos * ivec2(1, -1) + ivec2(0, spaceSize.y);
+    // Calculate effective spacing that includes current padding settings
+    ivec2 effectiveSpaceSize = spaceSize + text.charPadding * 2;
 
-    uint index = uint(charWidth - pos.x + pos.y * charWidth + 1); // Edited
+    // Use this effective spacing for positioning
+    ivec2 pos = text.fragPos - text.textPos - effectiveSpaceSize * text.charPos * ivec2(1, -1) + ivec2(0, effectiveSpaceSize.y);
 
-    // Draw background
-    if (clamp(pos, ivec2(0), spaceSize - 1) == pos)
-        text.result = mix(text.result, text.bgCol, text.bgCol.a);
+    // Draw background (larger area with padding)
+    ivec2 bgPos = pos + text.bgPadding;
+    if (clamp(bgPos, ivec2(0), effectiveSpaceSize + text.bgPadding * 2 - 1) == bgPos) {
+        float bgAlpha = text.result.a;
+        // Only apply background if this pixel hasn't been colored yet
+        if (bgAlpha < 0.01) {
+            text.result = mix(text.result, text.bgCol, text.bgCol.a);
+        }
+    }
 
     // Draw character
-    if (clamp(pos, ivec2(0), charSize - 1) == pos)
+    ivec2 charPos = pos - text.charPadding;
+    if (clamp(charPos, ivec2(0), charSize - 1) == charPos) {
+        uint index = uint(charWidth - charPos.x + charPos.y * charWidth + 1);
         text.result = mix(text.result, text.fgCol, text.fgCol.a * float(character >> index & 1u));
+    }
 
     // Advance to next character
     text.charPos.x++;
@@ -203,8 +221,8 @@ void printUnsignedInt(uint value, int len) {
 
     // Write number backwards
     for (int i = 0; i < len; ++i) {
-        printChar(digits[int(value) % text.base]); // Edited
-        value /= uint(text.base); // Edited
+        printChar(digits[int(value) % text.base]);
+        value /= uint(text.base);
         text.charPos.x -= 2;
     }
 

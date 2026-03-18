@@ -15,3 +15,5 @@ subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
     if (color.r + color.g > color.b + 1.1) emission = 0.8;
     else if (color.r > color.g + color.b) emission = 0.2;
 #endif
+
+sandNoiseIntensity = 0.3, mossNoiseIntensity = 0.0;

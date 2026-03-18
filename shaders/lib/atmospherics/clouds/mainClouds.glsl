@@ -1,3 +1,4 @@
+#include "/lib/shaderSettings/clouds.glsl"
 #if CLOUD_UNBOUND_SIZE_MULT != 100
     #define CLOUD_UNBOUND_SIZE_MULT_M CLOUD_UNBOUND_SIZE_MULT * 0.01
 #endif
@@ -45,8 +46,8 @@ float InterleavedGradientNoiseForClouds() {
     #include "/lib/atmospherics/clouds/unboundClouds.glsl"
 #endif
 
-vec4 GetClouds(inout float cloudLinearDepth, float skyFade, vec3 cameraPosOffset, vec3 playerPos,
-               float lViewPos, float VdotS, float VdotU, float dither, vec3 auroraBorealis, vec3 nightNebula) {
+vec4 GetClouds(inout float cloudLinearDepth, float skyFade, vec3 cameraPosOffset, vec3 playerPos, vec3 viewPos,
+               float lViewPos, float VdotS, float VdotU, float dither, vec3 auroraBorealis, vec3 nightNebula, vec3 sunVec) {
     vec4 clouds = vec4(0.0);
 
     vec3 nPlayerPos = normalize(playerPos);
@@ -65,7 +66,7 @@ vec4 GetClouds(inout float cloudLinearDepth, float skyFade, vec3 cameraPosOffset
         #endif
 
         int modFactorM = int(modFactor);
-        
+
         vec2 cameraPositionBIM = cameraPositionInt.xz - modFactorM * (cameraPositionInt.xz / modFactorM);
 
         vec3 cameraPos = vec3(
@@ -73,10 +74,35 @@ vec4 GetClouds(inout float cloudLinearDepth, float skyFade, vec3 cameraPosOffset
             cameraPosition.y,
             cameraPositionBIM.y + cameraPositionBestFract.z
         );
+
+        #if defined CLOUDS_UNBOUND && defined DOUBLE_UNBOUND_CLOUDS
+            float layer2ScaleFactor = CLOUD_UNBOUND_LAYER2_SIZE * 10.0 / CLOUD_UNBOUND_SIZE_MULT;
+            #if CLOUD_UNBOUND_SIZE_MULT == 100
+                float modFactor2 = 1.0 / (cloudNarrowness * layer2ScaleFactor);
+            #else
+                float modFactor2 = 1.0 / (cloudNarrowness * CLOUD_UNBOUND_SIZE_MULT_M * layer2ScaleFactor);
+            #endif
+
+            int modFactorM2 = int(modFactor2);
+
+            vec2 cameraPositionBIM2 = cameraPositionInt.xz - modFactorM2 * (cameraPositionInt.xz / modFactorM2);
+
+            vec3 cameraPos2 = vec3(
+                cameraPositionBIM2.x + cameraPositionBestFract.x,
+                cameraPosition.y,
+                cameraPositionBIM2.y + cameraPositionBestFract.z
+            );
+        #endif
     #else
         vec3 cameraPos = cameraPosition;
+        #if defined CLOUDS_UNBOUND && defined DOUBLE_UNBOUND_CLOUDS
+            vec3 cameraPos2 = cameraPosition;
+        #endif
     #endif
     cameraPos += cameraPosOffset;
+    #if defined CLOUDS_UNBOUND && defined DOUBLE_UNBOUND_CLOUDS
+        cameraPos2 += cameraPosOffset;
+    #endif
 
     #ifdef CLOUDS_REIMAGINED
         float thresholdF = 4000.0;
@@ -86,6 +112,17 @@ vec4 GetClouds(inout float cloudLinearDepth, float skyFade, vec3 cameraPosOffset
 
     //float thresholdMix = pow2(clamp01(VdotU * 15.0));
     //thresholdF = mix(far, thresholdF, thresholdMix * 0.5 + 0.5);
+    thresholdF *= CLOUD_RENDER_DISTANCE;
+
+    #if RAINBOW_CLOUD != 0
+        vec3 wpos = normalize((gbufferModelViewInverse * vec4(viewPos, 1.0)).xyz);
+        wpos /= (abs(wpos.y) + length(wpos.xz));
+
+        vec3 rainbowColor = getRainbowColor(wpos.xz * rainbowCloudDistribution * 0.35, 0.05);
+        cloudRainColor *= rainbowColor;
+        cloudAmbientColor *= rainbowColor;
+        cloudLightColor *= rainbowColor;
+    #endif
 
     #ifdef CLOUDS_REIMAGINED
         cloudAmbientColor *= 1.0 - 0.25 * rainFactor;
@@ -98,28 +135,49 @@ vec4 GetClouds(inout float cloudLinearDepth, float skyFade, vec3 cameraPosOffset
     cloudAmbientColor *= cloudColorMult;
     cloudLightColor *= cloudColorMult;
 
-    #if !defined DOUBLE_REIM_CLOUDS || defined CLOUDS_UNBOUND
-        clouds = GetVolumetricClouds(cloudAlt1i, thresholdF, cloudLinearDepth, skyFade, skyMult0,
-                                        cameraPos, nPlayerPos, lViewPosM, VdotS, VdotU, dither);
-    #else
+    #if defined CLOUDS_REIMAGINED && defined DOUBLE_REIM_CLOUDS
         int maxCloudAlt = max(cloudAlt1i, cloudAlt2i);
         int minCloudAlt = min(cloudAlt1i, cloudAlt2i);
 
         if (abs(cameraPos.y - minCloudAlt) < abs(cameraPos.y - maxCloudAlt)) {
             clouds = GetVolumetricClouds(minCloudAlt, thresholdF, cloudLinearDepth, skyFade, skyMult0,
-                                            cameraPos, nPlayerPos, lViewPosM, VdotS, VdotU, dither);
+                                            cameraPos, nPlayerPos, lViewPosM, VdotS, VdotU, dither, sunVec, viewPos);
             if (clouds.a == 0.0) {
             clouds = GetVolumetricClouds(maxCloudAlt, thresholdF, cloudLinearDepth, skyFade, skyMult0,
-                                            cameraPos, nPlayerPos, lViewPosM, VdotS, VdotU, dither);
+                                            cameraPos, nPlayerPos, lViewPosM, VdotS, VdotU, dither, sunVec, viewPos);
             }
         } else {
             clouds = GetVolumetricClouds(maxCloudAlt, thresholdF, cloudLinearDepth, skyFade, skyMult0,
-                                            cameraPos, nPlayerPos, lViewPosM, VdotS, VdotU, dither);
+                                            cameraPos, nPlayerPos, lViewPosM, VdotS, VdotU, dither, sunVec, viewPos);
             if (clouds.a == 0.0) {
             clouds = GetVolumetricClouds(minCloudAlt, thresholdF, cloudLinearDepth, skyFade, skyMult0,
-                                            cameraPos, nPlayerPos, lViewPosM, VdotS, VdotU, dither);
+                                            cameraPos, nPlayerPos, lViewPosM, VdotS, VdotU, dither, sunVec, viewPos);
             }
         }
+
+    #elif defined CLOUDS_UNBOUND && defined DOUBLE_UNBOUND_CLOUDS
+        float cloudLinearDepth1 = 1.0;
+        float cloudLinearDepth2 = 1.0;
+        //The order of calculating the clouds actually matters here
+        vec4 clouds1 = GetVolumetricClouds(cloudAlt1i, thresholdF, cloudLinearDepth1, skyFade, skyMult0,
+                                        cameraPos, nPlayerPos, lViewPosM, VdotS, VdotU, dither, sunVec, viewPos);
+        vec4 clouds2 = GetVolumetricClouds(cloudAlt2i, thresholdF, cloudLinearDepth2, skyFade, skyMult0,
+                                       cameraPos2, nPlayerPos, lViewPosM, VdotS, VdotU, dither, sunVec, viewPos);
+
+        if (clouds1.a * clouds2.a < 1e-36)
+            clouds = clouds1 * sign(max(0.0, clouds1.a - 1e-36)) + clouds2 * sign(max(0.0, clouds2.a - 1e-36));
+        else {
+            if (cloudLinearDepth1 < cloudLinearDepth2)
+                clouds = vec4(mix(clouds2.rgb, clouds1.rgb, clouds1.w), mix(clouds2.w, 1.0, clouds1.w));
+            else
+                clouds = vec4(mix(clouds1.rgb, clouds2.rgb, clouds2.w), mix(clouds1.w, 1.0, clouds2.w));
+        }
+
+        cloudLinearDepth = min(clouds1.a > 0.5 ? cloudLinearDepth1 : 1.0, clouds2.a > 0.5 ? cloudLinearDepth2 : 1.0);
+    #else
+        clouds = GetVolumetricClouds(cloudAlt1i, thresholdF, cloudLinearDepth, skyFade, skyMult0,
+                                        cameraPos, nPlayerPos, lViewPosM, VdotS, VdotU, dither, sunVec, viewPos) ;
+
     #endif
 
     #ifdef ATM_COLOR_MULTS
@@ -136,5 +194,12 @@ vec4 GetClouds(inout float cloudLinearDepth, float skyFade, vec3 cameraPosOffset
         clouds.rgb += nightNebula * 0.2;
     #endif
 
+    #if DOOM_AND_GLOOM_FOG == 1
+        clouds.rgb = vec3(0.5);
+    #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
+        if (doomAndGloomFog > 0.0001) {
+            clouds.rgb = vec3(0.5);
+        }
+    #endif    
     return clouds;
 }

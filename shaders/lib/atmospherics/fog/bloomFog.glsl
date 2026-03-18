@@ -1,3 +1,4 @@
+#include "/lib/shaderSettings/bloom.glsl"
 #ifdef CAVE_FOG
     #include "/lib/atmospherics/fog/caveFactor.glsl"
 #endif
@@ -20,6 +21,14 @@ float GetBloomFog(float lViewPos) {
         float bloomFogMult;
         if (isEyeInWater != 1) {
             bloomFogMult = (rainFactor2 * rainBloomAdd + nightBloomAdd * (1.0 - sunFactor)) * eyeBrightnessM;
+            #ifdef MOD_YUNGSCAVEBIOMES
+                bloomFogMult += YUNGS_SANDSTORM_FOG_BLOOM * yungSandstormFactor * 10;
+            #endif
+            #if DOOM_AND_GLOOM_FOG == 1
+                bloomFogMult += FOG_BLOOM * eyeBrightnessM;
+            #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
+                bloomFogMult += FOG_BLOOM * doomAndGloomFog * eyeBrightnessM;
+            #endif
             #ifdef CAVE_FOG
                 bloomFogMult += GetCaveFactor() * caveBloomAdd;
             #endif
@@ -43,3 +52,4 @@ float GetBloomFog(float lViewPos) {
 
     return 1.0 + bloomFog * bloomFogMult;
 }
+                        

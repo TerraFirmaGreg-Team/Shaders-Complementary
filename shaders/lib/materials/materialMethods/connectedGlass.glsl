@@ -51,7 +51,7 @@ void DoSimpleConnectedGlass(inout vec4 color) {
             float pixelOffset = 0.5 / (absMidCoordPos.y * atlasSize.y);
             float pixelOffsetPlus = pixelOffset + epsilon2;
             float pixelOffsetMinus = pixelOffset - epsilon2;
-            
+
             colorP = texture2DLod(tex, texCoord, 0);
             vec4 colorPvanilla = colorP;
 
@@ -96,7 +96,7 @@ void DoSimpleConnectedGlass(inout vec4 color) {
                     if (voxel == voxelID) discard;
                 }
             }
-            
+
             #ifdef CONNECTED_GLASS_CORNER_FIX
                 // Restores corners
                 for (int i = 0; i < 12; i++) {
@@ -108,7 +108,7 @@ void DoSimpleConnectedGlass(inout vec4 color) {
                     }
                 }
             #endif
-        
+
             color = colorP * vec4(glColor.rgb, 1.0);
         }
     }

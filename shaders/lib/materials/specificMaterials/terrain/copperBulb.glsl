@@ -1,4 +1,4 @@
-noSmoothLighting = true;
+noSmoothLighting = true, overlayNoiseIntensity = 0.5;
 
 vec3 hsvColor = rgb2hsv(color.rgb);
 if (abs(hsvColor.r - 0.09722) < 0.04305 && hsvColor.b > 0.7) { // Active Light Part

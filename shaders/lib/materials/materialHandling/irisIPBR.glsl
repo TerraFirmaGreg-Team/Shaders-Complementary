@@ -1,15 +1,33 @@
+#include "/lib/shaderSettings/entityMaterials.glsl"
 int mat = currentRenderedItemId;
 
 #ifdef GBUFFERS_HAND
     float lViewPos = 0.0;
 #endif
 
-int subsurfaceMode;
+#if defined GBUFFERS_ENTITIES || defined GBUFFERS_HAND
+    int subsurfaceMode;
+#endif
+
+#if defined GBUFFERS_BLOCK
+    float skyLightCheck = 0.0;
+    float overlayNoiseEmission;
+    vec3 maRecolor;
+    bool noGeneratedNormals;
+    bool noVanillaAO;
+#endif
+
 bool centerShadowBias;
 float noPuddles;
 
 if (currentRenderedItemId < 45000) {
-    #include "/lib/materials/materialHandling/terrainIPBR.glsl"
+    #ifdef DISTANT_LIGHT_BOKEH
+        #undef DISTANT_LIGHT_BOKEH
+        #include "/lib/materials/materialHandling/terrainIPBR.glsl"
+        #define DISTANT_LIGHT_BOKEH
+    #else
+        #include "/lib/materials/materialHandling/terrainIPBR.glsl"
+    #endif
 } else
 
 if (currentRenderedItemId < 45064) {
@@ -23,6 +41,9 @@ if (currentRenderedItemId < 45064) {
 
                     #ifdef GLOWING_ARMOR_TRIM
                         emission = 1.0;
+                    #endif
+                    #ifdef SITUATIONAL_GLOWING_TRIMS
+                        emission *= skyLightCheck;
                     #endif
                 } else if (currentRenderedItemId == 45004) { // Wooden Tools, Bow, Fishing Rod
                     #include "/lib/materials/specificMaterials/planks/sprucePlanks.glsl"
@@ -84,7 +105,15 @@ if (currentRenderedItemId < 45064) {
                         emission *= 1.8;
                         color.rg += color.b * vec2(0.4, 0.15);
                         color.b *= 0.8;
-                    } else {
+                        if (LAVA_TEMPERATURE != 0.0) maRecolor += LAVA_TEMPERATURE * 0.1;
+                        emission *= LAVA_EMISSION;
+                        #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
+                            color.rgb = changeColorFunction(color.rgb, 2.0, colorSoul, inSoulValley);
+                        #endif
+                        #ifdef PURPLE_END_FIRE_INTERNAL
+                            color.rgb = changeColorFunction(color.rgb, 2.0, colorEndBreath, 1.0);
+                        #endif
+                } else {
                         #include "/lib/materials/specificMaterials/terrain/ironBlock.glsl"
                     }
                 } else /*if (currentRenderedItemId == 45036)*/ { // Bucket++
@@ -103,7 +132,13 @@ if (currentRenderedItemId < 45064) {
                     lmCoordM.x = 0.85;
                     emission = color.g;
                     color.rgb = sqrt1(color.rgb);
-                } else /*if (currentRenderedItemId == 45044)*/ { // Bottle o' Enchanting, Glow Inc Sac
+                    #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
+                        color.rgb = changeColorFunction(color.rgb, 2.0, colorSoul, inSoulValley);
+                    #endif
+                    #ifdef PURPLE_END_FIRE_INTERNAL
+                        color.rgb = changeColorFunction(color.rgb, 2.0, colorEndBreath, 1.0);
+                    #endif
+            } else /*if (currentRenderedItemId == 45044)*/ { // Bottle o' Enchanting, Glow Inc Sac
                     emission = color.b * 2.0;
                 }
             }
@@ -111,7 +146,13 @@ if (currentRenderedItemId < 45064) {
             if (currentRenderedItemId < 45056) {
                 if (currentRenderedItemId == 45048) { // Fire Charge
                     emission = max0(color.r + color.g - color.b * 0.5);
-                } else /*if (currentRenderedItemId == 45052)*/ { // Chorus Fruit
+                    #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
+                        color.rgb = changeColorFunction(color.rgb, 5.0, colorSoul, inSoulValley);
+                    #endif
+                    #ifdef PURPLE_END_FIRE_INTERNAL
+                        color.rgb = changeColorFunction(color.rgb, 5.0, colorEndBreath, 1.0);
+                    #endif
+            } else /*if (currentRenderedItemId == 45052)*/ { // Chorus Fruit
                     emission = max0(color.b * 2.0 - color.r) * 1.5;
                 }
             } else {
@@ -130,7 +171,7 @@ if (currentRenderedItemId < 45064) {
             }
         }
     }
-} else {
+} else if (currentRenderedItemId < 45128) {
     if (currentRenderedItemId < 45096) {
         if (currentRenderedItemId < 45080) {
             if (currentRenderedItemId < 45072) {
@@ -188,6 +229,7 @@ if (currentRenderedItemId < 45064) {
                         emission = 3.0;
                         color.r *= 1.1;
                     }
+                    emission *= END_CRYSTAL_EMISSION;
                 }
             }
         }
@@ -237,4 +279,108 @@ if (currentRenderedItemId < 45064) {
             }
         }
     }
+}
+ else if (currentRenderedItemId != 65535) {
+    if (currentRenderedItemId < 46112) {
+        if (currentRenderedItemId < 46096) {
+            if (currentRenderedItemId < 46088) {
+                if (currentRenderedItemId < 46084) {
+                    // item.46080 = ancient_pearl
+                    smoothnessG = 1.0;
+                    highlightMult = 2.0;
+                    smoothnessD = 1.0;
+                
+                    emission = pow2(color.b);
+                } else /*if (currentRenderedItemId < 46088)*/ {
+                    // item.46084 = bubble_pearl
+                    smoothnessG = 1.2;
+                    highlightMult = 2.0;
+                    smoothnessD = 1.0;
+                
+                    vec2 tSize = textureSize(tex, 0);
+                    ivec2 texCoordScaled = ivec2(texCoord * tSize);
+                
+                    if (texCoordScaled.x > 5 && texCoordScaled.y > 5 && texCoordScaled.x < 11 && texCoordScaled.y < 11) {
+                        emission = 2.0;
+                        color.rgb = pow1_5(color.rgb);
+                    }
+                
+                    emission = texCoordScaled.x * 0.02;
+                }
+            } else /*if (currentRenderedItemId < 46096)*/ {
+                if (currentRenderedItemId < 46092) {
+                    // item.46088 = corrupted_pearl
+                    emission = pow2(color.b - color.g) * 10.0 + 3.0 * (color.b - color.g);
+                
+                    smoothnessG = 1.0;
+                    highlightMult = 2.0;
+                    smoothnessD = 1.0;
+                } else /*if (currentRenderedItemId < 46096)*/ {
+                    // item.46092 = crimson_pearl
+                    if (color.r > 0.9) {
+                        emission = 3.0 * color.g;
+                        color.r *= 1.2;
+                
+                        overlayNoiseIntensity = 0.5;
+                    }
+                
+                    smoothnessG = color.r * 0.5;
+                    smoothnessD = smoothnessG;
+                    highlightMult = 2.0;
+                }
+            }
+        } else /*if (currentRenderedItemId < 46112)*/ {
+            if (currentRenderedItemId < 46104) {
+                if (currentRenderedItemId < 46100) {
+                    // item.46096 = icy_pearl
+                    smoothnessG = pow2(color.g) * color.g;
+                    smoothnessD = smoothnessG;
+                    highlightMult = 2.0;
+                
+                    color.a = 0.9;
+                } else /*if (currentRenderedItemId < 46104)*/ {
+                    // item.46100 = soul_pearl
+                    smoothnessG = 1.0;
+                    highlightMult = 2.0;
+                    smoothnessD = 1.0;
+                
+                    if (color.b > 0.6) {
+                        emission = 1.5;
+                        color.rgb = pow1_5(color.rgb);
+                    }
+                }
+            } else /*if (currentRenderedItemId < 46112)*/ {
+                if (currentRenderedItemId < 46108) {
+                    // item.46104 = summoner_pearl
+                    emission = 4.0 * pow2(color.b) - 1.5 * color.g;
+                
+                    smoothnessG = 1.0;
+                    highlightMult = 2.0;
+                    smoothnessD = 1.0;
+                } else /*if (currentRenderedItemId < 46112)*/ {
+                    // item.46108 = chorus_fruit
+                    #ifndef NOT_GLOWING_CHORUS_FLOWER
+                        if (abs(color.r - color.b) < 0.05) {
+                            emission = max0(color.b * 2.0 - color.r) * 1.5;
+                        }
+                    #endif
+                }
+            }
+        }
+    } else /*if (currentRenderedItemId < 46120)*/ {
+        if (currentRenderedItemId < 46116) {
+            // item.46112 = ricoshield
+            #include "/lib/materials/specificMaterials/terrain/kineticCore.glsl"
+        } else /*if (currentRenderedItemId < 46120)*/ {
+            // item.46116 = spectralibur
+            if (color.b > 0.6) {
+                emission = 1.5 * pow2(color.b);
+                color.rgb = pow1_5(color.rgb);
+            } else {
+                smoothnessG = color.b + 0.4;
+                smoothnessD = smoothnessG;
+            }
+        }
+    }
+    
 }

@@ -47,31 +47,185 @@ bool CheckInsideSceneVoxelVolume(vec3 voxelPos) {
             uint matM = mat > 10 ? uint(mat) : 1u;
             vec2 textureRad = abs(texCoord - mc_midTexCoord.xy);
             vec2 origin = mc_midTexCoord.xy - textureRad;
+            if (mat < 12299) {
+                if (mat < 12293) {
+                    if (mat < 12290) {
+                        if (mat < 12289) {
+                            if (mat == 12288) {
+                                return;
+                            }
+                        } else { // mat >= 12289
+                            if (mat == 12289) {
+                                return;
+                            }
+                        }
+                    } else { // mat >= 12290
+                        if (mat < 12291) {
+                            if (mat == 12290) {
+                                return;
+                            }
+                        } else { // mat >= 12291
+                            if (mat < 12292) {
+                                if (mat == 12291) {
+                                    return;
+                                }
+                            } else { // mat >= 12292
+                                if (mat == 12292) {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                } else { // mat >= 12293
+                    if (mat < 12296) {
+                        if (mat < 12294) {
+                            if (mat == 12293) {
+                                return;
+                            }
+                        } else { // mat >= 12294
+                            if (mat < 12295) {
+                                if (mat == 12294) {
+                                    return;
+                                }
+                            } else { // mat >= 12295
+                                if (mat == 12295) {
+                                    return;
+                                }
+                            }
+                        }
+                    } else { // mat >= 12296
+                        if (mat < 12297) {
+                            if (mat == 12296) {
+                                return;
+                            }
+                        } else { // mat >= 12297
+                            if (mat < 12298) {
+                                if (mat == 12297) {
+                                    return;
+                                }
+                            } else { // mat >= 12298
+                                if (mat == 12298) {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else { // mat >= 12299
+                if (mat < 12304) {
+                    if (mat < 12301) {
+                        if (mat < 12300) {
+                            if (mat == 12299) {
+                                return;
+                            }
+                        } else { // mat >= 12300
+                            if (mat == 12300) {
+                                return;
+                            }
+                        }
+                    } else { // mat >= 12301
+                        if (mat < 12302) {
+                            if (mat == 12301) {
+                                return;
+                            }
+                        } else { // mat >= 12302
+                            if (mat < 12303) {
+                                if (mat == 12302) {
+                                    return;
+                                }
+                            } else { // mat >= 12303
+                                if (mat == 12303) {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                } else { // mat >= 12304
+                    if (mat < 12321) {
+                        if (mat < 12305) {
+                            if (mat == 12304) {
+                                if (textureRad.y < 5.0 / atlasSize.y) {
+                                    // Discarding if textureRad is too small to fix (somewhat rare) flickering on stairs
+                                    if (textureRad.x < 5.0 / atlasSize.x) return;
+                                
+                                    // Half textureRad for stairs and slabs to not overshoot their textures
+                                    textureRad *= 0.5;
+                                
+                                    // P.S: Don't ask me how any of these checks make sense because I have absolutely no idea either
+                                    // P.P.S: It seems like these checks only work well with default 16x textures but I don't have a better solution
+                                }
+                                
+                                doSolidBlockCheck = false;
+                                if (normal.y < 0.5) storeToAllFacesExceptTop = true; // Not overriding top face or else carpets look broken on top of slabs
+                            }
+                        } else { // mat >= 12305
+                            if (mat < 12309) {
+                                if (mat == 12308) {
+                                    if (textureRad.y < 5.0 / atlasSize.y) {
+                                        // Discarding if textureRad is too small to fix (somewhat rare) flickering on stairs
+                                        if (textureRad.x < 5.0 / atlasSize.x) return;
+                                    
+                                        // Half textureRad for stairs and slabs to not overshoot their textures
+                                        textureRad *= 0.5;
+                                    
+                                        // P.S: Don't ask me how any of these checks make sense because I have absolutely no idea either
+                                        // P.P.S: It seems like these checks only work well with default 16x textures but I don't have a better solution
+                                    }
+                                    
+                                    doSolidBlockCheck = false;
+                                    if (normal.y < 0.5) storeToAllFacesExceptTop = true; // Not overriding top face or else carpets look broken on top of slabs
+                                }
+                            } else { // mat >= 12309
+                                if (mat == 12320) {
+                                    return;
+                                }
+                            }
+                        }
+                    } else { // mat >= 12321
+                        if (mat < 12322) {
+                            if (mat == 12321) {
+                                return;
+                            }
+                        } else { // mat >= 12322
+                            if (mat < 12323) {
+                                if (mat == 12322) {
+                                    return;
+                                }
+                            } else { // mat >= 12323
+                                if (mat == 12323) {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
 
             if (mat == 10132) { // Grass Block Regular
                 if (texture2D(tex, mc_midTexCoord.xy).a < 0.5) return; // Grass Block Side Overlay
             }
 
-            if (mat == 10009) { // Leaves
+            if (abs(mat - 10009) <= 2) { // Leaves (10007, 10009, 10011)
                 doSolidBlockCheck = false;
             }
 
             if (mat == 10129 // Farmland:Dry
                 || mat == 10137 // Farmland:Wet
                 || mat == 10493 // Dirt Path
-            ) { 
+            ) {
                 doSolidBlockCheck = false;
                 textureRad *= 0.5;
                 origin.y += 2.0 / atlasSize.y;
-            } 
+            }
 
-            if (mat == 10068 // Lava
-            ) { 
+            if (abs(mat - 10069) <= 1 // Lava (10068, 10070)
+            ) {
                 if (abs(dot(textureRad, vec2(atlasSize.x, -atlasSize.y))) < 6.5)
                     storeToAllFaces = true;
                 else return;
             }
-            
+
             // Half blocks that we want to display as full blocks in reflections
             if (mat == 10035 // Stone Bricks, Mossy Stone Bricks
                 || abs(mat - 10095) <= 12 && mat % 4 == 3 // Stone, Smooth Stone, Granite, Diorite, Andesite, Bricks, Mud Bricks
@@ -110,7 +264,7 @@ bool CheckInsideSceneVoxelVolume(vec3 voxelPos) {
                 if (normal.y < 0.5) storeToAllFacesExceptTop = true; // Not overriding top face or else carpets look broken on top of slabs
             }
 
-            if (mat == 10669 || mat == 10845 || mat == 10925 || mat == 10953) { // Wool Carpets, Moss Carpet, Snow Layers < 8
+            if (mat == 10669 || mat == 10843|| mat == 10845 || mat == 10925 || mat == 10953) { // Wool Carpets, Moss Carpet, Snow Layers < 8
                 if (normal.y > 0.5) {
                     voxelPos.y -= 1.0;
                     doSolidBlockCheck = false;

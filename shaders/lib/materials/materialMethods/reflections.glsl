@@ -2,11 +2,28 @@
 
 #ifdef OVERWORLD
     #include "/lib/atmospherics/sky.glsl"
-#endif
-#if defined END && defined COMPOSITE
-    #include "/lib/atmospherics/enderBeams.glsl"
+    #include "/lib/shaderSettings/stars.glsl"
+    #ifdef END_PORTAL_BEAM_INTERNAL
+        #include "/lib/atmospherics/endPortalBeam.glsl"
+    #endif
 #endif
 
+#ifdef END
+    #include "/lib/shaderSettings/endBeams.glsl"
+    #ifdef COMPOSITE
+        #include "/lib/atmospherics/enderBeams.glsl"
+    #endif
+    #if END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0
+        #include "/lib/atmospherics/endCrystalVortex.glsl"
+    #endif
+    #include "/lib/atmospherics/fog/endCenterFog.glsl"
+#endif
+
+    #if (defined ENDERSCAPE_ATMOSPHERE || defined MOD_ENDERSCAPE) && defined ES_NEBULA && (defined END)
+        #include "/lib/atmospherics/enderscapeNebula.glsl"
+    #endif
+    
+    
 #ifdef ATM_COLOR_MULTS
     #include "/lib/colors/colorMultipliers.glsl"
 #endif
@@ -33,7 +50,7 @@ float refDist = far;
 
 vec4 GetReflection(vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerPos, float lViewPos, float z0,
                    sampler2D depthtex, float dither, float skyLightFactor, float fresnel,
-                   float smoothness, vec3 geoNormal, vec3 color, vec3 shadowMult, float highlightMult) {
+                   float smoothness, vec3 geoNormal, vec3 color, vec3 shadowMult, float highlightMult, float enderDragonDead, vec2 texelOffset) {
     // ============================== Step 1: Prepare ============================== //
     #if WORLD_SPACE_REFLECTIONS_INTERNAL == -1
         vec2 rEdge = vec2(0.6, 0.55);
@@ -41,6 +58,13 @@ vec4 GetReflection(vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerPos, fl
         vec2 rEdge = vec2(0.525, 0.525);
     #endif
     vec3 normalMR = normalM;
+    #if defined PIXELATED_WATER_REFLECTIONS && defined GBUFFERS_WATER
+        playerPos = TexelSnap(playerPos, texelOffset);
+        viewPos = TexelSnap(viewPos, texelOffset);
+        nViewPos = TexelSnap(nViewPos, texelOffset);
+        lViewPos = TexelSnap(lViewPos, texelOffset);
+        fresnel = TexelSnap(fresnel, texelOffset);
+    #endif
 
     #if defined GBUFFERS_WATER && WATER_STYLE == 1 && defined GENERATED_NORMALS
         normalMR = normalize(mix(geoNormal, normalM, 0.05));
@@ -49,6 +73,7 @@ vec4 GetReflection(vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerPos, fl
     vec3 nViewPosR = normalize(reflect(nViewPos, normalMR));
     float RVdotU = dot(nViewPosR, upVec);
     float RVdotS = dot(nViewPosR, sunVec);
+    vec3 worldRefDir    = 0.5 * far * (mat3(gbufferModelViewInverse) * nViewPosR);
 
     #if defined GBUFFERS_WATER && WATER_STYLE >= 2
         normalMR = normalize(mix(geoNormal, normalM, 0.8));
@@ -60,7 +85,7 @@ vec4 GetReflection(vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerPos, fl
         // In COMPOSITE for translucents we just need to return WSR and that's it
         if (z0 != z1) {
             /*vec4 reflection;
-            AddBackgroundReflection(reflection, color, playerPos, normalM, normalMR, nViewPos, nViewPosR,
+            AddBackgroundReflection(reflection, color, playerPos, normalM, normalMR, viewPos, nViewPos, nViewPosR,
                                     shadowMult, RVdotU, RVdotS, z0, dither, skyLightFactor, smoothness, highlightMult);
 
             return reflection;*/
@@ -71,6 +96,8 @@ vec4 GetReflection(vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerPos, fl
     #endif
 
     vec4 reflection = vec4(0.0);
+    vec3 refPos = vec3(0.0);
+    vec3 reflectionColor = vec3(0.0);
     #if (defined COMPOSITE || WATER_REFLECT_QUALITY >= 1) && (WORLD_SPACE_REFLECTIONS_INTERNAL == -1 || WORLD_SPACE_REF_MODE == 2)
         #if defined COMPOSITE || WATER_REFLECT_QUALITY >= 2 && !defined DH_WATER
             // Method 1: Ray Marched Reflection //
@@ -99,7 +126,6 @@ vec4 GetReflection(vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerPos, fl
 
             int sr = 0;
             float dist = 0.0;
-            vec3 refPos = vec3(0.0);
             vec3 rfragpos = vec3(0.0);
             float err = 9999999.0;
             for (int i = 0; i < sampleCount; i++) {
@@ -153,13 +179,15 @@ vec4 GetReflection(vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerPos, fl
                         lod = max(lod - 1.0, 0.0);
 
                         reflection.rgb = texture2DLod(colortex0, refPos.xy, lod).rgb;
+                        reflectionColor = reflection.rgb;
+
                     #endif
 
                     float skyFade = 0.0;
 
                     #ifdef GBUFFERS_WATER
                         float reflectionPrevAlpha = reflection.a;
-                        DoFog(reflection, skyFade, lViewPosRT, ViewToPlayer(rfragpos.xyz), RVdotU, RVdotS, dither, true, lViewPos);
+                        DoFog(reflection, skyFade, lViewPosRT, ViewToPlayer(rfragpos.xyz), RVdotU, RVdotS, dither, true, lViewPos, 0.0);
                         reflection.a = reflectionPrevAlpha;
                         //reflection.a *= 1.0 - skyFade;
                     #endif
@@ -208,7 +236,7 @@ vec4 GetReflection(vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerPos, fl
                     vec4 viewPos1DH = dhProjectionInverse * (screenPos1DH * 2.0 - 1.0);
                     viewPos1DH /= viewPos1DH.w;
                     lViewPosR = min(lViewPosR, length(viewPos1DH.xyz));
-                    
+
                     z1R = min(z1R, z1RDH);
                 #endif
 
@@ -241,10 +269,27 @@ vec4 GetReflection(vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerPos, fl
         if (reflection.a < 1.0)
     #endif
     {
-        AddBackgroundReflection(reflection, color, playerPos, normalM, normalMR, nViewPos, nViewPosR,
+        AddBackgroundReflection(reflection, color, playerPos, normalM, normalMR, viewPos, nViewPos, nViewPosR,
                                 shadowMult, RVdotU, RVdotS, z0, dither, skyLightFactor, smoothness, highlightMult);
-    } 
+    }
     // ============================== End of Step 3 ============================== //
+
+    #if (defined COMPOSITE || (WATER_REFLECT_QUALITY >= 2 && defined SKY_EFFECT_REFLECTION)) && (END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0)
+        reflection.rgb += EndCrystalVortices(playerPos, worldRefDir, dither).rgb;
+    #endif
+    #if (defined COMPOSITE || (WATER_REFLECT_QUALITY >= 2 && defined SKY_EFFECT_REFLECTION)) && defined END_PORTAL_BEAM_INTERNAL && !defined DH_WATER
+        vec4 refPosPlayer = gbufferModelViewInverse * (gbufferProjectionInverse * vec4(refPos * 2.0 - 1.0, 1.0));
+        refPosPlayer /= refPosPlayer.w;
+        reflection.rgb += sqrt(GetEndPortalBeam(playerPos, refPosPlayer.xyz * reflection.a - playerPos).rgb);
+    #endif
+
+    #if (defined COMPOSITE || WATER_REFLECT_QUALITY >= 2) && (WORLD_SPACE_REFLECTIONS_INTERNAL == -1 || WORLD_SPACE_REF_MODE == 2) && defined END && END_CENTER_LIGHTING > 0 && MC_VERSION >= 10900 && !defined DH_WATER
+        if (reflection.a < 1.0) {
+            float attentuation = doEndCenterFog(playerPos + cameraPositionBest, worldRefDir.xyz, length(viewPosRT - start), 0.07);
+            vec3 pointLightFog = vec3(END_CENTER_LIGHTING_R, END_CENTER_LIGHTING_G + 0.05, END_CENTER_LIGHTING_B) * 0.355 * END_CENTER_LIGHTING * attentuation * enderDragonDead;
+            reflection.rgb += sqrt(clamp01(pointLightFog - reflectionColor));
+        }
+    #endif
 
     return reflection;
 }

@@ -1,14 +1,28 @@
-/////////////////////////////////////
-// Complementary Shaders by EminGT //
-/////////////////////////////////////
+//////////////////////////////////////////
+// Complementary Shaders by EminGT // Can't be filled with white spaces because of Physics Mod detection
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
+#extension GL_ARB_derivative_control : enable
+#ifdef GL_ARB_derivative_control
+    #define USE_FINE_DERIVATIVES
+#endif
 
 //Common//
 #include "/lib/common.glsl"
+#include "/lib/shaderSettings/water.glsl"
+#include "/lib/shaderSettings/shockwave.glsl"
+#include "/lib/shaderSettings/emissionMult.glsl"
+#define WAVING_WATER_VERTEX
+
+#if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
+    #include "/lib/misc/distortWorld.glsl"
+#endif
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
 
 flat in int mat;
+flat in int blockLightEmission;
 
 in vec2 texCoord;
 #ifdef GBUFFERS_COLORWHEEL_TRANSLUCENT
@@ -23,6 +37,8 @@ flat in vec3 upVec, sunVec, northVec, eastVec;
 in vec3 playerPos;
 in vec3 normal;
 in vec3 viewVector;
+in vec3 atMidBlock;
+in vec3 blockUV;
 
 in vec4 glColor;
 
@@ -86,23 +102,30 @@ void DoTranslucentTweaks(vec4 color, inout float fresnelM, inout float reflectMu
 #include "/lib/lighting/mainLighting.glsl"
 #include "/lib/atmospherics/fog/mainFog.glsl"
 
+#if defined OVERWORLD_BEAMS && defined OVERWORLD
+    float vlFactor = 0.0;
+#endif
+
 #ifdef OVERWORLD
     #include "/lib/atmospherics/sky.glsl"
 #endif
 
+#if !defined ATMOSPHERIC_FOG && !defined BORDER_FOG
+    #include "/lib/colors/skyColors.glsl"
+#endif
+
+#if WATER_REFLECT_QUALITY >= 0 && defined SKY_EFFECT_REFLECTION && defined OVERWORLD && AURORA_STYLE > 0
+    #include "/lib/atmospherics/auroraBorealis.glsl"
+#endif
+
 #if WATER_REFLECT_QUALITY >= 0
     #if defined SKY_EFFECT_REFLECTION && defined OVERWORLD
-        #if AURORA_STYLE > 0
-            #include "/lib/atmospherics/auroraBorealis.glsl"
-        #endif
-
+        #include "/lib/atmospherics/stars.glsl"
         #if NIGHT_NEBULAE == 1
             #include "/lib/atmospherics/nightNebula.glsl"
-        #else
-            #include "/lib/atmospherics/stars.glsl"
         #endif
 
-        #ifdef VL_CLOUDS_ACTIVE 
+        #ifdef VL_CLOUDS_ACTIVE
             #include "/lib/atmospherics/clouds/mainClouds.glsl"
         #endif
     #endif
@@ -149,14 +172,36 @@ void DoTranslucentTweaks(vec4 color, inout float fresnelM, inout float reflectMu
     #include "/lib/materials/materialMethods/connectedGlass.glsl"
 #endif
 
+#ifdef SS_BLOCKLIGHT
+    #include "/lib/lighting/coloredBlocklight.glsl"
+#endif
+
+#if SEASONS > 0 || defined MOSS_NOISE_INTERNAL || defined SAND_NOISE_INTERNAL
+    #include "/lib/materials/overlayNoise.glsl"
+#endif
+
+#if PIXEL_WATER > 0
+    #include "/lib/materials/materialMethods/waterProcedureTexture.glsl"
+#endif
+
+#if SHOCKWAVE > 0
+    #include "/lib/misc/shockwave.glsl"
+#endif
+
+#include "/lib/atmospherics/fog/endCenterFog.glsl"
+
 //Program//
 void main() {
-    vec4 colorP = texture2D(tex, texCoord);
+    #if SHOCKWAVE > 0
+        vec4 colorP = doShockwave(playerPos + relativeEyePosition, texCoord);
+    #else
+        vec4 colorP = texture2D(tex, texCoord);
+    #endif
 
     #ifdef GBUFFERS_COLORWHEEL_TRANSLUCENT
         float ao;
         vec4 overlayColor;
-        
+
         clrwl_computeFragment(colorP, colorP, lmCoord, ao, overlayColor);
         vec4 color = mix(colorP, overlayColor, overlayColor.a);
         lmCoord = clamp((lmCoord - 1.0 / 32.0) * 32.0 / 30.0, 0.0, 1.0);
@@ -177,6 +222,12 @@ void main() {
         dither = fract(dither + goldenRatio * mod(float(frameCounter), 3600.0));
     #endif
 
+    #ifdef DISTANT_HORIZONS
+        if (getDHFadeFactor(playerPos) < dither) {
+            discard;
+        }
+    #endif
+
     #ifdef LIGHT_COLOR_MULTS
         lightColorMult = GetLightColorMult();
     #endif
@@ -184,6 +235,18 @@ void main() {
         atmColorMult = GetAtmColorMult();
         sqrtAtmColorMult = sqrt(atmColorMult);
     #endif
+
+    float overlayNoiseIntensity = 1.0;
+    float snowNoiseIntensity = 1.0;
+    float sandNoiseIntensity = 1.0;
+    float mossNoiseIntensity = 1.0;
+    float overlayNoiseTransparentOverwrite = 0.0;
+    float overlayNoiseAlpha = 1.0;
+    float overlayNoiseFresnelMult = 1.0;
+    float IPBRMult = 1.0;
+    bool isFoliage = false;
+    vec3 dhColor = vec3(1.0);
+    float purkinjeOverwrite = 0.0, enderDragonDead = 1.0;
 
     #ifdef VL_CLOUDS_ACTIVE
         float cloudLinearDepth = texelFetch(gaux2, texelCoord, 0).a;
@@ -197,6 +260,7 @@ void main() {
     float VdotU = dot(nViewPos, upVec);
     float VdotS = dot(nViewPos, sunVec);
     float VdotN = dot(nViewPos, normal);
+    vec3 worldPos = playerPos + cameraPosition;
 
     // Materials
     vec4 translucentMult = vec4(1.0);
@@ -210,6 +274,7 @@ void main() {
     vec3 shadowMult = vec3(1.0);
     float fresnel = clamp(1.0 + dot(normalM, nViewPos), 0.0, 1.0);
     float fresnelM = pow3(fresnel);
+    float SSBLAlpha = 1.0;
     #ifdef IPBR
         #include "/lib/materials/materialHandling/translucentIPBR.glsl"
 
@@ -222,17 +287,29 @@ void main() {
         #endif
     #else
         #ifdef CUSTOM_PBR
-            float smoothnessD, materialMaskPh;
+            float smoothnessD = 0.0;
+            float materialMaskPh = 0.0;
             GetCustomMaterials(color, normalM, lmCoordM, NdotU, shadowMult, smoothnessG, smoothnessD, highlightMult, emission, materialMaskPh, viewPos, lViewPos);
             reflectMult = smoothnessD;
         #endif
 
         if (mat == 32000) { // Water
-            #include "/lib/materials/specificMaterials/translucents/water.glsl"
+            #ifdef SHADER_WATER
+                #include "/lib/materials/specificMaterials/translucents/water.glsl"
+            #endif
+            overlayNoiseIntensity = 0.0;
+            overlayNoiseFresnelMult = 0.0;
+            IPBRMult = 0.0;
+            overlayNoiseAlpha = 0.0;
         } else if (mat == 30020) { // Nether Portal
             #ifdef SPECIAL_PORTAL_EFFECTS
                 #include "/lib/materials/specificMaterials/translucents/netherPortal.glsl"
             #endif
+            overlayNoiseIntensity = 0.0;
+        } else if (mat == 32016) { // Beacon
+            overlayNoiseAlpha = 0.8;
+            mossNoiseIntensity = 0.5;
+            sandNoiseIntensity = 0.5;
         }
     #endif
 
@@ -243,16 +320,65 @@ void main() {
         }
     #endif
 
+    #if defined MOSS_NOISE_INTERNAL || defined SAND_NOISE_INTERNAL
+        #include "/lib/materials/overlayNoiseApply.glsl"
+    #endif
+    #if SEASONS > 0
+        #include "/lib/materials/seasons.glsl"
+    #endif
+
+    #ifdef REFLECTIVE_WORLD
+        smoothnessG = 1.0;
+    #endif
+
+    #if MONOTONE_WORLD > 0
+        #if MONOTONE_WORLD == 1
+            color.rgb = vec3(1.0);
+        #elif MONOTONE_WORLD == 2
+            color.rgb = vec3(0.0);
+        #else
+            color.rgb = vec3(0.5);
+        #endif
+    #endif
+
     // Blending
     if (!translucentMultCalculated)
         translucentMult = vec4(mix(vec3(0.666), color.rgb * (1.0 - pow2(pow2(color.a))), color.a), 1.0);
 
     translucentMult.rgb = mix(translucentMult.rgb, vec3(1.0), min1(pow2(pow2(lViewPos / far))));
 
+    #ifdef SS_BLOCKLIGHT
+        float lmCoordXModified = lmCoord.x;
+        #ifdef IRIS_FEATURE_BLOCK_EMISSION_ATTRIBUTE
+            lmCoordXModified = lmCoord.x == 1.0 && blockLightEmission < 0.5 ? 0.0 : lmCoord.x;
+        #endif
+        blocklightCol = ApplyMultiColoredBlocklight(blocklightCol, screenPos, playerPos, lmCoordXModified);
+    #endif
+
+    bool isLightSource = false;
+    if (lmCoord.x > 0.99 || blockLightEmission > 0) { // Mod support for light level 15 (and all light levels with iris 1.7) light sources and blockID set by user
+        if (mat == 0) {
+            emission = DoAutomaticEmission(noSmoothLighting, noDirectionalShading, color.rgb, lmCoord.x, blockLightEmission, 0.0);
+        }
+        isLightSource = true;
+        overlayNoiseIntensity = 0.0;
+    }
+
+    emission *= EMISSION_MULTIPLIER;
+
     // Lighting
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, dither,
                worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, false,
-               false, subsurfaceMode, smoothnessG, highlightMult, emission);
+               false, subsurfaceMode, smoothnessG, highlightMult, emission, purkinjeOverwrite, isLightSource,
+               enderDragonDead);
+
+    #ifdef SS_BLOCKLIGHT
+        vec3 normalizedColor = normalize(color.rgb);
+        vec3 maskedLightAlbedo =
+            (mat == 30012 || mat == 30016 || (mat >= 31000 && mat < 32000) || mat == 32004) // Slime, Honey, Glass, Ice
+            ? normalizedColor : vec3(0.0);
+        vec3 lightAlbedo = mix(maskedLightAlbedo, normalizedColor * min1(emission), color.a);
+    #endif
 
     // Reflections
     float skyLightFactor = GetSkyLightFactor(lmCoordM, shadowMult);
@@ -265,10 +391,13 @@ void main() {
         #endif
 
         fresnelM = (fresnelM * 0.85 + 0.15) * reflectMult;
-
+        vec2 texelOffset = vec2(0.0);
+        #ifdef PIXELATED_WATER_REFLECTIONS
+            texelOffset = ComputeTexelOffset(tex, texCoord);
+        #endif
         vec4 reflection = GetReflection(normalM, viewPos.xyz, nViewPos, playerPos, lViewPos, -1.0,
                                         depthtex1, dither, skyLightFactor, fresnel,
-                                        smoothnessG, geoNormal, color.rgb, shadowMult, highlightMult);
+                                        smoothnessG, geoNormal, color.rgb, shadowMult, highlightMult, enderDragonDead, texelOffset);
         color.rgb = mix(color.rgb, reflection.rgb, fresnelM);
 
     #else
@@ -284,7 +413,12 @@ void main() {
     float skyFade = 0.0;
     float prevAlpha = color.a;
     color.a = 1.0;
-    DoFog(color, skyFade, lViewPos, playerPos, VdotU, VdotS, dither, false, 0.0);
+    DoFog(color, skyFade, lViewPos, playerPos, VdotU, VdotS, dither, false, 0.0, 0.0);
+    #if defined END && END_CENTER_LIGHTING > 0 && MC_VERSION >= 10900
+        float attentuation = doEndCenterFog(cameraPositionBest, normalize(playerPos), min(renderDistance, lViewPos), 0.5);
+        vec3 pointLightFog = vec3(END_CENTER_LIGHTING_R, END_CENTER_LIGHTING_G, END_CENTER_LIGHTING_B) * 0.5 * END_CENTER_LIGHTING * 0.1 * attentuation * enderDragonDead;
+        color.rgb = sqrt(pow2(color.rgb) + vec3(pointLightFog));
+    #endif
     float fogAlpha = color.a;
     color.a = prevAlpha * (1.0 - skyFade);
 
@@ -292,18 +426,34 @@ void main() {
         skyLightFactor *= 0.5;
     #endif
 
+    #ifdef ENTITIES_ARE_LIGHT
+        SSBLAlpha = 0.0;
+    #endif
+
     /* DRAWBUFFERS:03 */
     gl_FragData[0] = color;
     gl_FragData[1] = vec4(1.0 - translucentMult.rgb, translucentMult.a);
 
-    #if DETAIL_QUALITY >= 3 || (WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS > 0)
+    #if DETAIL_QUALITY >= 3 || (WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS > 0) || defined SS_BLOCKLIGHT
         /* DRAWBUFFERS:036 */
-        gl_FragData[2] = vec4(1.0, materialMask, skyLightFactor, 1.0);
+        gl_FragData[2] = vec4(1.0, materialMask, skyLightFactor, lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission));
 
         #if WORLD_SPACE_REFLECTIONS > 0
-            /* DRAWBUFFERS:03648 */
-            gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, sqrt(fresnelM * color.a * fogAlpha));
-            gl_FragData[4] = vec4(reflection.rgb * fresnelM * color.a * fogAlpha, reflection.a);
+            #ifdef SS_BLOCKLIGHT
+                /* DRAWBUFFERS:036489 */
+                gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, sqrt(fresnelM * color.a * fogAlpha));
+                gl_FragData[4] = vec4(reflection.rgb * fresnelM * color.a * fogAlpha, reflection.a);
+                gl_FragData[5] = vec4(lightAlbedo, SSBLAlpha);
+            #else
+                /* DRAWBUFFERS:03648 */
+                gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, sqrt(fresnelM * color.a * fogAlpha));
+                gl_FragData[4] = vec4(reflection.rgb * fresnelM * color.a * fogAlpha, reflection.a);
+            #endif
+        #else
+            #ifdef SS_BLOCKLIGHT
+            /* DRAWBUFFERS:0369 */
+            gl_FragData[3] = vec4(lightAlbedo, SSBLAlpha);
+            #endif
         #endif
     #elif WORLD_SPACE_REFLECTIONS > 0
         /* DRAWBUFFERS:0348 */
@@ -318,6 +468,7 @@ void main() {
 #ifdef VERTEX_SHADER
 
 flat out int mat;
+flat out int blockLightEmission;
 
 out vec2 texCoord;
 #ifdef GBUFFERS_COLORWHEEL_TRANSLUCENT
@@ -325,6 +476,7 @@ out vec2 texCoord;
 #else
     out vec2 lmCoord;
 #endif
+
 out vec2 signMidCoordPos;
 flat out vec2 absMidCoordPos;
 
@@ -332,6 +484,8 @@ flat out vec3 upVec, sunVec, northVec, eastVec;
 out vec3 playerPos;
 out vec3 normal;
 out vec3 viewVector;
+out vec3 atMidBlock;
+out vec3 blockUV;
 
 out vec4 glColor;
 
@@ -349,6 +503,7 @@ out vec4 glColor;
 
 //Attributes//
 attribute vec4 mc_Entity;
+attribute vec4 at_midBlock;
 attribute vec4 mc_midTexCoord;
 attribute vec4 at_tangent;
 
@@ -366,24 +521,34 @@ attribute vec4 at_tangent;
     #include "/lib/antialiasing/jitter.glsl"
 #endif
 
-#ifdef WAVING_WATER_VERTEX
+#if defined WAVE_EVERYTHING || defined WAVING_WATER_VERTEX
     #include "/lib/materials/materialMethods/wavingBlocks.glsl"
 #endif
 
 //Program//
 void main() {
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+    #ifdef ATLAS_ROTATION
+        texCoord += texCoord * float(hash33(mod(cameraPosition * 0.1, vec3(100.0))));
+    #endif
     lmCoord  = GetLightMapCoordinates();
 
     glColor = gl_Color;
 
     mat = int(mc_Entity.x + 0.5);
 
+    blockLightEmission = 0;
+    #ifdef IRIS_FEATURE_BLOCK_EMISSION_ATTRIBUTE
+        blockLightEmission = clamp(int(at_midBlock.w + 0.5), 0, 15);
+    #endif
+
     normal = normalize(gl_NormalMatrix * gl_Normal);
     upVec = normalize(gbufferModelView[1].xyz);
     eastVec = normalize(gbufferModelView[0].xyz);
     northVec = normalize(gbufferModelView[2].xyz);
     sunVec = GetSunVector();
+    atMidBlock = at_midBlock.xyz;
+    blockUV = 0.5 - at_midBlock.xyz / 64.0;
 
     binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
     tangent  = normalize(gl_NormalMatrix * at_tangent.xyz);
@@ -412,6 +577,19 @@ void main() {
     #ifdef WAVING_WATER_VERTEX
         DoWave(position.xyz, mat);
     #endif
+
+    #ifdef MIRROR_DIMENSION
+        doMirrorDimension(position);
+    #endif
+
+    #ifdef WORLD_CURVATURE
+        position.y += doWorldCurvature(position.xz);
+    #endif
+
+    #ifdef WAVE_EVERYTHING
+        DoWaveEverything(position.xyz);
+    #endif
+
 
     gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
 

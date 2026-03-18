@@ -38,6 +38,6 @@ vec4 sampleBlurFilteredReflection(vec4 centerCol, float dither, float z0) {
             wsum += w_s;
         }
     }
-    
+
     return sum / wsum;
 }

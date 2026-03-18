@@ -1,3 +1,6 @@
+#if !defined REPROJECTION_FILE
+#define REPROJECTION_FILE
+
 // Previous frame reprojection from Chocapic13
 vec2 Reprojection(vec3 pos, vec3 cameraOffset) {
     pos = pos * 2.0 - 1.0;
@@ -28,3 +31,5 @@ vec2 SHalfReprojection(vec3 playerPos, vec3 cameraOffset) {
     previousPosition = gbufferPreviousProjection * previousPosition;
     return previousPosition.xy / previousPosition.w * 0.5 + 0.5;
 }
+
+#endif

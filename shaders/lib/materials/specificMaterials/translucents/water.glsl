@@ -1,7 +1,9 @@
 // ============================== Step 1: Color Prep ============================== //
+#include "/lib/shaderSettings/water.glsl"
+vec3 glColorM = vec3(0.43, 0.6, 0.8);
 #if MC_VERSION >= 11300
     #if WATERCOLOR_MODE >= 2
-        vec3 glColorM = glColor.rgb;
+        glColorM = glColor.rgb;
 
         #if WATERCOLOR_MODE >= 3
             glColorM.g = max(glColorM.g, 0.39);
@@ -12,13 +14,22 @@
             translucentMult.rgb = normalize(sqrt2(glColor.rgb));
             translucentMult.g *= 0.88;
         #endif
-
-        glColorM = sqrt1(glColorM) * vec3(1.0, 0.85, 0.8);
-    #else
-        vec3 glColorM = vec3(0.43, 0.6, 0.8);
+        #ifdef COMP_WATER_TWEAKS
+            glColorM = sqrt1(glColorM) * vec3(1.0, 0.85, 0.8);
+        #endif
     #endif
+#endif
 
-    #if WATER_STYLE < 3
+#if PIXEL_WATER > 0 && (defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER || defined DH_WATER)
+    const float water_scroll_speed = 0.002;
+    vec3 worldPosPixel = playerPos + cameraPosition;
+    vec3 waterPosPixel = worldPosPixel + (vec3(frameTimeCounter) * water_scroll_speed);
+    vec3 waterMask = waterMaskFunc(waterPosPixel, water_scroll_speed, glColorM, mat, normalM);
+    vec3 colorOriginal = colorP.rgb;
+    if (abs(NdotU) > 0.01) colorP.rgb = waterMask;
+#endif
+#if MC_VERSION >= 11300
+    #if WATER_STYLE < 3 || PIXEL_WATER == 1
         vec3 colorPM = pow2(colorP.rgb);
         color.rgb = colorPM * glColorM;
     #else
@@ -26,7 +37,7 @@
         color.rgb = 0.375 * glColorM;
     #endif
 #else
-    #if WATER_STYLE < 3
+    #if WATER_STYLE < 3 || PIXEL_WATER == 1
         color.rgb = mix(color.rgb, vec3(GetLuminance(color.rgb)), 0.88);
         color.rgb = pow2(color.rgb) * vec3(2.3, 3.5, 3.1) * 0.9;
     #else
@@ -40,18 +51,24 @@
 // ============================== End of Step 1 ============================== //
 
 #define PHYSICS_OCEAN_INJECTION
-#if defined GENERATED_NORMALS && (WATER_STYLE >= 2 || defined PHYSICS_OCEAN) && !defined DH_WATER
+#if defined GENERATED_NORMALS && (WATER_STYLE >= 2 || defined PHYSICS_OCEAN || !defined WATER_GENERATED_NORMALS || PIXEL_WATER == 1) && !defined DH_WATER
     noGeneratedNormals = true;
 #endif
 
+#ifdef WATER_GENERATED_NORMALS
+#endif
+
 #if defined GBUFFERS_WATER || defined DH_WATER
+    SSBLAlpha = 0.0;
     lmCoordM.y = min(lmCoord.y * 1.07, 1.0); // Iris/Sodium skylight inconsistency workaround
-    
+
     float fresnel2 = pow2(fresnel);
     float fresnel4 = pow2(fresnel2);
 
     // ============================== Step 2: Water Normals ============================== //
     reflectMult = 1.0;
+
+    float waterBumpNoise = 1.0;
 
     #if WATER_MAT_QUALITY >= 3
         materialMask = OSIEBCA * 241.0; // Water
@@ -68,6 +85,9 @@
             waterPos = floor(waterPos * blockRes) / blockRes;
         #endif
         waterPos = 0.032 * (waterPos + worldPos.y * 2.0);
+        #ifdef CLEAR_WATER_SPOTS
+            waterBumpNoise = 1 - clamp01((1 - smoothstep(0.0, 0.5, texture2DLod(noisetex, waterPos.x * 0.045 + waterPos * 0.042 + wind * 0.006, 0.0).g)) * 2) * 0.85;
+        #endif
     #endif
 
     #if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && WATER_MAT_QUALITY >= 2
@@ -99,7 +119,7 @@
                      normalBig += texture2D(gaux4, waterPosM * 0.05 - 0.05 * wind).rg - 0.5;
 
                 normalMap.xy = normalMed * WATER_BUMP_MED + normalSmall * WATER_BUMP_SMALL + normalBig * WATER_BUMP_BIG;
-                normalMap.xy *= 6.0 * (1.0 - 0.7 * fresnel) * WATER_BUMPINESS_M;
+                normalMap.xy *= 6.0 * (1.0 - 0.7 * fresnel) * WATER_BUMPINESS_M * waterBumpNoise;
             #endif
 
             normalMap.xy *= 0.03 * lmCoordM.y + 0.01;
@@ -135,6 +155,7 @@
             fresnel = clamp(1.0 + dot(normalM, nViewPos), 0.0, 1.0);
         #endif
     #endif
+    // color.rgb = vec3(waterBumpNoise);
     // ============================== End of Step 2 ============================== //
 
     // ============================== Step 3: Water Material Features ============================== //
@@ -161,7 +182,7 @@
             float lViewPosT = length(viewPosT);
             float lViewPosDifM = lViewPos - lViewPosT;
 
-            #if WATER_STYLE < 3
+            #if WATER_STYLE < 3 || PIXEL_WATER == 1
                 color.a = sqrt1(color.a);
             #else
                 color.a = 0.98;
@@ -191,7 +212,7 @@
             ////
 
             // Water Foam //
-            #if WATER_FOAM_I > 0 && defined GBUFFERS_WATER
+            #if WATER_FOAM_I > 0 && defined GBUFFERS_WATER && !(defined MIRROR_DIMENSION || defined WORLD_CURVATURE)
                 if (NdotU > 0.99) {
                     vec3 matrixM = vec3(
                         gbufferModelViewInverse[0].y,
@@ -201,8 +222,12 @@
                     float playerPosTY = dot(matrixM, viewPosT) + gbufferModelViewInverse[3].y;
                     float yPosDif = playerPosTY - playerPos.y;
 
-                    #if WATER_STYLE < 3 && MC_VERSION >= 11300
-                        float dotColorPM = dot(colorPM, colorPM);
+                    #if (WATER_STYLE < 3 || PIXEL_WATER > 0) && MC_VERSION >= 11300
+                        #if PIXEL_WATER > 0
+                            float dotColorPM = dot(waterMask, pow1_5(colorOriginal));
+                        #else
+                            float dotColorPM = dot(colorPM, colorPM);
+                        #endif
                         float foamThreshold = min(pow2(dotColorPM) * 1.6, 1.2);
                     #else
                         float foamThreshold = pow2(texture2DLod(noisetex, waterPos * 4.0 + wind * 0.5, 0.0).g) * 1.6;
@@ -215,7 +240,11 @@
                     #endif
                     foam *= clamp((fract(worldPos.y) - 0.7) * 10.0, 0.0, 1.0);
 
-                    vec4 foamColor = vec4(0.9, 0.95, 1.05, 1.0);
+                    vec3 foamColor3 = vec3(0.9, 0.95, 1.05);
+                    #if PIXEL_WATER > 0
+                        foamColor3 *= 2.0;
+                    #endif
+                    vec4 foamColor = vec4(foamColor3, 1.0);
 
                     #define WATER_FOAM_IM WATER_FOAM_I * 0.01
                     #if WATER_FOAM_I < 100
@@ -234,12 +263,12 @@
 
             reflectMult = 0.5;
 
-            #if MC_VERSION < 11300 && WATER_STYLE >= 3
+            #if MC_VERSION < 11300 && WATER_STYLE >= 3 && PIXEL_WATER == 0
                 color.a = 0.7;
             #endif
 
             #ifdef GBUFFERS_WATER
-                #if WATER_STYLE == 1
+                #if WATER_STYLE == 1 || PIXEL_WATER == 1
                     translucentMult.rgb *= 1.0 - fresnel4;
                 #else
                     translucentMult.rgb *= 1.0 - 0.9 * max(0.5 * sqrt(fresnel4), fresnel4);
@@ -250,6 +279,8 @@
                 reflectMult = 1.0 / color.a;
                 fresnelM = 1.0;
             #endif
+
+            reflectMult = clamp01(reflectMult * FRESNEL_MULTIPLIER);
         }
     #else
         shadowMult = vec3(0.0);
@@ -266,7 +297,7 @@
             smoothnessG = 1.0;
 
             const float WATER_BUMPINESS_M2 = min(WATER_BUMP_MED * WATER_BUMP_SMALL * WATER_BUMPINESS * 0.65, 1.0);
-            vec2 lightNormalP = WATER_BUMPINESS_M2 * (normalMed + 0.5 * normalSmall);
+            vec2 lightNormalP = WATER_BUMPINESS_M2 * (normalMed + 0.5 * normalSmall) * waterBumpNoise;
             vec3 lightNormal = normalize(vec3(lightNormalP, 1.0) * tbnMatrix);
             highlightMult = dot(lightNormal, lightVec);
             highlightMult = max0(highlightMult) / max(dot(normal, lightVec), 0.17);

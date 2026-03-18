@@ -1,3 +1,6 @@
+#include "/lib/shaderSettings/materials.glsl"
+
+#ifdef IS_IRIS
 #ifndef INCLUDE_VOXELIZATION
     #define INCLUDE_VOXELIZATION
 
@@ -117,32 +120,154 @@
         "lightVoxelization.glsl", "blocklightColors.glsl", "item.properties"
         The order of if-checks or block IDs don't matter. The returning IDs matter. */
 
-        #define ALWAYS_DO_IPBR_LIGHTS
-
-        #if defined IPBR || defined ALWAYS_DO_IPBR_LIGHTS
-            #define DO_IPBR_LIGHTS
-        #endif
-
+        if (mat < 12302) {
+            if (mat < 12295) {
+                if (mat < 12291) {
+                    if (mat < 12289) {
+                        #if defined DO_IPBR_LIGHTS && (!(defined NOT_GLOWING_CHORUS_FLOWER))
+                        if (mat == 12288) return 39;
+                        #endif
+                    } else { // mat >= 12289
+                        if (mat < 12290) {
+                            #if defined DO_IPBR_LIGHTS && (!(defined NOT_GLOWING_CHORUS_FLOWER))
+                            if (mat == 12289) return 39;
+                            #endif
+                        } else { // mat >= 12290
+                            #if defined DO_IPBR_LIGHTS && (!(defined NOT_GLOWING_CHORUS_FLOWER))
+                            if (mat == 12290) return 39;
+                            #endif
+                        }
+                    }
+                } else { // mat >= 12291
+                    if (mat < 12292) {
+                        #if defined DO_IPBR_LIGHTS && (!(defined NOT_GLOWING_CHORUS_FLOWER))
+                        if (mat == 12291) return 39;
+                        #endif
+                    } else { // mat >= 12292
+                        if (mat < 12293) {
+                            #if defined DO_IPBR_LIGHTS
+                            if (mat == 12292) return 251;
+                            #endif
+                        } else { // mat >= 12293
+                            #if defined DO_IPBR_LIGHTS
+                            if (mat == 12294) return 252;
+                            #endif
+                        }
+                    }
+                }
+            } else { // mat >= 12295
+                if (mat < 12299) {
+                    if (mat < 12297) {
+                        #if defined DO_IPBR_LIGHTS
+                        if (mat == 12296) return 252;
+                        #endif
+                    } else { // mat >= 12297
+                        if (mat < 12298) {
+                            #if defined DO_IPBR_LIGHTS
+                            if (mat == 12297) return 252;
+                            #endif
+                        } else { // mat >= 12298
+                            #if defined DO_IPBR_LIGHTS
+                            if (mat == 12298) return 252;
+                            #endif
+                        }
+                    }
+                } else { // mat >= 12299
+                    if (mat < 12300) {
+                        #if defined DO_IPBR_LIGHTS
+                        if (mat == 12299) return 252;
+                        #endif
+                    } else { // mat >= 12300
+                        if (mat < 12301) {
+                            #if defined DO_IPBR_LIGHTS
+                            if (mat == 12300) return 65;
+                            #endif
+                        } else { // mat >= 12301
+                            #if defined DO_IPBR_LIGHTS
+                            if (mat == 12301) return 65;
+                            #endif
+                        }
+                    }
+                }
+            }
+        } else { // mat >= 12302
+            if (mat < 12316) {
+                if (mat < 12313) {
+                    if (mat < 12303) {
+                        #if defined DO_IPBR_LIGHTS
+                        if (mat == 12302) return 65;
+                        #endif
+                    } else { // mat >= 12303
+                        if (mat < 12304) {
+                            #if defined DO_IPBR_LIGHTS
+                            if (mat == 12303) return 65;
+                            #endif
+                        } else { // mat >= 12304
+                            if (mat == 12312) return 296;
+                        }
+                    }
+                } else { // mat >= 12313
+                    if (mat < 12314) {
+                        if (mat == 12313) return 296;
+                    } else { // mat >= 12314
+                        if (mat < 12315) {
+                            if (mat == 12314) return 296;
+                        } else { // mat >= 12315
+                            if (mat == 12315) return 296;
+                        }
+                    }
+                }
+            } else { // mat >= 12316
+                if (mat < 12325) {
+                    if (mat < 12321) {
+                        #if defined SPECLIGHT_ACT
+                        if (mat == 12320) return 298;
+                        #endif
+                    } else { // mat >= 12321
+                        if (mat < 12323) {
+                            #if defined SPECLIGHT_ACT
+                            if (mat == 12322) return 297;
+                            #endif
+                        } else { // mat >= 12323
+                            if (mat == 12324) return 298;
+                        }
+                    }
+                } else { // mat >= 12325
+                    if (mat < 12326) {
+                        if (mat == 12325) return 298;
+                    } else { // mat >= 12326
+                        if (mat < 12327) {
+                            if (mat == 12326) return 298;
+                        } else { // mat >= 12327
+                            if (mat == 12327) return 298;
+                        }
+                    }
+                }
+            }
+        }
         if (mat < 10604) {
             if (mat < 10396) {
                 if (mat < 10300) {
                     if (mat < 10228) {
                         if (mat < 10076) {
                             if (mat == 10056) return  14; // Lava Cauldron
-                            if (mat == 10068) return  13; // Lava
+                            if (mat == 10068 || mat == 10070) return  13; // Lava
                             if (mat == 10072) return   5; // Fire
                         } else {
                             if (mat == 10076) return  27; // Soul Fire
-                            #ifdef DO_IPBR_LIGHTS
+                            #if defined GLOWING_NETHER_TREES && defined DO_IPBR_LIGHTS
                             if (mat == 10216) return  62; // Crimson Stem, Crimson Hyphae
                             if (mat == 10224) return  63; // Warped Stem, Warped Hyphae
                             #endif
                         }
                     } else {
                         if (mat < 10276) {
-                            if (mat == 10228) return 255; // Bedrock
+                            if (mat == 10228) return 30055; // Bedrock
                             #if defined GLOWING_ORE_ANCIENTDEBRIS && defined DO_IPBR_LIGHTS
                             if (mat == 10252) return  52; // Ancient Debris
+                            #endif
+                            #if defined GLOWING_RAW_BLOCKS && defined DO_IPBR_LIGHTS
+                            if (mat == 10268) return 43; // Raw Iron Block
                             #endif
                             #if defined GLOWING_ORE_IRON && defined DO_IPBR_LIGHTS
                             if (mat == 10272) return  43; // Iron Ore
@@ -151,9 +276,15 @@
                             #if defined GLOWING_ORE_IRON && defined DO_IPBR_LIGHTS
                             if (mat == 10276) return  43; // Deepslate Iron Ore
                             #endif
+                            #if defined GLOWING_RAW_BLOCKS && defined DO_IPBR_LIGHTS
+                            if (mat == 10280) return 45; // Raw Coper Block
+                            #endif
                             #if defined GLOWING_ORE_COPPER && defined DO_IPBR_LIGHTS
                             if (mat == 10284) return  45; // Copper Ore
                             if (mat == 10288) return  45; // Deepslate Copper Ore
+                            #endif
+                            #if defined GLOWING_RAW_BLOCKS && defined DO_IPBR_LIGHTS
+                            if (mat == 10296) return 44; // Raw Gold Block
                             #endif
                         }
                     }
@@ -162,7 +293,11 @@
                         if (mat < 10320) {
                             #if defined GLOWING_ORE_GOLD && defined DO_IPBR_LIGHTS
                             if (mat == 10300) return  44; // Gold Ore
-                            if (mat == 10304) return  44; // Deepslate Gold Ore
+                            if (mat == 10302) return  44; // Deepslate Gold Ore
+                            #endif
+                            #if defined GLOWING_ORE_MODDED && defined DO_IPBR_LIGHTS
+                            if (mat == 10304) return  39; // Modded Pink Ore
+                            if (mat == 10306) return  36; // Modded Purple Ore
                             #endif
                             #if defined GLOWING_ORE_NETHERGOLD && defined DO_IPBR_LIGHTS
                             if (mat == 10308) return  50; // Nether Gold Ore
@@ -173,6 +308,9 @@
                             if (mat == 10324) return  48; // Deepslate Diamond Ore
                             #endif
                             if (mat == 10332) return  36; // Amethyst Cluster, Amethyst Buds
+                            #if defined GLOWING_EMERALD_BLOCK && defined DO_IPBR_LIGHTS
+                            if (mat == 10336) return 47; // Emerald Block
+                            #endif
                         }
                     } else {
                         if (mat < 10356) {
@@ -232,12 +370,12 @@
                         } else {
                             if (mat == 10548) return  33; // Enchanting Table
                             if (mat == 10556) return  58; // End Portal Frame:Active
-                            if (mat == 10560) return  12; // Lantern
+                            if (mat == 10560 || mat == 10562) return  12; // Lantern
                         }
                     } else {
                         if (mat < 10580) {
                             if (mat == 10564) return  29; // Soul Lantern
-                            #ifdef DO_IPBR_LIGHTS
+                            #if defined EMISSIVE_DRAGON_EGG && defined DO_IPBR_LIGHTS
                             if (mat == 10572) return  38; // Dragon Egg
                             #endif
                             if (mat == 10576) return  22; // Smoker:Lit
@@ -358,21 +496,37 @@
                 } else {
                     if (mat < 31000) {
                         if (mat < 30012) {
-                            if (mat == 10980) return  81; // Potted Open Eyeblossom
-                            if (abs(mat - 10986) <= 2) return 84; // Copper Torch, Copper Lantern
-                            if (mat == 30008) return 254; // Tinted Glass
+                            if (mat < 21014) {
+                                if (mat == 10980) return  81; // Potted Open Eyeblossom
+                                if (abs(mat - 10986) <= 2) return 84; // Copper Torch, Copper Lantern
+                                if (mat == 21000) return  97; // White Modded Blocks - Also used For Black / Gray
+                                if (mat == 21002) return  43; // Brown Modded Blocks
+                                if (mat == 21004) return  70; // Red Modded Blocks
+                                if (mat == 21006) return  71; // Orange Modded Blocks
+                                if (mat == 21008) return  72; // Yellow Modded Blocks
+                                if (mat == 21010) return  73; // Lime Modded Blocks
+                                if (mat == 21012) return  74; // Green Modded Blocks
+                            } else {
+                                if (mat == 21014) return  75; // Cyan Modded Blocks
+                                if (mat == 21016) return  76; // Light Blue Modded Blocks
+                                if (mat == 21018) return  77; // Blue Modded Blocks
+                                if (mat == 21020) return  78; // Purple Modded Blocks
+                                if (mat == 21022) return  79; // Magenta Modded Blocks
+                                if (mat == 21024) return  80; // Pink Modded Blocks
+                                if (mat == 30008) return 30054; // Tinted Glass
+                            }
                         } else {
-                            if (mat == 30012) return 213; // Slime Block
-                            if (mat == 30016) return 201; // Honey Block
+                            if (mat == 30012) return 30013; // Slime Block
+                            if (mat == 30016) return 30001; // Honey Block
                             if (mat == 30020) return  25; // Nether Portal
                         }
                     } else {
                         if (mat < 32008) {
-                            if (mat >= 31000 && mat < 32000) return 200 + (mat - 31000) / 2; // Stained Glass+
-                            if (mat == 32004) return 216; // Ice
+                            if (mat >= 31000 && mat < 32000) return 30000 + (mat - 31000) / 2; // Stained Glass+
+                            if (mat == 32004) return 30016; // Ice
                         } else {
-                            if (mat == 32008) return 217; // Glass
-                            if (mat == 32012) return 218; // Glass Pane
+                            if (mat == 32008) return 30017; // Glass
+                            if (mat == 32012) return 30018; // Glass Pane
                             if (mat == 32016) return   4; // Beacon
                         }
                     }
@@ -393,6 +547,9 @@
             vec3 modelPos = gl_Vertex.xyz + at_midBlock.xyz / 64.0;
             vec3 viewPos = transform(gl_ModelViewMatrix, modelPos);
             vec3 scenePos = transform(shadowModelViewInverse, viewPos);
+            #ifdef WORLD_CURVATURE
+                scenePos.y += doWorldCurvature(scenePos.xz);
+            #endif
             vec3 voxelPos = SceneToVoxel(scenePos);
 
             //#define OPTIMIZATION_ACT_HALF_RATE_VOXELS
@@ -403,6 +560,7 @@
                     if (scenePos.z < 0.0) return;
                 }
             #endif
+
             #if defined GBUFFERS_COLORWHEEL || defined SHADOW_COLORWHEEL
                 bool isEligible = true;
             #else
@@ -419,10 +577,11 @@
                 #if defined GBUFFERS_COLORWHEEL || defined SHADOW_COLORWHEEL
                     voxelData = voxelData | 32768;
                 #endif
-                
+
                 imageStore(voxel_img, ivec3(voxelPos), uvec4(voxelData, 0u, 0u, 0u));
             }
         }
     #endif
 
 #endif //INCLUDE_VOXELIZATION
+#endif

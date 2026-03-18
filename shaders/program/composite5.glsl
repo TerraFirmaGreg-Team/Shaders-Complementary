@@ -1,9 +1,13 @@
-/////////////////////////////////////
-// Complementary Shaders by EminGT //
-/////////////////////////////////////
+//////////////////////////////////////////
+// Complementary Shaders by EminGT      //
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
 
 //Common//
 #include "/lib/common.glsl"
+#include "/lib/shaderSettings/composite5.glsl"
+#include "/lib/shaderSettings/blueScreen.glsl"
+#include "/lib/shaderSettings/bloom.glsl"
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -28,63 +32,7 @@ vec2 view = vec2(viewWidth, viewHeight);
 #endif
 
 //Common Functions//
-void LinearToRGB(inout vec3 color) {
-    const vec3 k = vec3(0.055);
-    color = mix((vec3(1.0) + k) * pow(color, vec3(1.0 / 2.4)) - k, 12.92 * color, lessThan(color, vec3(0.0031308)));
-}
-
-void DoCompTonemap(inout vec3 color) {
-    // Lottes tonemap modified for Complementary Shaders
-    // Lottes 2016, "Advanced Techniques and Optimization of HDR Color Pipelines"
-    // http://32ipi028l5q82yhj72224m8j.wpengine.netdna-cdn.com/wp-content/uploads/2016/03/GdcVdrLottes.pdf
-    color = TM_EXPOSURE * color;
-
-    float colorMax = max(color.r, max(color.g, color.b));
-    float initialLuminance = GetLuminance(color);
-
-    vec3 a      = vec3(TM_CONTRAST); // General Contrast
-    vec3 d      = vec3(1.0); // Roll-off control
-    vec3 hdrMax = vec3(8.0); // Maximum input brightness
-    vec3 midIn  = vec3(0.25); // Input middle gray
-    vec3 midOut = vec3(0.25); // Output middle gray
-
-    vec3 a_d = a * d;
-    vec3 hdrMaxA = pow(hdrMax, a);
-    vec3 hdrMaxAD = pow(hdrMax, a_d);
-    vec3 midInA = pow(midIn, a);
-    vec3 midInAD = pow(midIn, a_d);
-    vec3 HM1 = hdrMaxA * midOut;
-    vec3 HM2 = hdrMaxAD - midInAD;
-
-    vec3 b = (-midInA + HM1) / (HM2 * midOut);
-    vec3 c = (hdrMaxAD * midInA - HM1 * midInAD) / (HM2 * midOut);
-
-    vec3 colorOut = pow(color, a) / (pow(color, a_d) * b + c);
-
-    LinearToRGB(colorOut);
-
-    // Remove tonemapping from darker colors for better readability
-    const float darkLiftStart = 0.1;
-    const float darkLiftMix = 0.75;
-    float darkLift = smoothstep(darkLiftStart, 0.0, initialLuminance);
-    vec3 smoothColor = pow(color, vec3(1.0 / 2.2));
-    colorOut = mix(colorOut, smoothColor, darkLift * darkLiftMix * max0(0.55 - abs(1.05 - TM_CONTRAST)) / 0.55);
-    
-    // Path to White
-    const float wpInputCurveStart = 0.0;
-    const float wpInputCurveMax = 16.0; // Increase this value to reduce the effect of white path
-    float modifiedLuminance = pow(initialLuminance / wpInputCurveMax, 2.0 - TM_WHITE_PATH) * wpInputCurveMax;
-    float whitePath = smoothstep(wpInputCurveStart, wpInputCurveMax, modifiedLuminance);
-    colorOut = mix(colorOut, vec3(1.0), whitePath);
-
-    // Desaturate dark colors
-    const float dpInputCurveStart = 0.1;
-    const float dpInputCurveMax = 0.0;
-    float desaturatePath = smoothstep(dpInputCurveStart, dpInputCurveMax, initialLuminance);
-    colorOut = mix(colorOut, vec3(GetLuminance(colorOut)), desaturatePath * TM_DARK_DESATURATION);
-    
-    color = clamp01(colorOut);
-}
+#include "/lib/colors/tonemaps.glsl"
 
 void DoBSLColorSaturation(inout vec3 color) {
     float saturationFactor = T_SATURATION + 0.07;
@@ -144,6 +92,119 @@ void DoBSLColorSaturation(inout vec3 color) {
     }
 #endif
 
+#include "/lib/util/colorConversion.glsl"
+
+// #if COLORED_LIGHTING_INTERNAL > 0
+//     #include "/lib/voxelization/lightVoxelization.glsl"
+// #endif
+
+// http://www.diva-portal.org/smash/get/diva2:24136/FULLTEXT01.pdf
+// The MIT License
+// Copyright © 2024 Benjamin Stott "sixthsurge"
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+// THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+vec3 purkinjeShift(vec3 rgb, vec4 texture6, vec3 playerPos, float lViewPos, float purkinjeOverwrite, float z0, float fogValue) {
+    float interiorFactorM = 0;
+    #ifdef NETHER
+        float nightDesaturationIntensity = NIGHT_DESATURATION_NETHER;
+        float renderdistanceFade = PURKINJE_RENDER_DISTANCE_FADE_NETHER;
+        interiorFactorM = 1.0;
+    #elif defined END
+        float nightDesaturationIntensity = NIGHT_DESATURATION_END;
+        nightFactor = 1.0;
+        float renderdistanceFade = 0.1;
+        interiorFactorM = -10000.0;
+    #else
+		float renderdistanceFade = PURKINJE_RENDER_DISTANCE_FADE;
+	    #ifdef MOON_PHASE_INF_PURKINJE
+			float nightDesaturationIntensity = moonPhase == 0 ? MOON_PHASE_FULL_PURKINJE : moonPhase != 4 ? MOON_PHASE_PARTIAL_PURKINJE : MOON_PHASE_DARK_PURKINJE;
+		#else
+			float nightDesaturationIntensity = NIGHT_DESATURATION_OW;
+		#endif
+    #endif
+
+    float lightFogFactor = smoothstep(-0.5, 1.0, fogValue);
+    float renderDistanceFade = mix(0, lViewPos * 2.5 / far, renderdistanceFade * (1.0 - lightFogFactor));
+    if (isEyeInWater == 1) renderDistanceFade = lViewPos * 7.0 / far;
+    float nightCaveDesaturation = NIGHT_CAVE_DESATURATION * 0.1;
+
+    float skyLightFactor = texture6.b;
+
+    #ifdef IRIS_FEATURE_FADE_VARIABLE
+        if (skyLightFactor > 0.50001) skyLightFactor = eyeBrightnessM;
+        else skyLightFactor *= 1.9999;
+    #endif
+
+    float interiorFactor = isEyeInWater == 1 ? 0.0 : pow2(1.0 - skyLightFactor * (1.0 - lightFogFactor));
+    interiorFactor =  mix(interiorFactor, interiorFactorM, renderDistanceFade);
+    interiorFactor -= sqrt2(eyeBrightnessM) * 0.66;
+    interiorFactor = smoothstep(0.0, 1.0, clamp01(interiorFactor));
+
+    // interiorFactor = 0.0;
+
+    // return vec3(interiorFactor);
+
+    float lightSourceFactor = 1.0;
+    #ifdef NIGHT_DESATURATION_REMOVE_NEAR_LIGHTS
+        lightSourceFactor = pow3(1.0 - texture6.a * (1.0 - lightFogFactor));
+        lightSourceFactor += renderDistanceFade;
+        lightSourceFactor = clamp01(lightSourceFactor);
+    #endif
+
+    float heldLight = 1.0;
+    #ifdef NIGHT_DESATURATION_REMOVE_LIGHTS_IN_HAND
+        heldLight = max(heldBlockLightValue, heldBlockLightValue2);
+        if (heldItemId == 45032 || heldItemId2 == 45032) heldLight = 15; // Lava Bucket
+        if (heldLight > 0){
+            heldLight = clamp(heldLight, 0.0, 15.0);
+            heldLight = sqrt2(heldLight / 15.0) * -1.0 + 1.0; // Normalize and invert
+            heldLight = mix(heldLight, 1.0, clamp01(lViewPos * 15 / far)); // Only do it around the player
+        } else {
+            heldLight = 1.0;
+        }
+    #endif
+
+    float nightVisionFactor = 1.0;
+    #ifdef NIGHT_DESATURATION_REMOVE_NIGHT_VISION
+        nightVisionFactor = nightVision * -1.0 + 1.0;
+    #endif
+
+    float purkinjeIntensity = 0.004 * purkinjeOverwrite * nightDesaturationIntensity;
+    purkinjeIntensity  = purkinjeIntensity * fuzzyOr(interiorFactor, sqrt3(nightFactor - 0.1)); // No purkinje shift in daylight
+    purkinjeIntensity *= lightSourceFactor; // Reduce purkinje intensity in blocklight
+    purkinjeIntensity *= (1.0 - lightFogFactor);
+    purkinjeIntensity *= clamp01(nightCaveDesaturation + (1.0 - nightCaveDesaturation) * pow3(1.0 - interiorFactor)); // Reduce purkinje intensity underground
+    purkinjeIntensity *= clamp01(heldLight); // Reduce purkinje intensity when holding light sources
+    purkinjeIntensity *= nightVisionFactor * (1.0 - isLightningActive()); // Reduce purkinje intensity when using night vision or during lightning
+    purkinjeIntensity = clamp(purkinjeIntensity, 0.01, 1.0); // prevent it going to 0 to avoid NaNs
+
+    if (nightDesaturationIntensity < 300) {
+        float blueDominance = rgb.b / max(max(rgb.r, rgb.g), 0.01);
+        float blueReduction = smoothstep(0.9, 2.3, blueDominance);
+
+        // Create a darker tint for blue colors
+        vec3 purkinjeTint = vec3(0.5, 0.7, 1.0);
+        purkinjeTint *= mix(vec3(1.0), vec3(0.6, 0.7, 0.65), blueReduction * 0.7);
+        purkinjeTint *= rec709ToRec2020;
+
+        const vec3 rodResponse = vec3(7.15e-5, 4.81e-1, 3.28e-1) * rec709ToRec2020;
+        vec3 xyz = rgb * rec2020ToXyz;
+        vec3 scotopicLuminance = xyz * (1.33 * (1.0 + (xyz.y + xyz.z) / xyz.x) - 0.5);
+        float purkinje = dot(rodResponse, scotopicLuminance * xyzToRec2020) * 0.45;
+
+        float purkinjeFactor = exp2(-rcp(purkinjeIntensity) * purkinje) * (1.0 - blueReduction * 0.5);
+
+        rgb = mix(rgb, purkinje * purkinjeTint, purkinjeFactor);
+    } else {
+        rgb = mix(rgb, vec3(GetLuminance(rgb) * 0.9), clamp01(purkinjeIntensity));
+    }
+
+    // return vec3(purkinjeIntensity);
+
+    return max0(rgb);
+}
+
 //Includes//
 #ifdef BLOOM_FOG
     #include "/lib/atmospherics/fog/bloomFog.glsl"
@@ -157,16 +218,22 @@ void DoBSLColorSaturation(inout vec3 color) {
     #include "/lib/misc/lensFlare.glsl"
 #endif
 
+#include "/lib/util/spaceConversion.glsl"
+
 //Program//
 void main() {
     vec3 color = texture2D(colortex0, texCoord).rgb;
-    
-    #if defined BLOOM_FOG || LENSFLARE_MODE > 0 && defined OVERWORLD
+
+    vec4 texture5 = texelFetch(colortex5, texelCoord, 0);
+
+    #if defined BLOOM_FOG || LENSFLARE_MODE > 0 && defined OVERWORLD || defined NIGHT_DESATURATION
         float z0 = texture2D(depthtex0, texCoord).r;
         vec4 screenPos = vec4(texCoord, z0, 1.0);
         vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
         viewPos /= viewPos.w;
         float lViewPos = length(viewPos.xyz);
+
+        vec3 playerPos = ViewToPlayer(viewPos.xyz);
     #else
         float lViewPos = 0.0;
     #endif
@@ -202,23 +269,40 @@ void main() {
         color *= 0.01;
     #endif
 
-    DoCompTonemap(color);
-
-    #if defined GREEN_SCREEN_LIME || SELECT_OUTLINE == 4
-        int materialMaskInt = int(texelFetch(colortex6, texelCoord, 0).g * 255.1);
+    #ifdef TONEMAP_COMPARISON
+        color = texCoord.x < mix(0.5, 0.0, isSneaking) ? tonemap_left(color) : tonemap_right(color); // Thanks to SixthSurge
+    #else
+        color = tonemap(color);
     #endif
+    color = clamp01(color);
+
+    #if defined GREEN_SCREEN_LIME || defined BLUE_SCREEN || SELECT_OUTLINE == 4 || defined NIGHT_DESATURATION
+        vec4 texture6 = texelFetch(colortex6, texelCoord, 0);
+        int materialMaskInt = int(texture6.g * 255.1);
+    #endif
+    float purkinjeOverwrite = 1.0;
 
     #ifdef GREEN_SCREEN_LIME
         if (materialMaskInt == 240) { // Green Screen Lime Blocks
             color = vec3(0.0, 1.0, 0.0);
+            purkinjeOverwrite = 0.0;
+        }
+    #endif
+    #ifdef BLUE_SCREEN
+        if (materialMaskInt == 239) { // Blue Screen Blue Blocks
+            color = vec3(0.0, 0.0, 1.0);
+            purkinjeOverwrite = 0.0;
         }
     #endif
 
-    #if SELECT_OUTLINE == 4
-        if (materialMaskInt == 252) { // Versatile Selection Outline
-            float colorMF = 1.0 - dot(color, vec3(0.25, 0.45, 0.1));
-            colorMF = smoothstep1(smoothstep1(smoothstep1(smoothstep1(smoothstep1(colorMF)))));
-            color = mix(color, 3.0 * (color + 0.2) * vec3(colorMF * SELECT_OUTLINE_I), 0.3);
+    #if SELECT_OUTLINE == 4 || defined NIGHT_DESATURATION
+        if (materialMaskInt == 252) { // Selection Outline
+            #if SELECT_OUTLINE == 4 // Versatile Selection Outline
+                float colorMF = 1.0 - dot(color, vec3(0.25, 0.45, 0.1));
+                colorMF = smoothstep1(smoothstep1(smoothstep1(smoothstep1(smoothstep1(colorMF)))));
+                color = mix(color, 3.0 * (color + 0.2) * vec3(colorMF * SELECT_OUTLINE_I), 0.3);
+            #endif
+            purkinjeOverwrite = 0.0;
         }
     #endif
 
@@ -228,8 +312,13 @@ void main() {
 
     DoBSLColorSaturation(color);
 
-    /* DRAWBUFFERS:3 */
+    #ifdef NIGHT_DESATURATION
+        color.rgb = purkinjeShift(color.rgb, texture6, playerPos, lViewPos, purkinjeOverwrite, z0, texture5.r);
+    #endif
+
+    /* DRAWBUFFERS:35 */
     gl_FragData[0] = vec4(color, 1.0);
+    gl_FragData[1] = vec4(vec3(0), texture5.a);
 }
 
 #endif

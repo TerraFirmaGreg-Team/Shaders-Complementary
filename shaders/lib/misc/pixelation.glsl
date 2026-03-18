@@ -1,3 +1,6 @@
+#if !defined PIXELATION_FILE
+#define PIXELATION_FILE
+
 #if PIXEL_SCALE == -2
     #define PIXEL_TEXEL_SCALE 4.0
 #elif PIXEL_SCALE == -1
@@ -47,7 +50,7 @@
     }
 
     vec4 TexelSnap(vec4 value, vec2 texelOffset) {
-        if (texelOffset == vec2(0.0)) return value;
+        if(all(equal(texelOffset, vec2(0.0)))) return value;
         vec4 dx = dFdx(value);
         vec4 dy = dFdy(value);
 
@@ -58,7 +61,7 @@
     }
 
     vec3 TexelSnap(vec3 value, vec2 texelOffset) {
-        if (texelOffset == vec2(0.0)) return value;
+        if(all(equal(texelOffset, vec2(0.0)))) return value;
         vec3 dx = dFdx(value);
         vec3 dy = dFdy(value);
 
@@ -69,7 +72,7 @@
     }
 
     vec2 TexelSnap(vec2 value, vec2 texelOffset) {
-        if (texelOffset == vec2(0.0)) return value;
+        if(all(equal(texelOffset, vec2(0.0)))) return value;
         vec2 dx = dFdx(value);
         vec2 dy = dFdy(value);
 
@@ -80,7 +83,7 @@
     }
 
     float TexelSnap(float value, vec2 texelOffset) {
-        if (texelOffset == vec2(0.0)) return value;
+        if(all(equal(texelOffset, vec2(0.0)))) return value;
         float dx = dFdx(value);
         float dy = dFdy(value);
 
@@ -90,3 +93,5 @@
         return value + valueOffset;
     }
 #endif
+
+#endif // !defined PIXELATION_FILE

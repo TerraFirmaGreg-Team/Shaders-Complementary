@@ -50,4 +50,30 @@ beginTextM(2, vec2(30, 175));
         _c, _o, _l, _o, _r, _e, _d, _space, _l, _i, _g, _h, _t, _i, _n, _g, _space,
         _e, _x, _p, _e, _r, _i, _e, _n, _c, _e, _dot
     ));
+    printLine();
+    printLine();
+    text.fgCol = vec4(vec3(1.0, 0.0, 1.0), 1.0);
+    printString((
+        _E, _u, _p, _h, _o, _r, _i, _a, _space, _P, _a, _t, _c, _h, _e, _s
+    ));
+    text.fgCol = vec4(vec3(0.65), 1.0);
+    printString((_space, _h, _a, _s, _space,
+        _a, _space, _s, _c, _r, _e, _e, _n, _s, _p, _a, _c, _e, _space,
+        _c, _o, _l, _o, _r, _e, _d, _space, _l, _i, _g, _h, _t, _i, _n, _g, _space, _o, _p, _t, _i, _o, _n
+    ));
+    printLine();
+    printString((
+        _w, _h, _i, _c, _h, _space, _w, _o, _r, _k, _s, _space, _o, _n, _space, _A, _p, _p, _l, _e, _dot
+    ));
+    printLine();
+    printLine();
+    printString((
+        _A, _v, _a, _i, _l, _a, _b, _l, _e, _space, _u, _n, _d, _e, _r, _colon
+    ));
+    printLine();
+    printString((
+        _E, _u, _p, _h, _o, _r, _i, _a, _space, _P, _a, _t, _c, _h, _e, _s, _space, _S, _e, _t, _t, _i, _n, _g, _s,
+        _space, _gt, _space, _P, _o, _p, _u, _l, _a, _r, _space, _S, _e, _t, _t, _i, _n, _g, _s, _space, _gt, _space,
+        _E, _u, _p, _h, _o, _r, _i, _a, _space, _C, _o, _l, _o, _r, _e, _d, _space, _L, _i, _g, _h, _t, _i, _n, _g
+    ));
 endText(color.rgb);

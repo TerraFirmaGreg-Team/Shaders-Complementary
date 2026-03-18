@@ -2,4 +2,4 @@
 
 layout(std430, binding = 2) SSBO_QUALIFIER buffer wsrLodBuffer {
 	uint bitmasks[];
-} wsrLodSSBO;  
+} wsrLodSSBO;

@@ -1,3 +1,4 @@
+#include "/lib/shaderSettings/mainFog.glsl"
 #ifdef ATM_COLOR_MULTS
     #include "/lib/colors/colorMultipliers.glsl"
 #endif
@@ -8,7 +9,7 @@
 #ifdef BORDER_FOG
     #ifdef OVERWORLD
         #include "/lib/atmospherics/sky.glsl"
-    #elif defined NETHER
+    #elif defined NETHER || defined END
         #include "/lib/colors/skyColors.glsl"
     #endif
 
@@ -19,17 +20,17 @@
             #ifndef DISTANT_HORIZONS
                 fog = pow2(pow2(fog));
             #endif
-            fog = 1.0 - exp(-3.0 * fog);
+            fog = 1.0 - exp(-BORDER_FOG_DISTANCE_OVERWORLD * fog);
         #endif
         #ifdef NETHER
             float farM = min(renderDistance, NETHER_VIEW_LIMIT); // consistency9023HFUE85JG
             float fog = lPos / farM;
-            fog = fog * 0.3 + 0.7 * pow(fog, 256.0 / max(farM, 256.0));
+            fog = fog * 0.3 + 0.7 * pow(fog * BORDER_FOG_DISTANCE_NETHER / 3, 256.0 / max(farM, 256.0));
         #endif
         #ifdef END
             float fog = lPos / renderDistance;
             fog = pow2(pow2(fog));
-            fog = 1.0 - exp(-3.0 * fog);
+            fog = 1.0 - exp(-BORDER_FOG_DISTANCE_END * fog);
         #endif
 
         #ifdef IRIS_FEATURE_FADE_VARIABLE
@@ -44,10 +45,13 @@
 
             #ifdef OVERWORLD
                 vec3 fogColorM = GetSky(VdotU, VdotS, dither, true, false);
+                #define BORDER_FOG_DENSITY BORDER_FOG_DENSITY_OVERWORLD
             #elif defined NETHER
                 vec3 fogColorM = netherColor;
+                #define BORDER_FOG_DENSITY BORDER_FOG_DENSITY_NETHER
             #else
                 vec3 fogColorM = endSkyColor;
+                #define BORDER_FOG_DENSITY BORDER_FOG_DENSITY_END
             #endif
 
             #ifdef ATM_COLOR_MULTS
@@ -57,6 +61,7 @@
                 fogColorM *= moonPhaseInfluence;
             #endif
 
+            fog *= BORDER_FOG_DENSITY;
             color = mix(color, vec4(fogColorM, 0.0), fog);
 
             #ifndef GBUFFERS_WATER
@@ -72,7 +77,7 @@
     #include "/lib/atmospherics/fog/caveFactor.glsl"
 
     void DoCaveFog(inout vec4 color, float lViewPos) {
-        float fog = GetCaveFactor() * (0.9 - 0.9 * exp(- lViewPos * 0.015));
+        float fog = GetCaveFactor() * (0.9 - 0.9 * exp(- lViewPos * 0.015 * CAVE_FOG_DENSITY));
 
         color = mix(color, vec4(caveFogColor, 0.0), fog);
     }
@@ -93,9 +98,14 @@
         #endif
 
         vec3 GetAtmFogColor(float altitudeFactorRaw, float VdotS) {
+            vec3 atmFogColor = vec3(ATMOSPHERIC_FOG_R_NEW, ATMOSPHERIC_FOG_G_NEW, ATMOSPHERIC_FOG_B_NEW) * ATMOSPHERIC_FOG_I;
+            #ifdef RADIOACTIVE_ATMOSPHERIC_FOG
+                atmFogColor *= GetLuminance(atmFogColor) * 10;
+            #endif
+
             float nightFogMult = 2.5 - 0.625 * max(pow2(pow2(altitudeFactorRaw)), rainFactor);
             float dayNightFogBlend = pow(invNightFactor, 4.0 - VdotS - 2.5 * sunVisibility2);
-            return mix(
+            return atmFogColor * mix(
                 nightUpSkyColor * (nightFogMult - dayNightFogBlend * nightFogMult),
                 dayDownSkyColor * (0.9 + 0.3 * noonFactor),
                 dayNightFogBlend
@@ -122,16 +132,17 @@
                 #define ATM_FOG_DISTANCE_M 100.0 / ATM_FOG_DISTANCE;
                 renDisFactor *= ATM_FOG_DISTANCE_M;
             #endif
-
             float fog = 1.0 - exp(-pow(lViewPos * (0.001 - 0.0007 * rainFactor), 2.0 - rainFactor2) * lViewPos * renDisFactor);
         #else
             float fog = pow2(1.0 - exp(-max0(lViewPos - 40.0) * (0.7 + 0.7 * rainFactor) / ATM_FOG_DISTANCE));
         #endif
-        
-        fog *= ATM_FOG_MULT - 0.1 - 0.15 * invRainFactor;
+
+        float atmFogA = 1.0;
+        atmFogA *= ATMOSPHERIC_FOG_DENSITY * ATM_FOG_MULT;
+        fog *= atmFogA - 0.1 - 0.15 * invRainFactor;
 
         float altitudeFactorRaw = GetAtmFogAltitudeFactor(playerPos.y + cameraPosition.y);
-        
+
         #ifndef DISTANT_HORIZONS
             float altitudeFactor = altitudeFactorRaw * 0.9 + 0.1;
         #else
@@ -197,7 +208,6 @@
 
 void DoWaterFog(inout vec4 color, float lViewPos) {
     float fog = GetWaterFog(lViewPos);
-
     color = mix(color, vec4(waterFogColor, 0), fog);
 }
 
@@ -244,7 +254,41 @@ void DoDarknessFog(inout vec4 color, float lViewPos) {
     color *= exp(-fog);
 }
 
-void DoFog(inout vec4 color, inout float skyFade, float lViewPos, vec3 playerPos, float VdotU, float VdotS, float dither, bool isReflection, float lBlockPos) {
+void DoBetrayedFog(inout vec4 color, float lViewPos) {
+    #ifdef MOD_NETHEREXP
+        float fog = 0.10 * lViewPos * betrayedSmooth;
+        fog = 1.0 - exp(-fog);
+
+        color.rgb = mix(color.rgb, vec3(1.0, 0.0, 0.0), fog);
+    #endif
+}
+
+void DoDoomAndGloomFog(inout vec4 color, float lViewPos, float fogOverride) {
+    #if DOOM_AND_GLOOM_FOG == 1
+        float fog = lViewPos * FOG_INTENSITY;
+    #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
+        float fog = lViewPos * FOG_INTENSITY * doomAndGloomFog;
+    #else
+        float fog = 0.0;
+    #endif
+
+    fog *= fog;
+    fog = 1.0 - exp(-fog);
+
+    color.rgb = mix(color.rgb, vec3(0.5), fog * (1 - fogOverride));
+}
+
+void DoSandstormFog(inout vec4 color, float lViewPos) {
+    #ifdef MOD_YUNGSCAVEBIOMES
+        float fog = lViewPos * yungSandstormFactor;
+        fog = sqrt(fog) * YUNGS_SANDSTORM_FOG_INTENSITY;
+        fog = 1.0 - exp(-fog);
+
+        color.rgb = mix(color.rgb, vec3(0.8, 0.5, 0.1), fog);
+    #endif
+}
+
+void DoFog(inout vec4 color, inout float skyFade, float lViewPos, vec3 playerPos, float VdotU, float VdotS, float dither, bool isReflection, float lBlockPos, float fogOverride) {
     #ifdef CAVE_FOG
         DoCaveFog(color, lViewPos);
     #endif
@@ -264,4 +308,18 @@ void DoFog(inout vec4 color, inout float skyFade, float lViewPos, vec3 playerPos
 
     if (blindness > 0.00001) DoBlindnessFog(color, lViewPos);
     if (darknessFactor > 0.00001) DoDarknessFog(color, lViewPos);
+
+    #ifdef MOD_NETHEREXP
+        DoBetrayedFog(color, lViewPos);
+    #endif
+
+    #if DOOM_AND_GLOOM_FOG == 1
+        DoDoomAndGloomFog(color, lViewPos, fogOverride);
+    #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
+        if (doomAndGloomFog > 0.0001) DoDoomAndGloomFog(color, lViewPos, fogOverride);
+    #endif
+
+    #ifdef MOD_YUNGSCAVEBIOMES
+        DoSandstormFog(color, lViewPos);
+    #endif
 }

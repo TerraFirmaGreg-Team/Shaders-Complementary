@@ -2,4 +2,4 @@
 
 layout(std430, binding = 0) SSBO_QUALIFIER buffer blockDataBuffer {
     uvec4 data[];
-} blockDataSSBO;  
+} blockDataSSBO;

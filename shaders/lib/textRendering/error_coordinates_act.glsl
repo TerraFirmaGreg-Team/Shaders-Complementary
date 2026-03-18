@@ -9,7 +9,7 @@ beginTextM(4, vec2(15, 36));
     printLine();
     text.fgCol = vec4(vec3(1.0), 1.0);
     printString((
-        _C, _o, _l, _o, _r, _e, _d, _space, _L, _i, _g, _h, _t, _i, _n, _g, _space, _w, _i, _l, _l, 
+        _C, _o, _l, _o, _r, _e, _d, _space, _L, _i, _g, _h, _t, _i, _n, _g, _space, _w, _i, _l, _l,
         _space, _n, _o, _t, _space, _w, _o, _r, _k
     ));
     printLine();

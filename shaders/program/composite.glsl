@@ -1,9 +1,12 @@
-/////////////////////////////////////
-// Complementary Shaders by EminGT //
-/////////////////////////////////////
+//////////////////////////////////////////
+// Complementary Shaders by EminGT      //
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
 
 //Common//
 #include "/lib/common.glsl"
+#define ROUGHNESS_MULTIPLIER 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0 8.5 9.0 9.5 10.0]
+#define ROUGHNESS_INTENSITY 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0 8.5 9.0 9.5 10.0]
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -62,7 +65,7 @@ void main() {
     ivec2 texelCoord = ivec2(texCoord * view);
     vec4 color = texelFetch(colortex0, texelCoord, 0);
     vec4 texture4 = texelFetch(colortex4, texelCoord, 0);
-    
+
     z0 = texelFetch(depthtex0, texelCoord, 0).r;
     z1 = texelFetch(depthtex1, texelCoord, 0).r;
 
@@ -126,7 +129,8 @@ void main() {
                     if (!opaqueSurface) reflectColor = vec3(0.0);
                 }
             #endif
-            noiseMult *= pow2(1.0 - smoothnessD);
+            float smoothnessDM = smoothnessD * ROUGHNESS_MULTIPLIER;
+            noiseMult *= pow2(1.0 - smoothnessDM) * ROUGHNESS_INTENSITY;
 
             vec2 roughCoord = gl_FragCoord.xy / 128.0;
             vec3 roughNoise = vec3(
@@ -139,10 +143,12 @@ void main() {
 
             vec3 refNormal = normalM + roughNoise;
 
+            float enderDragonDead = 1.0 - texelFetch(colortex5, ivec2(viewWidth-1, viewHeight-1), 0).a;
+
             vec4 reflection = GetReflection(refNormal, viewPos.xyz, nViewPos, playerPos, lViewPos, z0,
                                             depthtex1, dither, skyLightFactor, fresnel,
-                                            smoothnessD, vec3(0.0), vec3(0.0), vec3(0.0), 0.0);
-            
+                                            smoothnessDM, vec3(0.0), vec3(0.0), vec3(0.0), 0.0, enderDragonDead, vec2(0.0));
+
             reflection.rgb *= reflectColor;
             reflectOutput = reflection;
 
@@ -233,7 +239,7 @@ out vec3 sunVec;
 //Program//
 void main() {
     gl_Position = ftransform();
-    
+
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
     sunVec = GetSunVector();

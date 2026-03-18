@@ -13,7 +13,23 @@ vec2 darkOutlineOffsets[12] = vec2[12](
                                vec2( 2.0,0.0)
 );
 
-void DoDarkOutline(inout vec3 color, float z0) {
+void DoDarkOutline(inout vec3 color, float z0, float pixelFade, vec3 playerPos, float minecraft_far) {
+    float outlineFade = 1.0;
+    #ifdef DISTANT_HORIZONS
+        float horizontalDistance = length(playerPos.xz);
+        float verticalDistance = abs(playerPos.y);
+
+        float distanceToCamera = max(horizontalDistance, verticalDistance);
+
+        float fadeStart = minecraft_far * 0.7;
+        float fadeEnd = minecraft_far * 0.9;
+        if (fadeStart >= fadeEnd) {
+            fadeEnd = fadeStart + max(1.0, minecraft_far * 0.01);
+        }
+        outlineFade = (1.0 - smoothstep(fadeStart, fadeEnd, distanceToCamera)) * pixelFade;
+        if (outlineFade < 0.001) return;
+    #endif
+
     vec2 scale = vec2(1.0 / view);
 
     float outline = 1.0;
@@ -34,6 +50,8 @@ void DoDarkOutline(inout vec3 color, float z0) {
         outline *= clamp(1.0 - (z - sampleZsum * far), 0.0, 1.0);
         minZ = min(minZ, min(sampleZA, sampleZB));
     }
+
+    outline = mix(1.0, outline, outlineFade);
 
     if (outline < 0.909091) {
         vec4 viewPos = gbufferProjectionInverse * (vec4(texCoord, minZ, 1.0) * 2.0 - 1.0);

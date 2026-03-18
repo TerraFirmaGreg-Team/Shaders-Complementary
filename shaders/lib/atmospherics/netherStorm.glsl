@@ -54,6 +54,12 @@ vec4 GetNetherStorm(vec3 color, vec3 translucentMult, vec3 nPlayerPos, vec3 play
             wind *= -2.0;
         }
 
+        #ifdef RAIN_ATMOSPHERE
+            vec3 lightningPos = getLightningPos(tracePos - cameraPosition, lightningBoltPosition.xyz, false);
+            vec2 lightningAdd = lightningFlashEffect(lightningPos, vec3(1.0), 150.0, 0.0, 0) * isLightningActive() * 8.0;
+            netherStorm.rgb += lightningAdd.y;
+        #endif
+
         if (lTracePos > lViewPos) netherStorm.rgb *= translucentMultM;
     }
 

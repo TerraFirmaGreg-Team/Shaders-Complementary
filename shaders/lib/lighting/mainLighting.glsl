@@ -1,3 +1,11 @@
+#include "/lib/shaderSettings/mainLighting.glsl"
+#include "/lib/shaderSettings/cloudsAndLighting.glsl"
+#include "/lib/shaderSettings/shadowMainLighting.glsl"
+#include "/lib/shaderSettings/endFlash.glsl"
+#ifdef AURORA_INFLUENCE
+    #include "/lib/atmospherics/auroraBorealis.glsl"
+#endif
+
 //Lighting Includes//
 #include "/lib/colors/lightAndAmbientColors.glsl"
 #include "/lib/lighting/ggx.glsl"
@@ -27,8 +35,9 @@
     #include "/lib/voxelization/lightVoxelization.glsl"
 #endif
 
-#ifdef DO_PIXELATION_EFFECTS
-    #include "/lib/misc/pixelation.glsl"
+#if DRAGON_DEATH_EFFECT_INTERNAL > 0
+    #define ENDCRYSTAL_SAMPLER_DEFINE
+    uniform isampler2D endcrystal_sampler;
 #endif
 
 vec3 highlightColor = normalize(pow(lightColor, vec3(0.37))) * (0.3 + 1.5 * sunVisibility2) * (1.0 - 0.85 * rainFactor);
@@ -36,7 +45,14 @@ vec3 highlightColor = normalize(pow(lightColor, vec3(0.37))) * (0.3 + 1.5 * sunV
 //Lighting//
 void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 viewPos, float lViewPos, vec3 geoNormal, vec3 normalM, float dither,
                 vec3 worldGeoNormal, vec2 lightmap, bool noSmoothLighting, bool noDirectionalShading, bool noVanillaAO,
-                bool centerShadowBias, int subsurfaceMode, float smoothnessG, float highlightMult, float emission) {
+                bool centerShadowBias, int subsurfaceMode, float smoothnessG, float highlightMult, float emission, inout float purkinjeOverwrite, bool isLightSource,
+                inout float enderDragonDead) {
+    #ifdef WORLD_CURVATURE
+        playerPos.y += doWorldCurvature(playerPos.xz);
+    #endif
+
+    vec2 oldLightmap = lightmap.xy;
+
     #ifdef DO_PIXELATION_EFFECTS
         vec2 pixelationOffset = ComputeTexelOffset(tex, texCoord);
 
@@ -73,12 +89,96 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     float lightmapYM = smoothstep1(lightmap.y);
     float subsurfaceHighlight = 0.0;
     float ambientMult = 1.0;
+    vec3 subsurfaceColor = vec3(1.0);
+    #if defined AURORA_INFLUENCE && !(defined DEFERRED1 || defined COMPOSITE1)
+        ambientColor = getAuroraAmbientColor(ambientColor, viewPos, 0.035, AURORA_TERRAIN_INFLUENCE_INTENSITY, 0.9);
+    #endif
+
+    #if BLOOD_MOON > 0
+        float bloodMoonFactor = getBloodMoon(sunVisibility);
+        lightColor *= 1.0 + bloodMoonFactor * vec3(0.6, -0.3, -0.3);
+        ambientColor *= 1.0 + bloodMoonFactor * vec3(0.6, -0.3, -0.3);
+        subsurfaceColor = mix(vec3(1.0), vec3(1.3, 0.2, 0.2), bloodMoonFactor);
+    #endif
+
     vec3 lightColorM = lightColor;
     vec3 ambientColorM = ambientColor;
     vec3 nViewPos = normalize(viewPos);
 
     #if defined LIGHT_COLOR_MULTS && !defined GBUFFERS_WATER // lightColorMult is defined early in gbuffers_water
         lightColorMult = GetLightColorMult();
+    #endif
+    vec2 lightningAdd = vec2(0);
+    vec2 deathFlashAdd = vec2(0);
+    vec3 lightningPos = vec3(0);
+    #ifdef RAIN_ATMOSPHERE
+        float lightningDistance = 550.0;
+        lightningPos = getLightningPos(playerPos, lightningBoltPosition.xyz, false);
+        float lightningFadeOut = max(1.0 - length(lightningPos) / lightningDistance, 0.0);
+        float lightningFadeOutExp = exp((1.0 - lightningFadeOut) * -15.0);
+        vec3 normalLightning = mat3(gbufferModelViewInverse) * mix(geoNormal, normalM, 0.25);
+        float lightningNormalGradient = 0.12;
+        if (subsurfaceMode == 1) lightningNormalGradient = mix(lightningNormalGradient, 0.45, lightningFadeOutExp);
+        lightningAdd = (lightningFlashEffect(lightningPos, normalLightning, lightningDistance, lightningNormalGradient, subsurfaceMode) * 10.0 + mix(0.1, 0.0 , lightningFadeOut)) * isLightningActive();
+        ambientColorM += lightningAdd.x;
+    #endif
+    #if DRAGON_DEATH_EFFECT_INTERNAL > 0
+        vec3 dragonPosition = vec3(0, 80, 0) - cameraPosition;
+        int isDying = texelFetch(endcrystal_sampler, ivec2(35, 0), 0).r;
+        float dragonDeathFactor = 0.0001 * isDying;
+        float deathFadeFactor = exp(-3.0 * (1.0 - dragonDeathFactor)) * dragonDeathFactor;
+
+        if (dragonDeathFactor < 0.99) {
+            vec3 normalMDeath = mat3(gbufferModelViewInverse) * mix(geoNormal, normalM, 0.5);
+            vec3 deathFlashPos = getLightningPos(playerPos, dragonPosition, true);
+            float effectDistance = 800.0;
+            deathFlashAdd = lightningFlashEffect(deathFlashPos, normalMDeath, effectDistance, 0.0, subsurfaceMode) * 35.0 * deathFadeFactor;
+            ambientColorM *= mix(1.0, 0.0, deathFadeFactor) + deathFlashAdd.x * saturateColors(sqrt(endOrangeCol), 0.5);
+            purkinjeOverwrite = 1.0 * deathFlashAdd.y;
+        }
+    #endif
+
+    #if defined END && END_CENTER_LIGHTING > 0 && MC_VERSION >= 10900 && (defined GBUFFERS_BLOCK || defined GBUFFERS_ENTITIES || defined GBUFFERS_TERRAIN || defined GBUFFERS_HAND || defined GBUFFERS_WATER)
+        enderDragonDead = 1.0 - texelFetch(colortex5, ivec2(viewWidth-1, viewHeight-1), 0).a;
+        vec3 endCenterCol = saturateColors(vec3(END_CENTER_LIGHTING_R, END_CENTER_LIGHTING_G, END_CENTER_LIGHTING_B) * 0.8, 1.1);
+        vec3 endCenterPos = vec3(0.5, 60.5, 0.5) - (playerPos + cameraPositionBest);
+        endCenterPos.y *= 0.66; // Make it a pill-shaped point light
+        float rawDistance = length(endCenterPos);
+        float endCenterLightDist = exp(-rawDistance * 0.22);
+
+        float endCenterTimeNoise = frameTimeCounter * 0.075;
+
+        // Get the direction of the noise
+        float centerDistance = max(abs(endCenterPos.x), abs(endCenterPos.z)); // Square distance
+        float angleOffset = endCenterTimeNoise * 0.75;
+        vec2 rotatingDir = vec2(cos(angleOffset), sin(angleOffset));
+        float blendFactor = smoothstep(0.5, 3.0, centerDistance); // Prevent artifacts at the center by creating square shape
+        vec2 normalizedDir = mix(rotatingDir, normalize(endCenterPos.xz), blendFactor); // Blend square shape
+
+        vec2 endCenterNoiseBase = endCenterPos.xz * 0.03 + endCenterPos.y * 0.015;
+        vec2 endCenterNoisePos = endCenterNoiseBase - normalizedDir * 0.3 + endCenterTimeNoise * 0.15;
+        float endCenterIntensityNoise = texture2DLod(noisetex, endCenterNoisePos, 0.0).r;
+        float endCenterNoiseVariation = sin(endCenterTimeNoise * 6.0 + dot(endCenterPos.xy, endCenterPos.yz) * 0.01);
+        float endCenterNoiseIntensity = 0.7 + 0.35 * endCenterIntensityNoise + 0.2 * endCenterNoiseVariation;
+
+        // Hybrid lighting calculation - directional for walls, ambient for floors
+        vec3 transformedNormal = mat3(gbufferModelViewInverse) * normalM;
+        float normalDot = clamp01(dot(normalize(endCenterPos), transformedNormal));
+        float isFloor = clamp01(dot(transformedNormal, vec3(0.0, 1.0, 0.0)) * 2.0);
+
+        // Strong directional lighting for walls, softer lighting for floors
+        float directionalFactor = normalDot * 1.3;
+        float floorFactor = 0.6 + 0.25 * normalDot;
+        float endCenterLight = endCenterLightDist * mix(directionalFactor, floorFactor, isFloor);
+
+        ambientColorM += endCenterLight * endCenterCol * endCenterNoiseIntensity * 5.0 * enderDragonDead;
+    #else
+        enderDragonDead = 1.0;
+    #endif
+
+    int oldSubsurfaceMode = subsurfaceMode;
+    #if SSS_STRENGTH == 0
+        subsurfaceMode = 0;
     #endif
 
     #ifdef OVERWORLD
@@ -242,6 +342,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
                                 #endif
                             } else {
                                 float VdotL = dot(nViewPos, lightVec);
+
                                 float lightFactor = pow(max(VdotL, 0.0), 10.0) * float(isEyeInWater == 0);
                                 if (subsurfaceMode == 1) {
                                     offset = 0.0005235 * lightmapYM + 0.0009765;
@@ -259,11 +360,11 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
                                         NdotLM = mix(NdotL, NdotLM, 0.5);
                                     #endif
                                 } else {
-                                    
+
                                 }
                             }
                         #endif
-                        
+
                         int shadowSampleBooster = int(subsurfaceMode > 0 && lViewPos < 10.0);
                         #if SHADOW_QUALITY == 0
                             int shadowSamples = 0; // We don't use SampleTAAFilteredShadow on Shadow Quality 0
@@ -315,16 +416,42 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         #endif
     #endif
 
+    #ifdef END_FLASH_SHADOW_INTERNAL
+        shadowMult = mix(vec3(1.0), (shadowMult) * 2.0, endFlashIntensity);
+    #endif
+
     // Blocklight
     float lightmapXM;
-    if (!noSmoothLighting) {
-        float lightmapXMSteep = pow2(pow2(lightmap.x * lightmap.x))  * (2.8 - 0.6 * vsBrightness + XLIGHT_CURVE);
-        float lightmapXMCalm = (lightmap.x) * (2.8 + 0.6 * vsBrightness - XLIGHT_CURVE);
-        lightmapXM = pow(lightmapXMSteep + lightmapXMCalm, 2.25);
-    } else {
+    #if defined LIGHTMAP_CURVES && !defined GBUFFERS_TEXTURED
+        if (!noSmoothLighting || oldSubsurfaceMode > 0 && !isLightSource) {
+            float lx4 = pow2(pow2(lightmap.x));
+            float lx8 = pow2(lx4);
+            float vsBrightFactor = 2.8 - 0.6 * vsBrightness + XLIGHT_CURVE;
+
+            float transitionFactor = ((UPPER_LIGHTMAP_CURVE * 0.1 + 0.9) - 1.0) *
+                                    mix(1.0, 10.0, float(int(max(0.0, UPPER_LIGHTMAP_CURVE - 0.01))));
+
+            float transitions = (pow2(lx8) * (10 - vsBrightness) * 2 +
+                            lx8 * (2.8 + XLIGHT_CURVE - vsBrightness) * 0.8 +
+                            lx4 * (2.8 + XLIGHT_CURVE - vsBrightness * 0.7)) * transitionFactor;
+
+            float lightmapXMSteep = max(0.0, pow2(pow2(lightmap.x * lightmap.x)) * vsBrightFactor + transitions);
+            float lightmapXMCalm = lightmap.x * (2.8 - XLIGHT_CURVE + 0.6 * vsBrightness) * LOWER_LIGHTMAP_CURVE;
+            lightmapXM = pow(lightmapXMSteep + lightmapXMCalm, 2.25);
+        } else {
+            float xLightCurveM = XLIGHT_CURVE > 0.999 ? XLIGHT_CURVE : sqrt2(XLIGHT_CURVE);
+            lightmapXM = pow(lightmap.x, 3.0 * xLightCurveM) * 10.0 * pow(lightmap.x, pow2(UPPER_LIGHTMAP_CURVE)) * UPPER_LIGHTMAP_CURVE * (UPPER_LIGHTMAP_CURVE * 0.7 + 0.3);
+        }
+    #else
+        if (!noSmoothLighting) {
+            float lightmapXMSteep = pow2(pow2(lightmap.x * lightmap.x)) * (2.8 - 0.6 * vsBrightness + XLIGHT_CURVE);
+            float lightmapXMCalm = lightmap.x * (2.8 + 0.6 * vsBrightness - XLIGHT_CURVE);
+            lightmapXM = pow(lightmapXMSteep + lightmapXMCalm, 2.25);
+        } else {
         float xLightCurveM = XLIGHT_CURVE > 0.999 ? XLIGHT_CURVE : sqrt2(XLIGHT_CURVE);
         lightmapXM = pow(lightmap.x, 3.0 * xLightCurveM) * 10.0;
     }
+    #endif
 
     float daylightFactor = lightmapYM * invRainFactor * sunVisibility;
     emission *= 1.0 - 0.25 * daylightFactor; // Less emission under direct skylight
@@ -333,12 +460,51 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         lightmapXM *= 1.5 - 0.5 * daylightFactor; // Brighter lit particles
     #endif
 
-    #if BLOCKLIGHT_FLICKERING > 0
-        vec2 flickerNoise = texture2DLod(noisetex, vec2(frameTimeCounter * 0.06), 0.0).rb;
-        lightmapXM *= mix(1.0, min1(max(flickerNoise.r, flickerNoise.g) * 1.7), pow2(BLOCKLIGHT_FLICKERING * 0.1));
+    #if defined DIRECTIONAL_LIGHTMAP_NORMALS && (defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER || defined GBUFFERS_BLOCK)
+        if (oldLightmap.x > 0.035) { // very specific value, do not change
+            float lightmapDir = lightmapXM;
+            #ifdef USE_FINE_DERIVATIVES
+                vec2 dFdBlock = vec2(dFdxFine(oldLightmap.x), dFdyFine(oldLightmap.x)); // Get higher precision derivatives when available
+            #else
+                vec2 dFdBlock = vec2(dFdx(oldLightmap.x), dFdy(oldLightmap.x));
+            #endif
+            vec3 blockLightDir;
+
+            if (length(dFdBlock) < 1e-6) {
+                vec3 blockCenterPos = floor(playerPos + cameraPosition + 0.001 * worldGeoNormal) - cameraPosition + 0.5; // + 0.001 fixes percision issues
+                blockLightDir = blockCenterPos - worldGeoNormal * dot(worldGeoNormal, blockCenterPos - playerPos) - playerPos;
+                blockLightDir = mat3(gbufferModelView) * blockLightDir;
+            } else {
+                #ifdef USE_FINE_DERIVATIVES
+                    blockLightDir = dFdxFine(viewPos) * dFdBlock.x + dFdyFine(viewPos) * dFdBlock.y; // Get higher precision derivatives when available
+                #else
+                    blockLightDir = dFdx(viewPos) * dFdBlock.x + dFdy(viewPos) * dFdBlock.y;
+                #endif
+            }
+            float dotNormal = dot(normalize(blockLightDir), normalM);
+
+            lightmapDir *= pow(dotNormal + 1.0, DIRECTIONAL_LIGHTMAP_NORMALS_BLOCK_STRENGTH_NEW + 0.25);
+            lightmapXM = mix(lightmapXM, lightmapDir, 0.01 * max0(100.0 - lViewPos));
+        }
     #endif
 
-    vec3 blockLighting = lightmapXM * blocklightCol;
+    #if BLOCKLIGHT_FLICKERING > 0
+        vec2 flickerNoiseBlock = texture2DLod(noisetex, vec2(frameTimeCounter * 0.06), 0.0).rb;
+        lightmapXM *= mix(1.0, min1(max(flickerNoiseBlock.r, flickerNoiseBlock.g) * 1.7), pow2(BLOCKLIGHT_FLICKERING * 0.1));
+    #endif
+
+    #ifdef RANDOM_BLOCKLIGHT
+        float RandR = texture2DLod(noisetex, 0.00016 * RANDOM_BLOCKLIGHT_SIZE * (playerPos.xz + cameraPosition.xz), 0.0).r * XLIGHT_R;
+        float RandG = texture2DLod(noisetex, 0.00029 * RANDOM_BLOCKLIGHT_SIZE * (playerPos.xz + cameraPosition.xz), 0.0).r * XLIGHT_G;
+        float RandB = texture2DLod(noisetex, 0.00034 * RANDOM_BLOCKLIGHT_SIZE * (playerPos.xz + cameraPosition.xz), 0.0).r * XLIGHT_B;
+        blocklightCol = vec3(RandR, RandG, RandB) * 0.875;
+    #endif
+
+    #if defined END && (defined ES_LIGHTMAP == 2 || (defined ES_LIGHTMAP == 1 && defined MOD_ENDERSCAPE))
+        vec3 blockLighting = lightmapXM * blocklightCol + 0.4 * vec3(0.0, -oldLightmap.x * 0.1, oldLightmap.x * 0.16);
+    #else
+        vec3 blockLighting = lightmapXM * blocklightCol;
+    #endif
 
     #if COLORED_LIGHTING_INTERNAL > 0
         // Prepare
@@ -363,6 +529,8 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         // Add extra articial light for blocks that request it
         lightmapXM = max(lightmapXM, mix(lightmapXM, 10.0, lightVolume.a));
         specialLighting *= 1.0 + 50.0 * lightVolume.a;
+
+        purkinjeOverwrite += 17.0 * lightVolume.a;
 
         // Color Balance
         specialLighting = lightmapXM * 0.13 * DoLuminanceCorrection(specialLighting + blocklightCol * 0.05);
@@ -390,6 +558,10 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         //if (heldItemId2 == 40000 && heldItemId != 40000) blockLighting = lightVolume.rgb; // Hold spider eye to see light volume
     #endif
 
+    #if defined END && END_CENTER_LIGHTING > 0 && MC_VERSION >= 10900 && defined END_CENTER_LIGHTING_AFFECT_BLOCKLIGHT && (defined GBUFFERS_BLOCK || defined GBUFFERS_ENTITIES || defined GBUFFERS_TERRAIN || defined GBUFFERS_HAND)
+        blockLighting = mix(blockLighting, lightmapXM * clamp01(saturateColors(endCenterCol, 1.3)), clamp01(endCenterLightDist) * enderDragonDead);
+    #endif
+
     #if HELD_LIGHTING_MODE >= 1
         #if !defined DO_PIXELATION_EFFECTS || !defined PIXELATED_BLOCKLIGHT
             vec3 playerPosForHeldLighting = playerPos;
@@ -397,7 +569,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
             vec3 playerPosForHeldLighting = playerPosPixelated;
         #endif
 
-        vec3 heldLighting = GetHeldLighting(playerPosForHeldLighting, color.rgb, emission);
+        vec3 heldLighting = GetHeldLighting(playerPosForHeldLighting, color.rgb, emission, worldGeoNormal, normalM, viewPos);
 
         #ifdef GBUFFERS_HAND
             blockLighting *= 0.5;
@@ -405,7 +577,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         #endif
     #endif
 
-    vec3 minLighting = GetMinimumLighting(lightmapYM);
+    vec3 minLighting = GetMinimumLighting(lightmapYM, playerPos);
     vec3 shadowLightMult = shadowMult;
     float shadowMultFloat = min1(GetLuminance(shadowMult));
 
@@ -452,7 +624,12 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
             float endFlashDirectionFactor = max0(1.0 + dot(worldGeoNormal, normalize(worldEndFlashPosition))) * 0.5;
                   endFlashDirectionFactor = pow2(pow2(endFlashDirectionFactor));
 
-            vec3 endFlashColor = (endOrangeCol + 0.5 * endLightColor) * endFlashIntensity * pow2(lightmapYM);
+            #ifdef COLORED_ES_FLASH_LIGHTING
+                vec3 endFlashColor = 1.5 * (enderscapeFlashColor / maxOf(enderscapeFlashColor)) * endFlashIntensity * pow2(lightmapYM);
+                ambientColorM *= mix(vec3(1.0), enderscapeFlashColor / maxOf(enderscapeFlashColor), endFlashIntensity);
+            #else
+                vec3 endFlashColor = (endOrangeCol + 0.5 * endLightColor) * endFlashIntensity * pow2(lightmapYM);
+            #endif
             ambientColorM += endFlashColor * (0.2 * endFlashDirectionFactor);
         #endif
     #endif
@@ -510,6 +687,62 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
 
     blockLighting *= XLIGHT_I;
 
+    #ifdef BLOCKLIGHT_CAUSTICS
+        if (isEyeInWater == 1) {
+            vec3 worldPos = playerPos + cameraPosition;
+            #if defined DO_PIXELATION_EFFECTS && defined PIXELATED_SHADOWS
+                worldPos = playerPosPixelated + cameraPosition;
+            #endif
+
+            float causticTime = frameTimeCounter * 0.045;
+            mat2 rot = rotate(causticTime * 35);
+
+            vec3 absNormal = abs(worldGeoNormal);
+            vec2 basePos = absNormal.y > max(absNormal.x, absNormal.z) ? worldPos.xz :
+                        absNormal.x > absNormal.z ? worldPos.yz : worldPos.xy;
+
+            basePos *= 1.35;
+
+            // Opposing directional movement for the two layers
+            vec2 causticWind1 = vec2(causticTime * 0.3, causticTime * 0.15);
+            vec2 causticWind2 = vec2(-causticTime * 0.17, -causticTime * 0.22);
+
+            vec2 cPos1 = basePos * 0.10 + causticWind1;
+            vec2 cPos2 = basePos * 0.05 + causticWind2;
+
+            float gradientNoise = fract(52.9829189 * fract(0.06711056 * gl_FragCoord.x + 0.00583715 * gl_FragCoord.y));
+            #ifdef TAA
+                gradientNoise = fract(gradientNoise + 0.618034 * mod(float(frameCounter), 3600.0));
+            #endif
+
+            float caustic = 0.0;
+            int causticSamples = 4;
+
+            for (int i = 0; i < causticSamples; i++) {
+                vec2 offset1 = causticOffsetDist(gradientNoise + float(i), causticSamples);
+                vec2 offset2 = causticOffsetDist(gradientNoise + float(i) + 0.5, causticSamples);
+
+                offset1 = rot * offset1;
+                offset2 = rot * offset2;
+
+                vec4 sample1a = texture2D(gaux4, cPos1 + offset1);
+                vec4 sample1b = texture2D(gaux4, cPos1 - offset1);
+                vec4 sample2a = texture2D(gaux4, cPos2 + offset2);
+                vec4 sample2b = texture2D(gaux4, cPos2 - offset2);
+
+                float caustic1 = dot(sample1a.rg - sample1b.rg, vec2(6.0));
+                float caustic2 = dot(sample2a.rg - sample2b.rg, vec2(6.0));
+
+                caustic += caustic1 + caustic2;
+            }
+
+            caustic /= causticSamples;
+
+            caustic = clamp(caustic, -0.15, 2.0) * 0.52 + 0.587;
+            blockLighting *= caustic * WATER_CAUSTIC_STRENGTH;
+        }
+    #endif
+
     #ifdef LIGHT_COLOR_MULTS
         sceneLighting *= lightColorMult;
     #endif
@@ -556,6 +789,10 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         }
     #endif
 
+    #ifdef RAIN_ATMOSPHERE
+        vanillaAO += lightningAdd.y * 0.1 * (-vanillaAO + 1);
+    #endif
+
     // Light Highlight
     vec3 lightHighlight = vec3(0.0);
     #ifdef LIGHT_HIGHLIGHT
@@ -564,13 +801,16 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         specularHighlight *= highlightMult;
 
         lightHighlight = isEyeInWater != 1 ? shadowMult : pow(shadowMult, vec3(0.25)) * 0.35;
-        lightHighlight *= (subsurfaceHighlight + specularHighlight) * highlightColor;
+        lightHighlight *= (subsurfaceHighlight * subsurfaceColor + specularHighlight) * highlightColor;
 
         #ifdef LIGHT_COLOR_MULTS
             lightHighlight *= lightColorMult;
         #endif
         #ifdef MOON_PHASE_INF_REFLECTION
             lightHighlight *= pow2(moonPhaseInfluence);
+        #endif
+        #if BLOOD_MOON > 0
+            lightHighlight *= mix(vec3(1.0), vec3(1.0, 0.1294, 0.1294), getBloodMoon(sunVisibility));
         #endif
     #endif
 

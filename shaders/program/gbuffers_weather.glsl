@@ -1,9 +1,15 @@
-/////////////////////////////////////
-// Complementary Shaders by EminGT //
-/////////////////////////////////////
+//////////////////////////////////////////
+// Complementary Shaders by EminGT      //
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
 
 //Common//
 #include "/lib/common.glsl"
+#include "/lib/shaderSettings/raindropColor.glsl"
+
+#if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
+    #include "/lib/misc/distortWorld.glsl"
+#endif
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -12,6 +18,8 @@ flat in vec2 lmCoord;
 in vec2 texCoord;
 
 flat in vec3 upVec, sunVec;
+
+in vec3 playerPos;
 
 flat in vec4 glColor;
 
@@ -39,10 +47,30 @@ void main() {
 
     if (color.a < 0.1 || isEyeInWater == 3) discard;
 
+    #ifdef NO_RAIN_ABOVE_CLOUDS
+        if (cameraPosition.y > maximumCloudsHeight) discard;
+    #endif
+
     if (color.r + color.g < 1.5) color.a *= rainTexOpacity;
     else color.a *= snowTexOpacity;
 
     color.rgb = sqrt3(color.rgb) * (blocklightCol * 2.0 * lmCoord.x + (ambientColor + 0.2 * lightColor) * lmCoord.y * (0.6 + 0.3 * sunFactor));
+
+    color.rgb *= vec3(WEATHER_TEX_R, WEATHER_TEX_G, WEATHER_TEX_B);
+
+    #if GLITTER_RAIN > 0
+        float rainbowGlitterOn = 1.0;
+        #if GLITTER_RAIN == 1
+            rainbowGlitterOn = 0.0;
+            float randomRainbowGlitterTime = 24000 * hash1(worldDay * 3); // Effect happens randomly throughout the day
+            int rainbowGlitterEffect = (int(hash1(worldDay / 2)) % (2 * 24000)) + int(randomRainbowGlitterTime);
+            if (worldTime > rainbowGlitterEffect && worldTime < rainbowGlitterEffect + 400) { // 400 in ticks - 20s, how long the effect will be on
+                rainbowGlitterOn = 1.0;
+            }
+        #endif
+
+        color.rgb = mix(color.rgb, vec3(0.752, 0.752, 0.752) * 5.0, mix(0.0, step(0.7, Noise3D((playerPos + cameraPosition) * 0.004 + frameTimeCounter * 0.02)), rainbowGlitterOn * rainFactor));
+    #endif
 
     #ifdef COLOR_CODED_PROGRAMS
         ColorCodeProgram(color, -1);
@@ -66,15 +94,25 @@ out vec2 texCoord;
 
 flat out vec3 upVec, sunVec;
 
+out vec3 playerPos;
+
 flat out vec4 glColor;
 
 //Attributes//
+
+#if defined ATLAS_ROTATION || defined WAVE_EVERYTHING
+    attribute vec4 mc_midTexCoord;
+#endif
 
 //Common Variables//
 
 //Common Functions//
 
 //Includes//
+
+#ifdef WAVE_EVERYTHING
+    #include "/lib/materials/materialMethods/wavingBlocks.glsl"
+#endif
 
 //Program//
 void main() {
@@ -90,10 +128,28 @@ void main() {
     gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
 
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+    #ifdef ATLAS_ROTATION
+        texCoord += texCoord * float(hash33(mod(cameraPosition * 0.5, vec3(100.0))));
+    #endif
     lmCoord  = GetLightMapCoordinates();
 
     upVec = normalize(gbufferModelView[1].xyz);
     sunVec = GetSunVector();
+
+    playerPos = (gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex).xyz;
+
+    #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE || defined WAVE_EVERYTHING
+        #ifdef MIRROR_DIMENSION
+            doMirrorDimension(position);
+        #endif
+        #ifdef WORLD_CURVATURE
+            position.y += doWorldCurvature(position.xz);
+        #endif
+        #ifdef WAVE_EVERYTHING
+            DoWaveEverything(position.xyz);
+        #endif
+        gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
+    #endif
 }
 
 #endif

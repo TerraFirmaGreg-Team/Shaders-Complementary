@@ -1,9 +1,15 @@
-/////////////////////////////////////
-// Complementary Shaders by EminGT //
-/////////////////////////////////////
+//////////////////////////////////////////
+// Complementary Shaders by EminGT      //
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
 
 //Common//
 #include "/lib/common.glsl"
+#define BEACON_BEAM_EMISSION 1.0 //[0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0]
+
+#if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
+    #include "/lib/misc/distortWorld.glsl"
+#endif
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -52,6 +58,19 @@ void main() {
     #else
         vec3 viewPos = ScreenToView(screenPos);
     #endif
+
+    #ifdef DISTANT_HORIZONS
+        vec3 screenPosDH = vec3(screenPos.xy, texture2D(dhDepthTex, screenPos.xy).r);
+        #ifdef TAA
+            vec3 viewPosDH = ScreenToViewDH(vec3(TAAJitter(screenPosDH.xy, -0.5), screenPosDH.z));
+        #else
+            vec3 viewPosDH = ScreenToViewDH(screenPosDH);
+        #endif
+
+        if (viewPos.z < viewPosDH.z)
+            discard;
+    #endif
+
     float lViewPos = length(viewPos);
     vec3 nViewPos = normalize(viewPos);
     vec3 playerPos = ViewToPlayer(viewPos);
@@ -66,19 +85,26 @@ void main() {
     #ifdef ATM_COLOR_MULTS
         atmColorMult = GetAtmColorMult();
     #endif
+    float emission = 1.0;
 
     #ifdef IPBR
-        float emission = dot(colorP, colorP);
+        emission = dot(colorP, colorP);
 
         if (0.5 > color.a && color.a > 0.01) {
             color.a = 0.101;
             emission = pow2(pow2(emission)) * 0.1;
         }
 
+        emission *= BEACON_BEAM_EMISSION;
+
         color.rgb *= color.rgb * emission * 1.75;
         color.rgb += emission * 0.05;
     #else
-        color.rgb *= color.rgb * 4.0;
+        color.rgb *= color.rgb * 4.0 * BEACON_BEAM_EMISSION;
+    #endif
+
+    #ifdef SS_BLOCKLIGHT
+        vec3 lightAlbedo = normalize(color.rgb) * min1(emission);
     #endif
 
     color.rgb *= 0.5 + 0.5 * exp(-lViewPos * 0.04);
@@ -96,14 +122,19 @@ void main() {
     #endif
 
     float prevAlpha = color.a;
-    DoFog(color, sky, lViewPos, playerPos, VdotU, VdotS, dither, false, 0.0);
+    DoFog(color, sky, lViewPos, playerPos, VdotU, VdotS, dither, false, 0.0, 0.0);
     color.a = prevAlpha * (1.0 - sky);
-    
+
     if (color.a < 0.2 * dither) discard;
 
     /* DRAWBUFFERS:06 */
     gl_FragData[0] = color;
     gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
+
+    #ifdef SS_BLOCKLIGHT
+        /* DRAWBUFFERS:069 */
+        gl_FragData[2] = vec4(lightAlbedo, 1);
+    #endif
 }
 
 #endif
@@ -119,6 +150,11 @@ out vec4 glColor;
 
 //Attributes//
 
+#if defined ATLAS_ROTATION || defined WAVE_EVERYTHING
+    attribute vec4 mc_midTexCoord;
+    vec2 lmCoord = GetLightMapCoordinates();
+#endif
+
 //Common Variables//
 
 //Common Functions//
@@ -126,6 +162,10 @@ out vec4 glColor;
 //Includes//
 #ifdef TAA
     #include "/lib/antialiasing/jitter.glsl"
+#endif
+
+#ifdef WAVE_EVERYTHING
+    #include "/lib/materials/materialMethods/wavingBlocks.glsl"
 #endif
 
 //Program//
@@ -139,6 +179,23 @@ void main() {
     sunVec = GetSunVector();
 
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+    #ifdef ATLAS_ROTATION
+        texCoord += texCoord * float(hash33(mod(cameraPosition * 0.5, vec3(100.0))));
+    #endif
+
+    #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE || defined WAVE_EVERYTHING
+        vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
+        #ifdef MIRROR_DIMENSION
+            doMirrorDimension(position);
+        #endif
+        #ifdef WORLD_CURVATURE
+            position.y += doWorldCurvature(position.xz);
+        #endif
+        #ifdef WAVE_EVERYTHING
+            DoWaveEverything(position.xyz);
+        #endif
+        gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
+    #endif
 
     glColor = gl_Color;
 }

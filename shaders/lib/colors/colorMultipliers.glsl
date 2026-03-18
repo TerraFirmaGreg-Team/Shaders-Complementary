@@ -1,6 +1,8 @@
 #ifndef INCLUDE_LIGHT_AND_AMBIENT_MULTIPLIERS
     #define INCLUDE_LIGHT_AND_AMBIENT_MULTIPLIERS
 
+    #include "/lib/shaderSettings/colorMult.glsl"
+
     vec3 GetLightColorMult() {
         vec3 lightColorMult;
 
@@ -23,7 +25,11 @@
             lightColorMult = endLightMult;
         #endif
 
-        return lightColorMult;
+        #ifdef COLOR_MULTIPLIER_COMPARISON
+            return gl_FragCoord.x < mix(0.5, 0.0, isSneaking) * viewWidth ? vec3(1.0) : lightColorMult;
+        #else
+            return lightColorMult;
+        #endif
     }
 
     vec3 GetAtmColorMult() {
@@ -44,11 +50,18 @@
             atmColorMult = netherAtmMult;
         #elif defined END
             vec3 endAtmMult = vec3(ATM_END_R, ATM_END_G, ATM_END_B) * ATM_END_I;
+            #ifdef (DARKER_END_SKY == 1 && defined MOD_ENDERSCAPE) || DARKER_END_SKY == 2
+                endAtmMult *= 0.5;
+            #endif
 
             atmColorMult = endAtmMult;
         #endif
 
-        return atmColorMult;
+        #ifdef COLOR_MULTIPLIER_COMPARISON
+            return gl_FragCoord.x < mix(0.5, 0.0, isSneaking) * viewWidth ? vec3(1.0) : atmColorMult;
+        #else
+            return atmColorMult;
+        #endif
     }
 
     vec3 lightColorMult;
@@ -56,3 +69,4 @@
     vec3 sqrtAtmColorMult;
 
 #endif //INCLUDE_LIGHT_AND_AMBIENT_MULTIPLIERS
+            

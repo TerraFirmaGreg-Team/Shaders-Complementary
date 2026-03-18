@@ -1,15 +1,16 @@
+#include "/lib/shaderSettings/water.glsl"
 if (mat < 32008) {
     if (mat < 30016) {
         if (mat < 30008) {
             if (mat == 30000) { //
-            
+
             } else if (mat == 30004) { //
-            
+
             }
         } else {
             if (mat == 30008) { // Tinted Glass
                 #ifdef CONNECTED_GLASS_EFFECT
-                    uint voxelID = uint(254);
+                    uint voxelID = uint(30054);
                     bool isPane = false;
                     DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
                 #endif
@@ -23,7 +24,13 @@ if (mat < 32008) {
                     fresnelM = fresnelM * 0.5 + 0.5;
                     reflectMult /= color.a;
                     noGeneratedNormals = true;
+                    #ifdef MIRROR_TINTED_GLASS_OPAQUE
+                        color.a = 1.0;
+                    #endif
                 #endif
+                overlayNoiseAlpha = 0.95;
+                sandNoiseIntensity = 0.5;
+                mossNoiseIntensity = 0.5;
             } else /*if (mat == 30012)*/ { // Slime Block
                 translucentMultCalculated = true;
                 reflectMult = 0.7;
@@ -31,6 +38,9 @@ if (mat < 32008) {
 
                 smoothnessG = color.g * 0.7;
                 highlightMult = 2.5;
+                overlayNoiseAlpha = 0.6;
+                sandNoiseIntensity = 0.5;
+                mossNoiseIntensity = 0.5;
             }
         }
     } else {
@@ -43,59 +53,87 @@ if (mat < 32008) {
 
                     smoothnessG = color.r * 0.7;
                     highlightMult = 2.5;
+                    overlayNoiseAlpha = 0.4;
+                    sandNoiseIntensity = 0.5;
+                    mossNoiseIntensity = 0.5;
                 } else /*if (mat == 30020)*/ { // Nether Portal
                     #ifdef SPECIAL_PORTAL_EFFECTS
                         #include "/lib/materials/specificMaterials/translucents/netherPortal.glsl"
                     #endif
+                    overlayNoiseIntensity = 0.0;
                 }
             } else { // (31XXX)
                 if (mat % 2 == 0) { // Stained Glass
                     #ifdef CONNECTED_GLASS_EFFECT
-                        uint voxelID = uint(200 + (mat - 31000) / 2);
+                        uint voxelID = uint(30000 + (mat - 31000) / 2);
                         bool isPane = false;
                         DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
                     #endif
                     #include "/lib/materials/specificMaterials/translucents/stainedGlass.glsl"
+                    overlayNoiseAlpha = 1.05;
+                    mossNoiseIntensity = 0.8;
                 } else /*if (mat % 2 == 1)*/ { // Stained Glass Pane
                     #ifdef CONNECTED_GLASS_EFFECT
-                        uint voxelID = uint(200 + (mat - 31000) / 2);
+                        uint voxelID = uint(30000 + (mat - 31000) / 2);
                         bool isPane = true;
                         DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
                     #endif
                     #include "/lib/materials/specificMaterials/translucents/stainedGlass.glsl"
                     noSmoothLighting = true;
+                    overlayNoiseAlpha = 1.05;
+                    sandNoiseIntensity = 0.8;
+                    mossNoiseIntensity = 0.8;
                 }
             }
         } else {
             if (mat == 32000) { // Water
-                #include "/lib/materials/specificMaterials/translucents/water.glsl"
+                #ifdef SHADER_WATER
+                    #include "/lib/materials/specificMaterials/translucents/water.glsl"
+                #endif
+                overlayNoiseIntensity = 0.0;
+                overlayNoiseFresnelMult = 0.0;
+                IPBRMult = 0.0;
+                overlayNoiseAlpha = 0.0;
             } else /*if (mat == 32004)*/ { // Ice
                 smoothnessG = pow2(color.g) * color.g;
                 highlightMult = pow2(min1(pow2(color.g) * 1.5)) * 3.5;
 
                 reflectMult = 0.7;
+                overlayNoiseAlpha = 0.6;
+                sandNoiseIntensity = 0.7;
+                mossNoiseIntensity = 0.7;
             }
         }
     }
-} else {
+} else if (mat < 32064) {
     if (mat < 32024) {
         if (mat < 32016) {
-            if (mat == 32008) { // Glass
-                #ifdef CONNECTED_GLASS_EFFECT
-                    uint voxelID = uint(217);
-                    bool isPane = false;
-                    DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
-                #endif
+            if (mat < 32012) { // Glass
+                if (mat == 32008){
+                    #ifdef CONNECTED_GLASS_EFFECT
+                        uint voxelID = uint(30017);
+                        bool isPane = false;
+                        DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
+                    #endif
+                }
                 #include "/lib/materials/specificMaterials/translucents/glass.glsl"
+                overlayNoiseAlpha = 0.8;
+                sandNoiseIntensity = 0.8;
+                mossNoiseIntensity = 0.8;
             } else /*if (mat == 32012)*/ { // Glass Pane
-                #ifdef CONNECTED_GLASS_EFFECT
-                    uint voxelID = uint(218);
-                    bool isPane = true;
-                    DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
-                #endif
+                if (mat == 32012) {
+                    #ifdef CONNECTED_GLASS_EFFECT
+                        uint voxelID = uint(30018);
+                        bool isPane = true;
+                        DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
+                    #endif
+                }
                 if (color.a < 0.001 && abs(NdotU) > 0.95) discard; // Fixing artifacts on CTM/Opti connected glass panes
                 #include "/lib/materials/specificMaterials/translucents/glass.glsl"
                 noSmoothLighting = true;
+                overlayNoiseAlpha = 0.8;
+                sandNoiseIntensity = 0.8;
+                mossNoiseIntensity = 0.8;
             }
         } else {
             if (mat == 32016) { // Beacon
@@ -127,7 +165,9 @@ if (mat < 32008) {
                     highlightMult = 2.0 + min1(smoothnessG * 2.0) * 1.5;
                     smoothnessG = min1(smoothnessG);
                 }
-
+                overlayNoiseAlpha = 0.8;
+                sandNoiseIntensity = 0.5;
+                mossNoiseIntensity = 0.5;
             } else /*if (mat == 32020)*/ { //
 
             }
@@ -147,4 +187,8 @@ if (mat < 32008) {
             }
         }
     }
+}
+ else if (mat != 65535) {
+    // block.32128
+    
 }

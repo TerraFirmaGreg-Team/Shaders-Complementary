@@ -1,9 +1,11 @@
-/////////////////////////////////////
-// Complementary Shaders by EminGT //
-/////////////////////////////////////
+//////////////////////////////////////////
+// Complementary Shaders by EminGT      //
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
 
 //Common//
 #include "/lib/common.glsl"
+#include "/lib/shaderSettings/longExposure.glsl"
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -27,9 +29,16 @@ float GetLinearDepth(float depth) {
 //Program//
 void main() {
     vec3 color = texelFetch(colortex3, texelCoord, 0).rgb;
-        
-    #if FXAA_DEFINE == 1 && FXAA_STRENGTH > 1
-        FXAA311(color);
+
+    #if LONG_EXPOSURE > 0
+    if (hideGUI == 0 || isViewMoving()) {
+    #endif
+        #if FXAA_DEFINE == 1 && FXAA_STRENGTH > 1
+            // Apply FXAA only when GUI is hidden or view is moving
+            FXAA311(color);
+        #endif
+    #if LONG_EXPOSURE > 0
+    }
     #endif
 
     /* DRAWBUFFERS:3 */

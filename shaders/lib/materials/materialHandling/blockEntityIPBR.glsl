@@ -25,6 +25,7 @@ if (blockEntityId < 5028) {
                 #ifdef COATED_TEXTURES
                     noiseFactor = 0.66;
                 #endif
+                redstoneIPBR(color.rgb, emission);
             }
         }
     } else {
@@ -38,6 +39,18 @@ if (blockEntityId < 5028) {
                 if (color.g > color.r || color.b > color.g)
                     emission = pow2(factor) * 20.0;
                 emission += 0.35;
+                #if SEASONS == 1 || SEASONS == 4 || defined MOSS_NOISE_INTERNAL || defined SAND_NOISE_INTERNAL
+                    overlayNoiseIntensity = 0.7;
+                    if (dot(normal, upVec) > 0.99) {
+                        #if SNOW_CONDITION < 2 && SNOW_CONDITION != 0
+                            emission = mix(emission, emission * 0.8, inSnowy);
+                        #elif SNOW_CONDITION == 0
+                            emission = mix(emission, emission * 0.8, rainFactor * inSnowy);
+                        #else
+                            emission *= 0.8;
+                        #endif
+                    }
+                #endif
 
                 #ifdef COATED_TEXTURES
                     noiseFactor = 0.66;
@@ -59,14 +72,16 @@ if (blockEntityId < 5028) {
                     emission = 20.0;
                     color.rgb *= vec3(1.0, 0.25, 0.1);
                 }
+                overlayNoiseIntensity = 0.3;
             } else /*if (blockEntityId == 5024)*/ { // End Portal, End Gateway
                 #ifdef SPECIAL_PORTAL_EFFECTS
                     #include "/lib/materials/specificMaterials/others/endPortalEffect.glsl"
                 #endif
+                overlayNoiseIntensity = 0.0;
             }
         }
     }
-} else {
+} else if (blockEntityId < 5056 || blockEntityId == 10548) {
     if (blockEntityId < 5044) {
         if (blockEntityId < 5036) {
             if (blockEntityId == 5028) { // Bell
@@ -80,7 +95,7 @@ if (blockEntityId < 5028) {
             }
         } else {
             if (blockEntityId == 5036) { //
-            
+
             } else /*if (blockEntityId == 5040)*/ { //
 
             }
@@ -101,7 +116,12 @@ if (blockEntityId < 5028) {
                 if (color.b < 0.0001 && color.r > color.g) {
                     emission = color.g * 3.5;
                 }
+                overlayNoiseIntensity = 0.3;
             }
         }
     }
+}
+ else if (blockEntityId != 65535) {
+    // block.5056
+    
 }

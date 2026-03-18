@@ -1,3 +1,4 @@
+#include "/lib/shaderSettings/entityMaterials.glsl"
 if (entityId < 50128) { // 50000 to 50128
     if (entityId < 50064) { // 50000 to 50064
         if (entityId < 50032) { // 50000 to 50032
@@ -10,16 +11,19 @@ if (entityId < 50128) { // 50000 to 50128
                             emission = 12.0 * color.g;
                             color.r *= 1.1;
                         }
+                        emission *= END_CRYSTAL_EMISSION;
                     } else if (entityId == 50004) { // Lightning Bolt
                         #include "/lib/materials/specificMaterials/others/lightningBolt.glsl"
                     }
                 } else { // 50008 to 50016
                     if (entityId == 50008) { // Item Frame, Glow Item Frame
                         noSmoothLighting = true;
-                    } else /*if (entityId == 50012)*/ { // Iron Golem
+                    } else if (entityId == 50012) { // Iron Golem
                         #include "/lib/materials/specificMaterials/terrain/ironBlock.glsl"
 
                         smoothnessD *= 0.4;
+                    } else { // 50015 - Armor Stand
+                        // Do nothing for now
                     }
                 }
             } else { // 50016 to 50032
@@ -38,6 +42,18 @@ if (entityId < 50128) { // 50000 to 50128
                                     }
                                 }
                             }
+                            bool selfCheck = false;
+                            #if IRIS_VERSION >= 10800
+                                if (entityId == 50017) {
+                                    selfCheck = true;
+                                    entitySSBLMask = 0.0;
+                                }
+                            #else
+                                if (length(playerPos) < 4.0) {
+                                    selfCheck = true;
+                                    entitySSBLMask = 0.0;
+                                }
+                            #endif
                         }
                     } else /*if (entityId == 50020)*/ { // Blaze
                         lmCoordM = vec2(0.9, 0.0);
@@ -46,6 +62,13 @@ if (entityId < 50128) { // 50000 to 50128
                         float dotColor = dot(color.rgb, color.rgb);
                         if (abs(dotColor - 1.5) > 1.4) {
                             emission = 5.0;
+                        } else {
+                            #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
+                                color.rgb = changeColorFunction(color.rgb, 2.0, colorSoul, inSoulValley);
+                            #endif
+                            #ifdef PURPLE_END_FIRE_INTERNAL
+                                color.rgb = changeColorFunction(color.rgb, 2.0, colorEndBreath, 1.0);
+                            #endif
                         }
                     }
                 } else { // 50024 to 50032
@@ -86,7 +109,13 @@ if (entityId < 50128) { // 50000 to 50128
                     } else /*if (entityId == 50044)*/ { // Ghast
                         if (entityColor.a < 0.001)
                             emission = max0(color.r - color.g - color.b) * 6.0;
-                    }
+                            #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
+                            if (color.r > color.b * 2.0) color.rgb = changeColorFunction(color.rgb, 7.0, colorSoul, inSoulValley);
+                        #endif
+                        #ifdef PURPLE_END_FIRE_INTERNAL
+                            if (color.r > color.b * 2.0) color.rgb = changeColorFunction(color.rgb, 7.0, colorEndBreath, 1.0);
+                        #endif
+                }
                 }
             } else { // 50048 to 50064
                 if (entityId < 50056) { // 50048 to 50056
@@ -96,6 +125,12 @@ if (entityId < 50128) { // 50000 to 50128
                         emission = pow2(pow2(min(dotColor * 0.65, 1.5))) + 0.45;
                     } else /*if (entityId == 50052)*/ { // Magma Cube
                         emission = color.g * 6.0;
+                        #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
+                        color.rgb = changeColorFunction(color.rgb, 2.0, colorSoul, inSoulValley);
+                        #endif
+                        #ifdef PURPLE_END_FIRE_INTERNAL
+                            color.rgb = changeColorFunction(color.rgb, 2.0, colorEndBreath, 1.0);
+                        #endif
                     }
                 } else { // 50056 to 50064
                     if (entityId == 50056) { // Stray
@@ -142,9 +177,22 @@ if (entityId < 50128) { // 50000 to 50128
                     }
                 } else { // 50088 to 50096
                     if (entityId == 50088) { // Entity Flame (Iris Feature)
+                        #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
+                            color.rgb = changeColorFunction(color.rgb, 3.0, colorSoul, inSoulValley);
+                        #endif
+                        #ifdef PURPLE_END_FIRE_INTERNAL
+                            color.rgb = changeColorFunction(color.rgb, 3.0, colorEndBreath, 1.0);
+                        #endif
                         emission = 1.3;
+                    } else if (entityId == 50089) { // fireball, small fireball, dragon fireball
+                        #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
+                            color.rgb = changeColorFunction(color.rgb, 4.0, colorSoul, inSoulValley);
+                        #endif
+                        #ifdef PURPLE_END_FIRE_INTERNAL
+                            color.rgb = changeColorFunction(color.rgb, 4.0, colorEndBreath, 1.0);
+                        #endif
                     } else /*if (entityId == 50092)*/ { // Trident Entity
-                        #ifdef IS_IRIS
+                        #if defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000008
                             // Only on Iris, because otherwise it would be inconsistent with the Trident item
                             #include "/lib/materials/specificMaterials/others/trident.glsl"
                         #endif
@@ -185,9 +233,10 @@ if (entityId < 50128) { // 50000 to 50128
                         }
                     } else /*if (entityId == 50108)*/ { // Creaking
                         if (color.r > 0.7 && color.r > color.g * 1.2 && color.g > color.b * 2.0) { // Eyes
-                            lmCoordM.x = 0.5;
-                            emission = 5.0 * color.g;
-                            color.rgb *= color.rgb;
+                                lmCoordM.x = 0.5;
+                                emission = 5.0 * color.g;
+                                color.rgb *= color.rgb;
+                                purkinjeOverwrite = 1.0;
                         }
                     }
                 }
@@ -224,7 +273,7 @@ if (entityId < 50128) { // 50000 to 50128
             }
         }
     }
-} else { // 50128 to 50256
+} else if (entityId < 50128) { // 50128 to 50256
     if (entityId < 50192) { // 50128 to 50192
         if (entityId < 50160) { // 50128 to 50160
             if (entityId < 50144) { // 50128 to 50144
@@ -446,4 +495,101 @@ if (entityId < 50128) { // 50000 to 50128
             }
         }
     }
+}
+ else if (entityId != 65535) {
+    if (entityId < 51216) {
+        if (entityId < 51208) {
+            if (entityId < 51204) {
+                // entity.51200 = crimson_forest_enderman
+                if (color.r > 0.91) {
+                    emission = 3.0 * color.g;
+                    color.r *= 1.2;
+            
+                    overlayNoiseIntensity = 0.5;
+                }
+            
+                smoothnessG = color.r * 0.5;
+                smoothnessD = smoothnessG;
+            
+                #ifdef COATED_TEXTURES
+                    noiseFactor = 0.77;
+                #endif
+            } else /*if (entityId < 51208)*/ {
+                // entity.51204 = crimson_forest_enderman
+                if (color.r > 0.91) {
+                    emission = 3.0 * color.g;
+                    color.r *= 1.2;
+            
+                    overlayNoiseIntensity = 0.5;
+                }
+            
+                smoothnessG = color.r * 0.5;
+                smoothnessD = smoothnessG;
+            
+                #ifdef COATED_TEXTURES
+                    noiseFactor = 0.77;
+                #endif
+            }
+        } else /*if (entityId < 51216)*/ {
+            if (entityId < 51212) {
+                // entity.51208 = ice_spikes_enderman
+                smoothnessG = pow2(color.g) * color.g;
+                smoothnessD = smoothnessG;
+            } else /*if (entityId < 51216)*/ {
+                // entity.51212 = spirit
+                if (color.b > 1.3 * color.r || color.b > 0.9) {
+                    emission = 1.5;
+                    color.rgb = pow1_5(color.rgb);
+            
+                    overlayNoiseIntensity = 0.0;
+                    color.a = pow1_5(color.b) - 0.05;
+                }
+            }
+        }
+    } else /*if (entityId < 51232)*/ {
+        if (entityId < 51224) {
+            if (entityId < 51220) {
+                // entity.51216 = stone_enderman
+                #include "/lib/materials/specificMaterials/terrain/stone.glsl"
+            } else /*if (entityId < 51224)*/ {
+                // entity.51220 = warped_forest_enderman
+                #ifdef MOD_NETHEREXP
+                    if (color.r > 0.73) {
+                        emission = 1.5 * color.b;
+            
+                        overlayNoiseIntensity = 0.5;
+                    }
+                #else
+                    if (color.r > 0.91) {
+                        emission = 3.0 * color.g;
+                        color.r *= 1.2;
+            
+                        overlayNoiseIntensity = 0.5;
+                    }
+                #endif
+            
+                smoothnessG = color.g * 0.5;
+                smoothnessD = smoothnessG;
+            
+                #ifdef COATED_TEXTURES
+                    noiseFactor = 0.77;
+                #endif
+            }
+        } else /*if (entityId < 51232)*/ {
+            if (entityId < 51228) {
+                // entity.51224 = quake
+                #include "/lib/materials/specificMaterials/terrain/kineticCore.glsl"
+            } else /*if (entityId < 51232)*/ {
+                // entity.51228 = spectre
+                if (color.b > 0.6) {
+                    emission = 1.5 * pow2(color.b);
+                    color.rgb = pow1_5(color.rgb);
+                } else {
+                    smoothnessG = color.b + 0.4;
+                    smoothnessD = smoothnessG;
+                }
+            }
+        }
+    }
+    
 }

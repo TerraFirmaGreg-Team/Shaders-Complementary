@@ -12,7 +12,7 @@ float GetCustomEmission(vec4 specularMap, vec2 texCoordM) {
             float emissionL0 = specularMapL0.a < 1.0 ? specularMapL0.a : 0.0;
             emission = min(emission, emissionL0); // Fixes issues caused by mipmaps
         #endif
-        
+
         return emission * 0.03 * CUSTOM_EMISSION_INTENSITY;
     #else
         return 0.0;

@@ -26,8 +26,8 @@ void clearSSBOs() {
 
     #if WORLD_SPACE_PLAYER_REF == 1
         if (pixelIndex == 0) {
-            playerVerticesSSBO.bounds = playerBounds(ivec3(1e6), ivec3(-1e6), ivec3(1e6), ivec3(-1e6), 
-                                                     ivec3(1e6), ivec3(-1e6), ivec3(1e6), ivec3(-1e6), 
+            playerVerticesSSBO.bounds = playerBounds(ivec3(1e6), ivec3(-1e6), ivec3(1e6), ivec3(-1e6),
+                                                     ivec3(1e6), ivec3(-1e6), ivec3(1e6), ivec3(-1e6),
                                                      ivec3(1e6), ivec3(-1e6), ivec3(1e6), ivec3(-1e6));
         }
     #endif

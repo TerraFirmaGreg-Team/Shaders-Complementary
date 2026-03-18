@@ -191,9 +191,9 @@ void FXAA311(inout vec3 color) {
         #else
             float skipFXAA = FXAA_STRENGTH_SKIP;
         #endif
-        
+
         color = mix(newColor, color, skipFXAA);
-        
+
         // debug
         //if (skipFXAA > texCoord.y && texCoord.x < 0.02) color.rgb = vec3(1,0,1);
     }

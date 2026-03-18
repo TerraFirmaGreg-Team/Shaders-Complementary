@@ -1,8 +1,14 @@
+#include "/lib/shaderSettings/enhancedCelestials.glsl"
 #ifndef INCLUDE_SKY_COLORS
     #define INCLUDE_SKY_COLORS
-
-    #ifdef OVERWORLD
+	
+    #if defined(OVERWORLD) && !defined(AD_ASTRA)
         vec3 skyColorSqrt = sqrt(skyColor);
+        #ifdef MOD_SCORCHFUL
+            vec3 sandstormM = mix(vec3(0.0), mix(vec3(0.4, 0.05, -0.4), vec3(0.25, 0.05, -0.25), hasRegularSandstorm), hasSandstorm);
+        #else
+            vec3 sandstormM = vec3(0.0);
+        #endif
         // Doing these things because vanilla skyColor gets to 0 during a thunderstorm
         float invRainStrength2 = (1.0 - rainStrength) * (1.0 - rainStrength);
         vec3 skyColorM = mix(max(skyColorSqrt, vec3(0.63, 0.67, 0.73)), skyColorSqrt, invRainStrength2);
@@ -34,9 +40,9 @@
         vec3 ndscWeatherM = vec3(-0.15, -0.3, -0.42) + vec3(0.0, 0.02, 0.08) * noonFactor;
 
         vec3 noonUpSkyColor     = pow(skyColorM, vec3(2.9)) * (vec3(0.85, 0.92, 0.81) + rainFactor * nuscWeatherM);
-        vec3 noonMiddleSkyColor = pow(skyColorM, vec3(1.5)) * (vec3(1.3) + rainFactor * (nmscWeatherM + nmscRainM + nmscSnowM + nmscDryM))
+        vec3 noonMiddleSkyColor = pow(skyColorM, vec3(1.5)) * (vec3(1.3) + rainFactor * (ndscWeatherM + ndscRainM + ndscSnowM + ndscDryM + sandstormM))
                                 + noonUpSkyColor * 0.65;
-        vec3 noonDownSkyColor   = skyColorM * (vec3(0.9) + rainFactor * (ndscWeatherM + ndscRainM + ndscSnowM + ndscDryM))
+        vec3 noonDownSkyColor   = skyColorM * (vec3(0.9) + rainFactor * (ndscWeatherM + ndscRainM + ndscSnowM + ndscDryM + sandstormM))
                                 + noonUpSkyColor * 0.25;
 
         vec3 sunsetUpSkyColor     = skyColorM2 * (vec3(0.72, 0.522, 0.47) + vec3(0.1, 0.2, 0.35) * rainFactor2);
@@ -48,10 +54,15 @@
         vec3 dayMiddleSkyColor = mix(noonMiddleSkyColor, sunsetMiddleSkyColor, invNoonFactor2);
         vec3 dayDownSkyColor   = mix(noonDownSkyColor, sunsetDownSkyColor, invNoonFactor2);
 
-        vec3 nightColFactor      = 0.9 * vec3(0.07, 0.14, 0.24) * (1.0 - 0.5 * rainFactor) + skyColor;
+        vec3 lunarEventSkyFactor = pow(moonSizeSmooth / 20, SUPER_MOON_INFLUENCE) * saturateColors(moonColorSmooth / maxAll(moonColorSmooth), LUNAR_EVENT_SKY_SATURATION);        
+        vec3 nightColFactor      = lunarEventSkyFactor * 0.9 * vec3(0.07, 0.14, 0.24) * (1.0 - 0.5 * rainFactor) + skyColor + 0.4 * rainFactor * sandstormM;
         vec3 nightUpSkyColor     = pow(nightColFactor, vec3(0.90)) * 0.45;
         vec3 nightMiddleSkyColor = sqrt(nightUpSkyColor) * 0.65;
         vec3 nightDownSkyColor   = nightMiddleSkyColor * vec3(0.82, 0.82, 0.88);
+		
+	#elif defined(AD_ASTRA)
+		 #include "/ad_astra_config/skyColors.glsl"
     #endif
 
 #endif //INCLUDE_SKY_COLORS
+        

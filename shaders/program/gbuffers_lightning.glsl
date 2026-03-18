@@ -5,6 +5,10 @@
 //Common//
 #include "/lib/common.glsl"
 
+#if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
+    #include "/lib/misc/distortWorld.glsl"
+#endif
+
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
 
@@ -76,6 +80,10 @@ void main() {
 
     color.rgb = mix(color.rgb, entityColor.rgb, entityColor.a);
 
+    #ifdef SS_BLOCKLIGHT
+        vec3 lightAlbedo = normalize(color.rgb);
+    #endif
+
     #ifdef COLOR_CODED_PROGRAMS
         ColorCodeProgram(color, -1);
     #endif
@@ -87,6 +95,13 @@ void main() {
     #if BLOCK_REFLECT_QUALITY >= 2 && RP_MODE >= 1
         /* DRAWBUFFERS:064 */
         gl_FragData[2] = vec4(0.0, 1.0, 0.0, 1.0);
+        #ifdef SS_BLOCKLIGHT
+            /* DRAWBUFFERS:0649 */
+            gl_FragData[3] = vec4(lightAlbedo, 1.0);
+        #endif
+    #elif defined SS_BLOCKLIGHT
+        /* DRAWBUFFERS:069 */
+        gl_FragData[2] = vec4(lightAlbedo, 1.0);
     #endif
 }
 
@@ -103,13 +118,22 @@ out vec3 normal;
 
 out vec4 glColor;
 
+//Pipeline Constants//
+#if DRAGON_DEATH_EFFECT_INTERNAL > 0
+    #extension GL_ARB_shader_image_load_store : enable
+#endif
+
 //Attributes//
+attribute vec4 at_midBlock;
 
 //Common Variables//
 
 //Common Functions//
 
 //Includes//
+#if DRAGON_DEATH_EFFECT_INTERNAL > 0
+    #include "/lib/voxelization/endCrystalVoxelization.glsl"
+#endif
 
 //Program//
 void main() {
@@ -132,6 +156,15 @@ void main() {
 
     #if defined FLICKERING_FIX && SHADOW_QUALITY == -1
         if (glColor.a < 0.5) gl_Position.z += 0.0005;
+    #endif
+
+    #if DRAGON_DEATH_EFFECT_INTERNAL > 0
+        if (entityId == 0 && (glColor.a < 0.2 || glColor.a == 1.0)) { // Only lightning bolts and dragon death effect run in this program, lightning has an entity ID assigned
+            #if DRAGON_DEATH_EFFECT_INTERNAL == 1
+                gl_Position = vec4(0);
+            #endif
+            SetEndDragonDeath();
+        }
     #endif
 }
 

@@ -1,9 +1,17 @@
-/////////////////////////////////////
-// Complementary Shaders by EminGT //
-/////////////////////////////////////
+//////////////////////////////////////////
+// Complementary Shaders by EminGT      //
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
 
 //Common//
 #include "/lib/common.glsl"
+#include "/lib/shaderSettings/wavingBlocks.glsl"
+#include "/lib/shaderSettings/shadowMainLighting.glsl"
+#define SHADOW_SATURATION 1.0 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+
+#if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
+    #include "/lib/misc/distortWorld.glsl"
+#endif
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -70,7 +78,7 @@ void main() {
                         #ifdef CONNECTED_GLASS_EFFECT
                             DoSimpleConnectedGlass(color1);
                         #endif
-                        
+
                         #if defined LIGHTSHAFTS_ACTIVE && LIGHTSHAFT_BEHAVIOUR == 1 && defined OVERWORLD
                             positionYM = 0.0; // 86AHGA: For scene-aware light shafts to be less prone to get extreme under large glass planes
                         #endif
@@ -89,8 +97,9 @@ void main() {
                     // Water Caustics
                     #if WATER_CAUSTIC_STYLE < 3
                         #if MC_VERSION >= 11300
-                            float wcl = GetLuminance(color1.rgb);
-                            color1.rgb = color1.rgb * pow2(wcl) * 1.2;
+                            float wcl = pow2(GetLuminance(color1.rgb));
+                            color1.rgb = color1.rgb * wcl * 1.2;
+                            color1.rgb *= mix(1.0, WATER_CAUSTIC_STRENGTH, wcl);
                         #else
                             color1.rgb = mix(color1.rgb, vec3(GetLuminance(color1.rgb)), 0.88);
                             color1.rgb = pow2(color1.rgb) * vec3(2.5, 3.0, 3.0) * 0.96;
@@ -114,6 +123,8 @@ void main() {
                         #if MC_VERSION < 11300
                             color1.rgb *= vec3(0.3, 0.45, 0.9);
                         #endif
+
+                        color1.rgb *= mix(1.0, WATER_CAUSTIC_STRENGTH, caustic);
                     #endif
 
                     #if MC_VERSION >= 11300
@@ -186,17 +197,19 @@ void main() {
             }
         }
     #endif
+    #ifdef RAIN_ATMOSPHERE
+        if (entityId == 50004) discard; //remove lightning shadows
+    #endif
 
     /* DRAWBUFFERS:0 */
-    gl_FragData[0] = color1; // Shadow Color
+    gl_FragData[0] = vec4(saturateColors(color1.rgb, SHADOW_SATURATION), color1.a); // Shadow Color
 
     #if SHADOW_QUALITY >= 1
         #if defined LIGHTSHAFTS_ACTIVE && LIGHTSHAFT_BEHAVIOUR == 1 && defined OVERWORLD
             color2.a = 0.25 + max0(positionYM * 0.05); // consistencyMEJHRI7DG
         #endif
-
         /* DRAWBUFFERS:01 */
-        gl_FragData[1] = color2; // Light Shaft Color
+        gl_FragData[1] = vec4(saturateColors(color2.rgb, pow(SHADOW_SATURATION, 0.8)), color2.a); // Light Shaft Color
     #endif
 }
 
@@ -220,17 +233,14 @@ flat out vec4 glColor;
 #endif
 
 //Pipeline Constants//
-#if COLORED_LIGHTING_INTERNAL > 0
+#if COLORED_LIGHTING_INTERNAL > 0 || END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0 || defined END_PORTAL_BEAM_INTERNAL
     #extension GL_ARB_shader_image_load_store : enable
 #endif
 
 //Attributes//
 attribute vec4 mc_Entity;
 attribute vec4 mc_midTexCoord;
-
-#if COLORED_LIGHTING_INTERNAL > 0
-    attribute vec3 at_midBlock;
-#endif
+attribute vec4 at_midBlock;
 
 //Common Variables//
 vec2 lmCoord;
@@ -245,6 +255,10 @@ vec2 lmCoord;
     #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0
         writeonly uniform uimage3D wsr_img;
     #endif
+
+    #ifdef ACT_GROUND_LEAVES_FIX
+        writeonly uniform uimage3D leaves_img;
+    #endif
 #endif
 
 //Common Functions//
@@ -252,7 +266,7 @@ vec2 lmCoord;
 //Includes//
 #include "/lib/util/spaceConversion.glsl"
 
-#if defined WAVING_ANYTHING_TERRAIN || defined WAVING_WATER_VERTEX
+#if defined WAVING_ANYTHING_TERRAIN || defined WAVE_EVERYTHING || defined WAVING_WATER_VERTEX
     #include "/lib/materials/materialMethods/wavingBlocks.glsl"
 #endif
 
@@ -266,6 +280,13 @@ vec2 lmCoord;
     #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0
         #include "/lib/voxelization/reflectionVoxelization.glsl"
     #endif
+    #ifdef ACT_GROUND_LEAVES_FIX
+        #include "/lib/voxelization/leavesVoxelization.glsl"
+    #endif
+#endif
+
+#if END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0 || defined END_PORTAL_BEAM_INTERNAL
+    #include "/lib/voxelization/endCrystalVoxelization.glsl"
 #endif
 
 //Program//
@@ -277,10 +298,26 @@ void main() {
     upVec = normalize(gbufferModelView[1].xyz);
     mat = int(mc_Entity.x + 0.5);
 
-    position = shadowModelViewInverse * shadowProjectionInverse * ftransform();
+    #if defined WORLD_CURVATURE || defined MIRROR_DIMENSION
+        position = shadowModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
+    #else
+        position = shadowModelViewInverse * shadowProjectionInverse * ftransform();
+    #endif
 
-    #if defined WAVING_ANYTHING_TERRAIN || defined WAVING_WATER_VERTEX
+    #ifdef WORLD_CURVATURE
+        position.y += doWorldCurvature(position.xz);
+    #endif
+
+    #ifdef MIRROR_DIMENSION
+        doMirrorDimension(position);
+    #endif
+
+    #if defined WAVING_ANYTHING_TERRAIN || defined WAVING_WATER_VERTEX || defined WAVE_EVERYTHING
         DoWave(position.xyz, mat);
+        DoWave_BlockEntity(position.xyz, blockEntityId);
+        #ifdef WAVE_EVERYTHING
+            DoWaveEverything(position.xyz);
+        #endif
     #endif
 
     #ifdef CONNECTED_GLASS_EFFECT
@@ -291,7 +328,7 @@ void main() {
     #endif
 
     #ifdef PERPENDICULAR_TWEAKS
-        if (mat == 10005 || mat == 10017) { // Foliage
+        if (mat == 10003 || mat == 10005 || mat == 10015 || mat == 10017 || mat == 10019 || mat == 10029 || mat == 10039) { // Foliage
             #ifndef CONNECTED_GLASS_EFFECT
                 vec2 midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
                 vec2 texMinMidCoord = texCoord - midCoord;
@@ -306,6 +343,8 @@ void main() {
     if (mat == 32000) { // Water
         position.y += 0.015 * max0(length(position.xyz) - 50.0);
     }
+
+    vec3 normal = mat3(shadowModelViewInverse) * gl_NormalMatrix * gl_Normal;
 
     #if COLORED_LIGHTING_INTERNAL > 0
         if (gl_VertexID % 4 == 0) {
@@ -322,9 +361,53 @@ void main() {
         #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0 && WORLD_SPACE_PLAYER_REF == 1
             UpdatePlayerVertexList(position.xyz);
         #endif
+
+        #ifdef ACT_GROUND_LEAVES_FIX
+            UpdateLeavesVoxelMap(mat);
+        #endif
+    #endif
+
+    #ifdef END_PORTAL_BEAM_INTERNAL
+        if (mat == 10556 && normal.y > 0.99 && length(position.xyz) < 32) SetEndPortalLoc(position.xyz);
+    #endif
+
+    #if END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0
+        #if END_CRYSTAL_VORTEX_INTERNAL % 2 == 1
+            if (entityId == 50000 && abs(normal.y) > 0.5 && abs(normal.y) < 0.8) { // End Crystal
+                UpdateEndCrystalMap(position.xyz);
+            }
+        #endif
+        #if END_CRYSTAL_VORTEX_INTERNAL / 2 == 1
+            if (entityId == 50200) { // end crystal beam
+                UpdateBeamMap(position.xyz);
+            }
+        #endif
+    #endif
+    #if END_CRYSTAL_VORTEX_INTERNAL / 2 == 1 || DRAGON_DEATH_EFFECT_INTERNAL > 0
+        if (entityId == 50204) { // ender dragon
+            UpdateDragonPos(position.xyz);
+        }
+
+        #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0 && WORLD_SPACE_PLAYER_REF == 1
+            UpdatePlayerVertexList(position.xyz);
+        #endif
     #endif
 
     gl_Position = shadowProjection * shadowModelView * position;
+
+    #if DRAGON_DEATH_EFFECT_INTERNAL > 0
+        #if MC_VERSION >= 12100
+            #define VALUE == 1.0
+        #else
+            #define VALUE < 0.5
+        #endif
+        if (entityId == 0 && gl_Color.a VALUE && renderStage == MC_RENDER_STAGE_ENTITIES && abs(normal.y) > 0.999 && abs(normal.y) < 1.0) {
+            gl_Position = vec4(0);
+            #ifndef IRIS_TAG_SUPPORT
+                SetEndDragonDeath();
+            #endif
+        }
+    #endif
 
     float lVertexPos = sqrt(gl_Position.x * gl_Position.x + gl_Position.y * gl_Position.y);
     float distortFactor = lVertexPos * shadowMapBias + (1.0 - shadowMapBias);

@@ -1,4 +1,7 @@
-const float packSizeNT = 64.0;
+#define ENTITY_GN_AND_CT
+#define COATED_TEXTURE_MULT 100 //[25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 110 120 130 140 150 160 170 180 190 200]
+#define COATED_TEXTURE_RES 64 //[16 32 64 80 96 112 128 144 160 176 192 208 224 240 256 320 384 448 512]
+const float packSizeNT = COATED_TEXTURE_RES;
 
 void CoatTextures(inout vec3 color, float noiseFactor, vec3 playerPos, bool doTileRandomisation) {
     #ifndef ENTITY_GN_AND_CT

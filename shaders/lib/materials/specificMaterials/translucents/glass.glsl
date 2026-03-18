@@ -5,7 +5,7 @@ if (min(color.a, texture2DLod(tex, texCoord, 0).a) > 0.001) {
 
     translucentMultCalculated = true;
     translucentMult = vec4(0.0, 0.0, 0.0, 1.0);
-} 
+}
 
 #ifdef FANCY_GLASS
     else {

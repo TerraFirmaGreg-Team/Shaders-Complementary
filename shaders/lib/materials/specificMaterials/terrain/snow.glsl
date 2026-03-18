@@ -10,3 +10,8 @@ smoothnessD = smoothnessG;
 #if RAIN_PUDDLES >= 1
     noPuddles = 1.0;
 #endif
+
+#ifdef SSS_SNOW_ICE
+    subsurfaceMode = 3, noSmoothLighting = true, noDirectionalShading = true;
+    color.rgb *= mix(vec3(1), vec3(0.76, 0.8, 0.84), sunVisibility);
+#endif

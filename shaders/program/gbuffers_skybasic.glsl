@@ -1,9 +1,19 @@
-/////////////////////////////////////
-// Complementary Shaders by EminGT //
-/////////////////////////////////////
+#include "/lib/shaderSettings/enhancedCelestials.glsl"
+#include "/lib/shaderSettings/doomAndGloomFog.glsl"
+//////////////////////////////////////////
+// Complementary Shaders by EminGT      //
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
 
 //Common//
 #include "/lib/common.glsl"
+#include "/lib/shaderSettings/tonemaps.glsl"
+#include "/lib/shaderSettings/stars.glsl"
+//#define SECRET_CAELUM_SUPPORT_SETTING
+
+#if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
+    #include "/lib/misc/distortWorld.glsl"
+#endif
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -27,6 +37,22 @@ float shadowTimeVar1 = abs(sunVisibility - 0.5) * 2.0;
 float shadowTimeVar2 = shadowTimeVar1 * shadowTimeVar1;
 float shadowTime = shadowTimeVar2 * shadowTimeVar2;
 
+const int DoCompTonemap = 0;
+const int DoBSLTonemap = 1;
+const int ACESTonemap = 2;
+const int ACESRedModified = 3;
+const int BurgessTonemap = 4;
+const int LottesTonemap = 5;
+const int Uncharted2 = 6;
+const int uncharted2_tonemap_partial = 7;
+const int uncharted2_filmic = 8;
+const int reinhard2 = 9;
+const int filmic = 10;
+const int GTTonemap = 11;
+const int uchimura = 12;
+const int agxTonemap = 13;
+const int unreal = 14;
+
 //Common Functions//
 
 //Includes//
@@ -35,6 +61,7 @@ float shadowTime = shadowTimeVar2 * shadowTimeVar2;
 #ifdef OVERWORLD
     #include "/lib/atmospherics/sky.glsl"
     #include "/lib/atmospherics/stars.glsl"
+    #include "/lib/atmospherics/shootingStars.glsl"
 #endif
 
 #ifdef CAVE_FOG
@@ -59,6 +86,7 @@ float shadowTime = shadowTimeVar2 * shadowTimeVar2;
 //Program//
 void main() {
     vec4 color = vec4(glColor.rgb, 1.0);
+    float alphaColor = glColor.a;
 
     #ifdef OVERWORLD
         if (vanillaStars > 0.5) {
@@ -81,6 +109,9 @@ void main() {
         float dither = Bayer8(gl_FragCoord.xy);
 
         color.rgb = GetSky(VdotU, VdotS, dither, true, false);
+        #ifdef SECRET_CAELUM_SUPPORT_SETTING
+        if (alphaColor < 1.0 && alphaColor > 0.0) color.rgb = glColor.rgb * alphaColor;
+        #endif
 
         #ifdef ATM_COLOR_MULTS
             color.rgb *= GetAtmColorMult();
@@ -90,7 +121,25 @@ void main() {
         #endif
 
         vec2 starCoord = GetStarCoord(viewPos.xyz, 0.5);
-        color.rgb += GetStars(starCoord, VdotU, VdotS);
+        #if STAR_BRIGHTNESS != 3
+            vec3 starColor = GetStars(starCoord, VdotU, VdotS, 1.0, 0.0);
+
+            #define ADD_STAR_LAYER_OW1 (STAR_LAYER_OW == 1 || STAR_LAYER_OW == 3)
+            #define ADD_STAR_LAYER_OW2 (STAR_LAYER_OW == 2 || STAR_LAYER_OW == 3)
+
+            #if ADD_STAR_LAYER_OW1
+                starColor = max(starColor, GetStars(starCoord, VdotU, VdotS, 0.66, 0.0));
+            #endif
+
+            #if ADD_STAR_LAYER_OW2
+                starColor = max(starColor, GetStars(starCoord, VdotU, VdotS, 2.2, 0.45));
+            #endif
+
+            color.rgb += starColor;
+            #ifdef SHOOTING_STARS
+                color.rgb += GetShootingStars(starCoord, VdotU, VdotS);
+            #endif
+        #endif
 
         #if SUN_MOON_STYLE >= 2
             float absVdotS = abs(VdotS);
@@ -107,6 +156,12 @@ void main() {
                 float moonPhaseFactor1 = 2.2;
                 float moonPhaseFactor2 = 1000.0;
             #endif
+            #ifdef MOD_ENHANCEDCELESTIALS
+                sunSizeFactor1 = cos(sqrt(moonSizeSmooth / 20) * acos(sunSizeFactor1));
+                sunSizeFactor2 /= sqrt(moonSizeSmooth / 20);
+                moonPhaseFactor1 *= pow(moonSizeSmooth / 20, 0.2);
+                moonPhaseFactor2 /= (moonSizeSmooth / 20);
+            #endif            
             if (absVdotS > sunSizeFactor1) {
                 float sunMoonMixer = sqrt1(sunSizeFactor2 * (absVdotS - sunSizeFactor1));
 
@@ -122,8 +177,17 @@ void main() {
                     #ifdef CAVE_FOG
                         sunMoonMixer *= 1.0 - 0.65 * GetCaveFactor();
                     #endif
-
-                    color.rgb = mix(color.rgb, vec3(0.9, 0.5, 0.3) * 25.0, sunMoonMixer);
+                    float sunBrightness = 25.0;
+                    if (tonemap == ACESTonemap) color.rgb = mix(color.rgb, vec3(1.0, 0.698, 0.5451) * sunBrightness, sunMoonMixer);
+                    else
+                    #if DOOM_AND_GLOOM_FOG == 1
+                        sunMoonMixer = pow(sunMoonMixer * 0.3, 0.2);
+                        sunBrightness *= FOG_UNBOUND_SUN_BRIGHTNESS;
+                    #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
+                        sunMoonMixer = pow(sunMoonMixer * (1.0 - 0.7 * doomAndGloomFog), 0.2);
+                        sunBrightness *= mix(1.0, FOG_UNBOUND_SUN_BRIGHTNESS, doomAndGloomFog);
+                    #endif                    
+                    color.rgb = mix(color.rgb, vec3(0.9, 0.5, 0.3) * sunBrightness, sunMoonMixer);
                 } else {
                     float horizonFactor = GetHorizonFactor(-SdotU);
                     sunMoonMixer = max0(sunMoonMixer - 0.25) * 1.33333 * horizonFactor;
@@ -133,7 +197,12 @@ void main() {
                                     + texture2DLod(noisetex, starCoord * 2.5, 0.0).g * 0.7
                                     + texture2DLod(noisetex, starCoord * 5.0, 0.0).g * 0.5;
                     moonNoise = max0(moonNoise - 0.75) * 1.7;
-                    vec3 moonColor = vec3(0.38, 0.4, 0.5) * (1.2 - (0.2 + 0.2 * sqrt1(nightFactor)) * moonNoise);
+                    vec3 moonColor = vec3(0.38, 0.4, 0.5);
+                    #if BLOOD_MOON > 0
+                        moonColor = mix(moonColor, vec3(0.4588, 0.149, 0.149) * 1.5, getBloodMoon(sunVisibility));
+                    #endif
+                    moonColor *= (1.2 - (0.2 + 0.2 * sqrt1(nightFactor)) * moonNoise);
+                    moonColor *= saturateColors(moonColorSmooth, LUNAR_EVENT_MOON_SATURATION);
 
                     if (moonPhase >= 1) {
                         float moonPhaseOffset = 0.0;
@@ -159,7 +228,17 @@ void main() {
                         sunMoonMixer *= 1.0 - 0.5 * GetCaveFactor();
                     #endif
 
+                    #if DOOM_AND_GLOOM_FOG == 1
+                        moonColor *= mix(vec3(1.0), vec3(0.15, 0.2, 0.35), 0.3);
+                    #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
+                        moonColor *= mix(vec3(1.0), vec3(0.15, 0.2, 0.35), 0.3 * doomAndGloomFog);
+                    #endif                    
                     color.rgb = mix(color.rgb, moonColor, sunMoonMixer);
+                    #if DOOM_AND_GLOOM_FOG == 1
+                        color.rgb = mix(color.rgb, vec3(0.5), pow2(acos(absVdotS) / acos(sunSizeFactor1)));
+                    #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
+                        color.rgb = mix(color.rgb, vec3(0.5), doomAndGloomFog * pow2(acos(absVdotS) / acos(sunSizeFactor1)));
+                    #endif
                 }
             }
         #endif
@@ -190,11 +269,20 @@ flat out vec4 glColor;
 
 //Attributes//
 
+#ifdef WAVE_EVERYTHING
+    attribute vec4 mc_midTexCoord;
+    vec2 lmCoord = GetLightMapCoordinates();
+#endif
+
 //Common Variables//
 
 //Common Functions//
 
 //Includes//
+
+#ifdef WAVE_EVERYTHING
+    #include "/lib/materials/materialMethods/wavingBlocks.glsl"
+#endif
 
 //Program//
 void main() {
@@ -206,9 +294,31 @@ void main() {
     sunVec = GetSunVector();
 
     #ifdef OVERWORLD
-        //Vanilla Star Dedection by Builderb0y
-        vanillaStars = float(glColor.r == glColor.g && glColor.g == glColor.b && glColor.r > 0.0 && glColor.r < 0.51);
+        vanillaStars = 0.0;
+        #if MC_VERSION >= 11605 || defined IS_ANGELICA
+            if (renderStage == MC_RENDER_STAGE_STARS) {
+                vanillaStars = 1.0;
+            }
+        #else
+            //Vanilla Star Dedection by Builderb0y
+            vanillaStars = float(glColor.r == glColor.g && glColor.g == glColor.b && glColor.r > 0.0 && glColor.r < 0.51);
+        #endif
+    #endif
+
+    #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE || defined WAVE_EVERYTHING
+        vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
+        #ifdef MIRROR_DIMENSION
+            doMirrorDimension(position);
+        #endif
+        #ifdef WORLD_CURVATURE
+            position.y += doWorldCurvature(position.xz);
+        #endif
+        #ifdef WAVE_EVERYTHING
+            DoWaveEverything(position.xyz);
+        #endif
+        gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
     #endif
 }
 
 #endif
+                                        

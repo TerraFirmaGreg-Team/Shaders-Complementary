@@ -12,6 +12,7 @@ lmCoordM = vec2(1.0, 0.0);
 #else
     float value = 0.3;
 #endif
+color.rgb = pow(color.rgb, vec3(FROGLIGHT_SATURATION));
 emission = 0.3 + value + pow(dot(color.rgb, color.rgb) * 0.33, frogPow);
 emission *= 1.7;
 

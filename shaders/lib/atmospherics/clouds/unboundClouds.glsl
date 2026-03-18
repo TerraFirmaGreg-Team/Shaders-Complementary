@@ -1,14 +1,32 @@
-#if CLOUD_QUALITY == 1 || !defined DEFERRED1
-    const float cloudStretchRaw = 11.0;
-#elif CLOUD_QUALITY == 2
-    const float cloudStretchRaw = 16.0;
-#elif CLOUD_QUALITY == 3
-    const float cloudStretchRaw = 18.0;
+#include "/lib/shaderSettings/cloudsAndLighting.glsl"
+const float cloudStretchModified = max(0.25, float(CLOUD_STRETCH) * 1.9 - 0.9);
+#if CLOUD_QUALITY_INTERNAL == 1 || !defined DEFERRED1
+    const float cloudStretchRaw = 11.0 * cloudStretchModified;
+#elif CLOUD_QUALITY_INTERNAL == 2
+    const float cloudStretchRaw = 16.0 * cloudStretchModified;
+#elif CLOUD_QUALITY_INTERNAL == 3
+    const float cloudStretchRaw = 18.0 * cloudStretchModified;
+#elif CLOUD_QUALITY_INTERNAL == 4
+    const float cloudStretchRaw = 20.0 * cloudStretchModified;
 #endif
-#if CLOUD_UNBOUND_SIZE_MULT <= 100
-    const float cloudStretch = cloudStretchRaw;
+
+#ifdef DOUBLE_UNBOUND_CLOUDS
+    const float L2cloudStretch = cloudStretchRaw * CLOUD_UNBOUND_LAYER2_HEIGHT / CLOUD_STRETCH;
+
+    #if CLOUD_UNBOUND_SIZE_MULT <= 100
+        float cloudStretch = cloudStretchRaw;
+    #else
+        float cloudStretch = cloudStretchRaw / float(CLOUD_UNBOUND_SIZE_MULT_M);
+    #endif
+
+    float cloudTallness = cloudStretch * 2.0;
 #else
-    const float cloudStretch = cloudStretchRaw / float(CLOUD_UNBOUND_SIZE_MULT_M);
+    #if CLOUD_UNBOUND_SIZE_MULT <= 100
+        const float cloudStretch = cloudStretchRaw;
+    #else
+        const float cloudStretch = cloudStretchRaw / float(CLOUD_UNBOUND_SIZE_MULT_M);
+    #endif
+    const float cloudTallness = cloudStretch * 2.0;
 #endif
 
 #if CLOUD_QUALITY > 1
@@ -17,7 +35,6 @@
     const float cloudNarrowness = 0.00006;
 #endif
 
-const float cloudTallness = cloudStretch * 2.0;
 
 float GetCloudNoise(vec3 tracePos, int cloudAltitude, float lTracePosXZ, float cloudPlayerPosY) {
     vec3 tracePosM = tracePos.xyz * cloudNarrowness;
@@ -33,35 +50,62 @@ float GetCloudNoise(vec3 tracePos, int cloudAltitude, float lTracePosXZ, float c
         #define CLOUD_SPEED_MULT_M CLOUD_SPEED_MULT * 0.01
         wind *= frameTimeCounter * CLOUD_SPEED_MULT_M;
     #endif
+
     #if CLOUD_UNBOUND_SIZE_MULT != 100
         tracePosM *= CLOUD_UNBOUND_SIZE_MULT_M;
         wind *= CLOUD_UNBOUND_SIZE_MULT_M;
     #endif
 
-    #if CLOUD_QUALITY == 1
+    #ifdef DOUBLE_UNBOUND_CLOUDS
+        if (cloudAltitude != cloudAlt1i) {
+            tracePosM *= CLOUD_UNBOUND_LAYER2_SIZE * 10.0 / CLOUD_UNBOUND_SIZE_MULT;
+            wind *= CLOUD_UNBOUND_LAYER2_SIZE * 30.0 * CLOUD_LAYER2_SPEED_MULT / CLOUD_UNBOUND_SIZE_MULT;
+        }
+    #endif
+
+    #if CLOUD_QUALITY_INTERNAL == 1
         int sampleCount = 2;
         float persistance = 0.6;
         float noiseMult = 0.95;
         wind *= 0.5;
-    #elif CLOUD_QUALITY == 2 || !defined DEFERRED1
+    #elif CLOUD_QUALITY_INTERNAL == 2 || !defined DEFERRED1
         int sampleCount = 4;
         float persistance = 0.5;
         float noiseMult = 1.14;
-    #elif CLOUD_QUALITY == 3
+    #elif CLOUD_QUALITY_INTERNAL == 3
         int sampleCount = 4;
         float persistance = 0.5;
         float noiseMult = 1.0;
+    #elif CLOUD_QUALITY_INTERNAL == 4
+        int sampleCount = 5;
+        float persistance = 0.5;
+        float noiseMult = 1.05;
     #endif
 
     #ifndef DEFERRED1
         noiseMult *= 1.2;
     #endif
 
+    vec3 totalDistortion = vec3(0.0);
+    #if defined DOUBLE_UNBOUND_CLOUDS && defined CIRRUS_CLOUDS
+        if (cloudAltitude != cloudAlt1i) {  // checking for 2nd layer
+            #if CLOUD_QUALITY_INTERNAL >= 2
+                totalDistortion = fbm3d_3d(CIRRUS_DISTORTION_SCALE * (tracePosM + vec3(wind, 0.0, 0.0)), 3);
+            #else
+                totalDistortion.xz = fbm2d_2d(CIRRUS_DISTORTION_SCALE * (tracePosM.xz + vec2(wind, 0.0)), 3);
+            #endif
+            totalDistortion *= CIRRUS_DISTORTION_INTENSITY * 0.05;
+        }
+    #endif    
+    #if CLOUD_DIRECTION == 1
+        tracePosM.xz = tracePosM.zx;
+    #endif
+
     for (int i = 0; i < sampleCount; i++) {
-        #if CLOUD_QUALITY >= 2
-            noise += Noise3D(tracePosM - vec3(0.0, 0.0, wind)) * currentPersist;
+        #if CLOUD_QUALITY_INTERNAL >= 2
+            noise += Noise3D(tracePosM - vec3(0.0, 0.0, wind) + pow(1 + i, CIRRUS_DISTORTION_INTENSITY_2) * totalDistortion) * currentPersist;
         #else
-            noise += texture2DLod(noisetex, tracePosM.xz - vec2(0.0, wind), 0.0).b * currentPersist;
+            noise += texture2DLod(noisetex, tracePosM.xz - vec2(0.0, wind) + pow(1 + i, CIRRUS_DISTORTION_INTENSITY_2) * totalDistortion.xz, 0.0).b * currentPersist;
         #endif
         total += currentPersist;
 
@@ -75,19 +119,53 @@ float GetCloudNoise(vec3 tracePos, int cloudAltitude, float lTracePosXZ, float c
     //#define CLOUD_FAR_ADD -0.005
     #define CLOUD_ABOVE_ADD 0.1
 
+    float nightCloudRemove = NIGHT_CLOUD_UNBOUND_REMOVE * (1.0 - sunVisibility) * -0.65 + 1.0; // mapped to 1 to 0.65 range
+
+    float seasonCloudAdd = 0.0;
+    #if SEASONS > 0
+        float autumnOnlyForests = 1.0;
+        #ifdef AUTUMN_CONDITION
+            autumnOnlyForests = inForest;
+        #endif
+        float autumnWinterTime = autumnTime + winterTime;
+        #if SNOW_CONDITION != 2
+            autumnWinterTime *= mix(inSnowy + autumnOnlyForests, inSnowy, winterTime); // make only appear in cold biomes during winter
+        #endif
+        #if SNOW_CONDITION == 0
+            autumnWinterTime *= mix(rainFactor + autumnOnlyForests, rainFactor, winterTime); // make only appear in rain during winter
+        #endif
+        seasonCloudAdd += mix(0.0, 0.35, autumnWinterTime);
+        seasonCloudAdd += mix(0.0, -0.2, summerTime);
+    #endif
+
     noiseMult *= CLOUD_BASE_ADD
                 //+ CLOUD_FAR_ADD * sqrt(lTracePosXZ + 10.0) // more/less clouds far away
                 + CLOUD_ABOVE_ADD * clamp01(-cloudPlayerPosY / cloudTallness) // more clouds when camera is above them
-                + CLOUD_UNBOUND_RAIN_ADD * rainFactor; // more clouds during rain
-    noise *= noiseMult * CLOUD_UNBOUND_AMOUNT;
+                + CLOUD_UNBOUND_RAIN_ADD * rainFactor + seasonCloudAdd; // more clouds during rain and seasons
+
+    #ifdef DOUBLE_UNBOUND_CLOUDS
+    if (cloudAltitude != cloudAlt1i)
+        noise *= noiseMult * CLOUD_UNBOUND_LAYER2_AMOUNT * nightCloudRemove;
+    else
+    #endif
+    noise *= noiseMult * CLOUD_UNBOUND_AMOUNT * nightCloudRemove;
 
     float threshold = clamp(abs(cloudAltitude - tracePos.y) / cloudStretch, 0.001, 0.999);
     threshold = pow2(pow2(pow2(threshold)));
     return noise - (threshold * 0.2 + 0.25);
 }
 
-vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float cloudLinearDepth, float skyFade, float skyMult0, vec3 cameraPos, vec3 nPlayerPos, float lViewPosM, float VdotS, float VdotU, float dither) {
+vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float cloudLinearDepth, float skyFade, float skyMult0, vec3 cameraPos, vec3 nPlayerPos, float lViewPosM, float VdotS, float VdotU, float dither, vec3 sunVec, vec3 viewPos) {
     vec4 volumetricClouds = vec4(0.0);
+
+    #ifdef DOUBLE_UNBOUND_CLOUDS
+    float L1cloudStretch = cloudStretch;
+
+    if (cloudAltitude != cloudAlt1i) { // second layer
+        cloudStretch = L2cloudStretch;
+        cloudTallness = 2.0 * cloudStretch;
+    }
+    #endif
 
     float higherPlaneAltitude = cloudAltitude + cloudStretch;
     float lowerPlaneAltitude  = cloudAltitude - cloudStretch;
@@ -102,16 +180,33 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
 
     #ifndef DEFERRED1
         float stepMult = 64.0;
-    #elif CLOUD_QUALITY == 1
+    #elif CLOUD_QUALITY_INTERNAL == 1
         float stepMult = 16.0;
-    #elif CLOUD_QUALITY == 2
+    #elif CLOUD_QUALITY_INTERNAL == 2
         float stepMult = 32.0;
-    #elif CLOUD_QUALITY == 3
+    #elif CLOUD_QUALITY_INTERNAL == 3
         float stepMult = 16.0;
+    #elif CLOUD_QUALITY_INTERNAL == 4
+        float stepMult = 24.0;
     #endif
+
+    #if defined DOUBLE_UNBOUND_CLOUDS && (CLOUD_UNBOUND_LAYER2_SIZE > 10 || CLOUD_UNBOUND_SIZE_MULT > 100)
+        if (cloudAltitude != cloudAlt1i) {
+        #if CLOUD_UNBOUND_LAYER2_SIZE > 10
+            stepMult = stepMult / sqrt(CLOUD_UNBOUND_LAYER2_SIZE * 0.1);
+        #endif
+        } else {
+        #if CLOUD_UNBOUND_SIZE_MULT > 100
+            stepMult = stepMult / sqrt(float(CLOUD_UNBOUND_SIZE_MULT_M));
+        #endif
+        }
+
+    #else
 
     #if CLOUD_UNBOUND_SIZE_MULT > 100
         stepMult = stepMult / sqrt(float(CLOUD_UNBOUND_SIZE_MULT_M));
+    #endif
+
     #endif
 
     int sampleCount = int(planeDistanceDif / stepMult + dither + 1);
@@ -129,6 +224,11 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
 
     #ifdef FIX_AMD_REFLECTION_CRASH
         sampleCount = min(sampleCount, 30); //BFARC
+    #endif
+
+    #ifdef AURORA_INFLUENCE
+        cloudLightColor = getAuroraAmbientColor(cloudLightColor, viewPos, 0.06, AURORA_CLOUD_INFLUENCE_INTENSITY, 0.75);
+        cloudAmbientColor = getAuroraAmbientColor(cloudAmbientColor, viewPos, 0.03, AURORA_CLOUD_INFLUENCE_INTENSITY, 0.75);
     #endif
 
     for (int i = 0; i < sampleCount; i++) {
@@ -149,6 +249,23 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
         float cloudNoise = GetCloudNoise(tracePos, cloudAltitude, lTracePosXZ, cloudPlayerPos.y);
 
         if (cloudNoise > 0.00001) {
+            #if defined DOUBLE_UNBOUND_CLOUDS
+            //Fixes overlapping clouds
+
+            if (CLOUD_UNBOUND_LAYER2_HEIGHT > CLOUD_STRETCH){
+                if (cloudAltitude == cloudAlt1i) {
+                    if (abs(tracePos.y - cloudAlt2i) < L2cloudStretch)
+                        continue;
+                }
+            } else {
+                if (cloudAltitude != cloudAlt1i) {
+                    if (abs(tracePos.y - cloudAlt1i) < L1cloudStretch)
+                        continue;
+                }
+            }
+
+            #endif
+
             #if defined CLOUD_CLOSED_AREA_CHECK && SHADOW_QUALITY > -1
                 float shadowLength = shadowDistance * 0.9166667; //consistent08JJ622
                 if (shadowLength < lTracePos)
@@ -159,18 +276,86 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
 
             if (firstHitPos < 1.0) {
                 firstHitPos = lTracePos;
-                #if CLOUD_QUALITY == 1 && defined DEFERRED1
+                #if CLOUD_QUALITY_INTERNAL == 1 && defined DEFERRED1
                     tracePos.y += 4.0 * (texture2DLod(noisetex, tracePos.xz * cloudNarrowness * 16.0, 0.0).r - 0.5);
                 #endif
             }
 
-            float opacityFactor = min1(cloudNoise * 8.0);
+            #if defined DOUBLE_UNBOUND_CLOUDS && CLOUD_UNBOUND_LAYER2_TRANSPARENCY != 20
+                float opacityFactor = cloudAltitude != cloudAlt1i
+                    ? min1(cloudNoise * 8.0) * (CLOUD_UNBOUND_LAYER2_TRANSPARENCY * 0.05)
+                    : min1(cloudNoise * 8.0) * CLOUD_TRANSPARENCY;
+            #else
+                float opacityFactor = min1(cloudNoise * 8.0) * CLOUD_TRANSPARENCY;
+            #endif
 
-            float cloudShading = 1.0 - (higherPlaneAltitude - tracePos.y) / cloudTallness;
+            #ifdef INVERTED_CLOUD_SHADING
+                float cloudShading = (higherPlaneAltitude - tracePos.y) / cloudTallness;
+            #else
+                float cloudShading = 1.0 - (higherPlaneAltitude - tracePos.y) / cloudTallness;
+            #endif
+
             cloudShading *= 1.0 + 0.2 * VdotSM3 * (1.0 - opacityFactor) + VdotSM4;
+            #if CLOUD_SHADING_AMOUNT != 10
+                cloudShading = pow(max0(cloudShading), CLOUD_SHADING_AMOUNT * 0.1);
+            #endif
+
+            #ifdef AURORA_INFLUENCE
+                cloudLightColor = getAuroraAmbientColor(cloudLightColor, viewPos, 0.1, AURORA_CLOUD_INFLUENCE_INTENSITY, 0.75);
+            #endif
+
+            #if CLOUD_SUN_MOON_SHADING > 0
+                float visibilityFactor = 1.0;
+                #if CLOUD_SUN_MOON_SHADING == 1
+                    visibilityFactor = 1.0 - sunVisibility;
+                #elif CLOUD_SUN_MOON_SHADING == 2
+                    visibilityFactor = sunVisibility;
+                #endif
+
+                if (visibilityFactor > 0.0) {
+                    vec3 worldLightVec = mat3(gbufferModelViewInverse) * sunVec;
+                    float cloudLightRadius = 375.0;
+
+                    float aboveFade = clamp01(1.0 - (cameraPos.y - cloudAltitude) / (cloudTallness * 3.0));
+                    float radiusFactor = mix(cloudLightRadius * 8.0, cloudLightRadius, aboveFade);
+                    float moonVisibility = abs(1.0 - moonPhase / 4.0);
+                    float sunMult = mix(moonVisibility, 0.85, sunVisibility);
+
+                    float sunPlaneIntersect = (cloudAltitude - cameraPos.y) / worldLightVec.y;
+                    vec2 posVector = cameraPos.xz + worldLightVec.xz * sunPlaneIntersect - tracePos.xz;
+                    float falloff = exp((1.0 - max0(1.0 - length(posVector) / radiusFactor)) * -6.0) * aboveFade * sunMult;
+
+                    float sunShadingFactor = clamp01(falloff * mix(1.0, 2.0, aboveFade) * mix(1.0, (lTracePos - minPlaneDistance) / (maxPlaneDistance - minPlaneDistance), 0.75));
+
+                    vec3 bloodMoonCloudColor = vec3(1.0);
+                    #if BLOOD_MOON > 0
+                        bloodMoonCloudColor = mix(bloodMoonCloudColor, vec3(0.302, 0.0078, 0.0078) * 5, getBloodMoon(sunVisibility));
+                    #endif
+
+                    cloudLightColor += bloodMoonCloudColor * sunShadingFactor * 0.3 * visibilityFactor;
+                    cloudShading += sunShadingFactor * 0.45 * visibilityFactor;
+                }
+            #endif
+
+            #if BLOOD_MOON > 0
+                vec3 hsvCloudLightColor = rgb2hsv(cloudLightColor);
+                cloudLightColor = mix(cloudLightColor, hsv2rgb(vec3(0, max(0.66, hsvCloudLightColor.y), hsvCloudLightColor.z)), getBloodMoon(sunVisibility));
+            #endif
 
             vec3 colorSample = cloudAmbientColor * (0.4 + 0.6 * cloudShading) + cloudLightColor * cloudShading;
             //vec3 colorSample = 2.5 * cloudLightColor * pow2(cloudShading); // <-- Used this to take the Unbound logo
+
+            #ifdef RAIN_ATMOSPHERE
+                // Lightning flashes around lightning bolt position
+                vec3 lightningPos = getLightningPos(tracePos - cameraPos, lightningBoltPosition.xyz, false);
+                vec2 lightningAdd = lightningFlashEffect(lightningPos, vec3(1.0), 550.0, 0.0, 0) * isLightningActive() * 10.0;
+                colorSample += lightningAdd.y;
+
+                // Thunderstorm cloud highlights (randomly appear in stormy weather)
+                float highlightBoost = getThunderstormCloudHighlights(tracePos, cameraPos.xz, lTracePos, minPlaneDistance, maxPlaneDistance, 0.004);
+                colorSample += highlightBoost;
+            #endif
+
             vec3 cloudSkyColor = GetSky(VdotU, VdotS, dither, isEyeInWater == 0, false);
             #ifdef ATM_COLOR_MULTS
                 cloudSkyColor *= sqrtAtmColorMult; // C72380KD - Reduced atmColorMult impact on some things
@@ -193,7 +378,10 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
         }
     }
 
-    if (volumetricClouds.a > 0.5) cloudLinearDepth = sqrt(firstHitPos / renderDistance);
+    #ifndef DOUBLE_UNBOUND_CLOUDS
+    if (volumetricClouds.a > 0.5)
+    #endif
+    { cloudLinearDepth = sqrt(firstHitPos / renderDistance); }
 
     return volumetricClouds;
 }

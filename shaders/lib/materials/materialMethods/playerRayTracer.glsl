@@ -27,7 +27,7 @@ bool intersectsParallelogram(vec3 ro, vec3 rd, vec3 v0, vec3 v1, vec3 v2, float 
     return true;
 }
 
-void CheckQuadAt(int i, vec3 playerPos, vec3 rayDir, inout vec3 albedo, inout float tMin, inout vec3 normal) {
+void CheckQuadAt(int i, vec3 playerPos, vec3 rayDir, inout vec3 albedo, inout float tMin, inout vec3 normal, inout float emissionOut) {
     int i0 = 3 * i, i1 = 3 * i + 1, i2 = 3 * i + 2;
 
     vec3 v0 = playerVerticesSSBO.vertexPositions[i0];
@@ -36,6 +36,11 @@ void CheckQuadAt(int i, vec3 playerPos, vec3 rayDir, inout vec3 albedo, inout fl
 
     float t;
     vec2 uv;
+
+    vec3 colorP;
+    vec3 color;
+    float emission = 0.0;
+    float smoothnessD, smoothnessG;
     if (intersectsParallelogram(playerPos, rayDir, v0, v1, v2, tMin, t, uv, normal)) {
         vec2 texCoord0 = playerVerticesSSBO.vertexData[i0];
         vec2 texCoord1 = playerVerticesSSBO.vertexData[i1];
@@ -44,50 +49,56 @@ void CheckQuadAt(int i, vec3 playerPos, vec3 rayDir, inout vec3 albedo, inout fl
         vec2 quadTexCoord = mix(texCoord0, texCoord1, uv.x) + uv.y * (texCoord2 - texCoord1);
         vec4 playerAtlasSample = texelFetch(playerAtlas_sampler, ivec2(64 * quadTexCoord), 0);
 
-        if (playerAtlasSample.a > 0.2) {albedo = playerAtlasSample.rgb; tMin = t;}
+        vec3 colorP = playerAtlasSample.rgb;
+        vec3 color = playerAtlasSample.rgb;
+
+        #ifdef SPACEAGLE17
+            #include "/lib/materials/specificMaterials/others/SpacEagle17.glsl"
+        #endif
+        if (playerAtlasSample.a > 0.2) {albedo = color * (emission * 0.2 + 1.0); tMin = t; emissionOut = emission;}
     }
 }
 
-bool rayTracePlayer(vec3 playerPos, vec3 rayDir, float wsrTraceLength, out vec3 albedo, out vec3 normal) {
+bool rayTracePlayer(vec3 playerPos, vec3 rayDir, float wsrTraceLength, out vec3 albedo, out vec3 normal, out float emission) {
     float tMin = wsrTraceLength;
     vec3 aabbPos = playerPos * 1000.0;
 
     // Head
     if (intersectsAABB(aabbPos, rayDir, playerVerticesSSBO.bounds.headMin, playerVerticesSSBO.bounds.headMax)) {
         for (int i = 0; i < 12; i++) {
-            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal);
+            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal, emission);
         }
     }
     // Right Hand
     if (intersectsAABB(aabbPos, rayDir, playerVerticesSSBO.bounds.rightHandMin, playerVerticesSSBO.bounds.rightHandMax)) {
         for (int i = 12; i < 24; i++) {
-            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal);
+            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal, emission);
         }
     }
     // Left Leg
     if (intersectsAABB(aabbPos, rayDir, playerVerticesSSBO.bounds.leftLegMin, playerVerticesSSBO.bounds.leftLegMax)) {
         for (int i = 24; i < 36; i++) {
-            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal);
+            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal, emission);
         }
     }
     // Left Hand
     if (intersectsAABB(aabbPos, rayDir, playerVerticesSSBO.bounds.leftHandMin, playerVerticesSSBO.bounds.leftHandMax)) {
         for (int i = 36; i < 48; i++) {
-            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal);
+            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal, emission);
         }
     }
     // Right leg
     if (intersectsAABB(aabbPos, rayDir, playerVerticesSSBO.bounds.rightLegMin, playerVerticesSSBO.bounds.rightLegMax)) {
         for (int i = 48; i < 60; i++) {
-            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal);
+            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal, emission);
         }
     }
     // Torso
     if (intersectsAABB(aabbPos, rayDir, playerVerticesSSBO.bounds.torsoMin, playerVerticesSSBO.bounds.torsoMax)) {
         for (int i = 60; i < 72; i++) {
-            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal);
+            CheckQuadAt(i, playerPos, rayDir, albedo, tMin, normal, emission);
         }
     }
-    
+
     return tMin < wsrTraceLength;
 }

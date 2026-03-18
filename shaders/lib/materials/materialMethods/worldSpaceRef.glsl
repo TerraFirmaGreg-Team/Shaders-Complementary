@@ -2,13 +2,18 @@
 
 #include "/lib/voxelization/reflectionVoxelization.glsl"
 #include "/lib/lighting/minimumLighting.glsl"
+#include "/lib/shaderSettings/mainLighting.glsl"
 
 #if WORLD_SPACE_PLAYER_REF == 1
     #include "/lib/materials/materialMethods/playerRayTracer.glsl"
 #endif
 
+#ifdef AURORA_INFLUENCE
+    #include "/lib/atmospherics/auroraBorealis.glsl"
+#endif
+
 #if defined OVERWORLD || defined END
-    #ifndef GBUFFERS_WATER 
+    #ifndef GBUFFERS_WATER
         #include "/lib/lighting/shadowSampling.glsl"
         #if defined DO_PIXELATION_EFFECTS && defined PIXELATED_SHADOWS
             #include "/lib/misc/pixelation.glsl"
@@ -70,9 +75,9 @@ float getVoxelSpaceAO(vec3 playerPos, ivec3 normal, vec2 localTexCoord) {
 vec4 getShadedReflection(ivec3 voxelPos, vec3 oldPlayerPos, vec3 playerPos, vec3 rayDir, vec3 normal, float dither) {
     faceData faceData = getFaceData(voxelPos, normal);
     if (faceData.textureBounds.z < 1e-6) return vec4(-1.0);
-     
+
     vec2 localTexCoord = getLocalTexCoord(fract(playerPos + cameraPositionBestFract), normal);
-    
+
     vec2 textureSizeAtlas = textureSize(textureAtlas, 0);
     vec2 textureRadVec2 = faceData.textureBounds.z * vec2(1.0, textureSizeAtlas.x / textureSizeAtlas.y);
     vec2 textureCoord = faceData.textureBounds.xy + 2.0 * textureRadVec2 * localTexCoord;
@@ -104,11 +109,14 @@ vec4 getShadedReflection(ivec3 voxelPos, vec3 oldPlayerPos, vec3 playerPos, vec3
 
     int mat = int(texelFetch(wsr_sampler, voxelPos, 0).r);
 
-    bool noSmoothLighting = false, noDirectionalShading = false;
+    bool noSmoothLighting = false, noDirectionalShading = false, isFoliage = false;
     int subsurfaceMode = 0;
     float emission = 0.0, NdotU = normal.y, NdotE = normal.x, snowMinNdotU = 0.0;
     vec2 lmCoordM = vec2(1.0);
     vec3 shadowMult = vec3(1.0), maRecolor = vec3(0.0);
+    float skyLightCheck = 0.0;
+    float overlayNoiseIntensity = 1.0, snowNoiseIntensity = 1.0, sandNoiseIntensity = 1.0, mossNoiseIntensity = 1.0, overlayNoiseTransparentOverwrite = 0.0, overlayNoiseEmission = 1.0, lavaNoiseIntensity = LAVA_NOISE_INTENSITY;
+    vec3 normalM = normal, geoNormal = normal;
     #ifdef IPBR
         float lViewPos = length(playerPos);
         vec4 glColor = vec4(faceData.glColor, 1.0);
@@ -119,7 +127,7 @@ vec4 getShadedReflection(ivec3 voxelPos, vec3 oldPlayerPos, vec3 playerPos, vec3
         float smoothnessD = 0.0, materialMask = 0.0;
         float smoothnessG = 0.0, highlightMult = 1.0, noiseFactor = 1.0, snowFactor = 1.0, noPuddles = 0.0;
         vec2 lmCoord = faceData.lightmap;
-        vec3 normalM = normal, geoNormal = normal;
+        float IPBRMult = 1.0;
 
         #define DURING_WORLDSPACE_REF
             #ifndef IPBR_COMPAT_MODE
@@ -129,7 +137,7 @@ vec4 getShadedReflection(ivec3 voxelPos, vec3 oldPlayerPos, vec3 playerPos, vec3
             #include "/lib/materials/materialHandling/terrainIPBR.glsl"
         #undef DURING_WORLDSPACE_REF
     #else
-        if (mat == 10009) { // Leaves
+        if (mat == 10007 || mat == 10009 || mat == 10011) { // Leaves
             #include "/lib/materials/specificMaterials/terrain/leaves.glsl"
         }
     #endif
@@ -144,14 +152,14 @@ vec4 getShadedReflection(ivec3 voxelPos, vec3 oldPlayerPos, vec3 playerPos, vec3
     #else
         float lightingNdotL = max0(NdotL);
     #endif
-    
+
     #ifndef NETHER
         vec3 shadow = shadowMult;
         if (lightingNdotL > 0.0001) {
             float shadowLength = shadowDistance * 0.9166667 - length(playerPos); //consistent08JJ622
             if (shadowLength > 0.000001) {
                 float distanceBias = 0.12 + 0.0008 * pow(dot(playerPos, playerPos), 0.75);
-                vec3 bias = normal * distanceBias * (2.0 - 0.95 * max0(NdotL));  
+                vec3 bias = normal * distanceBias * (2.0 - 0.95 * max0(NdotL));
 
                 #if SHADOW_QUALITY == 0
                     int shadowSamples = 0; // We don't use SampleTAAFilteredShadow on Shadow Quality 0
@@ -185,11 +193,15 @@ vec4 getShadedReflection(ivec3 voxelPos, vec3 oldPlayerPos, vec3 playerPos, vec3
     vec3 specialLighting = 0.8 * pow(GetLuminance(lightVolume.rgb), 0.25) * DoLuminanceCorrection(pow(lightVolume.rgb, vec3(0.3)));
     if (noSmoothLighting == true) specialLighting *= 0.6;
 
-    vec3 minLighting = 0.8 * sqrt(GetMinimumLighting(faceData.lightmap.y));
+    vec3 minLighting = 0.8 * sqrt(GetMinimumLighting(faceData.lightmap.y, playerPos));
 
     #if HELD_LIGHTING_MODE >= 1
-        vec3 heldLighting = GetHeldLighting(playerPos, color.rgb, emission);
+        vec3 heldLighting = GetHeldLighting(playerPos, color.rgb, emission, geoNormal, normalM, vec3(0));
         specialLighting = sqrt(pow2(specialLighting) + sqrt(heldLighting));
+    #endif
+
+    #ifdef AURORA_INFLUENCE
+        ambientColor = getAuroraAmbientColor(ambientColor, rayDir, 0.035, AURORA_TERRAIN_INFLUENCE_INTENSITY, 0.9);
     #endif
 
     #ifdef OVERWORLD
@@ -217,7 +229,7 @@ vec4 getShadedReflection(ivec3 voxelPos, vec3 oldPlayerPos, vec3 playerPos, vec3
     vec3 fadeout = smoothstep(0.0, 32.0, 0.5 * sceneVoxelVolumeSize - abs(playerPos));
     fadeout = sqrt3(fadeout) * 0.9 + 0.1;
     float alphaFade = min(fadeout.x, min(fadeout.y, fadeout.z));
-    
+
     return vec4(color.rgb * lighting + maRecolor, alphaFade);
 }
 
@@ -251,7 +263,7 @@ vec4 traceHighLOD(vec3 rayDir, vec3 stepDir, vec3 stepSizes, vec3 oldPlayerPos, 
             float skyFade = 0.0;
             float reflectionPrevAlpha = reflection.a;
 
-            DoFog(reflection, skyFade, length(intersection), intersection, RVdotU, RVdotS, dither, true, length(oldPlayerPos));
+            DoFog(reflection, skyFade, length(intersection), intersection, RVdotU, RVdotS, dither, true, length(oldPlayerPos), 0.0);
 
             reflection.a = reflectionPrevAlpha * (1.0 - skyFade);
 
@@ -321,8 +333,12 @@ vec4 getWSR(vec3 playerPos, vec3 normalMR, vec3 nViewPosR, float RVdotU, float R
                 float wsrTraceLength = length(wsrHitPos - playerPos);
                 vec3 albedo;
                 vec3 normal;
+                float emission;
 
-                if (rayTracePlayer(playerPos - 0.01 * rayDir, rayDir, wsrTraceLength, albedo, normal)) {
+                #ifdef SPACEAGLE17
+                if (isSneaking < 0.5 || !(heldItemId == 45014 || heldItemId2 == 45014))
+                #endif
+                if (rayTracePlayer(playerPos - 0.01 * rayDir, rayDir, wsrTraceLength, albedo, normal, emission)) {
                     vec2 lmCoord = eyeBrightness / 240.0;
 
                     #ifdef OVERWORLD
@@ -340,11 +356,12 @@ vec4 getWSR(vec3 playerPos, vec3 normalMR, vec3 nViewPosR, float RVdotU, float R
                     vec3 specialLighting = pow(GetLuminance(lightVolume.rgb), 0.25) * DoLuminanceCorrection(pow(lightVolume.rgb, vec3(0.25)));
 
                     #if HELD_LIGHTING_MODE >= 1
-                        vec3 heldLighting = GetHeldLighting(playerPos, vec3(999999.0), 0.0);
+                        float tempEmission;
+                        vec3 heldLighting = GetHeldLighting(playerPos, vec3(999999.0), tempEmission, vec3(0), vec3(0), vec3(0));
                         specialLighting = sqrt(pow2(specialLighting) + sqrt(heldLighting));
                     #endif
 
-                    vec3 minLighting = 0.8 * sqrt(GetMinimumLighting(lmCoord.y));
+                    vec3 minLighting = 0.8 * sqrt(GetMinimumLighting(lmCoord.y, playerPos));
 
                     vec3 sceneLighting = ambientMult * ambientColor + lightMult * lightColor;
                     #ifdef LIGHT_COLOR_MULTS
@@ -355,12 +372,12 @@ vec4 getWSR(vec3 playerPos, vec3 normalMR, vec3 nViewPosR, float RVdotU, float R
                         sceneLighting *= moonPhaseInfluence;
                     #endif
 
-                    vec3 lighting = sceneLighting + specialLighting * (1.0 - lmCoord.y * sunFactor) * XLIGHT_I + minLighting;
+                    vec3 lighting = sceneLighting + specialLighting * (1.0 - lmCoord.y * sunFactor) * XLIGHT_I + minLighting + emission;
 
                     vec3 fadeout = smoothstep(0.0, 32.0, 0.5 * sceneVoxelVolumeSize - abs(playerPos));
                     fadeout = sqrt3(fadeout) * 0.9 + 0.1;
                     float alphaFade = min(fadeout.x, min(fadeout.y, fadeout.z));
-                    
+
                     return vec4(albedo * lighting, alphaFade);
                 }
             }

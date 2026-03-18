@@ -1,4 +1,5 @@
-subsurfaceMode = 2;
+subsurfaceMode = 2, isFoliage = true;
+sandNoiseIntensity = 0.3, mossNoiseIntensity = 0.0;
 
 #ifdef GBUFFERS_TERRAIN
     materialMask = OSIEBCA * 253.0; // Reduced Edge TAA

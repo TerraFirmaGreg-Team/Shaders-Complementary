@@ -1,9 +1,16 @@
-/////////////////////////////////////
-// Complementary Shaders by EminGT //
-/////////////////////////////////////
+//////////////////////////////////////////
+// Complementary Shaders by EminGT      //
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
 
 //Common//
 #include "/lib/common.glsl"
+#include "/lib/shaderSettings/emissionMult.glsl"
+//#define NIGHT_DESATURATION
+
+#if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
+    #include "/lib/misc/distortWorld.glsl"
+#endif
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -16,7 +23,7 @@ in vec3 normal;
 
 in vec4 glColor;
 
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || defined IPBR && defined IS_IRIS
+#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || defined IPBR && (defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000008)
     in vec2 signMidCoordPos;
     flat in vec2 absMidCoordPos;
     flat in vec2 midCoord;
@@ -44,6 +51,7 @@ float sunVisibility2 = sunVisibility * sunVisibility;
 float shadowTimeVar1 = abs(sunVisibility - 0.5) * 2.0;
 float shadowTimeVar2 = shadowTimeVar1 * shadowTimeVar1;
 float shadowTime = shadowTimeVar2 * shadowTimeVar2;
+float skyLightCheck = 0.0;
 
 #ifdef OVERWORLD
     vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
@@ -89,13 +97,28 @@ float shadowTime = shadowTimeVar2 * shadowTimeVar2;
     #include "/lib/misc/colorCodedPrograms.glsl"
 #endif
 
+#ifdef SS_BLOCKLIGHT
+    #include "/lib/lighting/coloredBlocklight.glsl"
+#endif
+
+#ifdef ATM_COLOR_MULTS
+    #include "/lib/colors/colorMultipliers.glsl"
+#endif
+
 //Program//
 void main() {
+    skyLightCheck = pow2(1.0 - min1(lmCoord.y * 2.9 * sunVisibility));
     vec4 color = texture2D(tex, texCoord);
+    float purkinjeOverwrite = 0.0, emission = 0.0;
 
-    float smoothnessD = 0.0, materialMask = OSIEBCA * 254.0; // No SSAO, No TAA, Reduce Reflection
+    float smoothnessD = 0.0, enderDragonDead = 1.0, materialMask = OSIEBCA * 254.0; // No SSAO, No TAA, Reduce Reflection
     vec2 lmCoordM = lmCoord;
     vec3 normalM = normal, shadowMult = vec3(0.5); // Reduced shadowMult for held items to not get too bright
+
+    #ifdef SS_BLOCKLIGHT
+        vec3 lightAlbedo = vec3(0.0);
+    #endif
+
 
     float alphaCheck = color.a;
     #ifdef DO_PIXELATION_EFFECTS
@@ -104,7 +127,7 @@ void main() {
     #endif
 
     if (alphaCheck > 0.001) {
-        #ifdef GENERATED_NORMALS
+        #if defined GENERATED_NORMALS || PIXEL_WATER == 1
             vec3 colorP = color.rgb;
         #endif
         color *= glColor;
@@ -116,10 +139,18 @@ void main() {
         if (color.a < 0.75) materialMask = 0.0;
 
         bool noSmoothLighting = true, noGeneratedNormals = false, noDirectionalShading = false, noVanillaAO = false;
-        float smoothnessG = 0.0, highlightMult = 1.0, emission = 0.0, noiseFactor = 0.6;
+        float smoothnessG = 0.0, highlightMult = 1.0, noiseFactor = 0.6;
         vec3 geoNormal = normalM;
         vec3 worldGeoNormal = normalize(ViewToPlayer(geoNormal * 10000.0));
         vec3 maRecolor = vec3(0.0);
+
+        float overlayNoiseIntensity = 1.0;
+        float snowNoiseIntensity = 1.0;
+        float sandNoiseIntensity = 1.0;
+        float mossNoiseIntensity = 1.0;
+        float overlayNoiseEmission = 1.0;
+        bool isFoliage = false;
+
         #ifdef IPBR
             #if defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000008
                 #include "/lib/materials/materialHandling/irisIPBR.glsl"
@@ -144,9 +175,38 @@ void main() {
             #endif
         #endif
 
+        // Support for modded light sources and blockID set by the user
+        #if defined IS_IRIS && !defined MC_OS_MAC
+            if (currentRenderedItemId == 0) {
+                float screenWidth = viewPos.x;
+                float region1End = -0.1;  // End of the first 2/5 region
+                float region2Start = 0.1; // Start of the last 2/5 region
+                int heldBlockLight = 0;
+                if (screenWidth <= region1End || screenWidth >= region2Start) {
+                    heldBlockLight = (viewPos.x > 0.0 ^^ isRightHanded) ? heldBlockLightValue2 : heldBlockLightValue;
+                }
+
+                if (heldBlockLight > 0) {
+                    bool doesNothing;
+                    emission = DoAutomaticEmission(noSmoothLighting, doesNothing, color.rgb, 0.0, heldBlockLight, 0.0);
+                }
+            }
+        #endif
+
+        #ifdef SS_BLOCKLIGHT
+            blocklightCol = ApplyMultiColoredBlocklight(blocklightCol, screenPos, playerPos, lmCoord.x);
+        #endif
+
+        emission *= EMISSION_MULTIPLIER;
+
         DoLighting(color, shadowMult, playerPos, viewPos, 0.0, geoNormal, normalM, 0.5,
                    worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, noVanillaAO,
-                   false, 0, smoothnessG, highlightMult, emission);
+                   false, 0, smoothnessG, highlightMult, emission, purkinjeOverwrite, false,
+                   enderDragonDead);
+
+        #ifdef SS_BLOCKLIGHT
+            lightAlbedo = normalize(color.rgb) * min1(emission) * float(heldBlockLightValue > 0 || heldBlockLightValue2 > 0 || heldItemId == 45032 || heldItemId2 == 45032);
+        #endif
 
         #ifdef IPBR
             color.rgb += maRecolor;
@@ -154,6 +214,11 @@ void main() {
     }
 
     float skyLightFactor = GetSkyLightFactor(lmCoordM, shadowMult);
+
+    float handSSBLMask = 0.0;
+    #ifdef ENTITIES_ARE_LIGHT
+        handSSBLMask = 0.2 + isSneaking * 0.5;
+    #endif
 
     #ifdef COLOR_CODED_PROGRAMS
         ColorCodeProgram(color, -1);
@@ -163,13 +228,26 @@ void main() {
         skyLightFactor *= 0.5;
     #endif
 
+    float purkinjeData = 1.0;
+    #if defined IS_IRIS || defined IS_ANGELICA || MC_VERSION >= 11600
+        purkinjeData = lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission);
+    #endif
+
     /* DRAWBUFFERS:06 */
     gl_FragData[0] = color;
-    gl_FragData[1] = vec4(smoothnessD, materialMask, skyLightFactor, 1.0);
+    gl_FragData[1] = vec4(smoothnessD, materialMask, skyLightFactor, purkinjeData);
 
-    #if BLOCK_REFLECT_QUALITY >= 2 && (RP_MODE >= 2 || defined IS_IRIS)
+    #if BLOCK_REFLECT_QUALITY >= 2 && (RP_MODE >= 2 || defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000008)
         /* DRAWBUFFERS:064 */
         gl_FragData[2] = vec4(mat3(gbufferModelViewInverse) * normalM, 1.0);
+
+        #ifdef SS_BLOCKLIGHT
+            /* DRAWBUFFERS:0649 */
+            gl_FragData[3] = vec4(lightAlbedo, handSSBLMask);
+        #endif
+    #elif defined SS_BLOCKLIGHT
+        /* DRAWBUFFERS:069 */
+        gl_FragData[2] = vec4(lightAlbedo, handSSBLMask);
     #endif
 }
 
@@ -186,7 +264,7 @@ out vec3 normal;
 
 out vec4 glColor;
 
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || defined IPBR && defined IS_IRIS
+#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || defined IPBR && (defined IS_IRIS || defined IS_ANGELICA)
     out vec2 signMidCoordPos;
     flat out vec2 absMidCoordPos;
     flat out vec2 midCoord;
@@ -203,13 +281,15 @@ out vec4 glColor;
 #endif
 
 //Attributes//
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || defined IPBR && defined IS_IRIS
+#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || defined IPBR && (defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000008)
     attribute vec4 mc_midTexCoord;
 #endif
 
 #if defined GENERATED_NORMALS || defined CUSTOM_PBR
     attribute vec4 at_tangent;
 #endif
+
+attribute vec4 at_midBlock;
 
 //Common Variables//
 
@@ -222,6 +302,9 @@ void main() {
     gl_Position = ftransform();
 
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
+    #ifdef ATLAS_ROTATION
+        texCoord += texCoord * float(hash33(mod(cameraPosition * 0.5, vec3(100.0))));
+    #endif
 
     lmCoord  = GetLightMapCoordinates();
 
@@ -234,7 +317,7 @@ void main() {
     northVec = normalize(gbufferModelView[2].xyz);
     sunVec = GetSunVector();
 
-    #if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || defined IPBR && defined IS_IRIS
+    #if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || defined IPBR && (defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000008)
         midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
         vec2 texMinMidCoord = texCoord - midCoord;
         signMidCoordPos = sign(texMinMidCoord);

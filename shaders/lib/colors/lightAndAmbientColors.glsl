@@ -1,7 +1,15 @@
+#include "/lib/shaderSettings/enhancedCelestials.glsl"
 #ifndef INCLUDE_LIGHT_AND_AMBIENT_COLORS
     #define INCLUDE_LIGHT_AND_AMBIENT_COLORS
 
-    #if defined OVERWORLD
+    #include "/lib/shaderSettings/endBeams.glsl"
+    #include "/lib/shaderSettings/lightAndAmbientColors.glsl"
+    #include "/lib/shaderSettings/overworldBeams.glsl"
+	
+	#if defined AD_ASTRA
+        #include "/ad_astra_config/lightAndAmbientColors.glsl"
+		
+    #elif defined OVERWORLD
         #ifndef COMPOSITE1
             vec3 noonClearLightColor = vec3(0.65, 0.55, 0.375) * 2.05; //ground and cloud color
         #else
@@ -47,7 +55,6 @@
 
         vec3 nightRainLightColor   = vec3(0.03, 0.035, 0.05) * (0.5 + 0.5 * vsBrightness);
         vec3 nightRainAmbientColor = vec3(0.16, 0.20, 0.3) * (0.75 + 0.6 * vsBrightness);
-
         #ifndef COMPOSITE1
             float noonFactorDM = noonFactor; //ground and cloud factor
         #else
@@ -56,8 +63,10 @@
         vec3 dayLightColor   = mix(sunsetClearLightColor, noonClearLightColor, noonFactorDM);
         vec3 dayAmbientColor = mix(sunsetClearAmbientColor, noonClearAmbientColor, noonFactorDM);
 
-        vec3 clearLightColor   = mix(nightClearLightColor, dayLightColor, sunVisibility2);
-        vec3 clearAmbientColor = mix(nightClearAmbientColor, dayAmbientColor, sunVisibility2);
+        vec3 lunarEventFactor  = pow(moonSizeSmooth / 20, SUPER_MOON_INFLUENCE) * saturateColors(moonColorSmooth / maxAll(moonColorSmooth), LUNAR_EVENT_LIGHTING_SATURATION);        
+        vec3 clearLightColor   = mix(lunarEventFactor * nightClearLightColor, dayLightColor, sunVisibility2);
+        vec3 clearAmbientColor = mix(lunarEventFactor * nightClearAmbientColor, dayAmbientColor, sunVisibility2);
+
 
         float rainShadowVisReduce = 0.0
             #ifdef SUN_MOON_DURING_RAIN
@@ -73,18 +82,48 @@
 
         vec3 rainLightColor   = mix(nightRainLightColor, dayRainLightColor * (1.0 - rainShadowVisReduce), sunVisibility2) * 2.5;
         vec3 rainAmbientColor = mix(nightRainAmbientColor, dayRainAmbientColor * (1.0 + rainShadowVisReduce), sunVisibility2);
+        #if DOOM_AND_GLOOM_FOG == 1
+            float lightDimming = FOG_LIGHT_DIMMING;
+        #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
+            float lightDimming = mix(1.0, FOG_LIGHT_DIMMING, doomAndGloomFog);
+        #else
+            float lightDimming = 1.0;
+        #endif
 
-        vec3 lightColor   = mix(clearLightColor, rainLightColor, rainFactor);
-        vec3 ambientColor = mix(clearAmbientColor, rainAmbientColor, rainFactor);
+        vec3 lightColor   = mix(clearLightColor, rainLightColor, rainFactor) * lightDimming;
+        #if SILHOUETTE == 0
+            vec3 ambientColor = mix(clearAmbientColor, rainAmbientColor, rainFactor);
+        #elif SILHOUETTE == 1
+            vec3 ambientColor = mix(clearAmbientColor, rainAmbientColor, rainFactor) * mix(SILHOUETTE_BRIGHTNESS, 1.0, sunVisibility);
+        #else
+            vec3 ambientColor = mix(clearAmbientColor, rainAmbientColor, rainFactor) * SILHOUETTE_BRIGHTNESS;
+        #endif
+
+        #ifdef OVERWORLD_BEAMS
+            vec3 ambientColorBeam = mix(clearAmbientColor, rainAmbientColor, rainFactor);
+            vec3 ColorBeam = mix(vec3(OW_BEAM_R_NEW, OW_BEAM_G_NEW, OW_BEAM_B_NEW), ambientColorBeam, BEAMS_AMBIENT_INFLUENCE);
+        #else
+            vec3 ColorBeam = vec3(0.0);
+        #endif
     #elif defined NETHER
         vec3 lightColor   = vec3(0.0);
         vec3 ambientColor = (netherColor + 0.5 * lavaLightColor) * (0.9 + 0.45 * vsBrightness);
     #elif defined END
-        vec3 endLightColor = vec3(0.68, 0.51, 1.07);
-        vec3 endOrangeCol = vec3(1.0, 0.3, 0.0);
+        float fogLuminance = dot(fogColor, vec3(0.299, 0.587, 0.114));
+        vec3 endLightColor = clamp(mix(fogColor * 0.6 + 0.3 * normalize(fogColor + 0.0001) + 0.25 * (1.0 - fogLuminance), vec3(0.68, 0.51, 1.07), inVanillaEnd * float(END_SKY_FOG_INFLUENCE)), 0.0, 1.0);
+        vec3 endOrangeCol = vec3(E_DRAGON_BEAM_R_NEW, E_DRAGON_BEAM_G_NEW, E_DRAGON_BEAM_B_NEW) * E_DRAGON_BEAM_I;
         float endLightBalancer = 0.2 * vsBrightness;
-        vec3 lightColor    = endLightColor * (0.35 - endLightBalancer);
-        vec3 ambientColor  = endLightColor * (0.2 + endLightBalancer);
+        vec3 lightColor   = endLightColor * (0.35 - endLightBalancer);
+        vec3 ambientCol   = endLightColor * (0.2 + endLightBalancer);
+        #ifdef (DARKER_END_ATMOSPHERE == 1 && defined MOD_ENDERSCAPE) || DARKER_END_ATMOSPHERE == 2
+            vec3 ambientColorTint = 0.6 * vec3(0.6, 1.0, 0.6);
+        #else
+            vec3 ambientColorTint = vec3(1.0);
+        #endif
+        vec3 ambientColor = ambientColorTint * mix(ambientCol, vec3(END_AMBIENT_R_NEW, END_AMBIENT_G_NEW, END_AMBIENT_B_NEW), END_AMBIENT_INFLUENCE) * END_AMBIENT_I;
+        vec3 endColorBeam = mix(vec3(E_BEAM_R_NEW, E_BEAM_G_NEW, E_BEAM_B_NEW), ambientCol, E_BEAMS_AMBIENT_INFLUENCE);
+
     #endif
 
 #endif //INCLUDE_LIGHT_AND_AMBIENT_COLORS
+        

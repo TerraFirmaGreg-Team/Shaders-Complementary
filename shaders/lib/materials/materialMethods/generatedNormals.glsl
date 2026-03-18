@@ -1,8 +1,19 @@
+#define ENTITY_GN_AND_CT
+#define GENERATED_NORMAL_MULT 100 //[25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 110 120 130 140 150 160 170 180 190 200 250 300 400]
+#define GENERATED_NORMAL_ENTITY_MULT 0 //[0 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 110 120 130 140 150 160 170 180 190 200 250 300 400]
+#define NORMAL_RES 128 //[16 32 64 80 96 112 128 144 160 176 192 208 224 240 256 320 384 448 512]
+
 const float normalThreshold = 0.05;
 const float normalClamp = 0.2;
 const float packSizeGN = 128.0;
 
-#ifndef GBUFFERS_HAND
+#ifdef GBUFFERS_ENTITIES
+    #if GENERATED_NORMAL_ENTITY_MULT > 0
+        const float normalMult = GENERATED_NORMAL_ENTITY_MULT * 0.025;
+    #else
+        const float normalMult = GENERATED_NORMAL_MULT * 0.025;
+    #endif
+#elif !defined GBUFFERS_HAND
     const float normalMult = GENERATED_NORMAL_MULT * 0.025;
 #else
     const float normalMult = GENERATED_NORMAL_MULT * 0.015;
@@ -52,7 +63,7 @@ void GenerateNormals(inout vec3 normalM, vec3 color) {
     #else
         vec2 offsetR = max(absMidCoordPos2.x, absMidCoordPos2.y) * vec2(float(atlasSizeM.y) / float(atlasSizeM.x), 1.0);
     #endif
-    offsetR /= packSizeGN;
+    offsetR /= NORMAL_RES;
 
     vec2 midCoord = texCoord - midCoordPos;
     vec2 maxOffsetCoord = midCoord + absMidCoordPos;

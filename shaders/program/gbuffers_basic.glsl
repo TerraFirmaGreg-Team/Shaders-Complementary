@@ -1,9 +1,14 @@
-//////////////////////////////////
-// Complementary Base by EminGT //
-//////////////////////////////////
+//////////////////////////////////////////
+// Complementary Shaders by EminGT      //
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
 
 //Common//
 #include "/lib/common.glsl"
+
+#if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
+    #include "/lib/misc/distortWorld.glsl"
+#endif
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -48,6 +53,10 @@ float shadowTime = shadowTimeVar2 * shadowTimeVar2;
     #include "/lib/misc/colorCodedPrograms.glsl"
 #endif
 
+#ifdef SS_BLOCKLIGHT
+    #include "/lib/lighting/coloredBlocklight.glsl"
+#endif
+
 //Program//
 void main() {
     vec4 color = glColor;
@@ -64,14 +73,19 @@ void main() {
     float materialMask = 0.0;
     vec3 normalM = normal, geoNormal = normal, shadowMult = vec3(1.0);
     vec3 worldGeoNormal = normalize(ViewToPlayer(geoNormal * 10000.0));
+    float purkinjeOverwrite = 0.0, emission = 0.0, enderDragonDead = 1.0;
 
     #ifndef GBUFFERS_LINE
+        #ifdef SS_BLOCKLIGHT
+            blocklightCol = ApplyMultiColoredBlocklight(blocklightCol, screenPos, playerPos, lmCoord.x);
+        #endif
+
         DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, 0.5,
                    worldGeoNormal, lmCoord, false, false, false,
-                   false, 0, 0.0, 0.0, 0.0);
+                   false, 0, 0.0, 0.0, 0.0, purkinjeOverwrite, false,
+                   enderDragonDead);
     #endif
 
-    #if SELECT_OUTLINE != 1 || defined SELECT_OUTLINE_AUTO_HIDE
     if (abs(color.a - 0.4) + dot(color.rgb, color.rgb) < 0.01) {
         #if SELECT_OUTLINE == 0
             discard;
@@ -83,8 +97,8 @@ void main() {
             color.rgb = vec3(SELECT_OUTLINE_R, SELECT_OUTLINE_G, SELECT_OUTLINE_B) * SELECT_OUTLINE_I;
         #elif SELECT_OUTLINE == 4 // Versatile
             color.a = 0.1;
-            materialMask = OSIEBCA * 252.0; // Versatile Selection Outline
         #endif
+        materialMask = OSIEBCA * 252.0; // Selection Outline
 
         #ifdef SELECT_OUTLINE_AUTO_HIDE
             if (heldItemId == 40008 && (
@@ -98,7 +112,6 @@ void main() {
             }
         #endif
     }
-    #endif
 
     #ifdef COLOR_CODED_PROGRAMS
         ColorCodeProgram(color, -1);
@@ -109,9 +122,20 @@ void main() {
         color = shadow2D(shadowtex0, vec3(0.5)); // To Activate Shadowmap in Nether
     #endif
 
+    #if DRAGON_DEATH_EFFECT_INTERNAL == 1 && !defined GBUFFERS_LINE
+        if (color.a == 1.0 && GetLuminance(color.rgb) > 0.9999 && color.g > 0.9999 && color.b > 0.9999) {
+            discard;
+        }
+    #endif
+
     /* DRAWBUFFERS:06 */
     gl_FragData[0] = color;
-    gl_FragData[1] = vec4(0.0, materialMask, 0.0, 1.0);
+    gl_FragData[1] = vec4(0.0, materialMask, 0.0, lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission));
+
+    #ifdef SS_BLOCKLIGHT
+        /* DRAWBUFFERS:069 */
+        gl_FragData[2] = vec4(0.0, 0.0, 0.0, 0.0);
+    #endif
 }
 
 #endif
@@ -127,6 +151,9 @@ out vec3 normal;
 flat out vec4 glColor;
 
 //Attributes//
+#ifdef WAVE_EVERYTHING
+    attribute vec4 mc_midTexCoord;
+#endif
 
 //Common Variables//
 
@@ -135,6 +162,10 @@ flat out vec4 glColor;
 //Includes//
 #ifdef TAA
     #include "/lib/antialiasing/jitter.glsl"
+#endif
+
+#ifdef WAVE_EVERYTHING
+    #include "/lib/materials/materialMethods/wavingBlocks.glsl"
 #endif
 
 //Program//
@@ -161,6 +192,20 @@ void main() {
 
     #ifdef TAA
         gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
+    #endif
+
+    #if !defined GBUFFERS_LINE && (defined MIRROR_DIMENSION || defined WORLD_CURVATURE || defined WAVE_EVERYTHING)
+        vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
+        #ifdef MIRROR_DIMENSION
+            doMirrorDimension(position);
+        #endif
+        #ifdef WORLD_CURVATURE
+            position.y += doWorldCurvature(position.xz);
+        #endif
+        #ifdef WAVE_EVERYTHING
+            DoWaveEverything(position.xyz);
+        #endif
+        gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
     #endif
 
     lmCoord  = GetLightMapCoordinates();

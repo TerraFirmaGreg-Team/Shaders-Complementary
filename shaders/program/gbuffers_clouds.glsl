@@ -1,9 +1,12 @@
-/////////////////////////////////////
-// Complementary Shaders by EminGT //
-/////////////////////////////////////
+//////////////////////////////////////////
+// Complementary Shaders by EminGT      //
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
 
 //Common//
 #include "/lib/common.glsl"
+#include "/lib/shaderSettings/clouds.glsl"
+#include "/lib/shaderSettings/cloudsAndLighting.glsl"
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -34,7 +37,7 @@
     #include "/lib/colors/skyColors.glsl"
     #include "/lib/util/spaceConversion.glsl"
 
-    #if defined TAA && defined BORDER_FOG
+    #if defined TAA && (defined BORDER_FOG || RAINBOW_CLOUD != 0 || defined AURORA_INFLUENCE)
         #include "/lib/antialiasing/jitter.glsl"
     #endif
 
@@ -48,6 +51,10 @@
     #ifdef COLOR_CODED_PROGRAMS
         #include "/lib/misc/colorCodedPrograms.glsl"
     #endif
+
+    #ifdef AURORA_INFLUENCE
+        #include "/lib/atmospherics/auroraBorealis.glsl"
+    #endif
 #endif
 
 //Program//
@@ -59,22 +66,7 @@ void main() {
 
         vec4 translucentMult = vec4(mix(vec3(0.666), color.rgb * (1.0 - pow2(pow2(color.a))), color.a), 1.0);
 
-        #ifdef OVERWORLD
-            vec3 cloudLight = mix(vec3(0.8, 1.6, 1.5) * sqrt1(nightFactor), mix(dayDownSkyColor, dayMiddleSkyColor, 0.1), sunFactor);
-            color.rgb *= sqrt(cloudLight) * (1.2 + 0.4 * noonFactor * invRainFactor);
-
-            #if CLOUD_R != 100 || CLOUD_G != 100 || CLOUD_B != 100
-                color.rgb *= vec3(CLOUD_R, CLOUD_G, CLOUD_B) * 0.01;
-            #endif
-            #ifdef ATM_COLOR_MULTS
-                color.rgb *= sqrt(GetAtmColorMult()); // C72380KD - Reduced atmColorMult impact on things
-            #endif
-            #ifdef MOON_PHASE_INF_ATMOSPHERE
-                color.rgb *= moonPhaseInfluence;
-            #endif
-        #endif
-
-        #ifdef BORDER_FOG
+        #if defined BORDER_FOG || RAINBOW_CLOUD != 0 || defined AURORA_INFLUENCE
             vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
             #ifdef TAA
                 vec3 viewPos = ScreenToView(vec3(TAAJitter(screenPos.xy, -0.5), screenPos.z));
@@ -92,6 +84,32 @@ void main() {
 
             cloudDistance = clamp((cloudDistance - xzMaxDistance) / cloudDistance, 0.0, 1.0);
             color.a *= clamp01(cloudDistance * 3.0);
+        #endif
+
+        color.a *= CLOUD_TRANSPARENCY;
+
+        #ifdef OVERWORLD
+            vec3 cloudLight = mix(vec3(0.8, 1.6, 1.5) * sqrt1(nightFactor), mix(dayDownSkyColor, dayMiddleSkyColor, 0.1), sunFactor);
+            #if RAINBOW_CLOUD != 0
+                vec3 wpos = normalize((gbufferModelViewInverse * vec4(viewPos, 1.0)).xyz);
+                wpos /= (abs(wpos.y) + length(wpos.xz));
+
+                cloudLight *= getRainbowColor(wpos.xz * rainbowCloudDistribution * 0.3, 0.05);
+            #endif
+            #ifdef AURORA_INFLUENCE
+                color.rgb = getAuroraAmbientColor(color.rgb, viewPos, 0.096, AURORA_CLOUD_INFLUENCE_INTENSITY, 0.7);
+            #endif
+            color.rgb *= sqrt(cloudLight) * (1.2 + 0.4 * noonFactor * invRainFactor);
+
+            #if CLOUD_R != 100 || CLOUD_G != 100 || CLOUD_B != 100
+                color.rgb *= vec3(CLOUD_R, CLOUD_G, CLOUD_B) * 0.01;
+            #endif
+            #ifdef ATM_COLOR_MULTS
+                color.rgb *= sqrt(GetAtmColorMult()); // C72380KD - Reduced atmColorMult impact on things
+            #endif
+            #ifdef MOON_PHASE_INF_ATMOSPHERE
+                color.rgb *= moonPhaseInfluence;
+            #endif
         #endif
 
         #ifdef COLOR_CODED_PROGRAMS

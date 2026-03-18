@@ -1,9 +1,16 @@
-/////////////////////////////////////
-// Complementary Shaders by EminGT //
-/////////////////////////////////////
+//////////////////////////////////////////
+// Complementary Shaders by EminGT      //
+// With Euphoria Patches by SpacEagle17 //
+//////////////////////////////////////////
 
 //Common//
 #include "/lib/common.glsl"
+#include "/lib/shaderSettings/materials.glsl"
+#include "/lib/shaderSettings/SSAO.glsl"
+
+#if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
+    #include "/lib/misc/distortWorld.glsl"
+#endif
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -33,9 +40,6 @@ float shadowTime = shadowTimeVar2 * shadowTimeVar2;
 
 vec2 lmCoordM = lmCoord;
 
-mat4 gbufferProjection = dhProjection;
-mat4 gbufferProjectionInverse = dhProjectionInverse;
-
 #ifdef OVERWORLD
     vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
 #else
@@ -46,12 +50,16 @@ mat4 gbufferProjectionInverse = dhProjectionInverse;
 #include "/lib/util/spaceConversion.glsl"
 #include "/lib/util/dither.glsl"
 
-#ifdef ATM_COLOR_MULTS
-    #include "/lib/colors/colorMultipliers.glsl"
-#endif
-
 #ifdef TAA
     #include "/lib/antialiasing/jitter.glsl"
+#endif
+
+#ifdef ACT_GROUND_LEAVES_FIX
+    #include "/lib/voxelization/leavesVoxelization.glsl"
+#endif
+
+#ifdef ATM_COLOR_MULTS
+    #include "/lib/colors/colorMultipliers.glsl"
 #endif
 
 #define GBUFFERS_TERRAIN
@@ -60,6 +68,13 @@ mat4 gbufferProjectionInverse = dhProjectionInverse;
 
 #ifdef SNOWY_WORLD
     #include "/lib/materials/materialMethods/snowyWorld.glsl"
+#endif
+#if SEASONS > 0 || defined MOSS_NOISE_INTERNAL || defined SAND_NOISE_INTERNAL
+    #include "/lib/materials/overlayNoise.glsl"
+#endif
+
+#ifdef SS_BLOCKLIGHT
+    #include "/lib/lighting/coloredBlocklight.glsl"
 #endif
 
 //Program//
@@ -76,6 +91,7 @@ void main() {
     vec3 nViewPos = normalize(viewPos);
     float VdotU = dot(nViewPos, upVec);
     float VdotS = dot(nViewPos, sunVec);
+    vec3 worldPos = playerPos + cameraPosition;
 
     float dither = Bayer64(gl_FragCoord.xy);
     #ifdef TAA
@@ -84,23 +100,58 @@ void main() {
 
     #ifdef ATM_COLOR_MULTS
         atmColorMult = GetAtmColorMult();
+        sqrtAtmColorMult = sqrt(atmColorMult);
     #endif
 
     bool noSmoothLighting = false, noDirectionalShading = false, noVanillaAO = false, centerShadowBias = false;
     int subsurfaceMode = 0;
-    float smoothnessG = 0.0, smoothnessD = 0.0, highlightMult = 1.0, emission = 0.0, snowFactor = 1.0, snowMinNdotU = 0.0;
-    vec3 normalM = normal, geoNormal = normal, shadowMult = vec3(1.0);    
+    float smoothnessG = 0.0, smoothnessD = 0.0, highlightMult = 1.0, emission = 0.0, snowFactor = 1.0, snowMinNdotU = 0.0, noPuddles = 0.0;
+    vec3 normalM = normal, geoNormal = normal, shadowMult = vec3(1.0), maRecolor = vec3(0.0);
     vec3 worldGeoNormal = normalize(ViewToPlayer(geoNormal * 10000.0));
-    
+
+    float overlayNoiseIntensity = 1.0;
+    float snowNoiseIntensity = 1.0;
+    float sandNoiseIntensity = 1.0;
+    float mossNoiseIntensity = 1.0;
+    float overlayNoiseTransparentOverwrite = 0.0;
+    float overlayNoiseEmission = 1.0;
+    float IPBRMult = 1.0;
+    bool isFoliage = false;
+    vec3 dhColor = color.rgb;
+    float purkinjeOverwrite = 0.0, enderDragonDead = 1.0;
+
+    float lavaNoiseIntensity = LAVA_NOISE_INTENSITY;
+
+    float dhSSAOBrightnessBoost = 1.05;
+
     if (mat == DH_BLOCK_LEAVES) {
         #include "/lib/materials/specificMaterials/terrain/leaves.glsl"
+	    dhSSAOBrightnessBoost = 1.35; // make brighter to compensate SSAO
     } else if (mat == DH_BLOCK_GRASS) {
         smoothnessG = pow2(color.g) * 0.85;
+	    dhSSAOBrightnessBoost = mix(1.0, 1.2, 1.0 - clamp01(dot(worldGeoNormal, ViewToPlayer(upVec)))); // only make brighter on the sides
+    } else if (mat == DH_BLOCK_SNOW) {
+        #include "/lib/materials/specificMaterials/terrain/snow.glsl"
+	    dhSSAOBrightnessBoost = 1.19;
+    } else if (mat == DH_BLOCK_LAVA) {
+        #include "/lib/materials/specificMaterials/terrain/lava.glsl"
+        #ifndef NETHER
+            color.rgb *= 0.75;
+        #else
+            color.rgb *= 0.89;
+        #endif
+	    dhSSAOBrightnessBoost = 0.9;
     } else if (mat == DH_BLOCK_ILLUMINATED) {
         emission = 2.5;
-    } else if (mat == DH_BLOCK_LAVA) {
-        emission = 1.5;
+        snowNoiseIntensity = 0.0;
+        sandNoiseIntensity = 0.2;
+        mossNoiseIntensity = 0.2;
+	    dhSSAOBrightnessBoost = 1.2;
     }
+
+    #if SSAO_QUALI > 0
+        color.rgb *= dhSSAOBrightnessBoost;
+    #endif
 
     #ifdef SNOWY_WORLD
         DoSnowyWorld(color, smoothnessG, highlightMult, smoothnessD, emission,
@@ -118,11 +169,43 @@ void main() {
     float noiseFactor = max0(1.0 - 0.3 * dot(color.rgb, color.rgb));
     color.rgb *= pow(noiseTexture, 0.6 * noiseFactor);
 
+    #if defined MOSS_NOISE_INTERNAL || defined SAND_NOISE_INTERNAL
+        #define GBUFFERS_TERRAIN
+        #include "/lib/materials/overlayNoiseApply.glsl"
+        #undef GBUFFERS_TERRAIN
+    #endif
+    #if SEASONS > 0
+        #define GBUFFERS_TERRAIN
+        #include "/lib/materials/seasons.glsl"
+        #undef GBUFFERS_TERRAIN
+    #endif
+
+    #if MONOTONE_WORLD > 0
+        #if MONOTONE_WORLD == 1
+            color.rgb = vec3(1.0);
+        #elif MONOTONE_WORLD == 2
+            color.rgb = vec3(0.0);
+        #else
+            color.rgb = vec3(0.5);
+        #endif
+    #endif
+
+    #ifdef SS_BLOCKLIGHT
+        blocklightCol = ApplyMultiColoredBlocklight(blocklightCol, screenPos, playerPos, lmCoord.x);
+        vec3 lightAlbedo = normalize(color.rgb) * min1(emission);
+    #endif
+
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, 0.5,
                worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, noVanillaAO,
-               centerShadowBias, subsurfaceMode, smoothnessG, highlightMult, emission);
-    /* DRAWBUFFERS:0 */
+               centerShadowBias, subsurfaceMode, smoothnessG, highlightMult, emission, purkinjeOverwrite, false,
+               enderDragonDead);
+    /* DRAWBUFFERS:06 */
     gl_FragData[0] = color;
+    gl_FragData[1] = gl_FragData[1] = vec4(smoothnessG, 0.0, 0.0, lmCoordM.x + clamp01(purkinjeOverwrite) + clamp01(emission));
+    #ifdef SS_BLOCKLIGHT
+        /* DRAWBUFFERS:069 */
+        gl_FragData[2] = vec4(lightAlbedo, 0.0);
+    #endif
 }
 
 #endif
@@ -150,6 +233,9 @@ out vec4 glColor;
 #ifdef TAA
     #include "/lib/antialiasing/jitter.glsl"
 #endif
+#ifdef WAVE_EVERYTHING
+    #include "/lib/materials/materialMethods/wavingBlocks.glsl"
+#endif
 
 //Program//
 void main() {
@@ -161,7 +247,7 @@ void main() {
     mat = dhMaterialId;
 
     lmCoord  = GetLightMapCoordinates();
-    
+
     normal = normalize(gl_NormalMatrix * gl_Normal);
     upVec = normalize(gbufferModelView[1].xyz);
     eastVec = normalize(gbufferModelView[0].xyz);
@@ -171,6 +257,20 @@ void main() {
     playerPos = (gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex).xyz;
 
     glColor = gl_Color;
+
+    #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE || defined WAVE_EVERYTHING
+        vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
+        #ifdef MIRROR_DIMENSION
+            doMirrorDimension(position);
+        #endif
+        #ifdef WORLD_CURVATURE
+            position.y += doWorldCurvature(position.xz);
+        #endif
+        #ifdef WAVE_EVERYTHING
+            DoWaveEverything(position.xyz);
+        #endif
+        gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
+    #endif
 }
 
 #endif

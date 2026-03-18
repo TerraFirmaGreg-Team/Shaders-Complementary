@@ -5,7 +5,7 @@
 
     float regularEdge = 10.0;
     float extraEdgeMult = 2.0;
-    
+
     float farEdgeDist = 128.0;
 #elif TAA_SMOOTHING == 3
     float blendMinimum = 0.35;
@@ -14,7 +14,7 @@
 
     float regularEdge = 6.0;
     float extraEdgeMult = 3.0;
-    
+
     float farEdgeDist = 112.0;
 #elif TAA_SMOOTHING == 4
     float blendMinimum = 0.5;
@@ -23,7 +23,7 @@
 
     float regularEdge = 4.0;
     float extraEdgeMult = 3.5;
-    
+
     float farEdgeDist = 96.0;
 #endif
 
@@ -139,7 +139,7 @@ void DoTAA(inout vec3 color, inout vec3 temp, float z1) {
     if (
         abs(materialMask - 149.5) < 50.0 // Entity Reflection Handling (see common.glsl for details)
         || materialMask == 254 // No SSAO, No TAA, Reduce Reflection
-    ) { 
+    ) {
         return;
     }
 
@@ -192,6 +192,14 @@ void DoTAA(inout vec3 color, inout vec3 temp, float z1) {
                               prvCoord.y > 0.0 && prvCoord.y < 1.0);
     float velocityFactor = dot(velocity, velocity) * 10.0;
     blendFactor *= max(exp(-velocityFactor) * blendVariable + blendConstant - min(length(cameraPosition - previousCameraPosition), 0.05) * edge, blendMinimum);
+
+    #ifdef RAIN_ATMOSPHERE
+        blendFactor *= 1.0 - isLightningActive();
+    #endif
+
+    #ifdef MIRROR_DIMENSION
+        blendFactor = 0.0;
+    #endif
 
     color = mix(color, tempColor, blendFactor);
     temp = color;
