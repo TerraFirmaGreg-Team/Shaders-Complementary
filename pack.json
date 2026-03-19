@@ -7,11 +7,13 @@
     "type": "release",
     "authors": [
         "EminGT",
+        "McArdellje",
         "Marsietis",
         "Metro",
         "SpaceEagle17",
         "lemon41625",
-        "woopSmile"
+        "woopSmile",
+        "i_iht"
     ],
     "included": [
         "shaders",
