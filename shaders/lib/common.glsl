@@ -843,12 +843,6 @@
 
     #include "/lib/materials/seasonsTime.glsl"
 	
-	#ifdef AD_ASTRA
-        // config for ad_astra worlds, taidumcraft modifications
-        #include "/ad_astra_config/ad_astra_world_config.glsl"
-    #endif
-
-
     const float OSIEBCA = 1.0 / 255.0; // One Step In Eight Bit Color Attachment
     /* materialMask steps
     0 to 240 - PBR Dependant:
@@ -900,3 +894,10 @@
 
 #define ES_NEBULA 1 //[0 1 2]
 
+#ifdef AD_ASTRA
+    // config for ad_astra worlds
+    #include "/ad_astra_config/ad_astra_world_config.glsl"
+#endif
+
+// config for non-ad_astra specific modifications
+#include "/TerraFirmaGreg.glsl"
