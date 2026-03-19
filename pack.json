@@ -1,0 +1,37 @@
+{
+    "name": "TerraFirmaGreg-Shaders-Complementary",
+    "description": "Shaders setup for TerraFirmaGreg",
+    "license": "Complementary License Agreement 1.5",
+    "logo": "shaders/logo.png",
+    "version": "DEV",
+    "type": "release",
+    "authors": [
+        "EminGT",
+        "Marsietis",
+        "Metro",
+        "SpaceEagle17",
+        "lemon41625",
+        "woopSmile"
+    ],
+    "included": [
+        "shaders",
+        "README.md",
+        "LICENSE",
+        "pack.json"
+    ],
+    "targets": {
+        "game_versions": [
+            "1.20.1",
+            "1.12.2"
+        ],
+        "loaders": [
+            "iris",
+            "optifine"
+        ],
+        "platform": [
+            "curseforge",
+            "modrinth"
+        ]
+    }
+    
+}

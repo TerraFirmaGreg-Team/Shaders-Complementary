@@ -3,17 +3,17 @@
   
   <a>The perfect look for top-level survival</a>
 
-  <a href="https://github.com/TerraFirmaGreg-Team/Shaders-Complementary">
+  <a href="https://terrafirmagreg.team/shaders/github">
     <img src="https://github.com/TerraFirmaGreg-Team/.github/blob/main/branding/icon/v3/1080p_logo_shader.png?raw=true" alt="Logo" height="120"/>
   </a>
   </br>
-  <a href="https://discord.gg/AEaCzCTUwQ">
+  <a href="https://terrafirmagreg.team/discord">
     <img src="https://github.com/TerraFirmaGreg-Team/.github/blob/main/branding/button/brands/discord_logo_32x.png?raw=true" alt="Join our Discord" height="50"/>
   </a>
-  <a href="https://www.curseforge.com/minecraft/shaders/terrafirmagreg-shaders">
+  <a href="https://terrafirmagreg.team/shaders/curseforge">
     <img src="https://github.com/TerraFirmaGreg-Team/.github/blob/main/branding/button/brands/curseforge_logo_32x.png?raw=true" alt="Available on CurseForge" height="50"/>
   </a>
-  <a href="https://modrinth.com/shader/terrafirmagreg-shaders">
+  <a href="https://terrafirmagreg.team/shaders/modrinth">
     <img src="https://github.com/TerraFirmaGreg-Team/.github/blob/main/branding/button/brands/modrinth_logo_32x.png?raw=true" alt="Available on Modrinth" height="50"/>
   </a>
   </br>
