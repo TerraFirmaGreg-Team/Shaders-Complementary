@@ -1,22 +1,23 @@
 // this file is included at the end of /lib/common.glsl so it can override any user settings
 
 // disable clouds
-#ifndef WORLD_whatever
+#ifndef WORLD_whatever //we dont have any planets we keep clouds, so i put whatever
     #undef VL_CLOUDS_ACTIVE
 #endif
 
 #ifdef AD_ASTRA_ORBIT
-    #define HAS_NO_MOON
-    #define HAS_NO_ATMOSPHERE
-    // Keep all bloom and lens flare effects for sun
-    // #undef  LENSFLARE
-    // #undef  BLOOM_FOG
 	
-	//Sun doesnt fade when on the horizon
-	#define UNLIT_SKY_OBJECTS
-	#define CELESTIAL_BOTH_HEMISPHERES
-    #define NEBULA_AT_DAY
-    #define DAYLIGHT_STARS
+	#define UNLIT_SKY_OBJECTS //Sun doesnt fade when over the horizon
+	
+	#define CELESTIAL_BOTH_HEMISPHERES //Stars still appear below the horizon
+	
+    #define NEBULA_AT_DAY //function not yet made
+	
+    #define DAYLIGHT_STARS //stars appear at day
+	
+	#define HAS_NO_MOON
+    #define HAS_NO_ATMOSPHERE
+	#undef	BORDER_FOG
     #undef  ATM_FOG_MULT
     #define ATM_FOG_MULT 0.0
     #undef  LIGHTSHAFTS_ACTIVE
@@ -34,21 +35,17 @@
 #endif
 #ifdef WORLD_MOON
     #define HAS_NO_MOON
-    #define NEBULA_AT_DAY
+   // #define NEBULA_AT_DAY
     #define DAYLIGHT_STARS
     #define HAS_NO_ATMOSPHERE
 	#undef	BORDER_FOG
-    #undef  ATM_FOG_MULT
-    #define ATM_FOG_MULT 0.0
-    #undef  LIGHTSHAFTS_ACTIVE
-    #define LIGHTSHAFTS_ACTIVE 0
-    #undef  LIGHTSHAFT_BEHAVIOUR
-    #define LIGHTSHAFT_BEHAVIOUR 0
+    #define  ATM_FOG_MULT 0
+	#define HAS_NO_ATMOSPHERE
 #endif
 
 #ifdef WORLD_MERCURY
     #define HAS_NO_MOON
-    #define NEBULA_AT_DAY
+ //   #define NEBULA_AT_DAY
     #define DAYLIGHT_STARS
 	
 #endif

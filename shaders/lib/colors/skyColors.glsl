@@ -65,4 +65,3 @@
     #endif
 
 #endif //INCLUDE_SKY_COLORS
-        

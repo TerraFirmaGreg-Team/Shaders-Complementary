@@ -1,6 +1,5 @@
-#ifdef AD_ASTRA_ORBIT
+#ifdef AD_ASTRA_ORBIT //not made
     uniform vec3 skyColorSmooth;
-    // I'm british >:3
     vec3 colour            = vec3(0.035, 0.035, 0.055);
 
     vec3 sunsetDownSkyColorP = colour;
@@ -11,7 +10,7 @@
     vec3 nightMiddleSkyColor = colour;
     vec3 nightDownSkyColor   = colour;
 
-#elif defined WORLD_EUROPA
+#elif defined WORLD_EUROPA //not made
     // Soft neutral gradient; no bluish band at horizon
     const vec3 dayUp    = vec3(0.070, 0.070, 0.075);
     const vec3 dayMid   = vec3(0.060, 0.060, 0.066);
@@ -31,7 +30,7 @@
     vec3 nightMiddleSkyColor  = nightMid;
     vec3 nightDownSkyColor    = nightDown;
 	
-#elif defined(WORLD_MARS)
+#elif defined WORLD_MARS
     // Mars sky colors - original Taidum values for proper brightness
     const vec3 dayUp    = vec3(0.90, 0.67, 0.52);
     const vec3 dayMid   = vec3(0.94, 0.61, 0.38);
@@ -52,7 +51,7 @@
     vec3 nightMiddleSkyColor  = nightMid;
     vec3 nightDownSkyColor    = nightDown;
 	
-#elif defined(WORLD_MERCURY)
+#elif defined WORLD_MERCURY //not made
     // Mars sky colors - original Taidum values for proper brightness
     const vec3 dayUp    = vec3(0.90, 0.67, 0.52);
     const vec3 dayMid   = vec3(0.94, 0.61, 0.38);
@@ -73,7 +72,7 @@
     vec3 nightMiddleSkyColor  = nightMid;
     vec3 nightDownSkyColor    = nightDown;
 	
-#elif defined (WORLD_MOON)
+#elif defined WORLD_MOON
     // Soft neutral gradient; no bluish band at horizon
     const vec3 dayUp    = vec3(0.070, 0.070, 0.075);
     const vec3 dayMid   = vec3(0.060, 0.060, 0.066);

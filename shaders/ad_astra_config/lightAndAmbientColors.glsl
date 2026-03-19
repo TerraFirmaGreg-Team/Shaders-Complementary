@@ -1,7 +1,7 @@
 // #ifdef WORLD_ORBIT
 
 
-#if defined WORLD_EUROPA
+#if defined WORLD_EUROPA //not made
     #ifndef COMPOSITE
 	    vec3 noonClearLightColor = vec3(0.6, 0.55, 0.7) * 1.9; //ground and cloud color
     #else
@@ -146,7 +146,7 @@
     vec3 ambientColor = mix(clearAmbientColor, rainAmbientColor, rainFactor);
 	
 	
-#elif defined(WORLD_MERCURY)
+#elif defined WORLD_MERCURY
     #ifndef COMPOSITE
 	    vec3 noonClearLightColor = vec3(0.76, 0.57, 0.36) * 1.9; //ground and cloud color
     #else
