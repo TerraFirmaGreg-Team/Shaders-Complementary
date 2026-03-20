@@ -15,9 +15,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  DEV_BRANCH: ${{ github.ref_name != 'dev' }}
-
 jobs:
   info:
     name: "[🖥️] Project Info"
@@ -180,7 +177,7 @@ jobs:
     name: "[🏷️] Release to GitHub"
     needs: [info, build-project]
     runs-on: ubuntu-latest
-    if: ${{ needs.info.outputs.make_release == 'true' && env.DEV_BRANCH == 'true' }}
+    if: ${{ needs.info.outputs.make_release == 'true' && github.ref_name == 'dev' }}
 
     steps:
       - name: "[📦] Download artifact"
@@ -225,7 +222,7 @@ jobs:
     name: "[🚀] Release to CurseForge"
     needs: [info, build-project, release-github]
     runs-on: ubuntu-latest
-    if: ${{ needs.info.outputs.make_release == 'true' && env.DEV_BRANCH == 'true' }}
+    if: ${{ needs.info.outputs.make_release == 'true' && github.ref_name == 'dev' }}
 
     steps:
       - name: "[🔒] Verify tokens"
