@@ -5,8 +5,7 @@ on:
   push:
     branches:
       - dev
-      - master
-      - main
+      - feature/workflows
     paths:
       - 'shaders/**'
       - 'CHANGELOG.md'
