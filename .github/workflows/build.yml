@@ -120,9 +120,9 @@ jobs:
             ### Project Info
             | Parameter | Value |
             |-----------|-------|
-            | 📃 **Name** | ${{ steps.check.outputs.project_name }} |
-            | 📃 **Version** | `${{ steps.check.outputs.project_version }}` |
-            | 📃 **Release Type** | `${{ steps.check.outputs.project_version_type }}` |
+            | 📃 **Name** | ${{ steps.check.outputs.name }} |
+            | 📃 **Version** | `${{ steps.check.outputs.version }}` |
+            | 📃 **Release Type** | `${{ steps.check.outputs.version_type }}` |
             | 📃 **Game Versions** | `${{ steps.check.outputs.game_version }}` |
             | 📃 **Loader Type** | `${{ steps.check.outputs.loader }}` |
 
@@ -130,7 +130,7 @@ jobs:
             | Parameter | Value |
             |-----------|-------|
             | 📃 **Tag Exists** | `${{ steps.check.outputs.exists }}` |
-            | 📃 **Make Release** | `${{ steps.check.outputs.is_release_candidate }}` |
+            | 📃 **Make Release** | `${{ steps.check.outputs.make_release }}` |
 
             ### CHANGELOG
             ```
