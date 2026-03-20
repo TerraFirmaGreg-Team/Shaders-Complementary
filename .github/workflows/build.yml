@@ -42,10 +42,10 @@ jobs:
         with:
           fail: true
           files: |
-            pack.json
-            LICENSE
-            README.md
-            shaders
+            "pack.json"
+            "LICENSE"
+            "README.md"
+            "shaders"
 
       - name: "[📥] Get Pack Info"
         id: pack_info
