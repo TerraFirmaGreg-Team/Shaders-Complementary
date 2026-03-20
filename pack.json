@@ -4,7 +4,7 @@
     "license": "Complementary License Agreement 1.5",
     "logo": "shaders/logo.png",
     "version": "DEV",
-    "type": "release",
+    "version_type": "release",
     "authors": [
         "EminGT",
         "McArdellje",
