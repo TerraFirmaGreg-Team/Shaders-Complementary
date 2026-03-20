@@ -62,9 +62,9 @@ option.info10=Credits
 value.info10.0=
 option.info10.comment=EminGT: The main developer of Complementary. Capt Tatsu: Developer of BSL Shaders, his generosity is what made Complementary possible in the first place. Special Thanks: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE
 
-option.info11=§dWhat is Euphoria Patches
+option.info11=§dTFG shaders credits
 value.info11.0=
-option.info11.comment=Euphoria Patches is an add-on for Complementary Shaders, developed by SpacEagle17. It aims to extend Complementary with more optional handcrafted features and settings.
+option.info11.comment=Big thanks to EminGT for Complementary, SpaceEagle for Euphoria-Patches, lemon41625 for supplemental-patches, and the taidumcraft team for the first ad_astra compatible shader that we used extensively!
 
 option.info12=Euphoria Patches Settings
 value.info12.0=

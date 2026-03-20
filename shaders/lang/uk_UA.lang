@@ -62,9 +62,9 @@ option.info10=Згадки і подяки
 value.info10.0=
 option.info10.comment=EminGT: головний розробник Complementary. Capt Tatsu: розробник BSL Shaders, його щедрість зробила можливим Complementary в першу чергу. Спеціальна подяка: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE.
 
-option.info11=§dЩо таке Euphoria Patches
+option.info11=§dАвтори шейдерів TFG
 value.info11.0=
-option.info11.comment=Euphoria Patches — це доповнення до шейдерів Complementary від SpacEagle17. Воно має на меті розширити Complementary за допомогою нових функцій і налаштувань ручної роботи.
+option.info11.comment=Велика подяка EminGT за доповнення, SpaceEagle за Euphoria-Patches, lemon41625 за додаткові патчі та команді taidumcraft за перший сумісний з ad_astra шейдер, який ми широко використовували!
 
 option.info12=Налаштування Euphoria Patches
 value.info12.0=
