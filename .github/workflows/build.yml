@@ -53,7 +53,7 @@ jobs:
 
       - name: "[📖] Parse Changelog"
         id: changelog
-        uses: Xikaro/action-changelog-parser@v1.2.1
+        uses: Xikaro/action-changelog-parser@v1.2.2
         continue-on-error: true
         with:
           path: "CHANGELOG.md"
