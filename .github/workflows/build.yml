@@ -148,7 +148,7 @@ jobs:
         with:
           files: ${{ needs.info.outputs.included }}
           dest: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
-          recursive: false
+          recursive: true
 
       - name: "[🚀] Upload artifact"
         uses: actions/upload-artifact@v7
