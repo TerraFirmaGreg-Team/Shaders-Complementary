@@ -126,13 +126,6 @@ jobs:
             | 📃 **Tag Exists** | `${{ steps.check.outputs.exists }}` |
             | 📃 **Make Release** | `${{ steps.check.outputs.make_release }}` |
 
-            ### CHANGELOG
-            ```
-            ${{ steps.changelog.outputs.description }}
-            ```
-
-           
-
   build-project:
     name: "[📦] Build Project"
     needs: [info]
@@ -153,7 +146,7 @@ jobs:
         with:
           files: ${{ needs.info.outputs.included }}
           dest: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
-          recursive: true
+          recursive: false
 
       - name: "[🚀] Upload artifact"
         uses: actions/upload-artifact@v7
