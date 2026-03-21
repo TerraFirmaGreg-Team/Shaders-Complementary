@@ -28,7 +28,7 @@ jobs:
       game_versions: ${{ steps.check.outputs.game_versions }}
       changelog: ${{ steps.changelog.outputs.description }}
       make_release: ${{ steps.check.outputs.make_release }}
-      included: ${{ steps.pack_info.outputs.included }}
+      included: ${{ steps.check.outputs.included }}
 
 
     steps:
@@ -77,6 +77,10 @@ jobs:
           GAME_VERSIONS="${{ steps.pack_info.outputs.targets_game_versions }}"
           LOADERS="${{ steps.pack_info.outputs.targets_loaders }}"
 
+          # Clean included array (remove JSON brackets and quotes)
+          RAW_INCLUDED="${{ steps.pack_info.outputs.included }}"
+          INCLUDED=$(echo "$RAW_INCLUDED" | tr -d '[]"' | tr ',' ' ' | xargs)
+
           # Determine if this is a release candidate
           IS_RELEASE_CANDIDATE="false"
           if [[ "$TAG_EXISTS" == "false" && -n "$CHANGELOG_VER" && "$CHANGELOG_VER" != "Unreleased" ]]; then
@@ -98,6 +102,7 @@ jobs:
           echo "version_type=$PACK_VERSION_TYPE" >> $GITHUB_OUTPUT
           echo "exists=$TAG_EXISTS" >> $GITHUB_OUTPUT
           echo "make_release=$IS_RELEASE_CANDIDATE" >> $GITHUB_OUTPUT
+          echo "included=$INCLUDED" >> $GITHUB_OUTPUT
           
 
       - name: "[📝] Generate Build Summary"
