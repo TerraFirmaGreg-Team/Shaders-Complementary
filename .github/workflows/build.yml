@@ -5,10 +5,9 @@ on:
   push:
     branches:
       - dev
-      - feature/workflows
-    # paths:
-    #   - 'shaders/**'
-    #   - 'CHANGELOG.md'
+    paths:
+      - 'shaders/**'
+      - 'CHANGELOG.md'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
