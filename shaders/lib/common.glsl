@@ -141,8 +141,12 @@
 
     #define SPECIAL_PORTAL_EFFECTS
     #define REFLECTION_RES 0.5 //[1.0 0.5]
-
-    #define SUN_ANGLE -1 //[-1 0 -20 -30 -40 -50 -60 60 50 40 30 20]
+	
+	#ifdef AD_ASTRA
+		#define SUN_ANGLE 0 //[-1 0 -20 -30 -40 -50 -60 60 50 40 30 20]
+    #else 
+		#define SUN_ANGLE -1 //[-1 0 -20 -30 -40 -50 -60 60 50 40 30 20]
+	#endif
 
     #define SELECT_OUTLINE 1 //[0 1 3 4 2]
     //#define SELECT_OUTLINE_AUTO_HIDE
@@ -386,7 +390,7 @@
         #define WATER_STYLE_DEFAULT 3
         //#define WATER_CAUSTIC_STYLE_DEFAULT 3
         #define AURORA_STYLE_DEFAULT 2
-        #define SUN_MOON_STYLE_DEFAULT 2
+		#define SUN_MOON_STYLE_DEFAULT 2
         #define CLOUD_STYLE_DEFAULT 3
         #define RAINBOW_STYLE_DEFAULT 4
     #endif

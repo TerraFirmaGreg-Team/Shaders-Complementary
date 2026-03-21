@@ -39,7 +39,7 @@
     #define DAYLIGHT_STARS
     #define HAS_NO_ATMOSPHERE
 	#undef	BORDER_FOG
-    #define  ATM_FOG_MULT 0
+    #define ATM_FOG_MULT 0
 	#define HAS_NO_ATMOSPHERE
 #endif
 
