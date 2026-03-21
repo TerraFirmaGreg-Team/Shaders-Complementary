@@ -1,3 +1,6 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
 *.glsl text linguist-language=glsl
 *.vsh text linguist-language=glsl
 *.gsh text linguist-language=glsl
