@@ -41,6 +41,7 @@
 	#undef	BORDER_FOG
     #define ATM_FOG_MULT 0
 	#define HAS_NO_ATMOSPHERE
+    #define BLOOM_STRENGTH 0.03 //[0 to 10]
 #endif
 
 #ifdef WORLD_MERCURY
