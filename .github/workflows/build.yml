@@ -1,253 +1,313 @@
-name: Project Build
-run-name: "📦 Project Build #${{ github.run_number }}"
+name: "Project Build"
+run-name: "[📦]: Project Build #${{ github.run_number }}"
+
 on:
   push:
     branches:
       - dev
-    paths:
-      - 'shaders/**'
+      - feature/workflows
+    # paths:
+    #   - 'shaders/**'
+    #   - 'CHANGELOG.md'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  DEV_ENVIRONMENT: ${{ github.ref_name != 'main' }}
-
-jobs:    
+jobs:
   info:
-    name: 🖥️ Project Info
+    name: "[🖥️] Project Info"
     runs-on: ubuntu-latest
-    if: ${{  github.repository_owner == 'TerraFirmaGreg-Team' }}
+    if: ${{ github.repository_owner == 'TerraFirmaGreg-Team' }}
     outputs:
-      project_version: ${{ steps.check.outputs.project_version }}
-      project_name: ${{ steps.check.outputs.project_name }}
-      release_type: ${{ steps.check.outputs.release_type }}
-      exists: ${{ steps.check.outputs.exists }}
+
+      name: ${{ steps.check.outputs.name }}
+      version: ${{ steps.check.outputs.version }}
+      version_type: ${{ steps.check.outputs.version_type }}
+      loaders: ${{ steps.check.outputs.loaders }}
+      game_versions: ${{ steps.check.outputs.game_versions }}
+      changelog: ${{ steps.changelog.outputs.description }}
       make_release: ${{ steps.check.outputs.make_release }}
+      included: ${{ steps.check.outputs.included }}
+
 
     steps:
-        - name: 📦 Checkout
-          uses: actions/checkout@v6.0.2
-          with:
-            fetch-depth: 0
-            ref: ${{ github.ref }}
+      - name: "[📦] Checkout"
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-        - name: 📥 Get Pakku Info
-          id: pakku_info
-          uses: ActionsTools/read-json-action@v1.0.5
-          with:
-            file_path: "pakku.json"
+      - name: "[🔍] Check required files and folders"
+        uses: andstor/file-existence-action@v3.0.0
+        with:
+          fail: true
+          ignore_case: true
+          files: "pack.json, LICENSE, README.md, shaders"
 
-        - name: 📝 Increment Semantic Version
-          id: increment
-          uses: christian-draeger/increment-semantic-version@1.2.3
-          with:
-            current-version: ${{ steps.pakku_info.outputs.version }}
-            version-fragment: 'patch'
+      - name: "[📥] Get Pack Info"
+        id: pack_info
+        uses: Xikaro/action-read-json@v1.1.1
+        with:
+          file_path: "pack.json"
+          flat_arrays: true
 
-        - name: 🔍 Check if tag exists
-          uses: mukunku/tag-exists-action@v1.7.0
-          id: check_tag
-          with:
-            tag: ${{ steps.increment.outputs.next-version }}
+      - name: "[📖] Parse Changelog"
+        id: changelog
+        uses: coditory/changelog-parser@v1.0.2
+        continue-on-error: true
+        with:
+          path: "CHANGELOG.md"
 
-        - name: 📝 Sync release version.
-          uses: tj-actions/sync-release-version@v13.16
-          with:
-            pattern: '"version": "'
-            current_version: ${{ steps.pakku_info.outputs.version }}
-            new_version: ${{ steps.increment.outputs.next-version }}
-            paths: |
-              pakku.json
+      - name: "[🔍] Check if tag exists"
+        id: tag_check
+        uses: mukunku/tag-exists-action@v1.7.0
+        with:
+          tag: ${{ steps.changelog.outputs.version }}
 
-        - name: 📝 Push changes
-          uses: EndBug/add-and-commit@v9.1.4
-          with:
-            committer_name: GitHub Actions
-            committer_email: actions@github.com
-            add: 'pakku.json'
-            message: 'Bump version to ${{ steps.increment.outputs.next-version }}'
+      - name: "[🔍] Check"
+        id: check
+        shell: bash
+        run: |
+          # Get data from previous steps
+          CHANGELOG_VER="${{ steps.changelog.outputs.version }}"
+          TAG_EXISTS="${{ steps.tag_check.outputs.exists }}"
 
-        - name: 🔍 Check
-          id: check
-          shell: bash
-          run: |  
-            echo "project_version=${{ steps.increment.outputs.next-version }}" >> $GITHUB_OUTPUT
+          PACK_NAME="${{ steps.pack_info.outputs.name }}"
+          PACK_VERSION_TYPE="${{ steps.pack_info.outputs.version_type }}"
+          GAME_VERSIONS="${{ steps.pack_info.outputs.targets_game_versions }}"
+          LOADERS="${{ steps.pack_info.outputs.targets_loaders }}"
 
-            echo "project_name=${{ steps.pakku_info.outputs.name }}" >> $GITHUB_OUTPUT
-            echo "release_type=${{ steps.pakku_info.outputs.release_type }}" >> $GITHUB_OUTPUT
-            echo "exists=${{ steps.check_tag.outputs.exists }}" >> $GITHUB_OUTPUT
-            echo "make_release=${{ steps.check_tag.outputs.exists == 'false' && env.DEV_ENVIRONMENT == 'false' }}" >> $GITHUB_OUTPUT
+          # Clean included array (remove JSON brackets and quotes)
+          RAW_INCLUDED="${{ steps.pack_info.outputs.included }}"
+          INCLUDED=$(echo "$RAW_INCLUDED" | tr -d '[]"' | tr ',' ' ' | xargs)
 
-        - name: 📝 Generate Github Summary
-          uses: WcAServices/markdown-template-action@v1.1.1
-          with:
-            template: |
-              📃 **Name**: ${{ steps.check.outputs.project_name }}
-              📃 **Release**:  `${{ steps.check.outputs.project_version }}`
-              📃 **Release Type**: `${{ steps.check.outputs.release_type }}`
+          # Determine if this is a release candidate
+          IS_RELEASE_CANDIDATE="false"
+          if [[ "$TAG_EXISTS" == "false" && -n "$CHANGELOG_VER" && "$CHANGELOG_VER" != "Unreleased" ]]; then
+            IS_RELEASE_CANDIDATE="true"
+          fi
 
-              📃 **Dev Environment**: `${{ env.DEV_ENVIRONMENT }}`
-              📃 **Tag Exists**: `${{ steps.check.outputs.exists }}`
-              📃 **Make Release**: `${{ steps.check.outputs.make_release }}`
-            
+          # Use changelog version for releases, fallback to pack.json version with build number
+          if [[ "$IS_RELEASE_CANDIDATE" == "true" ]]; then
+            PACK_VERSION="$CHANGELOG_VER"
+          else
+            PACK_VERSION="${{ steps.pack_info.outputs.version }}-build-${{ github.run_number }}"
+          fi
+
+          # Save values for next steps
+          echo "game_version=$GAME_VERSIONS" >> $GITHUB_OUTPUT
+          echo "loader=$LOADERS" >> $GITHUB_OUTPUT
+          echo "name=$PACK_NAME" >> $GITHUB_OUTPUT
+          echo "version=$PACK_VERSION" >> $GITHUB_OUTPUT
+          echo "version_type=$PACK_VERSION_TYPE" >> $GITHUB_OUTPUT
+          echo "exists=$TAG_EXISTS" >> $GITHUB_OUTPUT
+          echo "make_release=$IS_RELEASE_CANDIDATE" >> $GITHUB_OUTPUT
+          echo "included=$INCLUDED" >> $GITHUB_OUTPUT
+          
+
+      - name: "[📝] Generate Build Summary"
+        uses: WcAServices/markdown-template-action@v1.1.1
+        with:
+          template: |
+            ## 📊 Build Information
+
+            ### Project Info
+            | Parameter | Value |
+            |-----------|-------|
+            | 📃 **Name** | ${{ steps.check.outputs.name }} |
+            | 📃 **Version** | `${{ steps.check.outputs.version }}` |
+            | 📃 **Release Type** | `${{ steps.check.outputs.version_type }}` |
+            | 📃 **Game Versions** | `${{ steps.check.outputs.game_version }}` |
+            | 📃 **Loader Type** | `${{ steps.check.outputs.loader }}` |
+
+            ### Build Decision
+            | Parameter | Value |
+            |-----------|-------|
+            | 📃 **Tag Exists** | `${{ steps.check.outputs.exists }}` |
+            | 📃 **Make Release** | `${{ steps.check.outputs.make_release }}` |
 
   build-project:
-    name: 📦 Build Project
+    name: "[📦] Build Project"
     needs: [info]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6.0.2
-      
-      - name: 📁 Preparing the artifact Unbound
-        run: |
-          mkdir -p build/unbound
-          cp -r shaders/ build/unbound/
-          cd build/unbound
-          sed -i 's/#define SHADER_STYLE .* \/\/\[1 4\]/#define SHADER_STYLE 1 \/\/\[1 4\]/g' shaders/lib/common.glsl
-          zip -r ${{ needs.info.outputs.project_name }}-Unbound-${{ needs.info.outputs.project_version }}.zip shaders/
-          
-      - name: 🚀 Upload artifact Unbound
-        uses: actions/upload-artifact@v7.0.0
-        with:
-          name: ${{ needs.info.outputs.project_name }}-Unbound-${{ needs.info.outputs.project_version }}
-          path: ./build/unbound/${{ needs.info.outputs.project_name }}-Unbound-${{ needs.info.outputs.project_version }}.zip
-          if-no-files-found: error
+      - name: "[📦] Checkout"
+        uses: actions/checkout@v6
 
-      - name: 📁 Preparing the artifact Reimagined
+      - name: "[🔄] Replace strings"
+        shell: bash
         run: |
-          mkdir -p build/reimagined
-          cp -r shaders/ build/reimagined/
-          cd build/reimagined
-          sed -i 's/#define SHADER_STYLE .* \/\/\[1 4\]/#define SHADER_STYLE 4 \/\/\[1 4\]/g' shaders/lib/common.glsl
-          zip -r ${{ needs.info.outputs.project_name }}-Reimagined-${{ needs.info.outputs.project_version }}.zip shaders/
-          
-      - name: 🚀 Upload artifact Reimagined
-        uses: actions/upload-artifact@v7.0.0
+          set +e
+          VERSION=${{ needs.info.outputs.version }}
+          sed -i -e "s/DEV/${VERSION}/g" pack.json
+
+      - name: "[📁] Prepare artifact"
+        uses: vimtor/action-zip@v1.3
         with:
-          name: ${{ needs.info.outputs.project_name }}-Reimagined-${{ needs.info.outputs.project_version }}
-          path: ./build/reimagined/${{ needs.info.outputs.project_name }}-Reimagined-${{ needs.info.outputs.project_version }}.zip
+          files: ${{ needs.info.outputs.included }}
+          dest: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
+          recursive: false
+
+      - name: "[🚀] Upload artifact"
+        uses: actions/upload-artifact@v7
+        with:
+          name: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}"
+          path: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
           if-no-files-found: error
+          retention-days: 30
 
   release-github:
-    name: 🚀 Release to GitHub
+    name: "[🏷️] Release to GitHub"
     needs: [info, build-project]
     runs-on: ubuntu-latest
-    if: ${{ needs.info.outputs.make_release == 'true' }}
-    outputs:
-      url: ${{ steps.release.outputs.url }}
+    if: ${{ needs.info.outputs.make_release == 'true' && github.ref_name == 'dev' }}
 
     steps:
-      - name: 📦 Checkout
-        uses: actions/checkout@v6.0.2
+      - name: "[📦] Download artifact"
+        uses: actions/download-artifact@v8
 
-      - name: 📦 Download artifact
-        uses: actions/download-artifact@v8.0.1
-        with:
-          merge-multiple: true
-
-      - name: 🔍 Check if artifact exist
+      - name: "[🔍] Verify artifact"
         id: check_artifact
         shell: bash
         run: |
-          if [ ! -f ${{ needs.info.outputs.project_name }}-Reimagined-${{ needs.info.outputs.project_version }}.zip ]; then
-            echo '::error::No value found for artifact `Reimagined.zip`.' && exit 1
-          fi
-          if [ ! -f ${{ needs.info.outputs.project_name }}-Unbound-${{ needs.info.outputs.project_version }}.zip ]; then
-            echo '::error::No value found for artifact `Unbound.zip`.' && exit 1
-          fi
-          echo "✔️ All artifacts found"
+          
+          ARTIFACT_NAME="${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
+          echo "=== Artifact Verification ==="
+          echo "Expected file: $ARTIFACT_NAME"
+          echo ""
 
+          if [ ! -f "$ARTIFACT_NAME" ]; then
+            echo "::error::Artifact not found: $ARTIFACT_NAME"
+            ls -la
+            exit 1
+          fi
 
-      - name: 🚀 Create release
+          echo "✅ Artifacts found"
+          ls -lh "$ARTIFACT_NAME"
+
+      - name: "[🚀] Create GitHub Release"
         id: release
-        uses: softprops/action-gh-release@v2.6.1
+        uses: softprops/action-gh-release@v2
         with:
-          name: ${{ needs.info.outputs.project_version }}
-          tag_name: ${{ needs.info.outputs.project_version }}
-          target_commitish: ${{ github.ref_name }}
+          name: "${{ needs.info.outputs.version }}"
+          tag_name: "${{ needs.info.outputs.version }}"
+          target_commitish: "${{ github.ref_name }}"
+          body: |
+            ${{ needs.info.outputs.changelog }}
           files: |
-            ${{ needs.info.outputs.project_name }}-Reimagined-${{ needs.info.outputs.project_version }}.zip
-            ${{ needs.info.outputs.project_name }}-Unbound-${{ needs.info.outputs.project_version }}.zip
-          prerelease: ${{ needs.info.outputs.release_type != 'release' }}
+            ${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip
+          prerelease: ${{ needs.info.outputs.version_type != 'release' }}
           generate_release_notes: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  release-platforms:
-    name: 🚀 Release to Platforms
+
+  release-curseforge:
+    name: "[🚀] Release to CurseForge"
     needs: [info, build-project, release-github]
     runs-on: ubuntu-latest
-    if: ${{ needs.info.outputs.make_release == 'true' }}
+    if: ${{ needs.info.outputs.make_release == 'true' && github.ref_name == 'dev' }}
 
     steps:
-      - name: 🔒 Check if TOKEN exist
+      - name: "[🔒] Verify tokens"
         shell: bash
         run: |
-          if [ "${{ secrets.CURSEFORGE_TOKEN }}" == '' ]; then
-            echo '::error::No value found for secret key `CURSEFORGE_TOKEN`. See https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository' && exit 1
-          fi
-          if [ "${{ secrets.MODRINTH_TOKEN }}" == '' ]; then
-            echo '::error::No value found for secret key `MODRINTH_TOKEN`. See https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository' && exit 1
-          fi  
+          echo "=== Token Verification ==="
 
-      - name: 📦 Download artifact
-        uses: actions/download-artifact@v8.0.1
+          if [ -z "${{ secrets.CURSEFORGE_TOKEN }}" ]; then
+            echo "::error::CURSEFORGE_TOKEN not found"
+            exit 1
+          fi
+          echo "✅ CURSEFORGE_TOKEN: OK"
+
+          echo ""
+
+      - name: "[📦] Download artifact"
+        uses: actions/download-artifact@v8
         with:
           merge-multiple: true
 
-      - name: 🔍 Check if artifact exist
+      - name: "[🔍] Verify artifact"
         id: check_artifact
         shell: bash
         run: |
-          if [ ! -f ${{ needs.info.outputs.project_name }}-Reimagined-${{ needs.info.outputs.project_version }}.zip ]; then
-            echo '::error::No value found for artifact `Reimagined.zip`.' && exit 1
-          fi
-          if [ ! -f ${{ needs.info.outputs.project_name }}-Unbound-${{ needs.info.outputs.project_version }}.zip ]; then
-            echo '::error::No value found for artifact `Unbound.zip`.' && exit 1
-          fi
-          echo "✔️ All artifacts found"
+          ARTIFACT_NAME="${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
 
-      - name: 🚀 Upload Reimagined to platforms
+          if [ ! -f "$ARTIFACT_NAME" ]; then
+            echo "::error::Artifact not found: $ARTIFACT_NAME"
+            exit 1
+          fi
+          echo "✅ Artifact is ready for upload"
+
+      - name: "[🚀] Upload to platforms"
         uses: Kir-Antipov/mc-publish@v3.3.0
         with:
-          modrinth-id: ${{ vars.MODRINTH_ID }}
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: "${{ vars.CURSEFORGE_ID }}"
+          curseforge-token: "${{ secrets.CURSEFORGE_TOKEN }}"
 
-          curseforge-id: ${{ vars.CURSEFORGE_ID }}
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          loaders: "${{ needs.info.outputs.loaders }}"
+          game-versions: "${{ needs.info.outputs.game_versions }}"
 
-          loaders: Iris
-
-          game-versions: 1.20.1
-
-          files: ${{ needs.info.outputs.project_name }}-Reimagined-${{ needs.info.outputs.project_version }}.zip
-          name: "${{ needs.info.outputs.project_name }}-Reimagined-${{ needs.info.outputs.project_version }}"
-          version: ${{ needs.info.outputs.project_version }}
-          version-type: ${{ needs.info.outputs.release_type }}
+          files: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
+          name: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}"
+          version: "${{ needs.info.outputs.version }}"
+          version-type: "${{ needs.info.outputs.version_type }}"
+          changelog: ${{ needs.info.outputs.changelog }}
           game-version-filter: none
           retry-attempts: 2
           retry-delay: 10000
           fail-mode: fail
 
-      - name: 🚀 Upload Unbound to platforms
+  release-modrinth:
+    name: "[🚀] Release to Modrinth"
+    needs: [info, build-project, release-github]
+    runs-on: ubuntu-latest
+    if: ${{ needs.info.outputs.make_release == 'true' && github.ref_name == 'dev' }}
+
+    steps:
+      - name: "[🔒] Verify tokens"
+        shell: bash
+        run: |
+          echo "=== Token Verification ==="
+
+          if [ -z "${{ secrets.MODRINTH_TOKEN }}" ]; then
+            echo "::error::MODRINTH_TOKEN not found"
+            exit 1
+          fi
+          echo "✅ MODRINTH_TOKEN: OK"
+
+          echo ""
+
+      - name: "[📦] Download artifact"
+        uses: actions/download-artifact@v8
+        with:
+          merge-multiple: true
+
+      - name: "[🔍] Verify artifact"
+        id: check_artifact
+        shell: bash
+        run: |
+          ARTIFACT_NAME="${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
+
+          if [ ! -f "$ARTIFACT_NAME" ]; then
+            echo "::error::Artifact not found: $ARTIFACT_NAME"
+            exit 1
+          fi
+          echo "✅ Artifact is ready for upload"
+
+      - name: "[🚀] Upload to platforms"
         uses: Kir-Antipov/mc-publish@v3.3.0
         with:
-          modrinth-id: ${{ vars.MODRINTH_ID }}
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-id: "${{ vars.MODRINTH_ID }}"
+          modrinth-token: "${{ secrets.MODRINTH_TOKEN }}"
 
-          curseforge-id: ${{ vars.CURSEFORGE_ID }}
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          loaders: "${{ needs.info.outputs.loaders }}"
+          game-versions: "${{ needs.info.outputs.game_versions }}"
 
-          loaders: Iris
-
-          game-versions: 1.20.1
-
-          files: ${{ needs.info.outputs.project_name }}-Unbound-${{ needs.info.outputs.project_version }}.zip
-          name: "${{ needs.info.outputs.project_name }}-Unbound-${{ needs.info.outputs.project_version }}"
-          version: ${{ needs.info.outputs.project_version }}
-          version-type: ${{ needs.info.outputs.release_type }}
+          files: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
+          name: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}"
+          version: "${{ needs.info.outputs.version }}"
+          version-type: "${{ needs.info.outputs.version_type }}"
+          changelog: ${{ needs.info.outputs.changelog }}
           game-version-filter: none
           retry-attempts: 2
           retry-delay: 10000
