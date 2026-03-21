@@ -1,32 +1,73 @@
 name: "[❓]: Ask a Question"
-description: "Ask a question regarding this project."
+description: "Ask a question about shader configuration, usage, or features"
 title: "[❓]: "
 labels: [ "Status: Backlog" ]
 type: "Question"
 
 body:
-  - type: checkboxes
-    id: exists
-    attributes:
-      label: "Was this question asked before?"
-      description: "Please search open/closed issues before submitting, as the issue may have already been reported/addressed."
-      options:
-        - label: "No, it was not."
-          required: true
-
   - type: markdown
     attributes:
       value: |
-        If you are in need of quick response, Discord may be a better place. You can find a link to join in our README.md for this project.
+        ### 📋 Before Asking a Question
+        - 📖 Check the [README](https://github.com/TerraFirmaGreg-Team/Shaders-Complementary#readme)
+        - 💬 For quick questions, [Discord](https://terrafirmagreg.team/discord) is better
+        - 🔍 Search [existing issues](https://github.com/TerraFirmaGreg-Team/Shaders-Complementary/issues)
+
+  - type: checkboxes
+    id: exists
+    attributes:
+      label: "Has this question been asked before?"
+      description: "Please search open/closed issues before submitting."
+      options:
+        - label: "No, this is the first question."
+          required: true
+
+  - type: dropdown
+    id: mc-version
+    validations:
+      required: false
+    attributes:
+      label: "Minecraft Version"
+      description: "Which Minecraft version are you using? (optional)"
+      options:
+        - "1.20.x"
+        - "1.12.x"
+        - "Other"
+        - "Not applicable"
+
+  - type: dropdown
+    id: category
+    validations:
+      required: true
+    attributes:
+      label: "Question Category"
+      description: "Which category does your question belong to?"
+      options:
+        - "⚙️ Shader Configuration"
+        - "🔧 Installation"
+        - "🎮 Usage"
+        - "🌍 Dimensions and Biomes"
+        - "⚡ Performance"
+        - "🔌 Mod Compatibility"
+        - "Other"
 
   - type: textarea
     id: question
     validations:
       required: true
     attributes:
-      label: Your Question
-      description: Feel free to ask any question regarding this project here.
-      placeholder: "Example: How can I...?"
+      label: "Your Question"
+      description: "Ask your question here in as much detail as possible."
+      placeholder: "Example: How do I configure shadows? Why is water green? Can you add...?"
+
+  - type: textarea
+    id: context
+    validations:
+      required: false
+    attributes:
+      label: "Context"
+      description: "Additional information about your situation (mods, shader settings, system)."
+      placeholder: "Example: Minecraft 1.20.1, Iris 1.6.0, High profile, RTX 3060..."
 
   - type: markdown
     attributes:

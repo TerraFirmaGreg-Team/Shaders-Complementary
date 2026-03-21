@@ -1,19 +1,76 @@
 name: "[🐛]: Bug report"
-description: "Report a bug where something is not working as expected."
+description: "Report a visual bug, artifact, or incorrect shader behavior"
 title: "[🐛]: "
 labels: [ "Status: Backlog" ]
 projects: ["TerraFirmaGreg-Team/38"]
 type: "Bug"
 
 body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 📋 Before Creating an Issue
+        - ✅ Make sure you're using the **latest version** of the shader
+        - ✅ Search [existing issues](https://github.com/TerraFirmaGreg-Team/Shaders-Complementary/issues) to see if this has already been reported
+        - ✅ Try disabling other mods to check for conflicts
+
   - type: checkboxes
     id: exists
     attributes:
-      label: "Was this bug reported before?"
-      description: "Please search open/closed issues before submitting, as the issue may have already been reported/addressed."
+      label: "Confirmation"
       options:
-        - label: "No, it was not."
+        - label: "I checked that there is no error among the open/closed issues before sending."
           required: true
+        - label: "I'm using the latest shader version"
+          required: false
+
+  - type: dropdown
+    id: mc-version
+    validations:
+      required: true
+    attributes:
+      label: "Minecraft Version"
+      description: "Which Minecraft version are you using?"
+      options:
+        - "1.20.x"
+        - "1.12.x"
+        - "Other"
+
+  - type: dropdown
+    id: renderer
+    validations:
+      required: true
+    attributes:
+      label: "Graphics Mod"
+      description: "Which mod are you using for shaders?"
+      options:
+        - "Iris"
+        - "Oculus"
+        - "OptiFine"
+        - "Embeddium + Oculus"
+        - "Other"
+
+  - type: dropdown
+    id: gpu
+    validations:
+      required: true
+    attributes:
+      label: "Graphics Card (GPU)"
+      description: "Who is your GPU manufacturer?"
+      options:
+        - "NVIDIA"
+        - "AMD"
+        - "Intel"
+        - "I don't know"
+
+  - type: input
+    id: os
+    validations:
+      required: true
+    attributes:
+      label: "Computer OS"
+      description: "Write which OS your PC is running on."
+      placeholder: "Example: Windows 11"
 
   - type: textarea
     id: expected
@@ -21,8 +78,8 @@ body:
       required: true
     attributes:
       label: "Expected Behavior"
-      description: "What you expected to happen. Attach screenshots here as necessary."
-      placeholder: "Example: Expected to produce X by consuming Y."
+      description: "What did you expect to see? Attach screenshots if necessary."
+      placeholder: "Example: Expected correct block lighting..."
 
   - type: textarea
     id: result
@@ -30,8 +87,8 @@ body:
       required: true
     attributes:
       label: "Actual Behavior"
-      description: "What happened despite your expectations. Attach screenshots here as necessary."
-      placeholder: "Example: Produced one X but Y was not consumed."
+      description: "What actually happened? Attach screenshots if necessary."
+      placeholder: "Example: Blocks appear black, shadows flicker..."
 
   - type: textarea
     id: reproduction
@@ -39,8 +96,8 @@ body:
       required: true
     attributes:
       label: "Steps to Reproduce"
-      description: "How to reproduce the bug."
-      placeholder: "Example: 1) I did X..."
+      description: "How can we reproduce this bug?"
+      placeholder: "Example: 1) Launch game with shaders 2) Enter a cave 3) ..."
 
   - type: textarea
     id: additional-info
@@ -48,9 +105,9 @@ body:
       required: false
     attributes:
       label: "Additional Information"
-      description: "Any additional information you wish to provide. Please add anything which did not fit into the other sections here."
-      placeholder: "Example: This is likely caused by X because..."
+      description: "Mod list, shader settings, logs — drag and drop files here."
+      placeholder: "Example: Minecraft 1.20.1, Iris 1.6.0, RTX 3060, mods: TFC, Create..."
 
   - type: markdown
     attributes:
-      value: Thank you for taking the time to fill out this bug report.
+      value: "Thank you for taking the time to fill out this bug report."

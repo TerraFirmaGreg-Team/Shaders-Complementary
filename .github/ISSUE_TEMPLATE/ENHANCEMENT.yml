@@ -1,35 +1,78 @@
 name: "[💎]: Enhancement"
-description: "Provide supporting details for a feature in development"
+description: "Suggest an improvement for an existing shader feature"
 title: "[💎]: "
 labels: [ "Status: Backlog" ]
 projects: ["TerraFirmaGreg-Team/38"]
 type: "Enhancement"
 
 body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 📋 Before Creating an Issue
+        - ✅ Make sure this enhancement hasn't been suggested in [existing issues](https://github.com/TerraFirmaGreg-Team/Shaders-Complementary/issues)
+        - ✅ This template is for **improving existing** features. For new features, use the "Feature Request" template
+
   - type: checkboxes
     id: exists
     attributes:
-      label: "Was this enhancement asked before?"
-      description: "Please search open/closed issues before submitting, as the issue may have already been reported/addressed."
+      label: "Has this enhancement been suggested before?"
+      description: "Please search open/closed issues before submitting."
       options:
-        - label: "No, it was not."
+        - label: "No, this is the first suggestion."
           required: true
+
+  - type: dropdown
+    id: category
+    validations:
+      required: true
+    attributes:
+      label: "Enhancement Category"
+      description: "Which feature do you want to improve?"
+      options:
+        - "🌅 Sky and Clouds"
+        - "💧 Water and Fluids"
+        - "🌲 Foliage and Plants"
+        - "🔦 Lighting and Shadows"
+        - "🏗️ Blocks and Textures"
+        - "⚡ Performance"
+        - "🎨 Other"
+
+  - type: textarea
+    id: current
+    validations:
+      required: true
+    attributes:
+      label: "Current Implementation"
+      description: "Describe how the feature currently works and what you don't like about it."
+      placeholder: "Example: Currently shadows blur at distance, making the image unclear..."
 
   - type: textarea
     id: feature
     validations:
       required: true
     attributes:
-      label: What would you like to be added?
-      description: Feature requests are unlikely to make progress as issues.
+      label: "What do you want to improve?"
+      description: "Describe what exactly needs to change and how it should work after improvement."
+      placeholder: "Example: Improve shadow quality at distance, add range setting..."
 
   - type: textarea
     id: rationale
     validations:
       required: true
     attributes:
-      label: Why is this needed?
+      label: "Why is this needed?"
+      description: "Explain why this improvement is important and how it will enhance the shader experience."
+      placeholder: "Example: This will make the image more realistic and sharper..."
+
+  - type: textarea
+    id: additional
+    validations:
+      required: false
+    attributes:
+      label: "Additional Information"
+      description: "Any additional information, examples from other shaders, screenshots."
 
   - type: markdown
     attributes:
-      value: "Thanks for taking the time to fill out this request enhancement."
+      value: "Thank you for taking the time to fill out this enhancement request."

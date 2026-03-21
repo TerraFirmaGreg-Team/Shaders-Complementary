@@ -1,47 +1,91 @@
 name: "[💡]: Feature request"
-description: "Request a new feature or a change to an existing one."
+description: "Suggest a new feature or visual effect for the shader"
 title: "[💡]: "
 labels: [ "Status: Backlog" ]
 projects: ["TerraFirmaGreg-Team/38"]
 type: "Feature"
 
 body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 📋 Before Creating an Issue
+        - ✅ Make sure this feature hasn't been suggested in [existing issues](https://github.com/TerraFirmaGreg-Team/Shaders-Complementary/issues)
+        - ✅ This template is for **new features**. For improving existing ones, use the "Enhancement" template
+
   - type: checkboxes
     id: exists
     attributes:
-      label: "Was this feature suggested before?"
-      description: "Please search open/closed issues before submitting, as the issue may have already been reported/addressed."
+      label: "Has this feature been suggested before?"
+      description: "Please search open/closed issues before submitting."
       options:
-        - label: "No, it was not."
+        - label: "No, this is the first suggestion."
           required: true
+
+  - type: dropdown
+    id: category
+    validations:
+      required: true
+    attributes:
+      label: "Feature Category"
+      description: "Which category does your suggestion belong to?"
+      options:
+        - "🌅 Sky and Clouds"
+        - "💧 Water and Fluids"
+        - "🌲 Foliage and Plants"
+        - "🔦 Lighting and Shadows"
+        - "🏗️ Blocks and Textures"
+        - "⚡ Performance"
+        - "🎨 Other"
 
   - type: textarea
     id: problem
     validations:
       required: false
     attributes:
-      label: "Related problem"
-      description: If the feature you wish to change is related to a problem, please desscribe it. Leave this field blank if it is not related to a problem.
-      placeholder: "Example: I'm always frustrated when..."
+      label: "Related Problem"
+      description: "If your suggestion is related to a problem, describe it here."
+      placeholder: "Example: I'm not satisfied with how clouds are currently implemented..."
 
   - type: textarea
     id: solution
     validations:
       required: true
     attributes:
-      label: "Your solution"
-      description: Describe the solution you would like to have happen.
-      placeholder: "Example: If I could..."
+      label: "Your Solution"
+      description: "Describe in detail what exactly you want to see in the shader."
+      placeholder: "Example: I want clouds to have volume and cast shadows..."
+
+  - type: dropdown
+    id: performance
+    validations:
+      required: true
+    attributes:
+      label: "Performance Impact"
+      description: "Are you willing to accept a potential FPS drop for this feature?"
+      options:
+        - "Yes, I'm okay with reduced FPS"
+        - "Only if the impact is minimal"
+        - "No, the feature should be optional"
+        - "I don't know"
+
+  - type: textarea
+    id: references
+    validations:
+      required: false
+    attributes:
+      label: "Examples and References"
+      description: "Do you have examples from other shaders or games? Attach screenshots or links."
+      placeholder: "Example: In BSL shader this is implemented like..."
 
   - type: textarea
     id: additional-info
     validations:
       required: false
     attributes:
-      label: "Additional information"
-      description: Any additional information you wish to provide. Please add anything which did not fit into the other sections here.
-      placeholder: "Example: This is likely achieveable by doing X because..."
+      label: "Additional Information"
+      description: "Any additional information that will help implement your idea."
 
   - type: markdown
     attributes:
-      value: "Thanks for taking the time to fill out this feature request."
+      value: "Thank you for taking the time to fill out this feature request."
