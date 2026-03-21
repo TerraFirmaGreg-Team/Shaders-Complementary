@@ -157,7 +157,7 @@ jobs:
           retention-days: 30
 
   release-github:
-    name: "[🏷️] Release to GitHub"
+    name: "[🚀] Release to GitHub"
     needs: [info, build-project]
     runs-on: ubuntu-latest
     if: ${{ needs.info.outputs.make_release == 'true' && github.ref_name == 'dev' }}
@@ -203,7 +203,7 @@ jobs:
 
   release-curseforge:
     name: "[🚀] Release to CurseForge"
-    needs: [info, build-project, release-github]
+    needs: [info, build-project]
     runs-on: ubuntu-latest
     if: ${{ needs.info.outputs.make_release == 'true' && github.ref_name == 'dev' }}
 
@@ -259,7 +259,7 @@ jobs:
 
   release-modrinth:
     name: "[🚀] Release to Modrinth"
-    needs: [info, build-project, release-github]
+    needs: [info, build-project]
     runs-on: ubuntu-latest
     if: ${{ needs.info.outputs.make_release == 'true' && github.ref_name == 'dev' }}
 
