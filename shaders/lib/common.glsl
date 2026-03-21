@@ -19,7 +19,7 @@
     #define RP_MODE 1 //[1 0 3 2]
 
     #define SHADOW_QUALITY 2 //[-1 0 1 2 3 4 5]
-    const float shadowDistance = 160; //[64.0 80.0 96.0 112.0 128.0 160.0 192.0 224.0 256.0 320.0 384.0 512.0 768.0 1024.0]
+    const float shadowDistance = 160.0; //[64.0 80.0 96.0 112.0 128.0 160.0 192.0 224.0 256.0 320.0 384.0 512.0 768.0 1024.0]
     #define FXAA_DEFINE 1 //[-1 1]
     #define DETAIL_QUALITY 2 //[0 2 3]
     #define CLOUD_QUALITY 2 //[0 1 2 3]

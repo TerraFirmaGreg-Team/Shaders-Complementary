@@ -10,7 +10,7 @@
 #ifndef MAIN_FOG_SETTINGS_FILE
 #define MAIN_FOG_SETTINGS_FILE
 
-//#define LESS_LAVA_FOG
+#define LESS_LAVA_FOG
 
 
 // Euphoria Patches Settings
