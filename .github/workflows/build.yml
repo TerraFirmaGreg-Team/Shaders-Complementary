@@ -70,9 +70,6 @@ jobs:
         run: |
           # Get data from previous steps
           CHANGELOG_VER="${{ steps.changelog.outputs.version }}"
-          CHANGELOG_DESC="${{ steps.changelog.outputs.description }}"
-          HAS_UNRELEASED="${{ steps.changelog.outputs.hasUnreleased }}"
-          UNRELEASED_DESC="${{ steps.changelog.outputs.unreleasedDescription }}"
           TAG_EXISTS="${{ steps.tag_check.outputs.exists }}"
 
           PACK_NAME="${{ steps.pack_info.outputs.name }}"
@@ -93,17 +90,9 @@ jobs:
             PACK_VERSION="${{ steps.pack_info.outputs.version }}-build-${{ github.run_number }}"
           fi
 
-          # For Summary: use Unreleased if available, otherwise latest release
-          DISPLAY_DESC="$UNRELEASED_DESC"
-          if [[ -z "$UNRELEASED_DESC" ]]; then
-            DISPLAY_DESC="$CHANGELOG_DESC"
-          fi
-
           # Save values for next steps
           echo "game_version=$GAME_VERSIONS" >> $GITHUB_OUTPUT
           echo "loader=$LOADERS" >> $GITHUB_OUTPUT
-          echo "changelog=$DISPLAY_DESC" >> $GITHUB_OUTPUT
-          echo "has_unreleased=$HAS_UNRELEASED" >> $GITHUB_OUTPUT
           echo "name=$PACK_NAME" >> $GITHUB_OUTPUT
           echo "version=$PACK_VERSION" >> $GITHUB_OUTPUT
           echo "version_type=$PACK_VERSION_TYPE" >> $GITHUB_OUTPUT
@@ -131,6 +120,11 @@ jobs:
             |-----------|-------|
             | 📃 **Tag Exists** | `${{ steps.check.outputs.exists }}` |
             | 📃 **Make Release** | `${{ steps.check.outputs.make_release }}` |
+
+            ### CHANGELOG
+            ```
+            ${{ steps.changelog.outputs.description }}
+            ```
 
            
 
