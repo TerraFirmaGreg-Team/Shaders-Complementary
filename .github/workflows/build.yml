@@ -17,17 +17,20 @@ jobs:
   info:
     name: "[🖥️] Project Info"
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner == 'TerraFirmaGreg-Team' }}
+    if: ${{ !github.event.repository.fork }}
     outputs:
-
       name: ${{ steps.check.outputs.name }}
       version: ${{ steps.check.outputs.version }}
       version_type: ${{ steps.check.outputs.version_type }}
+      full_name: ${{ steps.check.outputs.name }}-${{ steps.check.outputs.version }}
+
       loaders: ${{ steps.check.outputs.loaders }}
       game_versions: ${{ steps.check.outputs.game_versions }}
+
       changelog: ${{ steps.changelog.outputs.description }}
-      make_release: ${{ steps.check.outputs.make_release }}
       included: ${{ steps.check.outputs.included }}
+
+      make_release: ${{ steps.check.outputs.make_release }}
 
 
     steps:
@@ -67,35 +70,35 @@ jobs:
         id: check
         shell: bash
         run: |
+
           # Get data from previous steps
           CHANGELOG_VER="${{ steps.changelog.outputs.version }}"
           TAG_EXISTS="${{ steps.tag_check.outputs.exists }}"
 
           PROJECT_NAME="${{ steps.project_info.outputs.name }}"
-          PROJECT_VERSION_TYPE="${{ steps.project_info.outputs.version_type }}"
           GAME_VERSIONS="${{ steps.project_info.outputs.targets_game_versions }}"
           LOADERS="${{ steps.project_info.outputs.targets_loaders }}"
 
-          # Clean included array (remove JSON brackets and quotes)
+          # Preparation
           RAW_INCLUDED="${{ steps.project_info.outputs.included }}"
           INCLUDED=$(echo "$RAW_INCLUDED" | tr -d '[]"' | tr ',' ' ' | xargs)
 
-          # Determine if this is a release candidate
           IS_RELEASE_CANDIDATE="false"
           if [[ "$TAG_EXISTS" == "false" && -n "$CHANGELOG_VER" && "$CHANGELOG_VER" != "Unreleased" ]]; then
             IS_RELEASE_CANDIDATE="true"
           fi
 
-          # Use changelog version for releases, fallback to project.json version with build number
           if [[ "$IS_RELEASE_CANDIDATE" == "true" ]]; then
             PROJECT_VERSION="$CHANGELOG_VER"
+            PROJECT_VERSION_TYPE="${{ steps.project_info.outputs.version_type }}"
           else
             PROJECT_VERSION="${{ steps.project_info.outputs.version }}-build-${{ github.run_number }}"
+            PROJECT_VERSION_TYPE="Unreleased"
           fi
 
           # Save values for next steps
           echo "game_version=$GAME_VERSIONS" >> $GITHUB_OUTPUT
-          echo "loader=$LOADERS" >> $GITHUB_OUTPUT
+          echo "loaders=$LOADERS" >> $GITHUB_OUTPUT
           echo "name=$PROJECT_NAME" >> $GITHUB_OUTPUT
           echo "version=$PROJECT_VERSION" >> $GITHUB_OUTPUT
           echo "version_type=$PROJECT_VERSION_TYPE" >> $GITHUB_OUTPUT
@@ -113,11 +116,11 @@ jobs:
             ### Project Info
             | Parameter | Value |
             |-----------|-------|
-            | 📃 **Name** | ${{ steps.check.outputs.name }} |
+            | 📃 **Name** | `${{ steps.check.outputs.name }}` |
             | 📃 **Version** | `${{ steps.check.outputs.version }}` |
             | 📃 **Release Type** | `${{ steps.check.outputs.version_type }}` |
             | 📃 **Game Versions** | `${{ steps.check.outputs.game_version }}` |
-            | 📃 **Loader Type** | `${{ steps.check.outputs.loader }}` |
+            | 📃 **Loaders** | `${{ steps.check.outputs.loaders }}` |
 
             ### Build Decision
             | Parameter | Value |
@@ -125,7 +128,7 @@ jobs:
             | 📃 **Tag Exists** | `${{ steps.check.outputs.exists }}` |
             | 📃 **Make Release** | `${{ steps.check.outputs.make_release }}` |
 
-  build-project:
+  build:
     name: "[📦] Build Project"
     needs: [info]
     runs-on: ubuntu-latest
@@ -133,7 +136,7 @@ jobs:
       - name: "[📦] Checkout"
         uses: actions/checkout@v6
 
-      - name: "[🔄] Replace strings"
+      - name: "[🔄] Replace"
         shell: bash
         run: |
           set +e
@@ -153,161 +156,89 @@ jobs:
           name: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}"
           path: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
           if-no-files-found: error
-          retention-days: 30
 
-  release-github:
-    name: "[🚀] Release to GitHub"
-    needs: [info, build-project]
-    runs-on: ubuntu-latest
-    if: ${{ needs.info.outputs.make_release == 'true' && github.ref_name == 'dev' }}
+  release:
+      name: "[🚀] Release"
+      needs: [info, build]
+      runs-on: ubuntu-latest
+      if: ${{ needs.info.outputs.make_release }}
 
-    steps:
-      - name: "[📦] Download artifact"
-        uses: actions/download-artifact@v8
+      steps:
+        - name: "[📦] Download artifact"
+          uses: actions/download-artifact@v8
 
-      - name: "[🔍] Verify artifact"
-        id: check_artifact
-        shell: bash
-        run: |
-          
-          ARTIFACT_NAME="${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
-          echo "=== Artifact Verification ==="
-          echo "Expected file: $ARTIFACT_NAME"
-          echo ""
+        - name: "[🔒] Verify"
+          shell: bash
+          run: |
+            echo "=== Token Verification ==="
 
-          if [ ! -f "$ARTIFACT_NAME" ]; then
-            echo "::error::Artifact not found: $ARTIFACT_NAME"
-            ls -la
-            exit 1
-          fi
+            if [ -z "${{ secrets.MODRINTH_TOKEN }}" ]; then
+              echo "::error::MODRINTH_TOKEN not found"
+              exit 1
+            fi
+            echo "✅ MODRINTH_TOKEN: OK"
 
-          echo "✅ Artifacts found"
-          ls -lh "$ARTIFACT_NAME"
+            if [ -z "${{ secrets.CURSEFORGE_TOKEN }}" ]; then
+              echo "::error::CURSEFORGE_TOKEN not found"
+              exit 1
+            fi
+            echo "✅ CURSEFORGE_TOKEN: OK"
 
-      - name: "[🚀] Create GitHub Release"
-        id: release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: "${{ needs.info.outputs.version }}"
-          tag_name: "${{ needs.info.outputs.version }}"
-          target_commitish: "${{ github.ref_name }}"
-          body: |
-            ${{ needs.info.outputs.changelog }}
-          files: |
-            ${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip
-          prerelease: ${{ needs.info.outputs.version_type != 'release' }}
-          generate_release_notes: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+            echo ""
+            echo "=== ID Verification ==="
 
+            if [ -z "${{ vars.MODRINTH_ID }}" ]; then
+              echo "::error::MODRINTH_ID not found"
+              exit 1
+            fi
+            echo "✅ MODRINTH_ID: OK"
 
-  release-curseforge:
-    name: "[🚀] Release to CurseForge"
-    needs: [info, build-project]
-    runs-on: ubuntu-latest
-    if: ${{ needs.info.outputs.make_release == 'true' && github.ref_name == 'dev' }}
+            if [ -z "${{ vars.CURSEFORGE_ID }}" ]; then
+              echo "::error::CURSEFORGE_ID not found"
+              exit 1
+            fi
+            echo "✅ CURSEFORGE_ID: OK"
 
-    steps:
-      - name: "[🔒] Verify tokens"
-        shell: bash
-        run: |
-          echo "=== Token Verification ==="
+            echo ""
+            echo "=== Artifact Verification ==="
 
-          if [ -z "${{ secrets.CURSEFORGE_TOKEN }}" ]; then
-            echo "::error::CURSEFORGE_TOKEN not found"
-            exit 1
-          fi
-          echo "✅ CURSEFORGE_TOKEN: OK"
+            if [ ! -f "${{ needs.info.outputs.full_name }}.zip" ]; then
+              echo "::error::Artifact not found"
+              ls -la
+              exit 1
+            fi
 
-          echo ""
+            echo "✅ Artifact: OK"
+            echo ""
+    
+        - name: "[🚀] Release"
+          if: false
+          uses: Xikaro/game-publish@3.3.1
+          with:
+            modrinth-id: ${{ vars.MODRINTH_ID }}
+            modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
-      - name: "[📦] Download artifact"
-        uses: actions/download-artifact@v8
-        with:
-          merge-multiple: true
+            curseforge-id: ${{ vars.CURSEFORGE_ID }}
+            curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
-      - name: "[🔍] Verify artifact"
-        id: check_artifact
-        shell: bash
-        run: |
-          ARTIFACT_NAME="${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
+            github-name: ${{ needs.info.outputs.version }}
+            github-tag: ${{ needs.info.outputs.version }}
+            github-generate-changelog: true
+            github-draft: false
+            github-prerelease: ${{ needs.info.outputs.version_type != 'release' }}
+            github-commitish: main
+            github-token: ${{ secrets.GITHUB_TOKEN }}
 
-          if [ ! -f "$ARTIFACT_NAME" ]; then
-            echo "::error::Artifact not found: $ARTIFACT_NAME"
-            exit 1
-          fi
-          echo "✅ Artifact is ready for upload"
+            files: ${{ needs.info.outputs.full_name }}.zip
 
-      - name: "[🚀] Upload to platforms"
-        uses: Kir-Antipov/mc-publish@v3.3.0
-        with:
-          curseforge-id: "${{ vars.CURSEFORGE_ID }}"
-          curseforge-token: "${{ secrets.CURSEFORGE_TOKEN }}"
+            name: ${{ needs.info.outputs.full_name }}
+            version: ${{ needs.info.outputs.version }}
+            version-type: ${{ needs.info.outputs.version_type }}
 
-          loaders: "${{ needs.info.outputs.loaders }}"
-          game-versions: "${{ needs.info.outputs.game_versions }}"
-
-          files: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
-          name: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}"
-          version: "${{ needs.info.outputs.version }}"
-          version-type: "${{ needs.info.outputs.version_type }}"
-          changelog: ${{ needs.info.outputs.changelog }}
-          game-version-filter: none
-          retry-attempts: 2
-          retry-delay: 10000
-          fail-mode: fail
-
-  release-modrinth:
-    name: "[🚀] Release to Modrinth"
-    needs: [info, build-project]
-    runs-on: ubuntu-latest
-    if: ${{ needs.info.outputs.make_release == 'true' && github.ref_name == 'dev' }}
-
-    steps:
-      - name: "[🔒] Verify tokens"
-        shell: bash
-        run: |
-          echo "=== Token Verification ==="
-
-          if [ -z "${{ secrets.MODRINTH_TOKEN }}" ]; then
-            echo "::error::MODRINTH_TOKEN not found"
-            exit 1
-          fi
-          echo "✅ MODRINTH_TOKEN: OK"
-
-          echo ""
-
-      - name: "[📦] Download artifact"
-        uses: actions/download-artifact@v8
-        with:
-          merge-multiple: true
-
-      - name: "[🔍] Verify artifact"
-        id: check_artifact
-        shell: bash
-        run: |
-          ARTIFACT_NAME="${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
-
-          if [ ! -f "$ARTIFACT_NAME" ]; then
-            echo "::error::Artifact not found: $ARTIFACT_NAME"
-            exit 1
-          fi
-          echo "✅ Artifact is ready for upload"
-
-      - name: "[🚀] Upload to platforms"
-        uses: Kir-Antipov/mc-publish@v3.3.0
-        with:
-          modrinth-id: "${{ vars.MODRINTH_ID }}"
-          modrinth-token: "${{ secrets.MODRINTH_TOKEN }}"
-
-          loaders: "${{ needs.info.outputs.loaders }}"
-          game-versions: "${{ needs.info.outputs.game_versions }}"
-
-          files: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}.zip"
-          name: "${{ needs.info.outputs.name }}-${{ needs.info.outputs.version }}"
-          version: "${{ needs.info.outputs.version }}"
-          version-type: "${{ needs.info.outputs.version_type }}"
-          changelog: ${{ needs.info.outputs.changelog }}
-          game-version-filter: none
-          retry-attempts: 2
-          retry-delay: 10000
-          fail-mode: fail
+            changelog: ${{ needs.info.outputs.changelog }}
+            loaders: ${{ needs.info.outputs.loaders }}
+            game-versions: ${{ needs.info.outputs.game_versions }}
+            game-version-filter: none
+            retry-attempts: 2
+            retry-delay: 10000
+            fail-mode: fail

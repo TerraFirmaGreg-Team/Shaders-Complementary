@@ -1,4 +1,5 @@
 {
+    "type": "shader",
     "name": "TerraFirmaGreg-Shaders-Complementary",
     "description": "Shaders setup for TerraFirmaGreg",
     "license": "Complementary License Agreement 1.5",
