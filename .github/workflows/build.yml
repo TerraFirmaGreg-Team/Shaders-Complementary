@@ -41,13 +41,13 @@ jobs:
         with:
           fail: true
           ignore_case: true
-          files: "pack.json, LICENSE, README.md, shaders"
+          files: "project.json, LICENSE, README.md, shaders"
 
-      - name: "[📥] Get Pack Info"
-        id: pack_info
+      - name: "[📥] Get Project Info"
+        id: project_info
         uses: Xikaro/action-read-json@v1.1.1
         with:
-          file_path: "pack.json"
+          file_path: "project.json"
           flat_arrays: true
 
       - name: "[📖] Parse Changelog"
@@ -71,13 +71,13 @@ jobs:
           CHANGELOG_VER="${{ steps.changelog.outputs.version }}"
           TAG_EXISTS="${{ steps.tag_check.outputs.exists }}"
 
-          PACK_NAME="${{ steps.pack_info.outputs.name }}"
-          PACK_VERSION_TYPE="${{ steps.pack_info.outputs.version_type }}"
-          GAME_VERSIONS="${{ steps.pack_info.outputs.targets_game_versions }}"
-          LOADERS="${{ steps.pack_info.outputs.targets_loaders }}"
+          PROJECT_NAME="${{ steps.project_info.outputs.name }}"
+          PROJECT_VERSION_TYPE="${{ steps.project_info.outputs.version_type }}"
+          GAME_VERSIONS="${{ steps.project_info.outputs.targets_game_versions }}"
+          LOADERS="${{ steps.project_info.outputs.targets_loaders }}"
 
           # Clean included array (remove JSON brackets and quotes)
-          RAW_INCLUDED="${{ steps.pack_info.outputs.included }}"
+          RAW_INCLUDED="${{ steps.project_info.outputs.included }}"
           INCLUDED=$(echo "$RAW_INCLUDED" | tr -d '[]"' | tr ',' ' ' | xargs)
 
           # Determine if this is a release candidate
@@ -86,19 +86,19 @@ jobs:
             IS_RELEASE_CANDIDATE="true"
           fi
 
-          # Use changelog version for releases, fallback to pack.json version with build number
+          # Use changelog version for releases, fallback to project.json version with build number
           if [[ "$IS_RELEASE_CANDIDATE" == "true" ]]; then
-            PACK_VERSION="$CHANGELOG_VER"
+            PROJECT_VERSION="$CHANGELOG_VER"
           else
-            PACK_VERSION="${{ steps.pack_info.outputs.version }}-build-${{ github.run_number }}"
+            PROJECT_VERSION="${{ steps.project_info.outputs.version }}-build-${{ github.run_number }}"
           fi
 
           # Save values for next steps
           echo "game_version=$GAME_VERSIONS" >> $GITHUB_OUTPUT
           echo "loader=$LOADERS" >> $GITHUB_OUTPUT
-          echo "name=$PACK_NAME" >> $GITHUB_OUTPUT
-          echo "version=$PACK_VERSION" >> $GITHUB_OUTPUT
-          echo "version_type=$PACK_VERSION_TYPE" >> $GITHUB_OUTPUT
+          echo "name=$PROJECT_NAME" >> $GITHUB_OUTPUT
+          echo "version=$PROJECT_VERSION" >> $GITHUB_OUTPUT
+          echo "version_type=$PROJECT_VERSION_TYPE" >> $GITHUB_OUTPUT
           echo "exists=$TAG_EXISTS" >> $GITHUB_OUTPUT
           echo "make_release=$IS_RELEASE_CANDIDATE" >> $GITHUB_OUTPUT
           echo "included=$INCLUDED" >> $GITHUB_OUTPUT
@@ -138,7 +138,7 @@ jobs:
         run: |
           set +e
           VERSION=${{ needs.info.outputs.version }}
-          sed -i -e "s/DEV/${VERSION}/g" pack.json
+          sed -i -e "s/DEV/${VERSION}/g" project.json
 
       - name: "[📁] Prepare artifact"
         uses: vimtor/action-zip@v1.3
