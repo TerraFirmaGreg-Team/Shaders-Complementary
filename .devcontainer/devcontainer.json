@@ -1,6 +1,8 @@
 {
   "name": "Shaders-Complementary",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/shaders,type=bind",
+  "workspaceFolder": "/shaders",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {}
   },
