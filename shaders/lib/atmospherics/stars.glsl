@@ -73,7 +73,7 @@ vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float st
     star *= max0(1.0 - pow(abs(VdotS) * 1.002, 100.0) * starsAroundSun) * starBelowHorizonBrightness - horizonFactor * 0.5;
 
     #ifndef DAYLIGHT_STARS
-		star *= min(1, pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility) + clamp((cameraPosition.y - 250) / 150, 0.0, 1.0));
+		star *= min(1, pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility) + clamp((cameraPosition.y - 180) / 220, 0.0, 1.0));
     #endif
 
     #ifdef CLEAR_SKY_WHEN_RAINING
