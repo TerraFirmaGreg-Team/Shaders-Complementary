@@ -62,9 +62,9 @@ option.info10=クレジット
 value.info10.0=
 option.info10.comment=EminGT: Complementaryのメイン開発者。. Capt Tatsu: BSLシェーダーの開発者であり、彼の寛大さがComplementaryの実現を可能にしました。. スペシャルサンクス: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE
 
-option.info11=§dTFGシェーダーのクレジット
-value.info11.0=
-option.info11.comment=Complementaryを提供してくれたEminGT、Euphoria-Patchesを提供してくれたSpaceEagle、supplemental-patchesを提供してくれたlemon41625、そして私たちが extensively 使用した最初の ad_astra 互換シェーダーを提供してくれた taidumcraft チームに心から感謝します！
+# option.info11=§dTFGシェーダーのクレジット
+# value.info11.0=
+# option.info11.comment=Complementaryを提供してくれたEminGT、Euphoria-Patchesを提供してくれたSpaceEagle、supplemental-patchesを提供してくれたlemon41625、そして私たちが extensively 使用した最初の ad_astra 互換シェーダーを提供してくれた taidumcraft チームに心から感謝します！
 
 option.info12=Euphoria Patchesの設定
 value.info12.0=

@@ -2756,3 +2756,12 @@ suffix.BLOOD_MOON=\ ігрових ночей
 option.BLOOD_MOON.comment=Умикає криваві місяці, які відбуваються протягом кількости днів Minecraft, які користувач встановив у цьому параметрі.
 option.EMISSIVE_BLOOD_MOON_FLOWERS=Випром. квіти кривавого Місяця
 option.EMISSIVE_BLOOD_MOON_FLOWERS.comment=Змушує червоні квіти світитися під час кривавих Місяців. §e[*]§r Для параметра «Підтримка ПР» має бути встановлено значення Integrated PBR+.
+
+option.TFGinfo1=Важлива інформація
+option.TFGinfo1.comment=Дякуємо за встановлення шейдерів TerraFirmaGreg. Наразі вони перебувають у розробці, тому очікуйте помилок та недосконалостей. Якщо ви знайшли баги чи маєте власні ідеї стосовно шейдерів, надішліть їх до нашого TerraFirmaGreg-shaders GitHub. Шейдери засновані на “Complementary-Euphoria-Supplemental”. Дякуємо всім розробникам за можливість використовувати їхню працю
+value.TFGinfo1.0=
+
+option.TFGinfo2=§d§nGitHub
+option.TFGinfo2.comment=Наші GitHub: §d§ngithub.com/TerraFirmaGreg-Team/Shaders-Complementary§r Будь ласка, відправляйте туди всі баги і ваші пропозиції по покращенню шейдерів
+value.TFGinfo2.0=
+

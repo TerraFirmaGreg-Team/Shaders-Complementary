@@ -65,9 +65,9 @@ option.info10=致谢
 value.info10.0=
 option.info10.comment=EminGT: Complementary 光影的主要开发者. Capt Tatsu: BSL 光影的开发者, 没有他的慷慨, 最初的 Complementary 不可能出现. 特别致谢: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE
 
-option.info11=§dTFG着色器鸣谢
-value.info11.0=
-option.info11.comment=非常感谢 EminGT 提供的 Complementary、SpaceEagle 提供的 Euphoria-Patches、lemon41625 提供的 supplemental-patches，以及 taidumcraft 团队提供的第一个 ad_astra 兼容着色器，我们广泛使用了该着色器！
+# option.info11=§dTFG着色器鸣谢
+# value.info11.0=
+# option.info11.comment=非常感谢 EminGT 提供的 Complementary、SpaceEagle 提供的 Euphoria-Patches、lemon41625 提供的 supplemental-patches，以及 taidumcraft 团队提供的第一个 ad_astra 兼容着色器，我们广泛使用了该着色器！
 
 option.info12=Euphoria Patches 设置
 value.info12.0=

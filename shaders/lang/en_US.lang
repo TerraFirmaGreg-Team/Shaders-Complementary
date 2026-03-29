@@ -3206,3 +3206,16 @@ option.YUNGS_SANDSTORM_FOG_INTENSITY.comment=Determines intensity of the fog dur
 option.YUNGS_SANDSTORM_WAVING_INTENSITY=Sandstorm Waving Intensity
 option.YUNGS_SANDSTORM_WAVING_INTENSITY.comment=Determines how strongly foliage waves during a sandstorm.
 
+
+#  // TerraFirmaGreg //
+
+screen.TERRAFIRMAGREG_VERSION=TerraFirmaGreg compat §d3.1.0
+
+option.TFGinfo1=Important Information
+option.TFGinfo1.comment=Thank you for installing §bTerraFirmaGreg shaders§r. The shaders are still in development, so expect bugs and imperfections. If you have any problems or suggestions, please leave them on the §dTerraFirmaGreg-shaders GitHub§r. The shaders are based on the §dComplementary-Euphoria-Supplemental shaders§r. Thanks to all the developers for allowing us to use their work
+value.TFGinfo1.0=
+
+option.TFGinfo2=§d§nGitHub
+option.TFGinfo2.comment=Our GitHub: §d§ngithub.com/TerraFirmaGreg-Team/Shaders-Complementary§r please leave all bug reports and suggestions for improving shaders exactly there
+value.TFGinfo2.0=
+

@@ -2757,3 +2757,11 @@ suffix.BLOOD_MOON=\ ночей Minecraft
 
 option.EMISSIVE_BLOOD_MOON_FLOWERS=Светящиеся цветы при кровавой луне
 option.EMISSIVE_BLOOD_MOON_FLOWERS.comment=Делает красные цветы светящимися во время кровавой луны. §e[*]§r Требуется, чтобы параметр поддержки RP был установлен в «Встроенный PBR+».
+
+option.TFGinfo1=Важная информация
+option.TFGinfo1.comment=Спасибо за установку шейдеров TerraFirmaGreg. Шейдеры всё ещё находятся в разработке, поэтому ожидайте ошибок и несовершенств. Если у вас возникнут какие-либо проблемы или предложения, пожалуйста, оставьте их на TerraFirmaGreg-shaders GitHub. Шейдеры основаны на шейдерах Complementary-Euphoria-Supplemental. Спасибо всем разработчикам за предоставленную возможность использовать их труды
+value.TFGinfo1.0=
+
+option.TFGinfo2=§d§nGitHub
+option.TFGinfo2.comment=Наш GitHub: §d§ngithub.com/TerraFirmaGreg-Team/Shaders-Complementary§r Пожалуйста, отправляйте туда все баги и ваши предложения по улучшению шейдеров
+value.TFGinfo2.0=
