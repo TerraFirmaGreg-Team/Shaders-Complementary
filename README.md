@@ -49,5 +49,5 @@ If you play **TerraFirmaGreg-Modpack** and want to take visual immersion to a ne
 **Acknowledgements:**
 Many thanks to the creators of **[Complementary](https://www.curseforge.com/minecraft/shaders/complementary-unbound)**, **[Euphoria Patches](https://www.curseforge.com/minecraft/mc-mods/euphoria-patches)** and **[Supplemental Patches](https://www.curseforge.com/minecraft/mc-mods/supplemental-patches)** for their outstanding works, which formed the basis of this project, as well as to the developers of the **TerraFirmaGreg-Modpack**.
 
-Also thanks to [TaidumCraft](https://modrinth.com/modpack/taidumcraft) for their excellent modified shaders to work with Ad Astra dimensions, which we use as a base.
+Also thanks to [TaidumCraft](https://modrinth.com/modpack/taidumcraft) for their excellent modified shaders to work with Ad Astra dimensions, which we use as a reference.
 
