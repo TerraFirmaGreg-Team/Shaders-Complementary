@@ -16,9 +16,9 @@
         "woopSmile",
         "i_iht"
     ],
-    "credits": {
+    "credits": [
         "Compat Complementary Euphoria Supplemental"
-    },
+    ],
     "included": [
         "shaders",
         "README.md",
