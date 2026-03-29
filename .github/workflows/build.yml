@@ -212,7 +212,7 @@ jobs:
             echo ""
     
         - name: "[🚀] Release"
-          if: false
+          if: ${{ !vars.ACTIONS_STEP_DEBUG }}
           uses: Xikaro/game-publish@3.3.1
           with:
             modrinth-id: ${{ vars.MODRINTH_ID }}
