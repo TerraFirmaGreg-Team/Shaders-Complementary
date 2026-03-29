@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [3.1.0] - 29-03-2026
 ### Changes
 - Updated to complementary 5.7.1
 - Added Euphoria Patcher 1.8.6
