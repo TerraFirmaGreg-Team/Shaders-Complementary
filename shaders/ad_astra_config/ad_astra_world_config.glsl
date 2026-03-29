@@ -46,6 +46,7 @@
 
 #ifdef WORLD_MERCURY
     #define HAS_NO_MOON
+    #define SUN_SIZE 2000 //normal is 400
  //   #define NEBULA_AT_DAY
     #define DAYLIGHT_STARS
 	
@@ -53,6 +54,7 @@
 
 #ifdef WORLD_MARS
     #define HAS_NO_MOON
+    #define SUN_SIZE 100 //normal is 400
     #undef  ATM_FOG_MULT
     #define ATM_FOG_MULT 0.0
     #undef  LIGHTSHAFTS_ACTIVE

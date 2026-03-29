@@ -148,7 +148,11 @@ void main() {
             float absVdotS = abs(VdotS);
             #if SUN_MOON_STYLE == 2
                 float sunSizeFactor1 = 0.9975;
-                float sunSizeFactor2 = 400.0;
+				#ifdef SUN_SIZE
+					float sunSizeFactor2 = SUN_SIZE;
+				#else
+					float sunSizeFactor2 = 400.0;
+				#endif
                 float moonCrescentOffset = 0.0055;
                 float moonPhaseFactor1 = 2.45;
                 float moonPhaseFactor2 = 750.0;

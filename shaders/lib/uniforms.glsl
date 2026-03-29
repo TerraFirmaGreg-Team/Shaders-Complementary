@@ -294,7 +294,12 @@ uniform float inSkyriseVale = 0.0;
     uniform float inVisceralHeap;
 #endif
 uniform float inWeepingWitchForest = 0.0;
-uniform vec3 moonColorSmooth = vec3(1.0);
+
+#ifdef AD_ASTRA //would be better if defined with HAS_NO_MOON, but its not yet defined
+	uniform vec3 moonColorSmooth = vec3(0.0);
+#else
+	uniform vec3 moonColorSmooth = vec3(1.0);
+#endif
 uniform float moonSizeSmooth = 20.0;
 #if defined MOD_ENDERSCAPE
     uniform float smoothEnderscapeNebulaAlpha;
