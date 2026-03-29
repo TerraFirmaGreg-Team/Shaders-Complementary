@@ -78,12 +78,16 @@ jobs:
           TAG_EXISTS="${{ steps.tag_check.outputs.exists }}"
 
           PROJECT_NAME="${{ steps.project_info.outputs.name }}"
-          GAME_VERSIONS="${{ steps.project_info.outputs.targets_game_versions }}"
-          LOADERS="${{ steps.project_info.outputs.targets_loaders }}"
 
           # Preparation
           RAW_INCLUDED="${{ steps.project_info.outputs.included }}"
           INCLUDED=$(echo "$RAW_INCLUDED" | tr -d '[]"' | tr ',' ' ' | xargs)
+
+          RAW_LOADERS="${{ steps.project_info.outputs.targets_loaders }}"
+          LOADERS=$(echo "$RAW_LOADERS" | tr ' ' ',')
+
+          RAW_GAME_VERSIONS="${{ steps.project_info.outputs.targets_game_versions }}"
+          GAME_VERSIONS=$(echo "$RAW_GAME_VERSIONS" | tr ' ' ',')
 
           IS_RELEASE_CANDIDATE="false"
           if [[ "$TAG_EXISTS" == "false" && -n "$CHANGELOG_VER" && "$CHANGELOG_VER" != "Unreleased" ]]; then
@@ -228,7 +232,6 @@ jobs:
             github-generate-changelog: true
             github-draft: false
             github-prerelease: ${{ needs.info.outputs.version_type != 'release' }}
-            github-commitish: main
             github-token: ${{ secrets.GITHUB_TOKEN }}
 
             files: ${{ needs.info.outputs.full_name }}.zip
