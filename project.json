@@ -1,6 +1,6 @@
 {
     "type": "shader",
-    "name": "TerraFirmaGreg-compat-Complementary-Euphoria-Supplemental",
+    "name": "TerraFirmaGreg-Shaders-Complementary",
     "description": "Shaders setup for TerraFirmaGreg",
     "license": "Complementary License Agreement 1.5",
     "logo": "shaders/logo.png",
@@ -16,6 +16,9 @@
         "woopSmile",
         "i_iht"
     ],
+    "credits": {
+        "Compat Complementary Euphoria Supplemental"
+    },
     "included": [
         "shaders",
         "README.md",
