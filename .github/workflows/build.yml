@@ -103,7 +103,7 @@ jobs:
           fi
 
           # Save values for next steps
-          echo "game_version=$GAME_VERSIONS" >> $GITHUB_OUTPUT
+          echo "game_versions=$GAME_VERSIONS" >> $GITHUB_OUTPUT
           echo "loaders=$LOADERS" >> $GITHUB_OUTPUT
           echo "name=$PROJECT_NAME" >> $GITHUB_OUTPUT
           echo "version=$PROJECT_VERSION" >> $GITHUB_OUTPUT
@@ -219,7 +219,7 @@ jobs:
     
         - name: "[🚀] Release"
           if: ${{ vars.ACTIONS_STEP_DEBUG != 'true' }}
-          uses: Xikaro/game-publish@3.3.2
+          uses: Xikaro/game-publish@3.3.3
           with:
             modrinth-id: ${{ vars.MODRINTH_ID }}
             modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
