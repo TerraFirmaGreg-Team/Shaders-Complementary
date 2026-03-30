@@ -125,7 +125,7 @@ jobs:
             | 📃 **Name** | `${{ steps.check.outputs.name }}` |
             | 📃 **Version** | `${{ steps.check.outputs.version }}` |
             | 📃 **Release Type** | `${{ steps.check.outputs.version_type }}` |
-            | 📃 **Game Versions** | `${{ steps.check.outputs.game_version }}` |
+            | 📃 **Game Versions** | `${{ steps.check.outputs.game_versions }}` |
             | 📃 **Loaders** | `${{ steps.check.outputs.loaders }}` |
 
             ### Build Decision
