@@ -29,7 +29,7 @@
     #define ANISOTROPIC_FILTER 0 //[0 4 8 16]
     #define ENTITY_SHADOW 1 //[-1 1 2]
 
-    #define COLORED_LIGHTING 128 //[128 192 256 384 512 768 1024]
+    // #define COLORED_LIGHTING 128 //[128 192 256 384 512 768 1024]
     #define WORLD_SPACE_REFLECTIONS -1 //[-1 1]
     #if defined IRIS_FEATURE_CUSTOM_IMAGES && SHADOW_QUALITY > -1 && !defined MC_OS_MAC && !(defined DH_TERRAIN || defined DH_WATER)
         #define COLORED_LIGHTING_INTERNAL COLORED_LIGHTING
@@ -283,7 +283,7 @@
     #ifdef MULTICOLORED_BLOCKLIGHT
         #define SSBL_OVERRIDE
     #endif
-    #define MCBL_MAIN_DEFINE 1 //[0 1 2 3]
+    #define MCBL_MAIN_DEFINE 0 //[0 1 2 3]
     #if COLORED_LIGHTING_INTERNAL == 0 || MCBL_MAIN_DEFINE > 1 || defined ENTITIES_ARE_LIGHT
         #if (MCBL_MAIN_DEFINE >= 1 || defined SSBL_OVERRIDE || defined ENTITIES_ARE_LIGHT) && (MC_VERSION >= 11604 || defined IS_IRIS || defined IS_ANGELICA)
             #define SS_BLOCKLIGHT
