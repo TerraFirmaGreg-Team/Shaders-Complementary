@@ -23,7 +23,7 @@
         "shaders",
         "README.md",
         "LICENSE",
-        "pack.json"
+        "project.json"
     ],
     "targets": {
         "game_versions": [
