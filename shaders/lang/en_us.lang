@@ -3209,7 +3209,7 @@ option.YUNGS_SANDSTORM_WAVING_INTENSITY.comment=Determines how strongly foliage 
 
 #  // TerraFirmaGreg //
 
-screen.TERRAFIRMAGREG_VERSION=TerraFirmaGreg compat §d3.1.0
+screen.TERRAFIRMAGREG_VERSION=TerraFirmaGreg compat §d3.1.2
 
 option.TFGinfo1=Important Information
 option.TFGinfo1.comment=Thank you for installing §bTerraFirmaGreg shaders§r. The shaders are still in development, so expect bugs and imperfections. If you have any problems or suggestions, please leave them on the §dTerraFirmaGreg-shaders GitHub§r. The shaders are based on the §dComplementary-Euphoria-Supplemental shaders§r. Thanks to all the developers for allowing us to use their work
