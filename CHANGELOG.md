@@ -1,4 +1,8 @@
 # Changelog
+## [3.1.2] - 1-04-2026
+- Added all blocks from 0.12.0
+- Fixed several bugs in the shaders menu
+
 ## [3.1.1] - 30-03-2026
 - Removed colored lighting from default settings, it was too heavy for most users. Is still default in presets Very High and above.
 - Added pack.json to have a description when using iris folder
