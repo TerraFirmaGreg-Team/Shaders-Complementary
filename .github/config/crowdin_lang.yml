@@ -9,7 +9,7 @@ preserve_hierarchy: true
 files:
   - source: "/lang/en_us.lang"
     translation: "/%original_path%/%locale_with_underscore%.%file_extension%"
-    type: "properties"
+    # type: "properties"
     update_option: "update_as_unapproved"
 
     languages_mapping:
