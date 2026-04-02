@@ -7,7 +7,6 @@ profile.MEDIUM=§aСредний
 profile.HIGH=§eВысокий (по умолчанию)
 profile.VERYHIGH=§cОчень высокий
 profile.ULTRA=§4§lУльтра
-profile.COMPLEMENTARY=§4§l§n§oComplementary
 profile.comment=Профили шейдера изменяют настройки производительности с оптимальным соотношением качества и производительности. §e[*]§r Рекомендуется использовать один из этих профилей, если вы не уверены в своих действиях. §e[*]§r Все затронутые настройки можно найти в разделе «Настройки производительности». Профиль «Популярные настройки» включает любимые опции сообщества.
 
 #Information
@@ -18,102 +17,72 @@ screen.INFORMATION2=Информация о Complementary
 screen.INFORMATION2.comment=Этот раздел содержит кнопки, которые существуют только для предоставления информации.
 
 option.info0=§bНаведите курсор на кнопку
-value.info0.0=
 option.info0.comment=Этот раздел содержит кнопки, которые существуют только для предоставления информации.
 
 option.info1=Как повысить производительность
-value.info1.0=
 option.info1.comment=Производительность в Minecraft зависит от многих факторов. Попробуйте следующее: уменьшите дальность прорисовки (оптимально от 6 до 16 для большинства устройств), выберите более низкий профиль шейдеров (они настроены для лучшего баланса качества и производительности). Дополнительная информация появится позже.
 
 option.info2=Какие настройки лучше
-value.info2.0=
 option.info2.comment=Лучшие настройки субъективны, но стандартные варианты подходят большинству. Они созданы на основе многолетнего опыта сообщества с учётом баланса качества и производительности. Не бойтесь экспериментировать!
 
 option.info3=Что такое профиль и визуальный стиль
-value.info3.0=
 option.info3.comment=Профиль изменяет настройки производительности, не затрагивая визуальные предпочтения. Визуальный стиль меняет параметры вроде «По стилю», но почти не влияет на производительность.
 
 option.info4=Поддержка наборов ресурсов
-value.info4.0=
 option.info4.comment=Определяет, как шейдеры обрабатывают блоки. Например, §bВстроенный PBR+§r делает золотые блоки отражающими, а §elabPBR§r/§eseuspbr§r требуют установки наборов ресурсов. Режим §aБазовый§r отключает 'особые' эффекты для большинства блоков.
 
 option.info5=Как исправить проблемы с модами
-value.info5.0=
 option.info5.comment=Некоторые моды несовместимы со шейдерами. Посетите страницу с известными решениями: www.complementary.dev/mod-issues
 
-option.info6=
-value.info6.0=
-option.info6.comment=
 
-option.info7=
-value.info7.0=
-option.info7.comment=
 
 option.info8=Как присоединиться к сообществу
-value.info8.0=
 option.info8.comment=Присоединяйтесь к серверу Complementary в Discord: www.complementary.dev/discord
 
 option.info9=Как поддержать Complementary
-value.info9.0=
 option.info9.comment=Лучшая поддержка — рассказать друзьям. Также можно помочь разработчику через Patreon: www.patreon.com/emingt
 
 option.info10=Благодарности
-value.info10.0=
 option.info10.comment=EminGT: главный разработчик. Capt Tatsu: создатель BSL Shaders. Особая благодарность: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap.
 
 option.info11=§dАвторы шейдеров TFG
-value.info11.0=
 option.info11.comment=Огромное спасибо EminGT за Complementary, SpaceEagle за Euphoria-Patches, lemon41625 за supplemental-patches и команде taidumcraft за первый шейдер, совместимый с ad_astra, который мы активно использовали!
 
 option.info12=Настройки Euphoria Patches
-value.info12.0=
 option.info12.comment=Все функции Euphoria по умолчанию отключены. В разделе «Популярные настройки» собраны самые востребованные опции. Существует также и много других опций, которые пополняются с каждым обновлением, так что можете в них покопаться.
 
 option.info13=Поддержка модов в Euphoria
-value.info13.0=
 option.info13.comment=Лучшая совместимость с модами через автоматическое определение источников света, листвы и свойств блоков (см. block.properties).
 
 option.info14=Присоединиться к сообществу
-value.info14.0=
 option.info14.comment=Discord-сервер Euphoria Patches: §d§l§neuphoriapatches.com/discord
 
 option.info15=Благодарности Euphoria Patches
-value.info15.0=
 option.info15.comment=Полный список: §deuphoriapatches.com/credits§r. Участники: isuewo, EminGT, Capt Tatsu, gri573, FoZy STYLE, SixthSurge, WoMspace, Septonious, fayer3, Xonk, Memokii, dragoncat, TheNukeLore, dbrighthd, Surisen, Acer, Folox_, Helgust.
 
 option.info16=§d§nКак поддержать Euphoria Patches
-value.info16.0=
 option.info16.comment=Рассказывайте о проекте или поддержите SpacEagle17 на Patreon/Ko-Fi: §d§l§neuphoriapatches.com/support
 
 option.info17=Бета-версии: Patreon SpacEagle17
-value.info17.0=
 option.info17.comment=Доступ к эксклюзивным версиям через поддержку: §d§l§neuphoriapatches.com/support
 
 option.info18=Для Complementary r5.7.1
-value.info18.0=
 option.info18.comment=Спасибо за установку Euphoria Patches :)
 
 option.info19=§aНОВОЕ ОБНОВЛЕНИЕ
-value.info19.0=§cX.Y.Z §r->§a X.Y.Z
 option.info19.comment=Доступна новая версия мода Euphoria Patcher. Скачайте: https://euphoriapatches.com/download.
 
-option.info20=
-value.info20.0=§aeuphoriapatches.com/download
 option.info20.comment=Доступна новая версия мода Euphoria Patcher. Скачайте: https://euphoriapatches.com/download.
 
 option.info21=Частые вопросы
-value.info21.0=
 option.info21.comment=Ответы на частые вопросы: §d§l§neuphoriapatches.com/faq
 
 option.info22=§dДополнительные настройки при прокрутке
-value.info22.0=
 option.info22.comment=При больших размерах интерфейса некоторые настройки могут быть скрыты — прокрутите вниз, чтобы увидеть их.
 
 #Style
 option.SHADER_STYLE=Визуальный стиль
 option.SHADER_STYLE.comment=Определяет базовый визуальный стиль. §bReimagined§r: сохраняет уникальные элементы Minecraft. §dUnbound§r: переработанный стиль с элементами фэнтези. §e[*]§r Затрагиваемые настройки: стиль воды, облаков, солнца и луны, угол солнца и луны, стиль свечения руд.
-value.SHADER_STYLE.1=§bReimagined
-value.SHADER_STYLE.4=§dUnbound
 
 #Screens
 screen.PERFORMANCE_SETTINGS=§eНастройки производительности§r
@@ -344,7 +313,6 @@ value.WORLD_SPACE_REFLECTIONS.1=§4§l§n§oДа
 option.WORLD_SPACE_REF_MODE=Режим WSR §e[*]§r
 option.WORLD_SPACE_REF_MODE.comment=Определяет режим работы отражений в мировом пространстве (WSR). §e[*]§r Режим «Только WSR» хорошо убирает все артефакты отражений в экранном пространстве, так как показывает только отражения в мировом пространстве, а режим «WSR + SSR» позволяет получить больше деталей в отражениях, так как отражения в экранном пространстве используют все детали, видимые на экране, без ограничений по блокам или расстоянию.
 value.WORLD_SPACE_REF_MODE.1=Только WSR
-value.WORLD_SPACE_REF_MODE.2=WSR + SSR
 
 option.WORLD_SPACE_PLAYER_REF=Отраж. игрока в мир. простр.
 option.WORLD_SPACE_PLAYER_REF.comment=Создаёт собственную игровую модель текущего игрока, отражённую в отражениях мирового пространства.
@@ -376,7 +344,7 @@ option.ATM_FOG_ALTITUDE=Высота атмосферного тумана
 option.ATM_FOG_ALTITUDE.comment=Задаёт высоту максимальной плотности тумана.
 
 option.CAVE_FOG=Пещерный туман
-option.CAVE_FOG.comment=Добавляет дополнительный туман в глубоких подземных зонах.
+option.CAVE_FOG.comment=Включает/отключает туман в пещерах.
 
 option.LIGHTSHAFT_BEHAVIOUR=Режим световых лучей
 option.LIGHTSHAFT_BEHAVIOUR.comment=Определяет поведение световых лучей. §a[+]§r Адаптивные лучи автоматически переключаются между режимами. §c[-]§r Экстремальный режим не рекомендуется для игры, так как сильно влияет на FPS.
@@ -402,8 +370,6 @@ option.CLOUD_STYLE_DEFINE=Стиль облаков
 option.CLOUD_STYLE_DEFINE.comment=Определяет стиль облаков. §e[*]§r «По стилю» — зависит от настройки «Визуального стиля». §e[*]§r Ванильный стиль требует включения облаков в настройках игры.
 value.CLOUD_STYLE_DEFINE.-1=По стилю
 value.CLOUD_STYLE_DEFINE.0=§cНет
-value.CLOUD_STYLE_DEFINE.1=Reimagined
-value.CLOUD_STYLE_DEFINE.3=Unbound
 value.CLOUD_STYLE_DEFINE.50=Ванильный §e[*]
 
 option.CLOUD_SHADOWS=Тени от облаков
@@ -431,7 +397,6 @@ option.CLOUD_UNBOUND_SIZE_MULT.comment=Регулирует размер обл�
 
 option.CLOUD_UNBOUND_RAIN_ADD=Добавление дождевых облаков
 option.CLOUD_UNBOUND_RAIN_ADD.comment=Регулирует увеличение количества облаков, которое применяется во время дождя и снегопада.
-prefix.CLOUD_UNBOUND_RAIN_ADD=+
 
 option.DOUBLE_REIM_CLOUDS=Двойные облака Reimagined
 option.DOUBLE_REIM_CLOUDS.comment=Включает дополнительный слой облаков Reimagined. §e[*]§r Требует стиля Reimagined.
@@ -518,15 +483,11 @@ option.GR_BC=Кривая синего
 option.WATER_STYLE_DEFINE=Стиль воды
 option.WATER_STYLE_DEFINE.comment=Определяет стиль воды. §e[*]§r «По стилю» — значение выбирается автоматически в зависимости от основного «Визуального стиля» на главной странице параметров шейдеров.
 value.WATER_STYLE_DEFINE.-1=По стилю
-value.WATER_STYLE_DEFINE.1=Reimagined
 value.WATER_STYLE_DEFINE.2=Reimagined + волны
-value.WATER_STYLE_DEFINE.3=Unbound
 
 option.WATER_CAUSTIC_STYLE_DEFINE=Стиль каустик воды
 option.WATER_CAUSTIC_STYLE_DEFINE.comment=Определяет стиль подводных световых узоров (каустик).
 value.WATER_CAUSTIC_STYLE_DEFINE.-1=Как у воды
-value.WATER_CAUSTIC_STYLE_DEFINE.1=Reimagined
-value.WATER_CAUSTIC_STYLE_DEFINE.3=Unbound
 
 option.WATER_REFRACTION_INTENSITY=Интенсивность рефракции воды §e[*]§r
 option.WATER_REFRACTION_INTENSITY.comment=Регулирует силу преломления света и искажений под водой. §e[*]§r Полноценно работает только при «Качестве деталей» — «Высокое», а иначе повлияет только на едва заметные подводные искажения.
@@ -578,37 +539,10 @@ option.WATER_SIZE_MULT.comment=Определяет видимый размер 
 option.SUN_ANGLE=Угол солнца/луны
 option.SUN_ANGLE.comment=Регулирует угол наклона солнца и луны относительно мира в полдень. §a[+]§r Стиль Reimagined оптимизирован для угла «0».
 value.SUN_ANGLE.-1=По стилю
-value.SUN_ANGLE.60=60
-value.SUN_ANGLE.55=55
-value.SUN_ANGLE.50=50
-value.SUN_ANGLE.45=45
-value.SUN_ANGLE.40=40
-value.SUN_ANGLE.35=35
-value.SUN_ANGLE.30=30
-value.SUN_ANGLE.25=25
-value.SUN_ANGLE.20=20
-value.SUN_ANGLE.15=15
-value.SUN_ANGLE.10=10
-value.SUN_ANGLE.5=5
-value.SUN_ANGLE.0=0 §r(§bReimagined§r)
-value.SUN_ANGLE.-5=-5
-value.SUN_ANGLE.-10=-10
-value.SUN_ANGLE.-15=-15
-value.SUN_ANGLE.-20=-20
-value.SUN_ANGLE.-25=-25
-value.SUN_ANGLE.-30=-30
-value.SUN_ANGLE.-35=-35
-value.SUN_ANGLE.-40=-40 §r(§dUnbound§r)
-value.SUN_ANGLE.-45=-45
-value.SUN_ANGLE.-50=-50
-value.SUN_ANGLE.-55=-55
-value.SUN_ANGLE.-60=-60
 
 option.SUN_MOON_STYLE_DEFINE=Стиль солнца и луны
 option.SUN_MOON_STYLE_DEFINE.comment=Определяет стиль солнца и луны. §e[*]§r Может конфликтовать с некоторыми наборами ресурсов из-за разграничением текстур солцна, луны и небосвода.
 value.SUN_MOON_STYLE_DEFINE.-1=По стилю
-value.SUN_MOON_STYLE_DEFINE.1=Reimagined
-value.SUN_MOON_STYLE_DEFINE.2=Unbound
 value.SUN_MOON_STYLE_DEFINE.3=Уменьшенный Unbound
 
 option.SUN_MOON_HORIZON=Солнце и луна за горизонтом
@@ -634,15 +568,11 @@ value.RAINBOWS.3=Всегда
 option.RAINBOW_STYLE_DEFINE=Стиль радуги
 option.RAINBOW_STYLE_DEFINE.comment=Определяет стиль радуги. §e[*]§r «По стилю» означает, что значение будет автоматически задаваться параметром «Визуальный стиль» в главном меню настроек шейдеров.
 value.RAINBOW_STYLE_DEFINE.-1=По стилю
-value.RAINBOW_STYLE_DEFINE.1=Reimagined
-value.RAINBOW_STYLE_DEFINE.4=Unbound
 
 option.AURORA_STYLE_DEFINE=Стиль северного сияния
 option.AURORA_STYLE_DEFINE.comment=Определяет стиль северного сияния, появляющегося в ночном небе.
 value.AURORA_STYLE_DEFINE.-1=По стилю
 value.AURORA_STYLE_DEFINE.0=§cНет
-value.AURORA_STYLE_DEFINE.1=Reimagined
-value.AURORA_STYLE_DEFINE.2=Unbound
 
 option.AURORA_CONDITION=Условия сияния
 option.AURORA_CONDITION.comment=Определяет условия появления северного сияния. §e[*]§r Оно появляется только ночью независимо от настроек.
@@ -705,44 +635,11 @@ value.BLOOM_ENABLED.1=§eДа
 
 option.BLOOM_STRENGTH=Яркость свечения
 option.BLOOM_STRENGTH.comment=Регулирует силу свечения ярких объектов и эффекта пещерной и дождевой влажности. §c[-]§r Высокие значения делают изображение размытым, чем предполагается, особенно во влажных условиях.
-value.BLOOM_STRENGTH.0.027=15%
-value.BLOOM_STRENGTH.0.036=20%
-value.BLOOM_STRENGTH.0.045=25%
-value.BLOOM_STRENGTH.0.054=30%
-value.BLOOM_STRENGTH.0.063=35%
-value.BLOOM_STRENGTH.0.072=40%
-value.BLOOM_STRENGTH.0.081=45%
-value.BLOOM_STRENGTH.0.09=50%
-value.BLOOM_STRENGTH.0.10=55%
-value.BLOOM_STRENGTH.0.11=60%
-value.BLOOM_STRENGTH.0.12=65%
-value.BLOOM_STRENGTH.0.13=70%
-value.BLOOM_STRENGTH.0.14=75%
-value.BLOOM_STRENGTH.0.15=80% §c[-]
-value.BLOOM_STRENGTH.0.16=85% §c[-]
-value.BLOOM_STRENGTH.0.17=90% §c[-]
-value.BLOOM_STRENGTH.0.18=95% §c[-]
-value.BLOOM_STRENGTH.0.19=100% §c[-]
-value.BLOOM_STRENGTH.0.21=110% §c[-]
-value.BLOOM_STRENGTH.0.23=120% §c[-]
-value.BLOOM_STRENGTH.0.25=130% §c[-]
-value.BLOOM_STRENGTH.0.28=150% §c[-]
-value.BLOOM_STRENGTH.0.32=180% §c[-]
 value.BLOOM_STRENGTH.10.00=§cБезумное
 
 option.IMAGE_SHARPENING=Резкость изображения
 option.IMAGE_SHARPENING.comment=Повышает резкость через фильтр. §c[-]§r Может вызывать артефакты, такие как сглаживание, мерцание, шум и незначительные изменения яркости.
 value.IMAGE_SHARPENING.0=Нет
-value.IMAGE_SHARPENING.1=1x
-value.IMAGE_SHARPENING.2=2x
-value.IMAGE_SHARPENING.3=3x
-value.IMAGE_SHARPENING.4=4x
-value.IMAGE_SHARPENING.5=5x
-value.IMAGE_SHARPENING.6=6x §c[-]
-value.IMAGE_SHARPENING.7=7x §c[-]
-value.IMAGE_SHARPENING.8=8x §c[-]
-value.IMAGE_SHARPENING.9=9x §c[-]
-value.IMAGE_SHARPENING.10=10x §c[-]
 
 option.LENSFLARE_MODE=Блики объектива
 option.LENSFLARE_MODE.comment=Добавляет блики при взгляде на солнце/луну. §c[-]§r Сильно влияет на производительность.
@@ -833,11 +730,6 @@ option.VIGNETTE_R.comment=Затемнение по краям экрана.
 
 option.CHROMA_ABERRATION=Хроматические аберрации
 option.CHROMA_ABERRATION.comment=Разделяет цвета по краям экрана. §c[-]§r Хроматическая аберрация может привести к тому, что изображение будет казаться размытым. Высокие значения не рекомендуются для игры.
-value.CHROMA_ABERRATION.4=4 §c[-]
-value.CHROMA_ABERRATION.5=5 §c[-]
-value.CHROMA_ABERRATION.6=6 §c[-]
-value.CHROMA_ABERRATION.7=7 §c[-]
-value.CHROMA_ABERRATION.8=8 §c[-]
 
 option.IPBR_EMISSIVE_MODE=Режим свечения встр. PBR+
 option.IPBR_EMISSIVE_MODE.comment=Определяет обработку свечения в встроенном PBR+. Выбор labPBR или seuspbr позволяет наборам ресурсов переопределять свечение для блоков, к которым прикреплены зеркальные текстуры. §c[-]§r Не меняйте, если не уверены, что делаете.
@@ -976,19 +868,9 @@ option.POM_DEPTH.comment=Регулирует глубину 3D-эффекта �
 
 option.POM_QUALITY=Качество ОПО
 option.POM_QUALITY.comment=Точность деталей отображения параллаксной окклюзии. §c[-]§r Значения выше 200 сильно снижают производительность. §e[*]§r Параметр «Поддержки наборов ресурсов» должен быть установлен в labPBR или seuspbr при наличии соответствующего набора ресурсов.
-value.POM_QUALITY.16=16 §e[*]
-value.POM_QUALITY.32=32 §e[*]
-value.POM_QUALITY.64=64 §e[*]
-value.POM_QUALITY.256=256 §c[-]
-value.POM_QUALITY.512=512 §c[-]
 
 option.POM_DISTANCE=Дистанция ОПО
 option.POM_DISTANCE.comment=Дальность расчёта 3D-эффекта отображения параллаксной окклюзии. §e[*]§r Рекомендуется до 50 для получения небольшого прироста производительности. §e[*]§r Параметр «Поддержки наборов ресурсов» должен быть установлен в labPBR или seuspbr при наличии соответствующего набора ресурсов.
-value.POM_DISTANCE.64=64 §e[*]
-value.POM_DISTANCE.128=128 §e[*]
-value.POM_DISTANCE.256=256 §e[*]
-value.POM_DISTANCE.512=512 §e[*]
-value.POM_DISTANCE.1024=1024 §e[*]
 
 option.POM_LIGHTING_MODE=Режим освещения ОПО
 option.POM_LIGHTING_MODE.comment=Настраивает стиль освещения для поверхностей, подверженных воздействию отображения параллаксной окклюзии. Резкое: стены ОПО не будут освещаться, если они не обращены к свету. Плавное: стены ОПО будут по-прежнему освещаться, как если бы они не были стенами.
@@ -1020,10 +902,6 @@ option.WAVING_SPEED.comment=Регулирует скорость движени
 
 option.WAVING_I=Интенсивность колыхания
 option.WAVING_I.comment=Сила движения объектов. §c[-]§r Слишком большая интенсивность колыхания может привести к пересечению колышащихся блоков с другими.
-value.WAVING_I.1.25=1.25 §c[-]
-value.WAVING_I.1.50=1.50 §c[-]
-value.WAVING_I.1.75=1.75 §c[-]
-value.WAVING_I.2.00=2.00 §c[-]
 value.WAVING_I.50.0=§cБезумная
 
 option.NO_WAVING_INDOORS=Без колыхания в помещениях
@@ -1059,8 +937,6 @@ option.SPECIAL_PORTAL_EFFECTS.comment=Добавляет анимации и с�
 
 option.REFLECTION_RES=Отражения с половинным разрешением
 option.REFLECTION_RES.comment=Отображает PBR-отражения на блоках (и отражения в мировом пространстве, если они включены) в половинном разрешении для повышения производительности.
-value.REFLECTION_RES.1=Нет
-value.REFLECTION_RES.2=Да
 
 option.WORLD_OUTLINE=Контур мира
 option.WORLD_OUTLINE.comment=Добавляет яркие контуры вокруг блоков. §c[-]§r Влияет на производительность.
@@ -1211,14 +1087,11 @@ option.XLIGHT_CURVE.comment=Регулирует скорость уменьше
 
 ####### Euphoria Patches #######
 
-profile.SPACEAGLE17=§f۞ §kO§fОТЛАДКА (Не использовать)§f§kO
+profile.SPACEAGLE17= §f۞ §kO§fОТЛАДКА (Не использовать)§f§kO
 profile.POPULAR=§bПопулярные §dнастройки
 
 #WATERMARK
-option.WATERMARK=Complementary
 option.WATERMARK.comment=Euphoria Patches созданы с любовью и заботой, чтобы дополнить уникальный опыт Minecraft, расширяя возможности Complementary Shaders. Присоединяйтесь к сообществу: www.complementary.dev/discord. Водяной знак от Elysia.
-value.WATERMARK.0=& §dEuphoria §rPatches
-value.WATERMARK.1=& §cE§6u§ep§aho§br§9i§da §rPatches
 value.WATERMARK.2=& §cE§6u§ep§aho§br§9i§da §rPatches — интерфейс скрыт
 value.WATERMARK.3=& Интерфейс скрыт и паучий глаз в руке
 value.WATERMARK.4=Чёрно-белый
@@ -1361,7 +1234,6 @@ screen.POPULAR_SETTINGS=§dПопулярные настройки
 screen.POPULAR_SETTINGS.comment=Это одни из самых популярных настроек в Euphoria Patches. За исключением «Продвинутой цветовой трассировки» (необходимой для многих эффектов), все эти опции являются эксклюзивными для Euphoria Patches и не могут быть найдены в оригинальных шейдерах Complementary.
 screen.POPULAR_SETTINGS_2=Страница 2
 screen.POPULAR_SETTINGS_3=Страница 3
-screen.EP_VERSION=Euphoria Patches §d1.8.6
 screen.EP_VERSION.comment=§bПоддержите SpacEagle17 на Patreon/Ko-Fi для доступа к бета-версиям. §r§d§l§neuphoriapatches.com/support
 
 option.DAYLIGHT_CYCLE_COMPAT=Анимация времени суток
@@ -1385,7 +1257,6 @@ value.AURORA_COLOR_PRESET.11=§bМ§3е§bр§3з§cл§3о§cт§bа
 value.AURORA_COLOR_PRESET.12=§dР§5о§dз§5о§dв§5ы§dй
 value.AURORA_COLOR_PRESET.13=§aД§5жокер
 value.AURORA_COLOR_PRESET.14=§cКровавая §bбаня
-value.AURORA_COLOR_PRESET.15=§bМисти§9ческое
 
 option.RGB_AURORA=RGB-сияние
 option.RGB_AURORA.comment=§4R§2G§9B §rэффекты для настоящих геймеров.
@@ -1523,54 +1394,12 @@ option.CLOUD_UNBOUND_LAYER2_AMOUNT=Количество второго слоя
 option.CLOUD_UNBOUND_LAYER2_AMOUNT.comment=Плотность облаков второго слоя.
 option.CLOUD_UNBOUND_LAYER2_TRANSPARENCY=Непрозрачность второго слоя облаков
 option.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.comment=Степень непрозрачности второго слоя облаков Unbound.
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.0=0.0
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.1=0.05
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.2=0.10
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.3=0.15
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.4=0.20
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.5=0.25
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.6=0.30
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.7=0.35
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.8=0.40
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.9=0.45
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.10=0.50
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.11=0.55
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.12=0.60
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.13=0.65
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.14=0.70
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.15=0.75
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.16=0.80
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.17=0.85
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.18=0.90
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.19=0.95
-value.CLOUD_UNBOUND_LAYER2_TRANSPARENCY.20=1.00
 
 
 option.CLOUD_REIMAGINED_LAYER2_HEIGHT=Высота второго слоя облаков
 option.CLOUD_REIMAGINED_LAYER2_HEIGHT.comment=Высота второго слоя облаков Reimagined.
 option.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY=Непрозрачность второго слоя облаков
 option.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.comment=Степень непрозрачности второго слоя облаков Reimagined.
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.0=0.0
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.1=0.05
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.2=0.10
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.3=0.15
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.4=0.20
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.5=0.25
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.6=0.30
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.7=0.35
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.8=0.40
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.9=0.45
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.10=0.50
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.11=0.55
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.12=0.60
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.13=0.65
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.14=0.70
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.15=0.75
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.16=0.80
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.17=0.85
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.18=0.90
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.19=0.95
-value.CLOUD_REIMAGINED_LAYER2_TRANSPARENCY.20=1.00
 
 option.CLOUD_SUN_MOON_SHADING=Затенение солнца и луны
 option.CLOUD_SUN_MOON_SHADING.comment=Позволяет затенять солнце и луну на облаках.
@@ -1652,84 +1481,14 @@ value.END_STAR_AMOUNT.3=Очень много
 value.END_STAR_AMOUNT.4=Огромное количество
 option.END_TWINKLING_STARS=Мерцание звёзд
 value.END_TWINKLING_STARS.0=Нет
-value.END_TWINKLING_STARS.1=0.1
-value.END_TWINKLING_STARS.2=0.2
-value.END_TWINKLING_STARS.3=0.3
-value.END_TWINKLING_STARS.4=0.4
-value.END_TWINKLING_STARS.5=0.5
-value.END_TWINKLING_STARS.6=0.6
-value.END_TWINKLING_STARS.7=0.7
-value.END_TWINKLING_STARS.8=0.8
-value.END_TWINKLING_STARS.9=0.9
-value.END_TWINKLING_STARS.10=1.0
-value.END_TWINKLING_STARS.11=1.1
-value.END_TWINKLING_STARS.12=1.2
-value.END_TWINKLING_STARS.13=1.3
-value.END_TWINKLING_STARS.14=1.4
-value.END_TWINKLING_STARS.15=1.5
-value.END_TWINKLING_STARS.16=1.6
-value.END_TWINKLING_STARS.17=1.7
-value.END_TWINKLING_STARS.18=1.8
-value.END_TWINKLING_STARS.19=1.9
-value.END_TWINKLING_STARS.20=2.0
 
 option.STAR_BRIGHTNESS=Яркость звёзд
 option.STAR_BRIGHTNESS.comment=Регулировка яркости звёзд.
 value.STAR_BRIGHTNESS.3=Нет
-value.STAR_BRIGHTNESS.4=0.1
-value.STAR_BRIGHTNESS.5=0.2
-value.STAR_BRIGHTNESS.6=0.3
-value.STAR_BRIGHTNESS.7=0.4
-value.STAR_BRIGHTNESS.8=0.5
-value.STAR_BRIGHTNESS.9=0.6
-value.STAR_BRIGHTNESS.10=0.7
-value.STAR_BRIGHTNESS.11=0.8
-value.STAR_BRIGHTNESS.12=0.9
-value.STAR_BRIGHTNESS.13=1.0
-value.STAR_BRIGHTNESS.14=1.1
-value.STAR_BRIGHTNESS.15=1.2
-value.STAR_BRIGHTNESS.16=1.3
-value.STAR_BRIGHTNESS.17=1.4
-value.STAR_BRIGHTNESS.18=1.5
-value.STAR_BRIGHTNESS.19=1.6
-value.STAR_BRIGHTNESS.20=1.7
-value.STAR_BRIGHTNESS.21=1.8
-value.STAR_BRIGHTNESS.22=1.9
-value.STAR_BRIGHTNESS.23=2.0
-value.STAR_BRIGHTNESS.24=2.1
-value.STAR_BRIGHTNESS.25=2.2
-value.STAR_BRIGHTNESS.26=2.3
-value.STAR_BRIGHTNESS.27=2.4
-value.STAR_BRIGHTNESS.28=2.5
-value.STAR_BRIGHTNESS.29=2.6
-value.STAR_BRIGHTNESS.30=2.7
-value.STAR_BRIGHTNESS.31=2.8
-value.STAR_BRIGHTNESS.32=2.9
-value.STAR_BRIGHTNESS.33=3.0
 
 option.TWINKLING_STARS=Мерцание звёзд
 option.TWINKLING_STARS.comment=Добавляет эффект мерцания звёздам.
 value.TWINKLING_STARS.0=Нет
-value.TWINKLING_STARS.1=0.1
-value.TWINKLING_STARS.2=0.2
-value.TWINKLING_STARS.3=0.3
-value.TWINKLING_STARS.4=0.4
-value.TWINKLING_STARS.5=0.5
-value.TWINKLING_STARS.6=0.6
-value.TWINKLING_STARS.7=0.7
-value.TWINKLING_STARS.8=0.8
-value.TWINKLING_STARS.9=0.9
-value.TWINKLING_STARS.10=1.0
-value.TWINKLING_STARS.11=1.1
-value.TWINKLING_STARS.12=1.2
-value.TWINKLING_STARS.13=1.3
-value.TWINKLING_STARS.14=1.4
-value.TWINKLING_STARS.15=1.5
-value.TWINKLING_STARS.16=1.6
-value.TWINKLING_STARS.17=1.7
-value.TWINKLING_STARS.18=1.8
-value.TWINKLING_STARS.19=1.9
-value.TWINKLING_STARS.20=2.0
 option.STAR_SIZE=Размер звёзд
 option.STAR_SIZE.comment=Изменяет видимый размер звёзд.
 
@@ -1766,8 +1525,6 @@ option.DIRECTIONAL_LIGHTMAP_NORMALS.comment=Связывает нормали с
 option.DIRECTIONAL_LIGHTMAP_NORMALS_BLOCK_STRENGTH_NEW=Яркость блоков
 option.DIRECTIONAL_LIGHTMAP_NORMALS_HANDHELD_STRENGTH=Яркость в руках
 
-option.CAVE_FOG=Пещерный туман
-option.CAVE_FOG.comment=Включает/отключает туман в пещерах.
 option.CAVE_FOG_R_NEW=Красный для пещерного тумана
 option.CAVE_FOG_G_NEW=Зелёный для пещерного тумана
 option.CAVE_FOG_B_NEW=Синий для пещерного тумана
@@ -1775,55 +1532,28 @@ option.CAVE_FOG_I=Яркость пещерного тумана
 option.CAVE_FOG_DENSITY=Плотность пещерного тумана
 
 option.ATMOSPHERIC_FOG=Атмосферный туман
-option.ATMOSPHERIC_FOG_R_NEW=Красный для атмосферного тумана
-option.ATMOSPHERIC_FOG_G_NEW=Зелёный для атмосферного тумана
-option.ATMOSPHERIC_FOG_B_NEW=Синий для атмосферного тумана
-option.ATMOSPHERIC_FOG_I=Яркость атмосферного тумана
+option.ATMOSPHERIC_FOG_R_NEW= Красный для атмосферного тумана
+option.ATMOSPHERIC_FOG_G_NEW= Зелёный для атмосферного тумана
+option.ATMOSPHERIC_FOG_B_NEW= Синий для атмосферного тумана
+option.ATMOSPHERIC_FOG_I= Яркость атмосферного тумана
 option.ATMOSPHERIC_FOG_DENSITY=Плотность атмосферного тумана
 option.RADIOACTIVE_ATMOSPHERIC_FOG=Радиоактивный атмосферный туман
 option.RADIOACTIVE_ATMOSPHERIC_FOG.comment=Опасный для здоровья эффект. Более заметен ночью.
 
 option.BORDER_FOG_DISTANCE_OVERWORLD=Дальность граничного тумана
 option.BORDER_FOG_DISTANCE_OVERWORLD.comment=Настройка дальности граничного тумана для обычного мира.
-value.BORDER_FOG_DISTANCE_OVERWORLD.1=0.25
-value.BORDER_FOG_DISTANCE_OVERWORLD.2=0.40
-value.BORDER_FOG_DISTANCE_OVERWORLD.3=0.50
-value.BORDER_FOG_DISTANCE_OVERWORLD.6=1.00
-value.BORDER_FOG_DISTANCE_OVERWORLD.10=1.25
-value.BORDER_FOG_DISTANCE_OVERWORLD.50=1.50
-value.BORDER_FOG_DISTANCE_OVERWORLD.100=1.75
-value.BORDER_FOG_DISTANCE_OVERWORLD.500=2.00
-value.BORDER_FOG_DISTANCE_OVERWORLD.1000=2.50
 
 option.BORDER_FOG_DENSITY_OVERWORLD=Плотность граничного тумана
 option.BORDER_FOG_DENSITY_OVERWORLD.comment=Настройка плотности граничного тумана для обычного мира.
 
 option.BORDER_FOG_DISTANCE_NETHER=Дальность граничного тумана
 option.BORDER_FOG_DISTANCE_NETHER.comment=Настройка дальности граничного тумана для Незера.
-value.BORDER_FOG_DISTANCE_NETHER.1=0.25
-value.BORDER_FOG_DISTANCE_NETHER.2=0.40
-value.BORDER_FOG_DISTANCE_NETHER.3=0.50
-value.BORDER_FOG_DISTANCE_NETHER.6=1.00
-value.BORDER_FOG_DISTANCE_NETHER.10=1.25
-value.BORDER_FOG_DISTANCE_NETHER.50=1.50
-value.BORDER_FOG_DISTANCE_NETHER.100=1.75
-value.BORDER_FOG_DISTANCE_NETHER.500=2.00
-value.BORDER_FOG_DISTANCE_NETHER.1000=2.50
 
 option.BORDER_FOG_DENSITY_NETHER=Плотность граничного тумана
 option.BORDER_FOG_DENSITY_NETHER.comment=Настройка плотности граничного тумана для Незера.
 
 option.BORDER_FOG_DISTANCE_END=Дальность граничного тумана
 option.BORDER_FOG_DISTANCE_END.comment=Настройка дальности граничного тумана для Энда.
-value.BORDER_FOG_DISTANCE_END.1=0.25
-value.BORDER_FOG_DISTANCE_END.2=0.40
-value.BORDER_FOG_DISTANCE_END.3=0.50
-value.BORDER_FOG_DISTANCE_END.6=1.00
-value.BORDER_FOG_DISTANCE_END.10=1.25
-value.BORDER_FOG_DISTANCE_END.50=1.50
-value.BORDER_FOG_DISTANCE_END.100=1.75
-value.BORDER_FOG_DISTANCE_END.500=2.00
-value.BORDER_FOG_DISTANCE_END.1000=2.50
 
 option.BORDER_FOG_DENSITY_END=Плотность граничного тумана
 option.BORDER_FOG_DENSITY_END.comment=Настройка плотности граничного тумана для Энда.
@@ -1835,7 +1565,6 @@ option.BORDER_FOG_OVERWORLD=Граничный туман обычного ми�
 option.NETHER_PORTAL_VARIATION=Предустановка портала в Незер
 option.NETHER_PORTAL_VARIATION.comment=Выбор стиля портала в Незер. §e[*]§r Требуется встроенный PBR+.
 value.NETHER_PORTAL_VARIATION.0=Ванильный
-value.NETHER_PORTAL_VARIATION.1=Complementary
 value.NETHER_PORTAL_VARIATION.2=Фиолетовая пустота
 
 option.BIOME_COLORED_NETHER_PORTALS=Порталы-хамелеоны
@@ -1846,7 +1575,6 @@ option.NETHER_PORTAL_NOISE.comment=Добавляет шум к текстуре
 
 option.END_PORTAL_VARIATION=Предустановка портала в Энд
 option.END_PORTAL_VARIATION.comment=Выбор стиля портала в Энд. §e[*]§r Требуется встроенный PBR+.
-value.END_PORTAL_VARIATION.0=Complementary
 value.END_PORTAL_VARIATION.1=Размытые нити
 value.END_PORTAL_VARIATION.3=Пиксельная сальса
 
@@ -1876,7 +1604,6 @@ option.END_CURVATURE_SIZE=Кривизна Энда
 
 option.LAVA_VARIATION=Предустановка лавы
 option.LAVA_VARIATION.comment=Выберите стиль лавы.
-value.LAVA_VARIATION.0=Complementary
 value.LAVA_VARIATION.1=Адаптивный шум (рекомендуется)
 value.LAVA_VARIATION.2=Пылающий румянец
 value.LAVA_VARIATION.3=Расплавленный сыр
@@ -1908,7 +1635,6 @@ option.NETHER_BRIGHTNESS.comment=Общая освещённость измер�
 
 option.END_ROD_COLOR_PROFILE=Профиль стержней Энда
 option.END_ROD_COLOR_PROFILE.comment=Цвет стержней Энда, используемый по умолчанию в Complementary, или ваш собственный.§e[*]§r Требуется «Поддержка наборов ресурсов»: встроенный PBR+.
-value.END_ROD_COLOR_PROFILE.0=Complementary
 value.END_ROD_COLOR_PROFILE.1=Пользовательский
 value.END_ROD_COLOR_PROFILE.2=Радуга
 value.END_ROD_COLOR_PROFILE.3=Радуга (только обычный мир)
@@ -1951,24 +1677,15 @@ option.EXCLUDE_ENTITIES.comment=Определяет, должны ли сущн
 
 option.LETTERBOXING_TRANSPARENCY=Прозрачность чёрных полос
 
-option.BAD_APPLE=Bad Apple
 option.BAD_APPLE.comment=Делает экран чёрным, за исключением сущностей, которые становятся белыми.
 
 option.tonemap=Тональная карта
 option.tonemap.comment=Выбор используемого тонального отображения.
 value.tonemap.DoCompTonemap=Complementary по умолчанию
-value.tonemap.DoBSLTonemap=BSL/Complementary
-value.tonemap.ACESTonemap=ACES
 value.tonemap.ACESRedModified=ACES с измененным красным
-value.tonemap.BurgessTonemap=Burgess
-value.tonemap.LottesTonemap=Lottes
 value.tonemap.uncharted2_tonemap_partial=Uncharted 2 частичное
 value.tonemap.uncharted2_filmic=Uncharted 2 кинематографичное
-value.tonemap.reinhard2=Reinhard2
 value.tonemap.filmic=Кинематографичное
-value.tonemap.GTTonemap=Gran Turismo
-value.tonemap.uchimura=Uchimura
-value.tonemap.agxTonemap=AgX
 
 option.TONEMAP_COMPARISON=Сравнение тональных карт
 option.TONEMAP_COMPARISON.comment=Сравнивает разные методы тонального отображения.
@@ -1976,34 +1693,16 @@ option.TONEMAP_COMPARISON.comment=Сравнивает разные методы
 option.tonemap_left=Тональная карта слева
 option.tonemap_left.comment=Выбор тонального отображения для левой части.
 value.tonemap_left.DoCompTonemap=Complementary по умолчанию
-value.tonemap_left.DoBSLTonemap=BSL/Complementary
-value.tonemap_left.ACESTonemap=ACES
 value.tonemap_left.ACESRedModified=ACES с изменённым красным
-value.tonemap_left.BurgessTonemap=Burgess
-value.tonemap_left.LottesTonemap=Lottes
-value.tonemap_left.uncharted2_tonemap_partial=Uncharted 2
 value.tonemap_left.uncharted2_filmic=Uncharted 2 кинематографичное
-value.tonemap_left.reinhard2=Reinhard2
 value.tonemap_left.filmic=Кинематографичное
-value.tonemap_left.GTTonemap=Gran Turismo
-value.tonemap_left.uchimura=Uchimura
-value.tonemap_left.agxTonemap=AgX
 
 option.tonemap_right=Тональная карта справа
 option.tonemap_right.comment=Выбор тонального отображения для правой части.
 value.tonemap_right.DoCompTonemap=Complementary по умолчанию
-value.tonemap_right.DoBSLTonemap=BSL/Complementary
-value.tonemap_right.ACESTonemap=ACES
 value.tonemap_right.ACESRedModified=ACES с изменённым красным
-value.tonemap_right.BurgessTonemap=Burgess
-value.tonemap_right.LottesTonemap=Lottes
-value.tonemap_right.uncharted2_tonemap_partial=Uncharted 2
 value.tonemap_right.uncharted2_filmic=Uncharted 2 кинематографичное
-value.tonemap_right.reinhard2=Reinhard2
 value.tonemap_right.filmic=Кинематографичное
-value.tonemap_right.GTTonemap=Gran Turismo
-value.tonemap_right.uchimura=Uchimura
-value.tonemap_right.agxTonemap=AgX
 
 option.ACES_EXPOSURE=Экспозиция
 option.ACES_EXPOSURE.comment=Регулирует общую яркость изображения.
@@ -2076,7 +1775,6 @@ value.SEASON_TRANSITION_START.4=80% сезона
 value.SEASON_TRANSITION_START.9=90% сезона
 
 option.SEASON_COLOR_DESATURATION=Обесцвечивание
-option.SEASON_COLOR_DESATURATION.comment=Уменьшает насыщенность цветов окружения.
 
 option.SNOW_CONDITION=Условия снега
 option.SNOW_CONDITION.comment=Определяет условия появления снега.
@@ -2152,7 +1850,6 @@ value.NETHER_NOISE.1=Да
 
 option.MCBL_MAIN_DEFINE=Цветное освещение Euphoria
 option.MCBL_MAIN_DEFINE.comment=Включает многоцветное блоковое освещение. Режим «ПЦТ + экранное пространство» сочетает метод с «Продвинутой цветовой трассировкой». §e[*]§r Работает только на 1.16.5+ или с Angelica.
-value.MCBL_MAIN_DEFINE.0=
 value.MCBL_MAIN_DEFINE.1=Экранное пространство
 value.MCBL_MAIN_DEFINE.2=ПЦТ + экранное пространство
 value.MCBL_MAIN_DEFINE.3=ПЦТ + экр. пр. + дин. освещ.
@@ -2192,10 +1889,10 @@ value.RETRO_LOOK.0=Нет
 value.RETRO_LOOK.1=Контуры
 value.RETRO_LOOK.2=Контуры только с ночным зрением
 
-option.RETRO_LOOK_R=Красный для ретро
-option.RETRO_LOOK_G=Зелёный для ретро
-option.RETRO_LOOK_B=Синий для ретро
-option.RETRO_LOOK_I=Яркость ретро
+option.RETRO_LOOK_R= Красный для ретро
+option.RETRO_LOOK_G= Зелёный для ретро
+option.RETRO_LOOK_B= Синий для ретро
+option.RETRO_LOOK_I= Яркость ретро
 
 option.CURVE_DISPLAY=Изогнутый экран
 option.CURVE_DISPLAY.comment=Добавляет кривизну к изображению.
@@ -2233,7 +1930,6 @@ option.COLOR_LEVELS=Постеризация
 option.COLOR_LEVELS.comment=Уменьшает количество цветов в изображении для придания ему ретро-вида.
 option.POSTERIZE_STRENGTH=Сила постеризации
 option.POSTERIZE_STRENGTH.comment=Регулирует интенсивность эффекта постеризации. Влияет на итоговое количество цветов, объединяя соседние.
-value.POSTERIZE_STRENGTH.0=Нет
 
 option.PALETTE_SWAP=Палитра
 option.PALETTE1R=Красный №1
@@ -2627,19 +2323,7 @@ option.SMOKE_PARTICLE_OPACITY=Непрозрачность частиц дыма
 
 option.END_SUN_ANGLE=Угол солнца в Энде
 option.END_SUN_ANGLE.comment=Угол солнца и луны относительно мира в зените (в полдень).
-value.END_SUN_ANGLE.60=60
-value.END_SUN_ANGLE.50=50
-value.END_SUN_ANGLE.40=40
-value.END_SUN_ANGLE.30=30
-value.END_SUN_ANGLE.20=20
-value.END_SUN_ANGLE.10=10
 value.END_SUN_ANGLE.0=0 §r(§bПо умолчанию§r)
-value.END_SUN_ANGLE.-10=-10
-value.END_SUN_ANGLE.-20=-20
-value.END_SUN_ANGLE.-30=-30
-value.END_SUN_ANGLE.-40=-40
-value.END_SUN_ANGLE.-50=-50
-value.END_SUN_ANGLE.-60=-60
 
 option.PIXELATED_NEBULA=Пиксельная туманность
 value.PIXELATED_NEBULA.0=Нет
@@ -2750,14 +2434,183 @@ option.BLOOD_MOON.comment=Включает появление кровавой �
 value.BLOOD_MOON.0=Нет
 value.BLOOD_MOON.1=Каждую ночь
 suffix.BLOOD_MOON=\ ночей Minecraft
-
 option.EMISSIVE_BLOOD_MOON_FLOWERS=Светящиеся цветы при кровавой луне
 option.EMISSIVE_BLOOD_MOON_FLOWERS.comment=Делает красные цветы светящимися во время кровавой луны. §e[*]§r Требуется, чтобы параметр поддержки RP был установлен в «Встроенный PBR+».
 
+
+#   ___                _                   _        _   ___      _      _
+#  / __|_  _ _ __ _ __| |___ _ __  ___ _ _| |_ __ _| | | _ \__ _| |_ __| |_  ___ ___
+#  \__ \ || | '_ \ '_ \ / -_) '  \/ -_) ' \  _/ _` | | |  _/ _` |  _/ _| ' \/ -_|_-<
+#  |___/\_,_| .__/ .__/_\___|_|_|_\___|_||_\__\__,_|_| |_| \__,_|\__\__|_||_\___/__/
+#           |_|  |_|
+# Settings added by Supplemental Patches
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#  // TerraFirmaGreg //
+
+
 option.TFGinfo1=Важная информация
 option.TFGinfo1.comment=Спасибо за установку шейдеров TerraFirmaGreg. Шейдеры всё ещё находятся в разработке, поэтому ожидайте ошибок и несовершенств. Если у вас возникнут какие-либо проблемы или предложения, пожалуйста, оставьте их на TerraFirmaGreg-shaders GitHub. Шейдеры основаны на шейдерах Complementary-Euphoria-Supplemental. Спасибо всем разработчикам за предоставленную возможность использовать их труды
-value.TFGinfo1.0=
 
-option.TFGinfo2=§d§nGitHub
 option.TFGinfo2.comment=Наш GitHub: §d§ngithub.com/TerraFirmaGreg-Team/Shaders-Complementary§r Пожалуйста, отправляйте туда все баги и ваши предложения по улучшению шейдеров
-value.TFGinfo2.0=
+
