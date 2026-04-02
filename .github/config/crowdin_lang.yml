@@ -12,15 +12,15 @@ files:
     type: "properties"
     update_option: "update_as_unapproved"
 
-    # languages_mapping:
-    #   locale_with_underscore:
-        # en-US: "en_us"
-        # zh-CN: "zh_cn"
-        # ja-JP: "ja_jp"
-        # pl-PL: "pl_pl"
-        # pt-BR: "pt_br"
-        # ru-RU: "ru_ru"
-        # uk-UA: "uk_ua"
+    languages_mapping:
+      locale_with_underscore:
+        en-US: "en_us"
+        zh-CN: "zh_cn"
+        pt-BR: "pt_br"
+        ja: "ja_jp"
+        pl: "pl_pl"
+        ru: "ru_ru"
+        uk: "uk_ua"
         # en-GB: "en_gb"
         # zh-CN: "zh_cn"
         # zh-TW: "zh_tw"
