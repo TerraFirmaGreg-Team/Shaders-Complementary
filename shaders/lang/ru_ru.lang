@@ -23,11 +23,11 @@ option.info0.comment=Этот раздел содержит кнопки, кот
 
 option.info1=Как повысить производительность
 value.info1.0=
-option.info1.comment=Производительность в Minecraft зависит от многих факторов. Попробуйте следующее: уменьшите дальность прорисовки (оптимально от 6 до 16 для большинства устройств), выберите более низкий профиль шейдеров (они настроены для лучшего баланса качества и производительности). Дополнительная информация появится позже.
+option.info1.comment=Производительность в Minecraft зависит от многих факторов. Попробуйте следующее\: уменьшите дальность прорисовки (оптимально от 6 до 16 для большинства устройств), выберите более низкий профиль шейдеров (они настроены для лучшего баланса качества и производительности). Дополнительная информация появится позже.
 
 option.info2=Какие настройки лучше
 value.info2.0=
-option.info2.comment=Лучшие настройки субъективны, но стандартные варианты подходят большинству. Они созданы на основе многолетнего опыта сообщества с учётом баланса качества и производительности. Не бойтесь экспериментировать!
+option.info2.comment=Лучшие настройки субъективны, но стандартные варианты подходят большинству. Они созданы на основе многолетнего опыта сообщества с учётом баланса качества и производительности. Не бойтесь экспериментировать\!
 
 option.info3=Что такое профиль и визуальный стиль
 value.info3.0=
@@ -39,7 +39,7 @@ option.info4.comment=Определяет, как шейдеры обрабат�
 
 option.info5=Как исправить проблемы с модами
 value.info5.0=
-option.info5.comment=Некоторые моды несовместимы со шейдерами. Посетите страницу с известными решениями: www.complementary.dev/mod-issues
+option.info5.comment=Некоторые моды несовместимы со шейдерами. Посетите страницу с известными решениями\: www.complementary.dev/mod-issues
 
 option.info6=
 value.info6.0=
@@ -51,19 +51,19 @@ option.info7.comment=
 
 option.info8=Как присоединиться к сообществу
 value.info8.0=
-option.info8.comment=Присоединяйтесь к серверу Complementary в Discord: www.complementary.dev/discord
+option.info8.comment=Присоединяйтесь к серверу Complementary в Discord\: www.complementary.dev/discord
 
 option.info9=Как поддержать Complementary
 value.info9.0=
-option.info9.comment=Лучшая поддержка — рассказать друзьям. Также можно помочь разработчику через Patreon: www.patreon.com/emingt
+option.info9.comment=Лучшая поддержка — рассказать друзьям. Также можно помочь разработчику через Patreon\: www.patreon.com/emingt
 
 option.info10=Благодарности
 value.info10.0=
-option.info10.comment=EminGT: главный разработчик. Capt Tatsu: создатель BSL Shaders. Особая благодарность: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap.
+option.info10.comment=EminGT\: главный разработчик. Capt Tatsu\: создатель BSL Shaders. Особая благодарность\: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap.
 
 option.info11=§dАвторы шейдеров TFG
 value.info11.0=
-option.info11.comment=Огромное спасибо EminGT за Complementary, SpaceEagle за Euphoria-Patches, lemon41625 за supplemental-patches и команде taidumcraft за первый шейдер, совместимый с ad_astra, который мы активно использовали!
+option.info11.comment=Огромное спасибо EminGT за Complementary, SpaceEagle за Euphoria-Patches, lemon41625 за supplemental-patches и команде taidumcraft за первый шейдер, совместимый с ad_astra, который мы активно использовали\!
 
 option.info12=Настройки Euphoria Patches
 value.info12.0=
@@ -75,35 +75,35 @@ option.info13.comment=Лучшая совместимость с модами ч
 
 option.info14=Присоединиться к сообществу
 value.info14.0=
-option.info14.comment=Discord-сервер Euphoria Patches: §d§l§neuphoriapatches.com/discord
+option.info14.comment=Discord-сервер Euphoria Patches\: §d§l§neuphoriapatches.com/discord
 
 option.info15=Благодарности Euphoria Patches
 value.info15.0=
-option.info15.comment=Полный список: §deuphoriapatches.com/credits§r. Участники: isuewo, EminGT, Capt Tatsu, gri573, FoZy STYLE, SixthSurge, WoMspace, Septonious, fayer3, Xonk, Memokii, dragoncat, TheNukeLore, dbrighthd, Surisen, Acer, Folox_, Helgust.
+option.info15.comment=Полный список\: §deuphoriapatches.com/credits§r. Участники\: isuewo, EminGT, Capt Tatsu, gri573, FoZy STYLE, SixthSurge, WoMspace, Septonious, fayer3, Xonk, Memokii, dragoncat, TheNukeLore, dbrighthd, Surisen, Acer, Folox_, Helgust.
 
 option.info16=§d§nКак поддержать Euphoria Patches
 value.info16.0=
-option.info16.comment=Рассказывайте о проекте или поддержите SpacEagle17 на Patreon/Ko-Fi: §d§l§neuphoriapatches.com/support
+option.info16.comment=Рассказывайте о проекте или поддержите SpacEagle17 на Patreon/Ko-Fi\: §d§l§neuphoriapatches.com/support
 
-option.info17=Бета-версии: Patreon SpacEagle17
+option.info17=Бета-версии\: Patreon SpacEagle17
 value.info17.0=
-option.info17.comment=Доступ к эксклюзивным версиям через поддержку: §d§l§neuphoriapatches.com/support
+option.info17.comment=Доступ к эксклюзивным версиям через поддержку\: §d§l§neuphoriapatches.com/support
 
 option.info18=Для Complementary r5.7.1
 value.info18.0=
-option.info18.comment=Спасибо за установку Euphoria Patches :)
+option.info18.comment=Спасибо за установку Euphoria Patches \:)
 
 option.info19=§aНОВОЕ ОБНОВЛЕНИЕ
 value.info19.0=§cX.Y.Z §r->§a X.Y.Z
-option.info19.comment=Доступна новая версия мода Euphoria Patcher. Скачайте: https://euphoriapatches.com/download.
+option.info19.comment=Доступна новая версия мода Euphoria Patcher. Скачайте\: https\://euphoriapatches.com/download.
 
 option.info20=
 value.info20.0=§aeuphoriapatches.com/download
-option.info20.comment=Доступна новая версия мода Euphoria Patcher. Скачайте: https://euphoriapatches.com/download.
+option.info20.comment=Доступна новая версия мода Euphoria Patcher. Скачайте\: https\://euphoriapatches.com/download.
 
 option.info21=Частые вопросы
 value.info21.0=
-option.info21.comment=Ответы на частые вопросы: §d§l§neuphoriapatches.com/faq
+option.info21.comment=Ответы на частые вопросы\: §d§l§neuphoriapatches.com/faq
 
 option.info22=§dДополнительные настройки при прокрутке
 value.info22.0=
@@ -111,7 +111,7 @@ option.info22.comment=При больших размерах интерфейс�
 
 #Style
 option.SHADER_STYLE=Визуальный стиль
-option.SHADER_STYLE.comment=Определяет базовый визуальный стиль. §bReimagined§r: сохраняет уникальные элементы Minecraft. §dUnbound§r: переработанный стиль с элементами фэнтези. §e[*]§r Затрагиваемые настройки: стиль воды, облаков, солнца и луны, угол солнца и луны, стиль свечения руд.
+option.SHADER_STYLE.comment=Определяет базовый визуальный стиль. §bReimagined§r\: сохраняет уникальные элементы Minecraft. §dUnbound§r\: переработанный стиль с элементами фэнтези. §e[*]§r Затрагиваемые настройки\: стиль воды, облаков, солнца и луны, угол солнца и луны, стиль свечения руд.
 value.SHADER_STYLE.1=§bReimagined
 value.SHADER_STYLE.4=§dUnbound
 
@@ -234,27 +234,27 @@ screen.WORLD_OUTLINE_SETTINGS.comment=Настройки дополнитель�
 
 #Settings
 option.RP_MODE=Поддержка наборов ресурсов
-option.RP_MODE.comment=Определяет способ отрисовки блоков и материалов. §bВстроенный PBR+§r: встроенные PBR-эффекты (рекомендуется). §aБазовый§r: без PBR и дополнительных эффектов. §elabPBR или seuspbr§r: требуют наличия наборов ресурсов с PBR.
+option.RP_MODE.comment=Определяет способ отрисовки блоков и материалов. §bВстроенный PBR+§r\: встроенные PBR-эффекты (рекомендуется). §aБазовый§r\: без PBR и дополнительных эффектов. §elabPBR или seuspbr§r\: требуют наличия наборов ресурсов с PBR.
 value.RP_MODE.0=§aБазовый
 value.RP_MODE.1=§bВстроенный PBR+
 value.RP_MODE.2=§eseuspbr (для набора ресурсов)
 value.RP_MODE.3=§elabPBR (для набора ресурсов)
 
 option.WATER_REFLECT_QUALITY=Качество отражений воды
-option.WATER_REFLECT_QUALITY.comment=Настраивает визуальное качество отражений, появляющихся на прозрачных материалах. §cСреднее§r: трассировка лучей в экранном пространстве. §eКартошка§r: упрощённый метод для воды и полупрозрачные отражения. §aНет§r: без отражений.
+option.WATER_REFLECT_QUALITY.comment=Настраивает визуальное качество отражений, появляющихся на прозрачных материалах. §cСреднее§r\: трассировка лучей в экранном пространстве. §eКартошка§r\: упрощённый метод для воды и полупрозрачные отражения. §aНет§r\: без отражений.
 value.WATER_REFLECT_QUALITY.-1=§aНет
 value.WATER_REFLECT_QUALITY.0=§aТолько небо
 value.WATER_REFLECT_QUALITY.1=§eКартошка
 value.WATER_REFLECT_QUALITY.2=§cСреднее
 
 option.BLOCK_REFLECT_QUALITY=Качество отражений блоков §e[*]§r
-option.BLOCK_REFLECT_QUALITY.comment=Настраивает визуальное качество отражений, появляющихся на твердых материалах. §cВысокое§r: блики солнца и луны + более плавные зеркальные отражения с использованием временного фильтра. §eСреднее§r: блики солнца и луны + зеркальные отражения. §aНизкое§r: только блики солнца и луны. §e[*]§r Для появления любых зеркальных отражений «Поддержка наборов ресурсов» должна быть установлена на что угодно, кроме «Базовой».
+option.BLOCK_REFLECT_QUALITY.comment=Настраивает визуальное качество отражений, появляющихся на твердых материалах. §cВысокое§r\: блики солнца и луны + более плавные зеркальные отражения с использованием временного фильтра. §eСреднее§r\: блики солнца и луны + зеркальные отражения. §aНизкое§r\: только блики солнца и луны. §e[*]§r Для появления любых зеркальных отражений «Поддержка наборов ресурсов» должна быть установлена на что угодно, кроме «Базовой».
 value.BLOCK_REFLECT_QUALITY.0=§aНет
 value.BLOCK_REFLECT_QUALITY.1=§eНизкое
 value.BLOCK_REFLECT_QUALITY.3=§cВысокое
 
 option.SHADOW_QUALITY=Тени в реальном времени
-option.SHADOW_QUALITY.comment=Настраивает качество теней. Более высокие уровни дополнительно уменьшает шумовые артефакты. Параметры ниже §eвысокого§r оптимизируют тени на листве, §eочень низкое§r значительно снижает уровень теней. §aНет§r: полное отключение теней и световых лучей.
+option.SHADOW_QUALITY.comment=Настраивает качество теней. Более высокие уровни дополнительно уменьшает шумовые артефакты. Параметры ниже §eвысокого§r оптимизируют тени на листве, §eочень низкое§r значительно снижает уровень теней. §aНет§r\: полное отключение теней и световых лучей.
 value.SHADOW_QUALITY.-1=§aНет
 value.SHADOW_QUALITY.0=§eОчень низкое
 value.SHADOW_QUALITY.1=§eНизкое
@@ -295,7 +295,7 @@ value.ENTITY_SHADOW.1=§cОбычные сущности
 value.ENTITY_SHADOW.2=§4§k-§r§4§l§n§oВсе§r§4§k- §r§c[-]
 
 option.DETAIL_QUALITY=Качество деталей
-option.DETAIL_QUALITY.comment=Настраивает несколько мелких параметров, влияющих на производительность. Влияет на: материал воды, временное сглаживание (TAA), настройки освещения, ночную туманность, шторм Незера, лучи Энда, эффекты отражения неба, точность дождевых луж, эффект колыхания.
+option.DETAIL_QUALITY.comment=Настраивает несколько мелких параметров, влияющих на производительность. Влияет на\: материал воды, временное сглаживание (TAA), настройки освещения, ночную туманность, шторм Незера, лучи Энда, эффекты отражения неба, точность дождевых луж, эффект колыхания.
 value.DETAIL_QUALITY.0=§aКартошка
 value.DETAIL_QUALITY.2=§eСреднее
 value.DETAIL_QUALITY.3=§cВысокое
@@ -376,7 +376,7 @@ option.ATM_FOG_ALTITUDE=Высота атмосферного тумана
 option.ATM_FOG_ALTITUDE.comment=Задаёт высоту максимальной плотности тумана.
 
 option.CAVE_FOG=Пещерный туман
-option.CAVE_FOG.comment=Добавляет дополнительный туман в глубоких подземных зонах.
+option.CAVE_FOG.comment=Включает/отключает туман в пещерах.
 
 option.LIGHTSHAFT_BEHAVIOUR=Режим световых лучей
 option.LIGHTSHAFT_BEHAVIOUR.comment=Определяет поведение световых лучей. §a[+]§r Адаптивные лучи автоматически переключаются между режимами. §c[-]§r Экстремальный режим не рекомендуется для игры, так как сильно влияет на FPS.
@@ -468,7 +468,7 @@ value.NETHER_VIEW_LIMIT.1024.0=64 чанка §c[-]
 value.NETHER_VIEW_LIMIT.99999.0=Без ограничений §c[-]
 
 option.NETHER_COLOR_MODE=Цветовая схема
-option.NETHER_COLOR_MODE.comment=Определяет, как будут обрабатываться цвета окружения в Незере. Постоянная: цвета не будут меняться между биомами. На основе биома: цвета будут меняться в зависимости от биома. На основе биома (модифицированная): в зависимости от биома, но цвета были изменены, чтобы лучше соответствовать визуальному стилю Complementary.
+option.NETHER_COLOR_MODE.comment=Определяет, как будут обрабатываться цвета окружения в Незере. Постоянная\: цвета не будут меняться между биомами. На основе биома\: цвета будут меняться в зависимости от биома. На основе биома (модифицированная)\: в зависимости от биома, но цвета были изменены, чтобы лучше соответствовать визуальному стилю Complementary.
 value.NETHER_COLOR_MODE.3=На основе биома (модиф.)
 value.NETHER_COLOR_MODE.2=На основе биома
 value.NETHER_COLOR_MODE.0=Постоянная
@@ -545,7 +545,7 @@ option.WATERCOLOR_G=Множитель зелёного для водной по
 option.WATERCOLOR_B=Множитель синего для водной поверхности
 
 option.WATERCOLOR_MODE=Цвет воды
-option.WATERCOLOR_MODE.comment=Определяет принцип окрашивания воды. Постоянный: цвет не зависит от биома. На основе биома: цвет меняется в зависимости от биома. На основе биома (ограниченный): цвет меняется в зависимости от биома и предотвращает неестественные цвета в некоторых биомах. §e[*]§r Не работает корректно на версиях Minecraft ниже 1.13.
+option.WATERCOLOR_MODE.comment=Определяет принцип окрашивания воды. Постоянный\: цвет не зависит от биома. На основе биома\: цвет меняется в зависимости от биома. На основе биома (ограниченный)\: цвет меняется в зависимости от биома и предотвращает неестественные цвета в некоторых биомах. §e[*]§r Не работает корректно на версиях Minecraft ниже 1.13.
 value.WATERCOLOR_MODE.3=На основе биома (огранич.)
 value.WATERCOLOR_MODE.2=На основе биома
 value.WATERCOLOR_MODE.0=Постоянный
@@ -578,15 +578,15 @@ option.WATER_SIZE_MULT.comment=Определяет видимый размер 
 option.SUN_ANGLE=Угол солнца/луны
 option.SUN_ANGLE.comment=Регулирует угол наклона солнца и луны относительно мира в полдень. §a[+]§r Стиль Reimagined оптимизирован для угла «0».
 value.SUN_ANGLE.-1=По стилю
-value.SUN_ANGLE.60=60
+value.SUN_ANGLE.60=60%
 value.SUN_ANGLE.55=55
 value.SUN_ANGLE.50=50
 value.SUN_ANGLE.45=45
-value.SUN_ANGLE.40=40
+value.SUN_ANGLE.40=40%
 value.SUN_ANGLE.35=35
 value.SUN_ANGLE.30=30
 value.SUN_ANGLE.25=25
-value.SUN_ANGLE.20=20
+value.SUN_ANGLE.20=20%
 value.SUN_ANGLE.15=15
 value.SUN_ANGLE.10=10
 value.SUN_ANGLE.5=5
@@ -733,10 +733,10 @@ value.BLOOM_STRENGTH.10.00=§cБезумное
 option.IMAGE_SHARPENING=Резкость изображения
 option.IMAGE_SHARPENING.comment=Повышает резкость через фильтр. §c[-]§r Может вызывать артефакты, такие как сглаживание, мерцание, шум и незначительные изменения яркости.
 value.IMAGE_SHARPENING.0=Нет
-value.IMAGE_SHARPENING.1=1x
-value.IMAGE_SHARPENING.2=2x
-value.IMAGE_SHARPENING.3=3x
-value.IMAGE_SHARPENING.4=4x
+value.IMAGE_SHARPENING.1=1×
+value.IMAGE_SHARPENING.2=2×
+value.IMAGE_SHARPENING.3=3×
+value.IMAGE_SHARPENING.4=4×
 value.IMAGE_SHARPENING.5=5x
 value.IMAGE_SHARPENING.6=6x §c[-]
 value.IMAGE_SHARPENING.7=7x §c[-]
@@ -754,7 +754,7 @@ option.LENSFLARE_I=Яркость бликов
 option.LENSFLARE_I.comment=Регулирует силу эффекта бликов.
 
 option.TAA_MODE=Фильтр TAA
-option.TAA_MODE.comment=Включает временное сглаживание (TAA), которое уменьшает зернистость, повышает производительность за счёт снижения количества выборок в тяжёлых эффектах и устраняет ступенчатость при правильных настройках. §c[-]§r: Отключение приведёт к ухудшению производительности и качества эффектов.
+option.TAA_MODE.comment=Включает временное сглаживание (TAA), которое уменьшает зернистость, повышает производительность за счёт снижения количества выборок в тяжёлых эффектах и устраняет ступенчатость при правильных настройках. §c[-]§r\: Отключение приведёт к ухудшению производительности и качества эффектов.
 value.TAA_MODE.0=Нет §c[-]
 value.TAA_MODE.1=Да §a[+]
 
@@ -765,7 +765,7 @@ value.TAA_SMOOTHING.3=Среднее
 value.TAA_SMOOTHING.4=Высокое
 
 option.TAA_JITTER=Временное дрожание §e[*]§r
-option.TAA_JITTER.comment=Дрожание помогает временному фильтру лучше сглаживать изображение, но имеет некоторые недостатки. §e[*]§r Более высокие значения улучшают сглаживание, но одновременно вызывают сильное мерцание и размытие. §e[*]§r При полном дрожании рекомендуется использовать высокое временное сглаживание. §c[-]§r: Отключение дрожания уберёт преимущества сглаживания.
+option.TAA_JITTER.comment=Дрожание помогает временному фильтру лучше сглаживать изображение, но имеет некоторые недостатки. §e[*]§r Более высокие значения улучшают сглаживание, но одновременно вызывают сильное мерцание и размытие. §e[*]§r При полном дрожании рекомендуется использовать высокое временное сглаживание. §c[-]§r\: Отключение дрожания уберёт преимущества сглаживания.
 value.TAA_JITTER.0=Нет §c[-]
 value.TAA_JITTER.1=Низкое
 value.TAA_JITTER.2=Среднее
@@ -801,7 +801,7 @@ option.MOTION_BLURRING_STRENGTH=Сила размытия в движении
 option.MOTION_BLURRING_STRENGTH.comment=Регулирует интенсивность размытия в движении.
 
 option.WORLD_BLUR=§eРазмытие мира
-option.WORLD_BLUR.comment=Включает размытие мира. Дистанционное: применяется подобно туману, по удалённости от камеры. Глубина резкости: размытие вне фокуса. §c[-]§r Сильно снижает производительность.
+option.WORLD_BLUR.comment=Включает размытие мира. Дистанционное\: применяется подобно туману, по удалённости от камеры. Глубина резкости\: размытие вне фокуса. §c[-]§r Сильно снижает производительность.
 value.WORLD_BLUR.0=Нет
 value.WORLD_BLUR.1=Дистанционное
 value.WORLD_BLUR.2=Глубина резкости
@@ -817,7 +817,7 @@ option.WB_ANAMORPHIC.comment=Растягивает размытие в одно
 
 option.WB_DOF_I=Сила глубины резкости
 option.WB_DOF_FOCUS=Фокус глубины резкости
-option.WB_DOF_FOCUS.comment=Определяет фокусное расстояние камеры. Авто: фокус в центре экрана. Яркость: фокус зависит от настроек ползунка «Яркости» в «Настройках графики».
+option.WB_DOF_FOCUS.comment=Определяет фокусное расстояние камеры. Авто\: фокус в центре экрана. Яркость\: фокус зависит от настроек ползунка «Яркости» в «Настройках графики».
 value.WB_DOF_FOCUS.-1=Яркость §e[*]
 value.WB_DOF_FOCUS.0=Авто
 
@@ -852,10 +852,10 @@ option.IPBR_PARTICLE_FEATURES=Особенности частиц встр. PBR+
 option.IPBR_PARTICLE_FEATURES.comment=Добавляет свечение частицам лавы и улучшает цвет частиц воды.
 
 option.FANCY_GLASS=Улучшенное стекло
-option.FANCY_GLASS.comment=Добавляет полупрозрачный слой к обычному стеклу. §c[-]§r Не работает в старых версиях Iris. §e[*]§r Требуется режим «Поддержка наборов ресурсов»: встроенный PBR+.
+option.FANCY_GLASS.comment=Добавляет полупрозрачный слой к обычному стеклу. §c[-]§r Не работает в старых версиях Iris. §e[*]§r Требуется режим «Поддержка наборов ресурсов»\: встроенный PBR+.
 
 option.GREEN_SCREEN_LIME=Лаймовый хромакей
-option.GREEN_SCREEN_LIME.comment=Превращает лаймовые блоки (бетон, шерсть, ковёр) в зелёный фон для монтажа. Совет 1: отключите свечение (bloom) для чёткости. Совет 2: расположите источники света под коврами. Совет 3: отключите быстрое сглаживание (FXAA) установить качество детализации на картошку в настройках производительности, чтобы отключить всю фильтрацию и добиться идеального разделения по пикселям.
+option.GREEN_SCREEN_LIME.comment=Превращает лаймовые блоки (бетон, шерсть, ковёр) в зелёный фон для монтажа. Совет 1\: отключите свечение (bloom) для чёткости. Совет 2\: расположите источники света под коврами. Совет 3\: отключите быстрое сглаживание (FXAA) установить качество детализации на картошку в настройках производительности, чтобы отключить всю фильтрацию и добиться идеального разделения по пикселям.
 
 option.MIRROR_TINTED_GLASS=Зеркальное тонированное стекло
 option.MIRROR_TINTED_GLASS.comment=Увеличивает отражаующую способность и непрозрачность блоков тонированного стекла. Для достижения наилучших результатов используйте отражения в мировом пространстве.
@@ -877,14 +877,14 @@ option.SNOWY_WORLD=Заснеженный мир
 option.SNOWY_WORLD.comment=Покрывает весь мир снегом.
 
 option.SHOW_LIGHT_LEVEL=Показывать уровни освещённости
-option.SHOW_LIGHT_LEVEL.comment=В обычном мире: жёлтый означает, что монстры могут появляться ночью; красный — всегда. В Незере и Энде: жёлтый означает, что появляться могут лишь некоторые мобы, красный — все. §e[*]§r Отключите плавное освещение для точности.
+option.SHOW_LIGHT_LEVEL.comment=В обычном мире\: жёлтый означает, что монстры могут появляться ночью; красный — всегда. В Незере и Энде\: жёлтый означает, что появляться могут лишь некоторые мобы, красный — все. §e[*]§r Отключите плавное освещение для точности.
 value.SHOW_LIGHT_LEVEL.0=Нет
 value.SHOW_LIGHT_LEVEL.1=Паучий глаз в руке
 value.SHOW_LIGHT_LEVEL.2=Источник света в руке
 value.SHOW_LIGHT_LEVEL.3=Всегда
 
 option.COLOR_CODED_PROGRAMS=Цветная отладка §c[-]§r
-option.COLOR_CODED_PROGRAMS.comment=Показывает используемые шейдерные программы. §c[-]§r Эта опция предназначена только для разработчиков, а не для игры. §e[*]§r Значения цвета можно найти в файлах шейдеров: shaders/lib/misc/colorCodedPrograms.glsl
+option.COLOR_CODED_PROGRAMS.comment=Показывает используемые шейдерные программы. §c[-]§r Эта опция предназначена только для разработчиков, а не для игры. §e[*]§r Значения цвета можно найти в файлах шейдеров\: shaders/lib/misc/colorCodedPrograms.glsl
 
 option.GLOWING_COLORED_PARTICLES=Принудительное свечение частиц §c[-]§r
 option.GLOWING_COLORED_PARTICLES.comment=Заставляет технически 'цветные' частицы светиться. §c[-]§r Не рекомендуется для игры, так как заставляет светиться множество частиц, когда они сделаны из материалов, которые вообще не должны светиться.
@@ -941,7 +941,7 @@ option.GLOWING_ORE_NETHERGOLD=Незерская золотая руда
 option.GLOWING_ORE_GILDEDBLACKSTONE=Золочёный чернит
 option.GLOWING_ORE_ANCIENTDEBRIS=Древние обломки
 option.GLOWING_ORE_MODDED=Руды из модов §e[*]§r
-option.GLOWING_ORE_MODDED.comment=§e[*]§r Вы можете добавить идентификаторы руд из модов в файл "Complementary-->shaders-->block.properties", чтобы заставить их светиться. Вы можете открыть файл block.properties в любом текстовом редакторе, например в блокноте, а затем добавить идентификаторы из модов блоков рядом с "block.10024=".
+option.GLOWING_ORE_MODDED.comment=§e[*]§r Вы можете добавить идентификаторы руд из модов в файл "Complementary-->shaders-->block.properties", чтобы заставить их светиться. Вы можете открыть файл block.properties в любом текстовом редакторе, например в блокноте, а затем добавить идентификаторы из модов блоков рядом с "block.10024\=".
 
 option.GLOWING_AMETHYST=Свечение аметиста
 value.GLOWING_AMETHYST.0=§cНет
@@ -991,7 +991,7 @@ value.POM_DISTANCE.512=512 §e[*]
 value.POM_DISTANCE.1024=1024 §e[*]
 
 option.POM_LIGHTING_MODE=Режим освещения ОПО
-option.POM_LIGHTING_MODE.comment=Настраивает стиль освещения для поверхностей, подверженных воздействию отображения параллаксной окклюзии. Резкое: стены ОПО не будут освещаться, если они не обращены к свету. Плавное: стены ОПО будут по-прежнему освещаться, как если бы они не были стенами.
+option.POM_LIGHTING_MODE.comment=Настраивает стиль освещения для поверхностей, подверженных воздействию отображения параллаксной окклюзии. Резкое\: стены ОПО не будут освещаться, если они не обращены к свету. Плавное\: стены ОПО будут по-прежнему освещаться, как если бы они не были стенами.
 value.POM_LIGHTING_MODE.1=Плавное
 value.POM_LIGHTING_MODE.2=Резкое
 
@@ -1059,8 +1059,8 @@ option.SPECIAL_PORTAL_EFFECTS.comment=Добавляет анимации и с�
 
 option.REFLECTION_RES=Отражения с половинным разрешением
 option.REFLECTION_RES.comment=Отображает PBR-отражения на блоках (и отражения в мировом пространстве, если они включены) в половинном разрешении для повышения производительности.
-value.REFLECTION_RES.1=Нет
-value.REFLECTION_RES.2=Да
+value.REFLECTION_RES.1.0=§4§l§n§oFull
+value.REFLECTION_RES.0.5=§aHalf
 
 option.WORLD_OUTLINE=Контур мира
 option.WORLD_OUTLINE.comment=Добавляет яркие контуры вокруг блоков. §c[-]§r Влияет на производительность.
@@ -1211,12 +1211,12 @@ option.XLIGHT_CURVE.comment=Регулирует скорость уменьше
 
 ####### Euphoria Patches #######
 
-profile.SPACEAGLE17=§f۞ §kO§fОТЛАДКА (Не использовать)§f§kO
+profile.SPACEAGLE17= §f۞ §kO§fОТЛАДКА (Не использовать)§f§kO
 profile.POPULAR=§bПопулярные §dнастройки
 
 #WATERMARK
 option.WATERMARK=Complementary
-option.WATERMARK.comment=Euphoria Patches созданы с любовью и заботой, чтобы дополнить уникальный опыт Minecraft, расширяя возможности Complementary Shaders. Присоединяйтесь к сообществу: www.complementary.dev/discord. Водяной знак от Elysia.
+option.WATERMARK.comment=Euphoria Patches созданы с любовью и заботой, чтобы дополнить уникальный опыт Minecraft, расширяя возможности Complementary Shaders. Присоединяйтесь к сообществу\: www.complementary.dev/discord. Водяной знак от Elysia.
 value.WATERMARK.0=& §dEuphoria §rPatches
 value.WATERMARK.1=& §cE§6u§ep§aho§br§9i§da §rPatches
 value.WATERMARK.2=& §cE§6u§ep§aho§br§9i§da §rPatches — интерфейс скрыт
@@ -1385,7 +1385,6 @@ value.AURORA_COLOR_PRESET.11=§bМ§3е§bр§3з§cл§3о§cт§bа
 value.AURORA_COLOR_PRESET.12=§dР§5о§dз§5о§dв§5ы§dй
 value.AURORA_COLOR_PRESET.13=§aД§5жокер
 value.AURORA_COLOR_PRESET.14=§cКровавая §bбаня
-value.AURORA_COLOR_PRESET.15=§bМисти§9ческое
 
 option.RGB_AURORA=RGB-сияние
 option.RGB_AURORA.comment=§4R§2G§9B §rэффекты для настоящих геймеров.
@@ -1589,13 +1588,13 @@ option.END_SKY_FOG_INFLUENCE=Влияние цвета тумана
 option.END_SKY_FOG_INFLUENCE.comment=Настройка влияния цвета тумана биомов из модов на небо Энда.
 
 option.GLOWING_EMERALD_BLOCK=Свечение изумрудных блоков
-option.GLOWING_EMERALD_BLOCK.comment=Включает свечение изумрудных блоков. §e[*]§r Требуется «Поддержка наборов ресурсов»: встроенный PBR+.
+option.GLOWING_EMERALD_BLOCK.comment=Включает свечение изумрудных блоков. §e[*]§r Требуется «Поддержка наборов ресурсов»\: встроенный PBR+.
 
 option.EMISSIVE_ENCHANTING_TABLE=Свечение стола зачарований
-option.EMISSIVE_ENCHANTING_TABLE.comment=Алмазная часть стола зачарований светится. §e[*]§r Требуется «Поддержка наборов ресурсов»: встроенный PBR+.
+option.EMISSIVE_ENCHANTING_TABLE.comment=Алмазная часть стола зачарований светится. §e[*]§r Требуется «Поддержка наборов ресурсов»\: встроенный PBR+.
 
 option.GLOWING_WART=Свечение блоков наростов
-option.GLOWING_WART.comment=Анимированное свечение блоков незерских наростов. §e[*]§r Требуется «Поддержка наборов ресурсов»: встроенный PBR+.
+option.GLOWING_WART.comment=Анимированное свечение блоков незерских наростов. §e[*]§r Требуется «Поддержка наборов ресурсов»\: встроенный PBR+.
 
 option.GLOWING_NETHER_TREES=Свечение грибов Незера
 option.GLOWING_NETHER_TREES.comment=Стволы багровых и искажённых грибов светятся.
@@ -1623,6 +1622,9 @@ value.END_CRYSTAL_VORTEX.2=Лучи исцеления
 value.END_CRYSTAL_VORTEX.3=Оба варианта
 option.DRAGON_DEATH_EFFECT=Эффект смерти дракона
 option.DRAGON_DEATH_EFFECT.comment=Заменяет лучи при смерти дракона объёмным эффектом. §4[***]§r Требует включения «§cТеней существ§r». §e[*]§r Работает только на Iris. §e[*]§r Не работает на MacOS.
+value.DRAGON_DEATH_EFFECT.0=Нет
+value.DRAGON_DEATH_EFFECT.1=Volumetric Effect
+value.DRAGON_DEATH_EFFECT.2=Volumetric + Original Beams
 option.E_BEAMS_AMBIENT_INFLUENCE=Влияние окружения
 option.E_BEAMS_AMBIENT_INFLUENCE.comment=Лучи принимают цвет окружения при значении 1.00  и пользовательский цвет при 0.00. Не применяется к лучам Эндер-дракона.
 option.E_BEAM_R_NEW=Красный для лучей Энда
@@ -1766,8 +1768,6 @@ option.DIRECTIONAL_LIGHTMAP_NORMALS.comment=Связывает нормали с
 option.DIRECTIONAL_LIGHTMAP_NORMALS_BLOCK_STRENGTH_NEW=Яркость блоков
 option.DIRECTIONAL_LIGHTMAP_NORMALS_HANDHELD_STRENGTH=Яркость в руках
 
-option.CAVE_FOG=Пещерный туман
-option.CAVE_FOG.comment=Включает/отключает туман в пещерах.
 option.CAVE_FOG_R_NEW=Красный для пещерного тумана
 option.CAVE_FOG_G_NEW=Зелёный для пещерного тумана
 option.CAVE_FOG_B_NEW=Синий для пещерного тумана
@@ -1775,10 +1775,10 @@ option.CAVE_FOG_I=Яркость пещерного тумана
 option.CAVE_FOG_DENSITY=Плотность пещерного тумана
 
 option.ATMOSPHERIC_FOG=Атмосферный туман
-option.ATMOSPHERIC_FOG_R_NEW=Красный для атмосферного тумана
-option.ATMOSPHERIC_FOG_G_NEW=Зелёный для атмосферного тумана
-option.ATMOSPHERIC_FOG_B_NEW=Синий для атмосферного тумана
-option.ATMOSPHERIC_FOG_I=Яркость атмосферного тумана
+option.ATMOSPHERIC_FOG_R_NEW= Красный для атмосферного тумана
+option.ATMOSPHERIC_FOG_G_NEW= Зелёный для атмосферного тумана
+option.ATMOSPHERIC_FOG_B_NEW= Синий для атмосферного тумана
+option.ATMOSPHERIC_FOG_I= Яркость атмосферного тумана
 option.ATMOSPHERIC_FOG_DENSITY=Плотность атмосферного тумана
 option.RADIOACTIVE_ATMOSPHERIC_FOG=Радиоактивный атмосферный туман
 option.RADIOACTIVE_ATMOSPHERIC_FOG.comment=Опасный для здоровья эффект. Более заметен ночью.
@@ -1864,7 +1864,7 @@ option.RAIN_ATMOSPHERE=Эпическая гроза
 option.RAIN_ATMOSPHERE.comment=Улучшает эффекты при ударе молний в грозу. §e[*]§r Лучше работает с Iris.
 
 option.BLUE_SCREEN=Синий экран
-option.BLUE_SCREEN.comment=Превращает синие блоки (бетон, шерсть, ковёр) в зелёный фон для монтажа. Совет 1: отключите свечение (bloom) для чёткости. Совет 2: расположите источники света под коврами. Совет 3: отключите быстрое сглаживание (FXAA) установить качество детализации на картошку в настройках производительности, чтобы отключить всю фильтрацию и добиться идеального разделения по пикселям.
+option.BLUE_SCREEN.comment=Превращает синие блоки (бетон, шерсть, ковёр) в зелёный фон для монтажа. Совет 1\: отключите свечение (bloom) для чёткости. Совет 2\: расположите источники света под коврами. Совет 3\: отключите быстрое сглаживание (FXAA) установить качество детализации на картошку в настройках производительности, чтобы отключить всю фильтрацию и добиться идеального разделения по пикселям.
 
 option.MIRROR_DIMENSION=Зеркальное измерение
 option.MIRROR_DIMENSION.comment=Магический эффект отражённого мира.
@@ -1907,7 +1907,7 @@ option.NETHER_BRIGHTNESS=Яркость Незера
 option.NETHER_BRIGHTNESS.comment=Общая освещённость измерения.
 
 option.END_ROD_COLOR_PROFILE=Профиль стержней Энда
-option.END_ROD_COLOR_PROFILE.comment=Цвет стержней Энда, используемый по умолчанию в Complementary, или ваш собственный.§e[*]§r Требуется «Поддержка наборов ресурсов»: встроенный PBR+.
+option.END_ROD_COLOR_PROFILE.comment=Цвет стержней Энда, используемый по умолчанию в Complementary, или ваш собственный.§e[*]§r Требуется «Поддержка наборов ресурсов»\: встроенный PBR+.
 value.END_ROD_COLOR_PROFILE.0=Complementary
 value.END_ROD_COLOR_PROFILE.1=Пользовательский
 value.END_ROD_COLOR_PROFILE.2=Радуга
@@ -1927,7 +1927,7 @@ option.END_ROD_RAINBOW_ANIMATE=Скорость анимации
 value.END_ROD_RAINBOW_ANIMATE.0.0=Нет
 
 option.REDSTONE_IPBR=Встроенный PBR для редстоуна
-option.REDSTONE_IPBR.comment=Делает красные пиксели на блоках редстоуна светящимися. Лучше работает с наборами ресурсов для редстоуна. §e[*]§r Требуется «Поддержка наборов ресурсов»: встроенный PBR+.
+option.REDSTONE_IPBR.comment=Делает красные пиксели на блоках редстоуна светящимися. Лучше работает с наборами ресурсов для редстоуна. §e[*]§r Требуется «Поддержка наборов ресурсов»\: встроенный PBR+.
 option.REDSTONE_IPBR_R=Определение красного
 option.REDSTONE_IPBR_R.comment=Настройте, если обнаружение не работает с вашим текстурпаком. Увеличивайте, если пиксели более красные, уменьшайте, если менее.
 option.REDSTONE_IPBR_G=Определение зелёного
@@ -2039,14 +2039,14 @@ option.EMIN_BOAT=Лодка Эмина
 option.EMIN_BOAT.comment=Катайтесь на лодках так, как задумал Эмин.
 
 option.MONOTONE_WORLD=Монохромный мир
-option.MONOTONE_WORLD.comment=Обесцветьте мир! Урааа!
+option.MONOTONE_WORLD.comment=Обесцветьте мир\! Урааа\!
 value.MONOTONE_WORLD.0=Нет
 value.MONOTONE_WORLD.1=Белый
 value.MONOTONE_WORLD.2=Чёрный
 value.MONOTONE_WORLD.3=Серый
 
 option.SEASONS=Времена года
-option.SEASONS.comment=Меняет цвета окружения в зависимости от игрового времени. Зимой также идёт снег! §e[*]§r Требуется «Поддержка наборов ресурсов»: встроенный PBR+.
+option.SEASONS.comment=Меняет цвета окружения в зависимости от игрового времени. Зимой также идёт снег\! §e[*]§r Требуется «Поддержка наборов ресурсов»\: встроенный PBR+.
 value.SEASONS.0=Нет
 value.SEASONS.1=Циклы
 value.SEASONS.2=Лето
@@ -2076,7 +2076,7 @@ value.SEASON_TRANSITION_START.4=80% сезона
 value.SEASON_TRANSITION_START.9=90% сезона
 
 option.SEASON_COLOR_DESATURATION=Обесцвечивание
-option.SEASON_COLOR_DESATURATION.comment=Уменьшает насыщенность цветов окружения.
+option.SEASON_COLOR_DESATURATION.commnet=Desaturates the colors of the environment.
 
 option.SNOW_CONDITION=Условия снега
 option.SNOW_CONDITION.comment=Определяет условия появления снега.
@@ -2143,7 +2143,7 @@ option.END_AMBIENT_B_NEW=Синий №окружения
 option.END_AMBIENT_I=Яркость цвета окружения
 
 option.ATLAS_ROTATION=Поворот текстур
-option.ATLAS_ROTATION.comment=:)
+option.ATLAS_ROTATION.comment=\:)
 
 option.NETHER_NOISE=Шум неба Незера
 option.NETHER_NOISE.comment=Добавляет визуальный шум к небу над крышей Незера.
@@ -2152,7 +2152,7 @@ value.NETHER_NOISE.1=Да
 
 option.MCBL_MAIN_DEFINE=Цветное освещение Euphoria
 option.MCBL_MAIN_DEFINE.comment=Включает многоцветное блоковое освещение. Режим «ПЦТ + экранное пространство» сочетает метод с «Продвинутой цветовой трассировкой». §e[*]§r Работает только на 1.16.5+ или с Angelica.
-value.MCBL_MAIN_DEFINE.0=
+value.MCBL_MAIN_DEFINE.0=Нет
 value.MCBL_MAIN_DEFINE.1=Экранное пространство
 value.MCBL_MAIN_DEFINE.2=ПЦТ + экранное пространство
 value.MCBL_MAIN_DEFINE.3=ПЦТ + экр. пр. + дин. освещ.
@@ -2176,7 +2176,7 @@ option.NO_RAIN_ABOVE_CLOUDS=Без дождя над облаками
 option.NO_RAIN_ABOVE_CLOUDS.comment=Отключает дождь выше облаков. Может некорректно работать при изменении ванильной высоты облаков при включённых ванильных облаках.
 
 option.RAIN_FADE_TIMER=Таймер затухания дождя
-option.RAIN_FADE_TIMER.comment=Изменяет время, необходимое для появления и исчезновения эффектов, связанных с дождём. Затрагиваемые эффекты: облака, лужи, туман, радуга и другие.
+option.RAIN_FADE_TIMER.comment=Изменяет время, необходимое для появления и исчезновения эффектов, связанных с дождём. Затрагиваемые эффекты\: облака, лужи, туман, радуга и другие.
 
 option.DOF_SNEAKING=Размытие на приседе и в подзорной трубе
 option.DOF_SNEAKING.comment=Активирует размытие мира только на приседе и при использовании подзорной трубы.
@@ -2192,10 +2192,10 @@ value.RETRO_LOOK.0=Нет
 value.RETRO_LOOK.1=Контуры
 value.RETRO_LOOK.2=Контуры только с ночным зрением
 
-option.RETRO_LOOK_R=Красный для ретро
-option.RETRO_LOOK_G=Зелёный для ретро
-option.RETRO_LOOK_B=Синий для ретро
-option.RETRO_LOOK_I=Яркость ретро
+option.RETRO_LOOK_R= Красный для ретро
+option.RETRO_LOOK_G= Зелёный для ретро
+option.RETRO_LOOK_B= Синий для ретро
+option.RETRO_LOOK_I= Яркость ретро
 
 option.CURVE_DISPLAY=Изогнутый экран
 option.CURVE_DISPLAY.comment=Добавляет кривизну к изображению.
@@ -2233,7 +2233,7 @@ option.COLOR_LEVELS=Постеризация
 option.COLOR_LEVELS.comment=Уменьшает количество цветов в изображении для придания ему ретро-вида.
 option.POSTERIZE_STRENGTH=Сила постеризации
 option.POSTERIZE_STRENGTH.comment=Регулирует интенсивность эффекта постеризации. Влияет на итоговое количество цветов, объединяя соседние.
-value.POSTERIZE_STRENGTH.0=Нет
+value.POSTERIZE_STRENGTH.0.0=Нет
 
 option.PALETTE_SWAP=Палитра
 option.PALETTE1R=Красный №1
@@ -2448,7 +2448,7 @@ option.WEATHER_TEX_G=Зелёный для текстуры осадков
 option.WEATHER_TEX_B=Синий для текстуры осадков
 
 option.EMISSIVE_SOUL_SAND=Свечение глаз песка душ
-option.EMISSIVE_SOUL_SAND.comment=Глаза на песке душ светятся при стоянии на нём. §e[*]§r Требуется «Поддержка наборов ресурсов»: встроенный PBR+. Только для стандартной ванильной текстуры.
+option.EMISSIVE_SOUL_SAND.comment=Глаза на песке душ светятся при стоянии на нём. §e[*]§r Требуется «Поддержка наборов ресурсов»\: встроенный PBR+. Только для стандартной ванильной текстуры.
 
 option.BEACON_BEAM_EMISSION=Свечение луча маяка
 option.BEACON_BEAM_EMISSION.comment=Настройка силы свечения луча маяка.
@@ -2470,7 +2470,7 @@ option.SHOCKWAVE=Ударная волна
 value.SHOCKWAVE.0=Нет
 value.SHOCKWAVE.1=Круг
 value.SHOCKWAVE.2=Квадрат
-option.SHOCKWAVE.comment=Присядьте и узнаете!
+option.SHOCKWAVE.comment=Присядьте и узнаете\!
 
 option.STAR_LAYER_OW=Слой звёзд
 option.STAR_LAYER_OW.comment=Добавляет дополнительные звёзды к текущим.
@@ -2627,11 +2627,11 @@ option.SMOKE_PARTICLE_OPACITY=Непрозрачность частиц дыма
 
 option.END_SUN_ANGLE=Угол солнца в Энде
 option.END_SUN_ANGLE.comment=Угол солнца и луны относительно мира в зените (в полдень).
-value.END_SUN_ANGLE.60=60
+value.END_SUN_ANGLE.60=60%
 value.END_SUN_ANGLE.50=50
-value.END_SUN_ANGLE.40=40
+value.END_SUN_ANGLE.40=40%
 value.END_SUN_ANGLE.30=30
-value.END_SUN_ANGLE.20=20
+value.END_SUN_ANGLE.20=20%
 value.END_SUN_ANGLE.10=10
 value.END_SUN_ANGLE.0=0 §r(§bПо умолчанию§r)
 value.END_SUN_ANGLE.-10=-10
@@ -2733,7 +2733,7 @@ option.END_FLASH_SHADOW=Тени от вспышек Энда
 option.END_FLASH_SHADOW.comment=Тени в Энде будут проецироваться от вспышек Энда вместо угла солнца Энда. §e[*]§r Эта функция работает только в Iris на версиях 1.21.9+
 
 option.EP_END_FLASH=Вспышка Энда
-option.EP_END_FLASH.comment=Изменяет тип вспышки Энда: стандартную, пользовательскую Euphoria или обе. §e[*]§r Эта функция работает только в Iris на версиях 1.21.9+
+option.EP_END_FLASH.comment=Изменяет тип вспышки Энда\: стандартную, пользовательскую Euphoria или обе. §e[*]§r Эта функция работает только в Iris на версиях 1.21.9+
 value.EP_END_FLASH.0=Только стандартная
 value.EP_END_FLASH.1=Только Euphoria
 value.EP_END_FLASH.2=Обе
@@ -2750,14 +2750,468 @@ option.BLOOD_MOON.comment=Включает появление кровавой �
 value.BLOOD_MOON.0=Нет
 value.BLOOD_MOON.1=Каждую ночь
 suffix.BLOOD_MOON=\ ночей Minecraft
-
 option.EMISSIVE_BLOOD_MOON_FLOWERS=Светящиеся цветы при кровавой луне
 option.EMISSIVE_BLOOD_MOON_FLOWERS.comment=Делает красные цветы светящимися во время кровавой луны. §e[*]§r Требуется, чтобы параметр поддержки RP был установлен в «Встроенный PBR+».
+
+
+#   ___                _                   _        _   ___      _      _
+#  / __|_  _ _ __ _ __| |___ _ __  ___ _ _| |_ __ _| | | _ \__ _| |_ __| |_  ___ ___
+#  \__ \ || | '_ \ '_ \ / -_) '  \/ -_) ' \  _/ _` | | |  _/ _` |  _/ _| ' \/ -_|_-<
+#  |___/\_,_| .__/ .__/_\___|_|_|_\___|_||_\__\__,_|_| |_| \__,_|\__\__|_||_\___/__/
+#           |_|  |_|
+# Settings added by Supplemental Patches
+screen.SUPPLEMENTAL_SETTINGS=§dConfigure Supplemental Patches
+
+screen.BIOMESOPLENTY=Biomes O Plenty
+
+screen.VISCERAL_HEAP=Visceral Heap
+
+option.FLESH_WAVING=Flesh Waving
+option.FLESH_WAVING.comment=Enables a waving effect on flesh blocks. §e[*]§r If Advanced Colored Lighting is not enabled in Performance Settings, some artifacts may be seen.
+
+option.FLESH_WAVING_ANYWHERE=Flesh Waving Anywhere
+option.FLESH_WAVING_ANYWHERE.comment=Enables flesh blocks to wave in any biome, even outside the Visceral Heap.
+
+option.FLESH_WAVING_SPEED=Flesh Waving Speed
+option.FLESH_WAVING_SPEED.comment=Adjusts the speed of the flesh waving in the Visceral Heap.
+
+option.FLESH_WAVING_STRENGTH=Flesh Waving Strength
+option.FLESH_WAVING_STRENGTH.comment=Adjusts the intensity of the flesh waving in the Visceral Heap.
+
+screen.CAVERNS_AND_CHASMS=Caverns & Chasms
+
+option.GLOWING_MIME_ENERGY=Glowing Mime Energy
+option.GLOWING_MIME_ENERGY.comment=Enables the particles emitted by the Mine to glow.
+
+option.GLOWING_ORE_SILVER_C=Glowing Silver Ore §e[*]§r
+option.GLOWING_ORE_SILVER_C.comment=§e[*]§r This setting will only affect the silver ore added by Caverns & Chasms.
+
+option.GLOWING_ORE_SOULSILVER=Glowing Soul Silver Ore
+
+option.GLOWING_ORE_SPINEL=Glowing Spinel Ore
+
+screen.CINDERSCAPES=Cinderspaces
+
+option.GLOWING_ORE_ROSE_QUARTZ=Glowing Rose Quartz Ore
+
+option.GLOWING_ORE_SMOKY_QUARTZ=Glowing Smoky Quartz Ore
+
+option.GLOWING_ORE_SULFUR=Glowing Sulfur Ore
+
+option.GLOWING_ORE_SULFUR_QUARTZ=Glowing Sulfur Quartz Ore
+
+screen.COBBLEMON=Cobblemon
+
+option.GLOWING_ORE_DUSK_STONE=Glowing Dusk Stone Ore
+
+option.GLOWING_ORE_ICE_STONE=Glowing Ice Stone Ore
+
+option.GLOWING_ORE_LEAF_STONE=Glowing Leaf Stone Ore
+
+option.GLOWING_ORE_MOON_STONE=Glowing Moon Stone Ore
+
+option.GLOWING_ORE_SUN_STONE=Glowing Sun Stone Ore
+
+option.GLOWING_ORE_THUNDER_STONE=Glowing Thunder Stone Ore
+
+option.GLOWING_ORE_WATER_STONE=Glowing Water Stone Ore
+
+screen.DITR=Diamonds in the Rough
+
+option.GLOWING_ORE_OBSIDIAN_DIAMOND=Glowing Obsidian Diamond Ore
+
+
+screen.DOOM_AND_GLOOM=Doom & Gloom
+
+screen.DOOM_AND_GLOOM_FOG=Туман
+screen.DOOM_AND_GLOOM_FOG.comment=Settings regarding the Fog effect from Doom & Gloom.
+
+option.FOG_AURORA_VISIBILITY=Aurora Visibility
+option.FOG_AURORA_VISIBILITY.comment=Determines how visible the aurora should be when then fog effect is on.
+
+option.DG_ACT_FOG_INTENSITY=ACT Fog Intensity §e[*]§r
+option.DG_ACT_FOG_INTENSITY.comment=Determines how much stronger ACT fog becomes when the fog effect is active. §e[*]§r Requires Advanced Color Tracing to be enabled.
+
+option.DG_ACT_FOG_SIZE=ACT Fog Size §e[*]§r
+option.DG_ACT_FOG_SIZE.comment=Determines how far the ACT fog will spread when the fog effect is active. §e[*]§r Requires Advanced Color Tracing to be enabled.
+
+
+
+option.DOOM_AND_GLOOM_FOG=Doom & Gloom Fog
+value.DOOM_AND_GLOOM_FOG.0=ON - with Effect
+value.DOOM_AND_GLOOM_FOG.1=Да
+value.DOOM_AND_GLOOM_FOG.2=Нет
+
+option.FOG_BLOOM=Fog Bloom
+option.FOG_BLOOM.comment=Determines how much distant objects should be blurred by during fog.
+
+option.FOG_INTENSITY=Fog Intensity
+option.FOG_INTENSITY.comment=Determines intensity of the fog.
+
+option.FOG_LIGHT_DIMMING=Fog Light Dimming
+option.FOG_LIGHT_DIMMING.comment=Determines how much skylight will be dimmed by the fog. Lower values mean less skylight.
+
+option.FOG_SUN_BRIGHTNESS=Reimagined Sun Intensity §e[*]§r
+option.FOG_SUN_BRIGHTNESS.comment=Determines the factor by which the sun should be dimmer during the fog effect. §e[*]§r Only applies when Sun / Moon Mode is set to Reimagined.
+
+option.FOG_UNBOUND_SUN_BRIGHTNESS=Unbound Sun Intensity §e[*]§r
+option.FOG_UNBOUND_SUN_BRIGHTNESS.comment=Determines the factor by which the sun should be dimmer during the fog effect. §e[*]§r Only applies when Sun / Moon Mode is set to Unbound.
+
+option.HOLLER_GLOWING_INTENSITY=Holler Glowing Intensity
+option.HOLLER_GLOWING_INTENSITY.comment=Controls the emissiveness of the Hollers.
+
+screen.ENDERSCAPE=Enderscape
+
+option.ANIMATED_END_LAMP=Animated End Lamp
+option.ANIMATED_END_LAMP.comment=Adds a pixelated noise animation to the end lamp.
+
+option.DARKER_END_ATMOSPHERE=Darker End Atmosphere §e[*]§r
+option.DARKER_END_ATMOSPHERE.comment=Darkens the end atmosphere and makes ambient light greener, to be more faithful to the lighting modifications in Enderscape. §e[*]§r This setting requires LIGHT_COLOR_MULT to be enabled to work.
+value.DARKER_END_ATMOSPHERE.0=Нет
+value.DARKER_END_ATMOSPHERE.1=If Mod Installed
+value.DARKER_END_ATMOSPHERE.2=Да
+
+option.DARKER_END_SKY=Darker End Sky §e[*]§r
+option.DARKER_END_SKY.comment=Darkens the end sky, to better mimic Enderscape's built-in custom skybox. §e[*]§r This setting requires ATM_COLOR_MULT to be enabled to work.
+value.DARKER_END_SKY.0=Нет
+value.DARKER_END_SKY.1=If Mod Installed
+value.DARKER_END_SKY.2=Да
+
+
+option.ES_LIGHTMAP=Enderscape Lightmap
+option.ES_LIGHTMAP.comment=Enables the modified lightmap used by Enderscape, in place of the default one.
+value.ES_LIGHTMAP.0=Нет
+value.ES_LIGHTMAP.1=If Mod Installed
+value.ES_LIGHTMAP.2=Да
+
+option.ES_STAR_COLOR=Biome Colored End Stars
+option.ES_STAR_COLOR.comment=Changes the color of End Stars to match that the colors defined by Enderscape.
+value.ES_STAR_COLOR.0=Нет
+value.ES_STAR_COLOR.1=If Mod Installed
+value.ES_STAR_COLOR.2=Да
+
+screen.ES_FLASH_FOLDER=Flash
+
+option.BIOME_COLORED_ES_FLASH=Biome Colored Flash §e[*]§r
+option.BIOME_COLORED_ES_FLASH.comment=Gives the End Flash different colors based on which Enderscape biome the player is in. §e[*]§r Requires Enderscape to be installed.
+
+option.COLORED_ES_FLASH_LIGHTING=Colored Flash Lighting
+option.COLORED_ES_FLASH_LIGHTING.comment=Applies the End Flash's color to the increase in lighting during the End Flash.
+
+option.DISABLE_DEFAULT_FLASH=Disable Default Flash
+option.DISABLE_DEFAULT_FLASH.comment=Disables Complementary Shader's default End Flash.
+
+
+option.ES_FLASH=Вспышка Энда
+value.ES_FLASH.0=Нет
+value.ES_FLASH.1=If Mod Installed
+value.ES_FLASH.2=Да
+
+option.ES_FLASH_B=Flash Color - Blue
+
+option.ES_FLASH_G=Flash Color - Green
+
+option.ES_FLASH_R=Flash Color - Red
+
+option.ES_FLASH_GRAININESS=Flash Graininess
+
+option.ES_FLASH_SIZE=Flash Size
+
+option.GLOWING_CELESTIAL_GROWTHS=Glowing Celestial Growths
+
+option.NOT_GLOWING_CHORUS_FLOWER=Not Glowing Chorus Flower
+
+option.GLOWING_ORE_NEBULITE=Glowing Nebulite Ore
+
+screen.ES_NEBULA_FOLDER=Nebula
+
+option.BIOME_COLORED_ES_NEBULA=Biome Colored Nebula §e[*]§r
+option.BIOME_COLORED_ES_NEBULA.comment=Gives the nebula different colors based on which Enderscape biome the player is in. §e[*]§r Requires Enderscape to be installed.
+
+screen.DISTORTION_FOLDER=Nebula Distortion
+
+option.ES_NEBULA_DISTORTION_INTENSITY=Distortion Intensity
+
+option.ES_NEBULA_DISTORTION_QUALITY=Distortion Quality
+value.ES_NEBULA_DISTORTION_QUALITY.1=Низкое
+value.ES_NEBULA_DISTORTION_QUALITY.2=Среднее
+value.ES_NEBULA_DISTORTION_QUALITY.3=Высокое
+
+option.ES_NEBULA_DISTORTION_SCALE=Distortion Scale 1
+option.ES_NEBULA_DISTORTION_SCALE.comment=Controls how quickly the distortion applied to the nebula changes over the sky.
+
+option.ES_NEBULA_DISTORTION_SCALE_2=Distortion Scale 2
+option.ES_NEBULA_DISTORTION_SCALE_2.comment=Controls how quickly the distortion applied to the nebula changes over the sky.
+
+
+
+option.ES_NEBULA=Enderscape Nebula
+option.ES_NEBULA.comment=Enables a procedurally-generated nebula skybox, similar to the one built into the Enderscape mod. §c[-]§r This effect can impact performance.
+value.ES_NEBULA.0=Нет
+value.ES_NEBULA.1=If Mod Installed
+value.ES_NEBULA.2=Да
+
+option.ES_NEBULA_COLOR_1_B=Nebula Color 1 - Blue
+
+option.ES_NEBULA_COLOR_1_G=Nebula Color 1 - Green
+
+option.ES_NEBULA_COLOR_1_R=Nebula Color 1 - Red
+
+option.ES_NEBULA_COLOR_2_B=Nebula Color 2 - Blue
+
+option.ES_NEBULA_COLOR_2_G=Nebula Color 2 - Green
+
+option.ES_NEBULA_COLOR_2_R=Nebula Color 2 - Red
+
+option.ES_NEBULA_GRAININESS=Nebula Graininess
+option.ES_NEBULA_GRAININESS.comment=Controls how much white noise is added to the nebula to give it a grainy effect.
+
+option.ES_NEBULA_INTENSITY=Nebula Intensity
+
+option.ES_NEBULA_RESOLUTION=Nebula Resolution
+option.ES_NEBULA_RESOLUTION.comment=Controls the number of pixels the nebula is discretised into. Noticeable distortion is present at lower resolutions as it is impossible to perfectly tile the surface of a sphere with squares.
+value.ES_NEBULA_RESOLUTION.-1=Infinite
+
+option.ES_NEBULA_SATURATION=Nebula Saturation
+
+option.ES_NEBULA_WISPINESS=Nebula Wispiness
+
+screen.NOISE_PARAMETERS_FOLDER=Noise Parameters
+
+option.ES_NEBULA_NOISE_AMP_1=Noise Amplitude 1
+
+option.ES_NEBULA_NOISE_AMP_2=Noise Amplitude 2
+
+option.ES_NEBULA_NOISE_AMP_3=Noise Amplitude 3
+
+option.ES_NEBULA_NOISE_AMP_4=Noise Amplitude 4
+
+option.ES_NEBULA_NOISE_AMP_5=Noise Amplitude 5
+
+option.ES_NEBULA_NOISE_AMP_6=Noise Amplitude 6
+
+option.ES_NEBULA_NOISE_AMP_7=Noise Amplitude 7
+
+option.ES_NEBULA_NOISE_AMP_8=Noise Amplitude 8
+
+option.SUBTLER_END_BEAMS=Subtler End Beams
+option.SUBTLER_END_BEAMS.comment=Dims end beams to make them more subtle and give prominence to the Enderscape Nebula.
+value.SUBTLER_END_BEAMS.0=Нет
+value.SUBTLER_END_BEAMS.1=If Mod Installed
+value.SUBTLER_END_BEAMS.2=Да
+
+screen.ENHANCEDCELESTIALS=Enhanced Celestials
+
+option.LUNAR_EVENT_LIGHTING_SATURATION=Lunar Event Lighting Saturation
+option.LUNAR_EVENT_LIGHTING_SATURATION.comment=Controls saturation of ambient and skylight during lunar events.
+
+option.LUNAR_EVENT_MOON_SATURATION=Lunar Event Moon Saturation §e[*]§r
+option.LUNAR_EVENT_MOON_SATURATION.comment=Controls saturation of moon during lunar events. §e[*]§r This only applies to the Unbound moon.
+
+option.LUNAR_EVENT_SKY_SATURATION=Lunar Event Sky Saturation
+option.LUNAR_EVENT_SKY_SATURATION.comment=Controls saturation of sky during lunar events.
+
+option.SUPER_MOON_INFLUENCE=Super Moon Influence
+option.SUPER_MOON_INFLUENCE.comment=Controls the extent to which a super moon will increase the ambient and skylight.
+
+screen.GALOSPHERE=Galosphere
+
+option.GLOWING_ALLURITE=Glowing Allurite
+value.GLOWING_ALLURITE.0=§cOFF
+value.GLOWING_ALLURITE.1=Кристаллы
+value.GLOWING_ALLURITE.2=Кристаллы и блок
+
+option.GLOWING_LUMIERE=Glowing Lumiere
+value.GLOWING_LUMIERE.0=§cOFF
+value.GLOWING_LUMIERE.1=Кристаллы
+value.GLOWING_LUMIERE.2=Кристаллы и блок
+
+option.GLOWING_PINK_SALT=Glowing Pink Salt
+value.GLOWING_PINK_SALT.0=§cOFF
+value.GLOWING_PINK_SALT.1=Cluster
+value.GLOWING_PINK_SALT.2=Cluster & Berserker
+value.GLOWING_PINK_SALT.3=Cluster & Berserker & Preserved
+
+option.GLOWING_ORE_SILVER_G=Glowing Silver Ore §e[*]§r
+option.GLOWING_ORE_SILVER_G.comment=§e[*]§r This setting will only affect the silver ore added by Galosphere.
+
+option.WAVING_GILDED_BEADS=Waving Gilded Beads
+option.WAVING_GILDED_BEADS.comment=Adjusts the intensity that gilded beads will wave.
+value.WAVING_GILDED_BEADS.0=§cOFF
+value.WAVING_GILDED_BEADS.1=Light
+value.WAVING_GILDED_BEADS.2=Moderate
+value.WAVING_GILDED_BEADS.3=Интенсивное
+
+screen.GENERAL_SETTINGS=General
+
+option.CIRRUS_CLOUDS=Cirrus Clouds §e[*]§r
+option.CIRRUS_CLOUDS.comment=Converts the second layer of unbound clouds into wispy, cirrus clouds. §e[*]§r Requires option for second layer of unbound clouds to be enabled.
+
+option.CIRRUS_DISTORTION_INTENSITY=Cirrus Distortion Intensity
+option.CIRRUS_DISTORTION_INTENSITY.comment=Changes the amount of distortion applied to the second layer of unbound clouds.
+
+option.CIRRUS_DISTORTION_INTENSITY_2=Cirrus Distortion Intensity 2
+option.CIRRUS_DISTORTION_INTENSITY_2.comment=Changes the magnitude of distortion applied to higher octaves of cloud noise.
+
+option.CIRRUS_DISTORTION_SCALE=Cirrus Distortion Scale
+option.CIRRUS_DISTORTION_SCALE.comment=Changes the rate at which the direction of distortion changes across the sky for the second layer of unbound clouds.
+
+
+option.GLOWING_POTION_EFFECT=Glowing Potion Effects
+option.GLOWING_POTION_EFFECT.comment=Enables glowing potion effect particles.
+
+option.WAVING_ROPE=Waving Rope
+option.WAVING_ROPE.comment=Enables ropes from Quark / Supplementaries / Farmers Delight to wave.
+
+screen.NEARS=Nears
+
+option.GLOWING_NEARS=Glowing Nears
+
+screen.NETHEREXP=Jaden's Nether Expansion
+
+option.ECTOPLASM_EDGE_EFFECT=Ectoplasm Edge Effect
+option.ECTOPLASM_EDGE_EFFECT.comment=Adds an edge to ectoplasm when it touches other blocks. §e[*]§r This feature only works if Advanced Colored Lighting is enabled in Performance Settings.
+value.ECTOPLASM_EDGE_EFFECT.0=§cOFF
+value.ECTOPLASM_EDGE_EFFECT.1=Светлый контур
+value.ECTOPLASM_EDGE_EFFECT.2=Тёмный контур
+
+screen.OREGANIZED=Oreganized
+
+option.CRYSTAL_GLASS_OPACITY=Crystal Glass Opacity
+option.CRYSTAL_GLASS_OPACITY.comment=Determines opacity of crystal glass.
+
+option.GLOWING_ORE_LEAD=Glowing Lead Ore
+
+option.GLOWING_ORE_SILVER_O=Glowing Silver Ore §e[*]§r
+option.GLOWING_ORE_SILVER_O.comment=§e[*]§r This setting will only affect the silver ore added by Oreganized.
+
+screen.MOLTEN_LEAD=Molten Lead
+screen.MOLTEN_LEAD.comment=Settings that relate to molten lead.
+
+option.MOLTEN_LEAD_EDGE_EFFECT=Molten Lead Edge Effect
+option.MOLTEN_LEAD_EDGE_EFFECT.comment=Adds an edge to molten lead when it touches other blocks. §e[*]§r This feature only works if Advanced Colored Lighting is enabled in Performance Settings.
+value.MOLTEN_LEAD_EDGE_EFFECT.0=§cOFF
+value.MOLTEN_LEAD_EDGE_EFFECT.1=Светлый контур
+value.MOLTEN_LEAD_EDGE_EFFECT.2=Тёмный контур
+
+option.MOLTEN_LEAD_WAVINESS=Waviness
+value.MOLTEN_LEAD_WAVINESS.0=§cOFF
+value.MOLTEN_LEAD_WAVINESS.1=Light
+value.MOLTEN_LEAD_WAVINESS.2=Moderate
+value.MOLTEN_LEAD_WAVINESS.3=Интенсивное
+option.MOLTEN_LEAD_WAVINESS.comment=Adjusts the waviness of molten lead.
+
+screen.PIGSTEEL=Pigsteel
+
+option.GLOWING_PORKSLAG=Glowing Porkslag
+
+screen.QUARK=Quark
+
+option.GLOWING_ORETORTOISE_MULT=Glowing Oretortoise Strength
+option.GLOWING_ORETORTOISE_MULT.comment=Determines the emission strength of glowing ores on the oretortoise.
+
+option.GLOWING_ORETORTOISE=Glowing Oretortoise
+option.GLOWING_ORETORTOISE.comment=Enables the functionality of glowing ores on the back of the oretortoise.
+
+option.SITUATIONAL_ORETORTOISE=Situational Oretortoise
+option.SITUATIONAL_ORETORTOISE.comment=Ores on the oretortoise will only glow in caves and at night. §e[*]§r Glowing Oretortoise must be enabled for this to work.
+
+screen.SCORCHFUL=Scorchful
+
+screen.SCORCHFUL_SANDSTORM=Sandstorm
+screen.SCORCHFUL_SANDSTORM.comment=Settings regarding the sandstorm effect from Scorchful.
+
+
+option.SCORCHFUL_SANDSTORM_FOLIAGE_WAVING_INTENSITY=Sandstorm Foliage Waving Intensity
+option.SCORCHFUL_SANDSTORM_FOLIAGE_WAVING_INTENSITY.comment=Determines how strongly foliage waves during a sandstorm.
+
+option.SCORCHFUL_SANDSTORM_HEIGHT=Sandstorm Height
+option.SCORCHFUL_SANDSTORM_HEIGHT.comment=Determines the height of the sandstorm that forms. Decreasing this value will result in the sandstorm gathering near its lower attitude.
+
+option.SCORCHFUL_SANDSTORM_LEAVES_WAVING_INTENSITY=Sandstorm Leaves Waving Intensity
+option.SCORCHFUL_SANDSTORM_LEAVES_WAVING_INTENSITY.comment=Determines how strongly leaves wave during a sandstorm.
+
+option.SCORCHFUL_SANDSTORM_LOWER_ALT=Sandstorm Lower Altitude
+option.SCORCHFUL_SANDSTORM_LOWER_ALT.comment=Determines the lower starting point of the volumetric sandstorm. The fog won't appear below this altitude, and it will look the most bright right above this altitude.
+
+
+option.SCORCHFUL_SANDSTORM_OPACITY=Sandstorm Opacity
+option.SCORCHFUL_SANDSTORM_OPACITY.comment=Adjusts the opacity of the sandstorm.
+
+option.VOLUMETRIC_SCORCHFUL_SANDSTORM=Volumetric Sandstorm §e[*]§r
+option.VOLUMETRIC_SCORCHFUL_SANDSTORM.comment=Enables a volumetric fog effect during Scorchful's sandstorms. §c[-]§r This effect can impact performance. §e[*]§r This setting is experimental.
+value.VOLUMETRIC_SCORCHFUL_SANDSTORM.0=§cDisabled
+value.VOLUMETRIC_SCORCHFUL_SANDSTORM.1=Low-Quality
+value.VOLUMETRIC_SCORCHFUL_SANDSTORM.2=High-Quality
+
+screen.SUPPLEMENTAL_VERSION=Supplemental Patches §d0.8.0-beta
+screen.SUPPLEMENTAL_VERSION.comment=This is a modification of Euphoria Patches to provide better support for many popular mods.
+
+option.info_1=What is Supplemental Patches
+option.info_1.comment=This is a modification of Euphoria Patches to provide better support for many popular mods. Specifically, it allows add new shader materials to Euphoria Patches, via a resource-pack, which enables new detailed shaders to be created for various modded materials.
+value.info_1.0=
+
+option.info_2=Adding New Materials
+option.info_2.comment=You can find out more by referring to the documentation at https\://github.com/jedlimlx/supplemental-patches/wiki.
+value.info_2.0=
+
+screen.SNOWYSPIRIT=Snowy Spirit
+
+option.GLOW_LIGHT_EXTRA_LIGHT=Glow Light Extra Light
+option.GLOW_LIGHT_EXTRA_LIGHT.comment=Determines how much extra light (above the pre-defined blocklight) the glow lights should emit.
+
+screen.SOULFULNETHER=Soulful Nether
+
+option.ANIMATED_FRIGHT_STEM=Animated Fright Stem §e[*]§r
+option.ANIMATED_FRIGHT_STEM.comment=Enables a glowing animation for the fright stem block. §e[*]§r This feature only works if Emissive Nether Trees is enabled.
+
+screen.SPECIES=Species
+
+option.SPECLIGHT_ACT=Speclight ACT
+option.SPECLIGHT_ACT.comment=Determines if the Speclight uses ACT lighting. Euphoria Coloured Lighting is recommended for speclights of colours other than the default.
+
+option.SPECLIGHT_B=Speclight Blue
+
+option.SPECLIGHT_G=Speclight Green
+
+option.SPECLIGHT_R=Speclight Red
+
+screen.UPGRADE_AQUATIC=Upgrade Aquatic
+
+option.GLOWING_CORALSTONE=Glowing Coralstone
+
+screen.WETLAND_WHIMSY=Wetland Whimsy
+
+option.GLOWING_BLOODCAP_MUSHROOM=Glowing Fellcap Mushroom
+value.GLOWING_BLOODCAP_MUSHROOM.0=§cOFF
+value.GLOWING_BLOODCAP_MUSHROOM.1=Dim
+value.GLOWING_BLOODCAP_MUSHROOM.2=Moderate
+value.GLOWING_BLOODCAP_MUSHROOM.3=Bright
+
+screen.YUNGS_CAVE_BIOMES=YUNG's Cave Biomes
+
+screen.YUNGS_SANDSTORM=Sandstorm
+screen.YUNGS_SANDSTORM.comment=Settings regarding the sandstorm found in the Lost Caves.
+
+option.YUNGS_SANDSTORM_FOG_BLOOM=Sandstorm Fog Bloom
+option.YUNGS_SANDSTORM_FOG_BLOOM.comment=Determines how much distant objects should be blurred by during the sandstorm.
+
+option.YUNGS_SANDSTORM_FOG_INTENSITY=Sandstorm Fog Intensity
+option.YUNGS_SANDSTORM_FOG_INTENSITY.comment=Determines intensity of the fog during a sandstorm.
+
+option.YUNGS_SANDSTORM_WAVING_INTENSITY=Sandstorm Waving Intensity
+option.YUNGS_SANDSTORM_WAVING_INTENSITY.comment=Determines how strongly foliage waves during a sandstorm.
+
+
+#  // TerraFirmaGreg //
+
+screen.TERRAFIRMAGREG_VERSION=TerraFirmaGreg Compat
 
 option.TFGinfo1=Важная информация
 option.TFGinfo1.comment=Спасибо за установку шейдеров TerraFirmaGreg. Шейдеры всё ещё находятся в разработке, поэтому ожидайте ошибок и несовершенств. Если у вас возникнут какие-либо проблемы или предложения, пожалуйста, оставьте их на TerraFirmaGreg-shaders GitHub. Шейдеры основаны на шейдерах Complementary-Euphoria-Supplemental. Спасибо всем разработчикам за предоставленную возможность использовать их труды
 value.TFGinfo1.0=
 
 option.TFGinfo2=§d§nGitHub
-option.TFGinfo2.comment=Наш GitHub: §d§ngithub.com/TerraFirmaGreg-Team/Shaders-Complementary§r Пожалуйста, отправляйте туда все баги и ваши предложения по улучшению шейдеров
+option.TFGinfo2.comment=Наш GitHub\: §d§ngithub.com/TerraFirmaGreg-Team/Shaders-Complementary§r Пожалуйста, отправляйте туда все баги и ваши предложения по улучшению шейдеров
 value.TFGinfo2.0=
+
