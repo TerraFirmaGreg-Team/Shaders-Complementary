@@ -7,6 +7,7 @@ profile.MEDIUM=§aПосередній
 profile.HIGH=§eВисокий (устал.)
 profile.VERYHIGH=§cНадвисокий
 profile.ULTRA=§4§lУльтра
+profile.COMPLEMENTARY=§4§l§n§oВзаємодоповнюючий
 profile.comment=Профілі шейдерів змінюють налаштування продуктивности з максимально оптимізованим співвідношенням візуальної точности та продуктивности. §e[*]§r Рекомендовано використовувати один із цих профілів для налаштувань, якщо ви не знаєте, що робите. §e[*]§r Усі параметри, яких це стосується, можна знайти в меню «Продуктивність».
 
 #Information
@@ -73,6 +74,7 @@ option.info19=§aНОВЕ ОНОВЛЕННЯ
 value.info19.0=§cX.Y.Z §r—>§a X.Y.Z
 option.info19.comment=Нова версія EuphoriaPatcher доступна. Завантажити: https://euphoriapatches.com/download.
 
+value.info20.0=§aeuphoriapatches.com/download
 option.info20.comment=Нова версія EuphoriaPatcher доступна. Завантажити: https://euphoriapatches.com/download.
 
 option.info21=Часті запитання
