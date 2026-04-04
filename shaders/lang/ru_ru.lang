@@ -7,6 +7,7 @@ profile.MEDIUM=§aСредний
 profile.HIGH=§eВысокий (по умолчанию)
 profile.VERYHIGH=§cОчень высокий
 profile.ULTRA=§4§lУльтра
+profile.COMPLEMENTARY=§4§l§n§oComplementary
 profile.comment=Профили шейдера изменяют настройки производительности с оптимальным соотношением качества и производительности. §e[*]§r Рекомендуется использовать один из этих профилей, если вы не уверены в своих действиях. §e[*]§r Все затронутые настройки можно найти в разделе «Настройки производительности». Профиль «Популярные настройки» включает любимые опции сообщества.
 
 #Information
@@ -541,6 +542,12 @@ option.WATER_SIZE_MULT.comment=Определяет видимый размер 
 option.SUN_ANGLE=Угол солнца/луны
 option.SUN_ANGLE.comment=Регулирует угол наклона солнца и луны относительно мира в полдень. §a[+]§r Стиль Reimagined оптимизирован для угла «0».
 value.SUN_ANGLE.-1=По стилю
+value.SUN_ANGLE.60=60
+value.SUN_ANGLE.55=55
+value.SUN_ANGLE.50=50
+value.SUN_ANGLE.45=45
+value.SUN_ANGLE.40=40
+value.SUN_ANGLE.35=35
 value.SUN_ANGLE.30=30
 value.SUN_ANGLE.25=25
 value.SUN_ANGLE.20=20
@@ -554,6 +561,10 @@ value.SUN_ANGLE.-20=-20
 value.SUN_ANGLE.-25=-25
 value.SUN_ANGLE.-30=-30
 value.SUN_ANGLE.-35=-35
+value.SUN_ANGLE.-45=-45
+value.SUN_ANGLE.-50=-50
+value.SUN_ANGLE.-55=-55
+value.SUN_ANGLE.-60=-60
 
 option.SUN_MOON_STYLE_DEFINE=Стиль солнца и луны
 option.SUN_MOON_STYLE_DEFINE.comment=Определяет стиль солнца и луны. §e[*]§r Может конфликтовать с некоторыми наборами ресурсов из-за разграничением текстур солцна, луны и небосвода.
@@ -650,6 +661,9 @@ value.BLOOM_ENABLED.1=§eВКЛ
 
 option.BLOOM_STRENGTH=Яркость свечения
 option.BLOOM_STRENGTH.comment=Регулирует силу свечения ярких объектов и эффекта пещерной и дождевой влажности. §c[-]§r Высокие значения делают изображение размытым, чем предполагается, особенно во влажных условиях.
+value.BLOOM_STRENGTH.0.027=15%
+value.BLOOM_STRENGTH.0.036=20%
+value.BLOOM_STRENGTH.0.045=25%
 value.BLOOM_STRENGTH.0.054=30%
 value.BLOOM_STRENGTH.0.063=35%
 value.BLOOM_STRENGTH.0.072=40%
