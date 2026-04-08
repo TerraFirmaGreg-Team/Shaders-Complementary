@@ -1,4 +1,7 @@
 # Changelog
+## [Unreleased]
+- Fixed colored lighting being undefined
+
 ## [3.1.2] - 1-04-2026
 - Added all blocks from 0.12.0
 - Fixed several bugs in the shaders menu
@@ -21,5 +24,3 @@
 ## [3.0.2] - 19-03-2026
 ### Changes
 - The beginning of the story
-
-- overflow fix?
