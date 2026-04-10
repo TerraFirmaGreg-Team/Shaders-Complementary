@@ -1,6 +1,7 @@
 # Changelog
-## [Unreleased]
+## [3.1.3] - 9-04-2026
 - Fixed colored lighting being undefined
+- More translations
 
 ## [3.1.2] - 1-04-2026
 - Added all blocks from 0.12.0
