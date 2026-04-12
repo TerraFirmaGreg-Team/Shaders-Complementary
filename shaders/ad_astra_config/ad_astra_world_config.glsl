@@ -8,7 +8,7 @@
 #ifdef AD_ASTRA_ORBIT
 	
 	#define UNLIT_SKY_OBJECTS //Sun doesnt fade when over the horizon
-    	
+
     #define NEBULA_AT_DAY //function not yet made
 	
     #define DAYLIGHT_STARS //stars appear at day
@@ -38,7 +38,6 @@
     #define HAS_NO_ATMOSPHERE
 	#undef	BORDER_FOG
     #define ATM_FOG_MULT 0
-	#define HAS_NO_ATMOSPHERE
     #define BLOOM_STRENGTH 0.03 //[0 to 10]
 #endif
 
