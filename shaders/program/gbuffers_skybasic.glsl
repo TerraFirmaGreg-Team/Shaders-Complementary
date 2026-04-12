@@ -309,7 +309,7 @@ void main() {
     gl_Position = ftransform();
 
 	#ifdef AD_ASTRA
-	 remove the orange line on sunset / sunrise
+	// remove the orange line on sunset / sunrise
 	glColor = vec4(0.0);
 	#else
 	glColor = gl_Color;
