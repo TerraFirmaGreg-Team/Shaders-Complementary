@@ -26,6 +26,10 @@ flat in vec4 glColor;
     flat in float vanillaStars;
 #endif
 
+#ifdef FADE_OUT_ATMOSPHERE
+	flat in float atmFadeoutFactor;
+#endif
+
 //Pipeline Constants//
 
 //Common Variables//
@@ -109,8 +113,13 @@ void main() {
         float VdotU = dot(nViewPos, upVec);
         float VdotS = dot(nViewPos, sunVec);
         float dither = Bayer8(gl_FragCoord.xy);
-
-        color.rgb = GetSky(VdotU, VdotS, dither, true, false);
+		
+		#ifdef FADE_OUT_ATMOSPHERE
+			color.rgb = mix(GetSky(VdotU, VdotS, dither, true, false), vec3(0.0), atmFadeoutFactor);
+		#else
+			color.rgb = GetSky(VdotU, VdotS, dither, true, false);
+		#endif
+		
         color.rgb *= SkyColorPlayerPos;
         #ifdef SECRET_CAELUM_SUPPORT_SETTING
         if (alphaColor < 1.0 && alphaColor > 0.0) color.rgb = glColor.rgb * alphaColor;
@@ -274,6 +283,10 @@ flat out vec4 glColor;
     flat out float vanillaStars;
 #endif
 
+#ifdef FADE_OUT_ATMOSPHERE
+	flat out float atmFadeoutFactor;
+#endif
+
 //Attributes//
 
 #ifdef WAVE_EVERYTHING
@@ -295,10 +308,19 @@ flat out vec4 glColor;
 void main() {
     gl_Position = ftransform();
 
-    glColor = gl_Color;
-
+	#ifdef AD_ASTRA
+	 remove the orange line on sunset / sunrise
+	glColor = vec4(0.0);
+	#else
+	glColor = gl_Color;
+	#endif
+	
     upVec = normalize(gbufferModelView[1].xyz);
     sunVec = GetSunVector();
+	
+	#ifdef FADE_OUT_ATMOSPHERE
+		atmFadeoutFactor = getAtmosphereFadeoutFactor(cameraPosition);
+	#endif
 
     #ifdef OVERWORLD
         vanillaStars = 0.0;

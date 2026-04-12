@@ -31,6 +31,10 @@ flat in vec3 upVec, sunVec;
     flat in float vlFactor;
 #endif
 
+#ifdef FADE_OUT_ATMOSPHERE
+	flat in float atmFadeoutFactor;
+#endif
+
 //Pipeline Constants//
 
 //Common Variables//
@@ -245,8 +249,15 @@ void main() {
     float vlFactorM = 0.0;
     #ifdef LIGHTSHAFTS_ACTIVE
         vlFactorM = vlFactor;
-
-        volumetricEffect = GetVolumetricLight(color, vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU, texCoord, z0, z1, dither);
+		#ifdef FADE_OUT_ATMOSPHERE
+			if (atmFadeoutFactor < 1.0) {
+				volumetricEffect = GetVolumetricLight(color, vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU, texCoord, z0, z1, dither);
+				volumetricEffect *= (1.0 - atmFadeoutFactor);
+			}
+		#else
+			volumetricEffect = GetVolumetricLight(color, vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU, texCoord, z0, z1, dither);
+		#endif
+		
     #endif
     float lightFogLength = 0.0;
     #if END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0
@@ -422,6 +433,10 @@ flat out vec3 upVec, sunVec;
     flat out float vlFactor;
 #endif
 
+#ifdef FADE_OUT_ATMOSPHERE
+	flat out float atmFadeoutFactor;
+#endif
+
 //Attributes//
 
 //Common Variables//
@@ -438,6 +453,10 @@ void main() {
 
     upVec = normalize(gbufferModelView[1].xyz);
     sunVec = GetSunVector();
+	
+	#ifdef FADE_OUT_ATMOSPHERE
+		atmFadeoutFactor = getAtmosphereFadeoutFactor(cameraPosition);
+	#endif
 
     #ifdef LIGHTSHAFTS_ACTIVE
         #if LIGHTSHAFT_BEHAVIOUR == 1 && SHADOW_QUALITY >= 1 || defined END

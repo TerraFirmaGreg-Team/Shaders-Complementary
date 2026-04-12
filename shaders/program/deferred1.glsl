@@ -19,6 +19,10 @@ flat in vec3 upVec, sunVec, eastVec;
     flat in float vlFactor;
 #endif
 
+#ifdef FADE_OUT_ATMOSPHERE
+	flat in float atmFadeoutFactor;
+#endif
+
 //Pipeline Constants//
 const bool colortex0MipmapEnabled = true;
 
@@ -423,6 +427,9 @@ void main() {
                                lViewPos, VdotS, VdotU, dither, auroraBorealis, nightNebula, sunVec);
 
             color = mix(color, vec4(clouds.rgb, 0.0), clouds.a);
+			#ifdef FADE_OUT_ATMOSPHERE
+				clouds.a = mix(clouds.a, 0.0, atmFadeoutFactor);
+			#endif
         }
     #endif
 
@@ -492,6 +499,10 @@ flat out vec3 upVec, sunVec, eastVec;
     flat out float vlFactor;
 #endif
 
+#ifdef FADE_OUT_ATMOSPHERE
+	flat out float atmFadeoutFactor;
+#endif
+
 //Attributes//
 
 //Common Variables//
@@ -508,6 +519,10 @@ void main() {
     upVec = normalize(gbufferModelView[1].xyz);
     sunVec = GetSunVector();
     eastVec = normalize(gbufferModelView[0].xyz);
+	
+	#ifdef FADE_OUT_ATMOSPHERE
+        atmFadeoutFactor = getAtmosphereFadeoutFactor(cameraPosition);
+    #endif
 
     #if defined LIGHTSHAFTS_ACTIVE && (LIGHTSHAFT_BEHAVIOUR == 1 && SHADOW_QUALITY >= 1 || defined END)
         vlFactor = texelFetch(colortex5, ivec2(viewWidth-1, viewHeight-1), 0).a;

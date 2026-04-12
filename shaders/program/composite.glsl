@@ -60,6 +60,10 @@ float GetLinearDepth(float depth) {
     #include "/lib/colors/colorMultipliers.glsl"
 #endif
 
+#ifdef FADE_OUT_ATMOSPHERE
+	flat in float atmFadeoutFactor;
+#endif
+
 //Program//
 void main() {
     ivec2 texelCoord = ivec2(texCoord * view);
@@ -228,6 +232,10 @@ out vec3 sunVec;
     out float vlFactor;
 #endif
 
+#ifdef FADE_OUT_ATMOSPHERE
+	flat out float atmFadeoutFactor;
+#endif
+
 //Attributes//
 
 //Common Variables//
@@ -243,6 +251,10 @@ void main() {
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
 
     sunVec = GetSunVector();
+	
+	#ifdef FADE_OUT_ATMOSPHERE
+		atmFadeoutFactor = getAtmosphereFadeoutFactor(cameraPosition);
+	#endif
 
     #ifdef END
         vlFactor = texelFetch(colortex5, ivec2(viewWidth-1, viewHeight-1), 0).a;

@@ -91,7 +91,18 @@ vec3 GetNightNebula(vec3 viewPos, float VdotU, float VdotS) {
         VdotUFactor = pow(VdotUFactor, horizonPower);
     #endif
 
-    float nebulaFactor = pow2(VdotUFactor * min1(nightFactor * 2.0));
+	#ifdef NEBULA_AT_DAY //unused yet
+		float nightHideFactor = 1.0;
+	#else
+		#ifdef FADE_OUT_ATMOSPHERE
+			float nightHideFactor = mix(min1(nightFactor * 2.0), 1.0, atmFadeoutFactor);
+		#else
+			float nightHideFactor = min1(nightFactor * 2.0);
+		#endif
+	#endif
+	
+	
+    float nebulaFactor = pow2(VdotUFactor * nightHideFactor);
 
     #if NEBULA_HORIZON_STRENGTH < 10
         float brightnessCompensation = 1.0 - (1.0 - horizonPower) * 0.5 * max0(originalVdotUFactor);
