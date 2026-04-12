@@ -3218,3 +3218,25 @@ option.TFGinfo2=§d§nGitHub
 option.TFGinfo2.comment=Our GitHub: §d§ngithub.com/TerraFirmaGreg-Team/Shaders-Complementary§r please leave all bug reports and suggestions for improving shaders exactly there
 value.TFGinfo2.0=
 
+screen.TERRAFIRMAGREG_SETTINGS=Configure TFG compat
+screen.TERRAFIRMAGREG_SETTINGS.comment=§dTerraFirmaGreg compat§r settings
+
+screen.TFG_ATMOSPHERIC=Atmosphere
+screen.TFG_ATMOSPHERIC.comment=Atmosphere settings
+
+screen.TFG_SPACE_TRANSITION=Space transition
+screen.TFG_SPACE_TRANSITION.comment=The color of the sky depends on the player's Y position
+
+option.ST_TOGGLE=Toggle space transition
+
+option.ST_HEIGHT=Transition height
+option.ST_HEIGHT.comment=The height of the beginning of the change in sky color
+
+option.ST_R=Red color
+
+option.ST_G=Green color
+
+option.ST_B=Blue color
+
+option.ST_STARS=Toggle space stars
+option.ST_STARS.comment=Enables the ability for stars to appear while gaining altitude (the altitude at which stars appear depends on the altitude of the space transition)
