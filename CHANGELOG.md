@@ -1,4 +1,8 @@
 # Changelog
+## [unreleased]
+- added true_darkness preset
+- re-did atmospheric fade out
+
 ## [3.1.3] - 9-04-2026
 - Fixed colored lighting being undefined
 - More translations
