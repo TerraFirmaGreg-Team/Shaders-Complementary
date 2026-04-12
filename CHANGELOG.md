@@ -1,5 +1,5 @@
 # Changelog
-## [unreleased]
+## [3.1.4] - 12-04-2026
 - added true_darkness preset
 - re-did atmospheric fade out
 
