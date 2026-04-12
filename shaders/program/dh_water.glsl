@@ -53,6 +53,10 @@ vec2 lmCoordM = lmCoord;
     );
 #endif
 
+#ifdef FADE_OUT_ATMOSPHERE
+	flat in float atmFadeoutFactor;
+#endif
+
 //Common Functions//
 
 //Includes//
@@ -249,6 +253,10 @@ out vec3 viewVector;
 
 out vec4 glColor;
 
+#ifdef FADE_OUT_ATMOSPHERE
+	flat out float atmFadeoutFactor;
+#endif
+
 //Attributes//
 attribute vec4 at_tangent;
 
@@ -306,6 +314,10 @@ void main() {
         #endif
         gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
     #endif
+	
+	#ifdef FADE_OUT_ATMOSPHERE
+		atmFadeoutFactor = getAtmosphereFadeoutFactor(cameraPosition);
+	#endif
 }
 
 #endif
