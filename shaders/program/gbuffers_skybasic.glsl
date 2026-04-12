@@ -107,23 +107,19 @@ void main() {
         vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
         viewPos /= viewPos.w;
         vec3 nViewPos = normalize(viewPos.xyz);
+        vec3 SkyColorPlayerPos = mix(vec3(1.0, 1.0, 1.0), vec3(0.07, 0.0, 0.2), atmFadeoutFactor);
 
         float VdotU = dot(nViewPos, upVec);
         float VdotS = dot(nViewPos, sunVec);
         float dither = Bayer8(gl_FragCoord.xy);
 		
-		    #ifdef FADE_OUT_ATMOSPHERE
-			    color.rgb = mix(GetSky(VdotU, VdotS, dither, true, false), vec3(0.0), atmFadeoutFactor);
-		    #else
-			    color.rgb = GetSky(VdotU, VdotS, dither, true, false);
-		    #endif
-
-        #ifdef ST_TOGGLE
-            float SkyColorPlayerPosMult = clamp((cameraPosition.y - ST_HEIGHT) / (400 - ST_HEIGHT), 0.0, 1.0);
-            vec3 SkyColorPlayerPos = mix(vec3(1.0, 1.0, 1.0), vec3(ST_R, ST_G, ST_B), SkyColorPlayerPosMult);
-            color.rgb *= SkyColorPlayerPos;
-        #endif
-
+		#ifdef FADE_OUT_ATMOSPHERE
+			color.rgb = mix(GetSky(VdotU, VdotS, dither, true, false), vec3(0.0), atmFadeoutFactor);
+		#else
+			color.rgb = GetSky(VdotU, VdotS, dither, true, false);
+		#endif
+		
+        color.rgb *= SkyColorPlayerPos;
         #ifdef SECRET_CAELUM_SUPPORT_SETTING
         if (alphaColor < 1.0 && alphaColor > 0.0) color.rgb = glColor.rgb * alphaColor;
         #endif
