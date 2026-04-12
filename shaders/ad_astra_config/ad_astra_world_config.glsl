@@ -8,9 +8,7 @@
 #ifdef AD_ASTRA_ORBIT
 	
 	#define UNLIT_SKY_OBJECTS //Sun doesnt fade when over the horizon
-	
-	#define CELESTIAL_BOTH_HEMISPHERES //Stars still appear below the horizon
-	
+    	
     #define NEBULA_AT_DAY //function not yet made
 	
     #define DAYLIGHT_STARS //stars appear at day
