@@ -19,7 +19,7 @@ flat in vec3 upVec, sunVec, eastVec;
     flat in float vlFactor;
 #endif
 
-#ifdef FADE_OUT_ATMOSPHERE
+#ifdef SPACE_TRANSITION
 	flat in float atmFadeoutFactor;
 #endif
 
@@ -427,7 +427,7 @@ void main() {
                                lViewPos, VdotS, VdotU, dither, auroraBorealis, nightNebula, sunVec);
 
             color = mix(color, vec4(clouds.rgb, 0.0), clouds.a);
-			#ifdef FADE_OUT_ATMOSPHERE
+			#ifdef SPACE_TRANSITION
 				clouds.a = mix(clouds.a, 0.0, atmFadeoutFactor);
 			#endif
         }
@@ -499,7 +499,7 @@ flat out vec3 upVec, sunVec, eastVec;
     flat out float vlFactor;
 #endif
 
-#ifdef FADE_OUT_ATMOSPHERE
+#ifdef SPACE_TRANSITION
 	flat out float atmFadeoutFactor;
 #endif
 
@@ -520,7 +520,7 @@ void main() {
     sunVec = GetSunVector();
     eastVec = normalize(gbufferModelView[0].xyz);
 	
-	#ifdef FADE_OUT_ATMOSPHERE
+	#ifdef SPACE_TRANSITION
         atmFadeoutFactor = getAtmosphereFadeoutFactor(cameraPosition);
     #endif
 

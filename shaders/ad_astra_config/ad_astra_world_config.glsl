@@ -3,6 +3,7 @@
 // disable clouds
 #ifndef WORLD_whatever //we dont have any planets we keep clouds, so i put whatever
     #undef VL_CLOUDS_ACTIVE
+    #undef CLOUD_SHADOWS
 #endif
 
 #ifdef AD_ASTRA_ORBIT

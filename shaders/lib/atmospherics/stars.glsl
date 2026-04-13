@@ -73,7 +73,7 @@ vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float st
     star *= max0(1.0 - pow(abs(VdotS) * 1.002, 100.0) * starsAroundSun) * starBelowHorizonBrightness - horizonFactor * 0.5;
 
     #ifndef DAYLIGHT_STARS 
-		#ifdef FADE_OUT_ATMOSPHERE
+		#ifdef SPACE_TRANSITION
 			star *= min(1, pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility) + atmFadeoutFactor); //not how taidum did it, will need to test
 		#else
 			star *= pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility);

@@ -3232,11 +3232,11 @@ option.ST_TOGGLE=Toggle space transition
 option.ST_HEIGHT=Transition height
 option.ST_HEIGHT.comment=The height of the beginning of the change in sky color
 
-option.ST_R=Red color
+option.SPACE_TRANSITION_R=Red color
 
-option.ST_G=Green color
+option.SPACE_TRANSITION_G=Green color
 
-option.ST_B=Blue color
+option.SPACE_TRANSITION_B=Blue color
 
 option.ST_STARS=Toggle space stars
 option.ST_STARS.comment=Enables the ability for stars to appear while gaining altitude (the altitude at which stars appear depends on the altitude of the space transition)

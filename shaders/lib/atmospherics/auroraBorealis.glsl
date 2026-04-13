@@ -34,7 +34,7 @@
 #define AURORA_COLOR_MIX_POWER 2.0 //[0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0]
 
 float GetAuroraVisibility(in float VdotU, float VdotUAmount) {
-	#ifdef FADE_OUT_ATMOSPHERE
+	#ifdef SPACE_TRANSITION
 		float visibility = sqrt1(clamp01(mix(1.0, VdotU, VdotUAmount) * (AURORA_DRAW_DISTANCE * 1.125 + 0.75) - 0.225)) - mix(sunVisibility + maxBlindnessDarkness, 0.0, atmFadeoutFactor);
 	#else
     float visibility = sqrt1(clamp01(mix(1.0, VdotU, VdotUAmount) * (AURORA_DRAW_DISTANCE * 1.125 + 0.75) - 0.225)) - sunVisibility - maxBlindnessDarkness;

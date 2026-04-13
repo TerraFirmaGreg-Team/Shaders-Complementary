@@ -60,7 +60,7 @@ float GetLinearDepth(float depth) {
     #include "/lib/colors/colorMultipliers.glsl"
 #endif
 
-#ifdef FADE_OUT_ATMOSPHERE
+#ifdef SPACE_TRANSITION
 	flat in float atmFadeoutFactor;
 #endif
 
@@ -232,7 +232,7 @@ out vec3 sunVec;
     out float vlFactor;
 #endif
 
-#ifdef FADE_OUT_ATMOSPHERE
+#ifdef SPACE_TRANSITION
 	flat out float atmFadeoutFactor;
 #endif
 
@@ -252,7 +252,7 @@ void main() {
 
     sunVec = GetSunVector();
 	
-	#ifdef FADE_OUT_ATMOSPHERE
+	#ifdef SPACE_TRANSITION
 		atmFadeoutFactor = getAtmosphereFadeoutFactor(cameraPosition);
 	#endif
 

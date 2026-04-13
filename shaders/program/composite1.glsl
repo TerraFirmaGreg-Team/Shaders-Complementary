@@ -31,7 +31,7 @@ flat in vec3 upVec, sunVec;
     flat in float vlFactor;
 #endif
 
-#ifdef FADE_OUT_ATMOSPHERE
+#ifdef SPACE_TRANSITION
 	flat in float atmFadeoutFactor;
 #endif
 
@@ -249,7 +249,7 @@ void main() {
     float vlFactorM = 0.0;
     #ifdef LIGHTSHAFTS_ACTIVE
         vlFactorM = vlFactor;
-		#ifdef FADE_OUT_ATMOSPHERE
+		#ifdef SPACE_TRANSITION
 			if (atmFadeoutFactor < 1.0) {
 				volumetricEffect = GetVolumetricLight(color, vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU, texCoord, z0, z1, dither);
 				volumetricEffect *= (1.0 - atmFadeoutFactor);
@@ -433,7 +433,7 @@ flat out vec3 upVec, sunVec;
     flat out float vlFactor;
 #endif
 
-#ifdef FADE_OUT_ATMOSPHERE
+#ifdef SPACE_TRANSITION
 	flat out float atmFadeoutFactor;
 #endif
 
@@ -454,7 +454,7 @@ void main() {
     upVec = normalize(gbufferModelView[1].xyz);
     sunVec = GetSunVector();
 	
-	#ifdef FADE_OUT_ATMOSPHERE
+	#ifdef SPACE_TRANSITION
 		atmFadeoutFactor = getAtmosphereFadeoutFactor(cameraPosition);
 	#endif
 

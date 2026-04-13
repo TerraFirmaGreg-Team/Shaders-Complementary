@@ -26,7 +26,7 @@ flat in vec4 glColor;
     flat in float vanillaStars;
 #endif
 
-#ifdef FADE_OUT_ATMOSPHERE
+#ifdef SPACE_TRANSITION
 	flat in float atmFadeoutFactor;
 #endif
 
@@ -112,8 +112,8 @@ void main() {
         float VdotS = dot(nViewPos, sunVec);
         float dither = Bayer8(gl_FragCoord.xy);
 		
-		#ifdef FADE_OUT_ATMOSPHERE
-			color.rgb = mix(GetSky(VdotU, VdotS, dither, true, false), vec3(0.0), atmFadeoutFactor);
+		#ifdef SPACE_TRANSITION
+			color.rgb = mix(GetSky(VdotU, VdotS, dither, true, false), vec3(SPACE_TRANSITION_R, SPACE_TRANSITION_G, SPACE_TRANSITION_B), atmFadeoutFactor);
 		#else
 			color.rgb = GetSky(VdotU, VdotS, dither, true, false);
 		#endif
@@ -280,7 +280,7 @@ flat out vec4 glColor;
     flat out float vanillaStars;
 #endif
 
-#ifdef FADE_OUT_ATMOSPHERE
+#ifdef SPACE_TRANSITION
 	flat out float atmFadeoutFactor;
 #endif
 
@@ -315,7 +315,7 @@ void main() {
     upVec = normalize(gbufferModelView[1].xyz);
     sunVec = GetSunVector();
 	
-	#ifdef FADE_OUT_ATMOSPHERE
+	#ifdef SPACE_TRANSITION
 		atmFadeoutFactor = getAtmosphereFadeoutFactor(cameraPosition);
 	#endif
 

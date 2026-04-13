@@ -53,7 +53,7 @@ vec2 lmCoordM = lmCoord;
     );
 #endif
 
-#ifdef FADE_OUT_ATMOSPHERE
+#ifdef SPACE_TRANSITION
 	flat in float atmFadeoutFactor;
 #endif
 
@@ -253,7 +253,7 @@ out vec3 viewVector;
 
 out vec4 glColor;
 
-#ifdef FADE_OUT_ATMOSPHERE
+#ifdef SPACE_TRANSITION
 	flat out float atmFadeoutFactor;
 #endif
 
@@ -315,7 +315,7 @@ void main() {
         gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
     #endif
 	
-	#ifdef FADE_OUT_ATMOSPHERE
+	#ifdef SPACE_TRANSITION
 		atmFadeoutFactor = getAtmosphereFadeoutFactor(cameraPosition);
 	#endif
 }

@@ -94,7 +94,7 @@ vec3 GetNightNebula(vec3 viewPos, float VdotU, float VdotS) {
 	#ifdef NEBULA_AT_DAY //unused yet
 		float nightHideFactor = 1.0;
 	#else
-		#ifdef FADE_OUT_ATMOSPHERE
+		#ifdef SPACE_TRANSITION
 			float nightHideFactor = mix(min1(nightFactor * 2.0), 1.0, atmFadeoutFactor);
 		#else
 			float nightHideFactor = min1(nightFactor * 2.0);
