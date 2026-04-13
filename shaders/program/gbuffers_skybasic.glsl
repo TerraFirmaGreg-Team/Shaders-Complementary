@@ -107,7 +107,6 @@ void main() {
         vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
         viewPos /= viewPos.w;
         vec3 nViewPos = normalize(viewPos.xyz);
-        vec3 SkyColorPlayerPos = mix(vec3(1.0, 1.0, 1.0), vec3(0.07, 0.0, 0.2), atmFadeoutFactor);
 
         float VdotU = dot(nViewPos, upVec);
         float VdotS = dot(nViewPos, sunVec);
@@ -118,8 +117,7 @@ void main() {
 		#else
 			color.rgb = GetSky(VdotU, VdotS, dither, true, false);
 		#endif
-		
-        color.rgb *= SkyColorPlayerPos;
+
         #ifdef SECRET_CAELUM_SUPPORT_SETTING
         if (alphaColor < 1.0 && alphaColor > 0.0) color.rgb = glColor.rgb * alphaColor;
         #endif
