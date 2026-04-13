@@ -1,13 +1,12 @@
 // this is the configuration file for the non-adastra-specific modifications made to the shader for the taidumcraft modpack
 
-#if !defined(HAS_NO_ATMOSPHERE)
-#define FADE_OUT_ATMOSPHERE
-// this is based on player camera position (aka eye position) not player position
-// player eye height is 1.62 units above player position so add 1.62 to the Y axis you get from the F3 menu if you want to be super accurate
-#define FADE_OUT_ATMOSPHERE_START_HEIGHT 180.0
-#define FADE_OUT_ATMOSPHERE_END_HEIGHT 400.0
+#if !defined(HAS_NO_ATMOSPHERE) && FADE_OUT_ATMOSPHERE == true
+#define FADE_OUT_ATMOSPHERE_START_HEIGHT 180.0 //[100 110 120 130 140 150 160 170 180 190 200 210 220 230 240 250 260 270 280 290 300 310 320 330 340 350 360 370 380 390 400]
+#define FADE_OUT_ATMOSPHERE_END_HEIGHT 400.0//[110 120 130 140 150 160 170 180 190 200 210 220 230 240 250 260 270 280 290 300 310 320 330 340 350 360 370 380 390 400]
 
 float getAtmosphereFadeoutFactor(vec3 camPos) {
 	return (clamp((camPos.y - FADE_OUT_ATMOSPHERE_START_HEIGHT) / (FADE_OUT_ATMOSPHERE_END_HEIGHT - FADE_OUT_ATMOSPHERE_START_HEIGHT), 0.0, 1.0));
 }
+#else
+	#undef FADE_OUT_ATMOSPHERE
 #endif
