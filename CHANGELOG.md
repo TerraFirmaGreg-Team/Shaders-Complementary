@@ -1,12 +1,12 @@
 # Changelog
-## [unreleased]
-- added TFG settings in the shader menu
-- remove cloud shadows on dimensions without clouds
-- fix stars in dimensions without atmospheres
+## [3.1.5] - 14-04-2026
+- Added TFG settings in the shader menu
+- Remove cloud shadows on dimensions without clouds
+- Fix stars in dimensions without atmospheres
 
 ## [3.1.4] - 12-04-2026
-- added true_darkness preset
-- re-did atmospheric fade out
+- Added true_darkness preset
+- Re-did atmospheric fade out
 
 ## [3.1.3] - 9-04-2026
 - Fixed colored lighting being undefined
