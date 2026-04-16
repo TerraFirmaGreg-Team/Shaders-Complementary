@@ -65,6 +65,9 @@ vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float st
         star -= 0.52;
         star *= 0.55;
     #endif
+    #ifdef HAS_NO_ATMOSPHERE
+        star *= SPACE_STARS_MULTIPLIER;    
+    #endif
 
     star = max0(star - starAmount * 0.1);
     star *= getStarEdgeFactor(fractPart, STAR_ROUNDNESS_OW / 10.0, STAR_SOFTNESS_OW);
@@ -86,13 +89,21 @@ vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float st
         star *= invRainFactor;
     #endif
 
-    vec3 starColor = GetStarColor(starCoord,
-                                vec3(0.38, 0.4, 0.5),
-                                  vec3(STAR_COLOR_1_OW_R, STAR_COLOR_1_OW_G, STAR_COLOR_1_OW_B),
-                                  vec3(STAR_COLOR_2_OW_R, STAR_COLOR_2_OW_G, STAR_COLOR_2_OW_B),
-                                  vec3(STAR_COLOR_3_OW_R, STAR_COLOR_3_OW_G, STAR_COLOR_3_OW_B),
-                                  float(STAR_COLOR_VARIATION_OW));
-
+    #ifndef SPACE_STARS_SPECTRUM    
+        vec3 starColor = GetStarColor(starCoord,
+                                    vec3(0.38, 0.4, 0.5),
+                                    vec3(STAR_COLOR_1_OW_R, STAR_COLOR_1_OW_G, STAR_COLOR_1_OW_B),
+                                    vec3(STAR_COLOR_2_OW_R, STAR_COLOR_2_OW_G, STAR_COLOR_2_OW_B),
+                                    vec3(STAR_COLOR_3_OW_R, STAR_COLOR_3_OW_G, STAR_COLOR_3_OW_B),
+                                    float(STAR_COLOR_VARIATION_OW));
+    #else 
+        vec3 starColor = GetStarColor(starCoord,
+                                    vec3(0.38, 0.4, 0.5),
+                                    vec3(G_STAR_COLOR_1_OW_R, G_STAR_COLOR_1_OW_G, G_STAR_COLOR_1_OW_B),
+                                    vec3(A_STAR_COLOR_1_OW_R, A_STAR_COLOR_1_OW_G, A_STAR_COLOR_1_OW_B),
+                                    vec3(M_STAR_COLOR_1_OW_R, M_STAR_COLOR_1_OW_G, M_STAR_COLOR_1_OW_B),
+                                    float(SPECTRUM_STAR_COLOR_VARIATION_OW));
+    #endif
     vec3 stars = 40.0 * star * starColor * starBrightness;
 
     #if TWINKLING_STARS > 0
