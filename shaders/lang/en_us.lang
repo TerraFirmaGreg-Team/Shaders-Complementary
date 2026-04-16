@@ -3240,3 +3240,28 @@ option.SPACE_TRANSITION_B=Blue color
 
 option.ST_STARS=Toggle space stars
 option.ST_STARS.comment=Enables the ability for stars to appear while gaining altitude (the altitude at which stars appear depends on the altitude of the space transition)
+
+screen.TFG_STARS=Stars
+screen.TFG_STARS.comment=Various settings enhanced the starred sky
+option.SPACE_STARS_MULTIPLIER=Space stars multiplier
+option.SPACE_STARS_MULTIPLIER.comment=Changes the amount of stars on planets without an atmosphere
+
+screen.TFG_SPACE_STARS_COLORS=Star colors
+option.SPACE_STARS_SPECTRUM=Use star spectral colors
+screen.TFG_M_STARS_COLORS=M-Stars colors
+screen.TFG_G_STARS_COLORS=G-Stars colors
+screen.TFG_A_STARS_COLORS=A-Stars colors
+screen.TFG_M_STARS_COLORS.comment=Set color values of stars with M spectral type
+screen.TFG_G_STARS_COLORS.comment=Set color values of stars with G spectral type
+screen.TFG_A_STARS_COLORS.comment=Set color values of stars with A spectral type
+option.M_STAR_COLOR_1_OW_R = Red color
+option.M_STAR_COLOR_1_OW_G = Green color
+option.M_STAR_COLOR_1_OW_B = Blue color
+option.G_STAR_COLOR_1_OW_R = Red color
+option.G_STAR_COLOR_1_OW_G = Green color
+option.G_STAR_COLOR_1_OW_B = Blue color
+option.A_STAR_COLOR_1_OW_R = Red color
+option.A_STAR_COLOR_1_OW_G = Green color
+option.A_STAR_COLOR_1_OW_B = Blue color
+
+
