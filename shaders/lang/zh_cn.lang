@@ -1191,6 +1191,8 @@ profile.POPULAR=§b最受欢迎§d的设置
 #WATERMARK
 option.WATERMARK=水印类型
 option.WATERMARK.comment=Euphoria Patches 是一个充满爱, 关怀和挫折的创作; 旨在通过向 Complementary Reimagined 添加有趣的功能, 尽可能以最好的方式补充独特的 Minecraft 体验. 你随时能加入友爱的 Complementary 社区. Discord链接: www.complementary.dev/discord. 水印由 Elysia 制作.
+value.WATERMARK.0=& §dEuphoria §r补丁
+value.WATERMARK.1=& §cE§6u§ep§aho§br§9i§da §r补丁
 value.WATERMARK.2=& §cE§6u§ep§aho§br§9i§da §rPatches - 隐藏 GUI 时
 value.WATERMARK.3=& 隐藏 GUI 且手持蜘蛛眼时
 value.WATERMARK.4=黑/白
@@ -1333,6 +1335,7 @@ screen.POPULAR_SETTINGS=§d最受欢迎的设置
 screen.POPULAR_SETTINGS.comment=Euphoria Patches 中最受欢迎的一些设置. 除开 高级颜色追踪 选项外(因为它是许多其他效选项的前置需求), 所有在此栏目中的选项都是 Euphoria Patches 独家选项.
 screen.POPULAR_SETTINGS_2=第二页
 screen.POPULAR_SETTINGS_3=第三页
+screen.EP_VERSION=Euphoria 补丁 §d1.8.6
 screen.EP_VERSION.comment=§b可以通过 Patreon 和 Ko-Fi 对 SpacEagle17 进行支持来获得最新开发版本的光影文件. §r§d§l§neuphoriapatches.com/support
 
 option.DAYLIGHT_CYCLE_COMPAT=世界时间动画
@@ -1593,6 +1596,9 @@ value.END_CRYSTAL_VORTEX.2=仅治疗光束
 value.END_CRYSTAL_VORTEX.3=两者
 option.DRAGON_DEATH_EFFECT=末影龙死亡效果 §e[Iris]§r
 option.DRAGON_DEATH_EFFECT.comment=用体积特效替换末影龙死亡特效的选项. §4[***]§r 需启用 §c实体阴影§r. [§e*§r] 仅在 Iris 光影加载器下生效. [§e*§r] 不支持 MacOS.
+value.DRAGON_DEATH_EFFECT.0=关闭
+value.DRAGON_DEATH_EFFECT.1=体积效果
+value.DRAGON_DEATH_EFFECT.2=音量+原始束。
 option.E_BEAMS_AMBIENT_INFLUENCE=环境色影响程度
 option.E_BEAMS_AMBIENT_INFLUENCE.comment=设置的数值越接近 1.00 时星束的颜色越接近环境色, 设置的数值越接近 0.00 时星束的颜色越接近玩家自定义的颜色. 此设置不会影响龙战星束颜色.
 option.E_BEAM_R_NEW=末地星束 - 红色
@@ -1803,6 +1809,8 @@ option.BORDER_FOG_OVERWORLD=主世界边界雾气
 option.NETHER_PORTAL_VARIATION=下界传送门预设
 option.NETHER_PORTAL_VARIATION.comment=可供选择的不同风格的下界传送门预设. §e[*]§r 资源包支持选项需设置为集成PBR+.
 value.NETHER_PORTAL_VARIATION.0=原版
+value.NETHER_PORTAL_VARIATION.1=辅助性的
+value.NETHER_PORTAL_VARIATION.2=紫色虚空
 
 option.BIOME_COLORED_NETHER_PORTALS=变色龙地狱门
 option.BIOME_COLORED_NETHER_PORTALS.comment=下界传送门的颜色将由玩家所处群系的颜色编码变色.
@@ -1812,6 +1820,9 @@ option.NETHER_PORTAL_NOISE.comment=为下界传送门纹理添加噪声, 使其�
 
 option.END_PORTAL_VARIATION=末地传送门预设
 option.END_PORTAL_VARIATION.comment=可供选择的不同风格的末地传送门预设. §e[*]§r 资源包支持选项需设置为集成PBR+.
+value.END_PORTAL_VARIATION.0=辅助性的
+value.END_PORTAL_VARIATION.1=烟雾字符串
+value.END_PORTAL_VARIATION.3=像素化的Salsa
 
 option.END_PORTAL_BEAM=末地传送门射束 §e[Iris]§r
 option.END_PORTAL_BEAM.comment=在末地传送门的边缘添加光束. 类似于《我的世界：地下城》. [§e*§r] 仅在 Iris 光影加载器下生效. [§e*§r] 不支持 MacOS.
@@ -1871,6 +1882,7 @@ option.NETHER_BRIGHTNESS.comment=调节下界环境光亮度.
 
 option.END_ROD_COLOR_PROFILE=末地烛配置
 option.END_ROD_COLOR_PROFILE.comment=在 Complementary 预设和你的自定义颜色之间切换末地烛的颜色. §e[*]§r 资源包支持选项需设置为集成PBR+.
+value.END_ROD_COLOR_PROFILE.0=辅助性的
 value.END_ROD_COLOR_PROFILE.1=自定义
 value.END_ROD_COLOR_PROFILE.2=彩虹
 value.END_ROD_COLOR_PROFILE.3=彩虹 - 仅主世界
@@ -1913,12 +1925,24 @@ option.EXCLUDE_ENTITIES.comment=决定是否剔除信封(宽屏)模式黑条对�
 
 option.LETTERBOXING_TRANSPARENCY=信封(宽屏)模式透明度
 
+option.BAD_APPLE=坏苹果
 option.BAD_APPLE.comment=使实体除外的屏幕部分显示黑色, 实体显示为白色.
 
 option.tonemap=色调映射
 option.tonemap.comment=改变使用的色调映射方式.
 value.tonemap.DoCompTonemap=Complementary 默认
+value.tonemap.DoBSLTonemap=BSL/辅助功能
+value.tonemap.ACESTonemap=ACES
 value.tonemap.ACESRedModified=ACES - 改善红色表现
+value.tonemap.BurgessTonemap=伯格斯文
+value.tonemap.LottesTonemap=Lottes
+value.tonemap.uncharted2_tonemap_partial=未绘制的 2 - 部分
+value.tonemap.uncharted2_filmic=未绘制的 2 - 电影
+value.tonemap.reinhard2=Reinhard2
+value.tonemap.filmic=Filmic
+value.tonemap.GTTonemap=Gran Turismo
+value.tonemap.uchimura=乌奇穆拉
+value.tonemap.agxTonemap=AgX
 
 option.TONEMAP_COMPARISON=色调比对模式
 option.TONEMAP_COMPARISON.comment=用来对比不同色调映射效果的设置.
@@ -1926,12 +1950,34 @@ option.TONEMAP_COMPARISON.comment=用来对比不同色调映射效果的设置.
 option.tonemap_left=左半屏幕色调映射方式
 option.tonemap_left.comment=改变左半屏幕使用的色调映射方式.
 value.tonemap_left.DoCompTonemap=Complementary 默认
+value.tonemap_left.DoBSLTonemap=BSL/辅助功能
+value.tonemap_left.ACESTonemap=ACES
 value.tonemap_left.ACESRedModified=ACES - 改善红色表现
+value.tonemap_left.BurgessTonemap=伯格斯文
+value.tonemap_left.LottesTonemap=Lottes
+value.tonemap_left.uncharted2_tonemap_partial=未命名的 2
+value.tonemap_left.uncharted2_filmic=未绘制的 2 - 电影
+value.tonemap_left.reinhard2=Reinhard2
+value.tonemap_left.filmic=Filmic
+value.tonemap_left.GTTonemap=Gran Turismo
+value.tonemap_left.uchimura=乌奇穆拉
+value.tonemap_left.agxTonemap=AgX
 
 option.tonemap_right=右半屏幕色调映射方式
 option.tonemap_right.comment=改变右半屏幕使用的色调映射方式.
 value.tonemap_right.DoCompTonemap=Complementary 默认
+value.tonemap_right.DoBSLTonemap=BSL/辅助功能
+value.tonemap_right.ACESTonemap=ACES
 value.tonemap_right.ACESRedModified=ACES - 改善红色表现
+value.tonemap_right.BurgessTonemap=伯格斯文
+value.tonemap_right.LottesTonemap=Lottes
+value.tonemap_right.uncharted2_tonemap_partial=未命名的 2
+value.tonemap_right.uncharted2_filmic=未绘制的 2 - 电影
+value.tonemap_right.reinhard2=Reinhard2
+value.tonemap_right.filmic=Filmic
+value.tonemap_right.GTTonemap=Gran Turismo
+value.tonemap_right.uchimura=乌奇穆拉
+value.tonemap_right.agxTonemap=AgX
 
 option.ACES_EXPOSURE=曝光
 option.ACES_EXPOSURE.comment=调节图像的整体亮度.
@@ -1942,6 +1988,8 @@ option.ACES_BRIGHTNESS_ROLLOFF.comment=调节 ACES 色调的亮度滚降.
 
 option.AGX_LOOK=AgX 外观
 value.AGX_LOOK.0=默认
+value.AGX_LOOK.1=金色
+value.AGX_LOOK.2=Punchy
 value.AGX_LOOK.3=自定义
 option.AGX_R=AgX - 红色
 option.AGX_G=AgX - 绿色
@@ -2321,6 +2369,7 @@ value.FROGLIGHT_SATURATION.1=默认
 value.FROGLIGHT_SATURATION.2=2x
 value.FROGLIGHT_SATURATION.3=3x
 
+option.RENKO_CUT=Renko的 EP 剪子
 option.RENKO_CUT.comment=Earned in a fair fight in the Complisseum. §e译者注§r. 本选项是由 gri573 为 Renko 添加的一个特别设置. 具体效果是在屏幕上用小刀雕刻一遍 Renko 这个名字.
 
 option.GLITTER_RAIN=闪光雨
@@ -2684,182 +2733,501 @@ option.EMISSIVE_BLOOD_MOON_FLOWERS.comment=血月期间使红色花朵发光. §
 #  |___/\_,_| .__/ .__/_\___|_|_|_\___|_||_\__\__,_|_| |_| \__,_|\__\__|_||_\___/__/
 #           |_|  |_|
 # Settings added by Supplemental Patches
+screen.SUPPLEMENTAL_SETTINGS=§d配置补充补丁
 
+screen.BIOMESOPLENTY=生物群落百科
 
+screen.VISCERAL_HEAP=可视堆肥量
 
+option.FLESH_WAVING=法尔斯
+option.FLESH_WAVING.comment=在粉红色块上启用波浪效果。§e[*]§r 如果在性能设置中没有启用高级彩色照明, 可能会看到一些伪影。
 
+option.FLESH_WAVING_ANYWHERE=Flesh Waving Anywhere
+option.FLESH_WAVING_ANYWHERE.comment=启用血管方块来挥动任何生物群落，甚至在可见毒性Heap之外。
 
+option.FLESH_WAVING_SPEED=鲜花擦除速度
+option.FLESH_WAVING_SPEED.comment=调整血液中血肉波的速度。
 
+option.FLESH_WAVING_STRENGTH=拳剑之力
+option.FLESH_WAVING_STRENGTH.comment=调整血液中血肉波的强度。
 
+screen.CAVERNS_AND_CHASMS=洞穴和查克
 
+option.GLOWING_MIME_ENERGY=Glowing Mime Energy
+option.GLOWING_MIME_ENERGY.comment=启用地雷排放的粒子到发光。
 
+option.GLOWING_ORE_SILVER_C=发光银矿石 §e[*]§r
+option.GLOWING_ORE_SILVER_C.comment=§e[*]§r 此设置只会影响Caverns & Chasms添加的银矿。
 
+option.GLOWING_ORE_SOULSILVER=发光灵魂银矿石
 
+option.GLOWING_ORE_SPINEL=发光螺旋矿石
 
+screen.CINDERSCAPES=Cinderspaces
 
+option.GLOWING_ORE_ROSE_QUARTZ=Glowing Rose Quartz Ore
 
+option.GLOWING_ORE_SMOKY_QUARTZ=发光的烟雾石英矿石
 
+option.GLOWING_ORE_SULFUR=发光硫矿石
 
+option.GLOWING_ORE_SULFUR_QUARTZ=发光苏丹石化矿石
 
+screen.COBBLEMON=科布伦文
 
+option.GLOWING_ORE_DUSK_STONE=发光的杜斯克石矿石
 
+option.GLOWING_ORE_ICE_STONE=发光冰石矿石
 
+option.GLOWING_ORE_LEAF_STONE=发光叶石矿石
 
+option.GLOWING_ORE_MOON_STONE=发光月球石矿石
 
+option.GLOWING_ORE_SUN_STONE=发光太阳石矿石
 
+option.GLOWING_ORE_THUNDER_STONE=发光细石矿石
 
+option.GLOWING_ORE_WATER_STONE=发光的水石矿石
 
+screen.DITR=果树中的钻石
 
+option.GLOWING_ORE_OBSIDIAN_DIAMOND=Glowing Obbenan Diamond Ore
 
 
+screen.DOOM_AND_GLOOM=Dom & Gloom
 
+screen.DOOM_AND_GLOOM_FOG=Fog
+screen.DOOM_AND_GLOOM_FOG.comment=关于Doom & Gloom的雾效果的设置。
 
+option.FOG_AURORA_VISIBILITY=Aurora 可见性
+option.FOG_AURORA_VISIBILITY.comment=确定当开启雾效果时，极光应该是多么可见的。
 
+option.DG_ACT_FOG_INTENSITY=ACT 雾强度 §e[*]§r
+option.DG_ACT_FOG_INTENSITY.comment=确定当雾效果正在发生时会变得更强的 ACT 雾。§e[*]§r 需要启用高级色彩追踪。
 
+option.DG_ACT_FOG_SIZE=ACT Fog Size §e[*]§r
+option.DG_ACT_FOG_SIZE.comment=确定当雾效果处于活动状态时，ACT 雾会分布多大。§e[*]§r 需要启用高级色彩追踪。
 
 
 
+option.DOOM_AND_GLOOM_FOG=Dom & Gloom Fog
+value.DOOM_AND_GLOOM_FOG.0=开启时特效
+value.DOOM_AND_GLOOM_FOG.1=开启
+value.DOOM_AND_GLOOM_FOG.2=§a关闭
 
+option.FOG_BLOOM=雾
+option.FOG_BLOOM.comment=确定在雾中有多少距离的对象应该模糊不清。
 
+option.FOG_INTENSITY=雾强度
+option.FOG_INTENSITY.comment=确定雾的强度。
 
+option.FOG_LIGHT_DIMMING=雾轻度变形
+option.FOG_LIGHT_DIMMING.comment=确定雾会使天窗变暗多少。较低的值意味着更少的天窗。
 
+option.FOG_SUN_BRIGHTNESS=重现太阳强度 §e[*]§r
+option.FOG_SUN_BRIGHTNESS.comment=确定在雾效果下太阳应变暗的系数。 §e[*]§r 仅在太阳/月亮模式被设置为重想象时才能使用。
 
+option.FOG_UNBOUND_SUN_BRIGHTNESS=未绑定的太阳强度 §e[*]§r
+option.FOG_UNBOUND_SUN_BRIGHTNESS.comment=确定在雾效果下太阳应变暗的系数。 §e[*]§r 仅在太阳/月亮模式被设为解除绑定时才生效。
 
+option.HOLLER_GLOWING_INTENSITY=持枪发光强度
+option.HOLLER_GLOWING_INTENSITY.comment=控制Hollers的威力。
 
+screen.ENDERSCAPE=Enderscape
 
+option.ANIMATED_END_LAMP=动画结束灯
+option.ANIMATED_END_LAMP.comment=添加像素噪音动画到末端灯。
 
+option.DARKER_END_ATMOSPHERE=暗色末端大气层§e[*]§r
+option.DARKER_END_ATMOSPHERE.comment=深化终端大气，使环境光线更加绿色，更加忠实于末影的照明修改。 §e[*]§r 此设置需要 LIGHT_COLOR_MULT 才能正常工作。
+value.DARKER_END_ATMOSPHERE.0=§a关闭
+value.DARKER_END_ATMOSPHERE.1=如果Mod已安装
+value.DARKER_END_ATMOSPHERE.2=开启
 
+option.DARKER_END_SKY=暗地结束天空§e[*]§r
+option.DARKER_END_SKY.comment=调暗结束天空，更好的模仿末影末影片末影。§e[*]§r 此设置需要启用 ATM_COLOR_MULT 才能工作。
+value.DARKER_END_SKY.0=§a关闭
+value.DARKER_END_SKY.1=如果Mod已安装
+value.DARKER_END_SKY.2=开启
 
 
+option.ES_LIGHTMAP=末影灯
+option.ES_LIGHTMAP.comment=启用 Enderscape 使用的修改过的灯塔，代替默认灯塔。
+value.ES_LIGHTMAP.0=§a关闭
+value.ES_LIGHTMAP.1=如果Mod已安装
+value.ES_LIGHTMAP.2=开启
 
+option.ES_STAR_COLOR=生物群落彩色末日星
+option.ES_STAR_COLOR.comment=更改末地星的颜色以匹配末影所定义的颜色。
+value.ES_STAR_COLOR.0=§a关闭
+value.ES_STAR_COLOR.1=如果Mod已安装
+value.ES_STAR_COLOR.2=开启
 
+screen.ES_FLASH_FOLDER=闪光灯
 
+option.BIOME_COLORED_ES_FLASH=生物群落彩色 §e[*]§r
+option.BIOME_COLORED_ES_FLASH.comment=给结束闪光不同的颜色，基于这种颜色，末影的生物是玩家的。§e[*]§r 需要安装末影片才能安装。
 
+option.COLORED_ES_FLASH_LIGHTING=彩色闪光灯
+option.COLORED_ES_FLASH_LIGHTING.comment=应用结束闪光灯的颜色来增加闪光灯。
 
+option.DISABLE_DEFAULT_FLASH=禁用默认闪光灯
+option.DISABLE_DEFAULT_FLASH.comment=禁用辅助阴影的默认结束闪光灯。
 
 
+option.ES_FLASH=结束闪光灯
+value.ES_FLASH.0=§a关闭
+value.ES_FLASH.1=如果Mod已安装
+value.ES_FLASH.2=开启
 
+option.ES_FLASH_B=闪光颜色 - 灯
 
+option.ES_FLASH_G=闪光颜色 - Green
 
+option.ES_FLASH_R=闪光颜色 - 红色
 
+option.ES_FLASH_GRAININESS=闪光度
 
+option.ES_FLASH_SIZE=闪光大小
 
+option.GLOWING_CELESTIAL_GROWTHS=发光的天生生长数
 
+option.NOT_GLOWING_CHORUS_FLOWER=不闪光的合唱花板
 
+option.GLOWING_ORE_NEBULITE=发光星云
 
+screen.ES_NEBULA_FOLDER=Nebula
 
+option.BIOME_COLORED_ES_NEBULA=生物群落彩色星云 §e[*]§r
+option.BIOME_COLORED_ES_NEBULA.comment=给出不同的星云颜色，基于这种颜色，末影生物就是玩家的生物。§e[*]§r 需要安装末影顶。
 
+screen.DISTORTION_FOLDER=星云
 
+option.ES_NEBULA_DISTORTION_INTENSITY=失真强度
 
+option.ES_NEBULA_DISTORTION_QUALITY=失真质量
+value.ES_NEBULA_DISTORTION_QUALITY.1=低
+value.ES_NEBULA_DISTORTION_QUALITY.2=中
+value.ES_NEBULA_DISTORTION_QUALITY.3=高
 
+option.ES_NEBULA_DISTORTION_SCALE=扭曲比例 1
+option.ES_NEBULA_DISTORTION_SCALE.comment=控制扭曲在天空的星云变化的速度。
 
+option.ES_NEBULA_DISTORTION_SCALE_2=扭曲比例 2
+option.ES_NEBULA_DISTORTION_SCALE_2.comment=控制扭曲在天空的星云变化的速度。
 
 
 
+option.ES_NEBULA=Enderscape Nebula
+option.ES_NEBULA.comment=启用一个由程序生成的星云空格，类似于内置于末影模组中的星云。§c[-]§r 这个效果可以影响性能。
+value.ES_NEBULA.0=§a关闭
+value.ES_NEBULA.1=如果Mod已安装
+value.ES_NEBULA.2=开启
 
+option.ES_NEBULA_COLOR_1_B=星云颜色 1 - 蓝色
 
+option.ES_NEBULA_COLOR_1_G=星云颜色 1-Green
 
+option.ES_NEBULA_COLOR_1_R=星云彩色 1 - 红色
 
+option.ES_NEBULA_COLOR_2_B=星云彩色 2 - 蓝色
 
+option.ES_NEBULA_COLOR_2_G=星云彩色 2 - Green
 
+option.ES_NEBULA_COLOR_2_R=星云彩色 2 - 红色
 
+option.ES_NEBULA_GRAININESS=星云灰度
+option.ES_NEBULA_GRAININESS.comment=控制在星云中添加多少白色噪音以使其产生灰色效果。
 
+option.ES_NEBULA_INTENSITY=星云强度
 
+option.ES_NEBULA_RESOLUTION=星云分辨率
+option.ES_NEBULA_RESOLUTION.comment=控制星云中的像素数量。 在较低的决议中存在明显的歪曲，因为不可能用正方形完全平铺一个球形的表面。
+value.ES_NEBULA_RESOLUTION.-1=无限的
 
+option.ES_NEBULA_SATURATION=星云饱和度
 
+option.ES_NEBULA_WISPINESS=Nebula Wispiness
 
+screen.NOISE_PARAMETERS_FOLDER=噪音参数
 
+option.ES_NEBULA_NOISE_AMP_1=噪音振动 1
 
+option.ES_NEBULA_NOISE_AMP_2=噪音振动 2
 
+option.ES_NEBULA_NOISE_AMP_3=噪音振动 3
 
+option.ES_NEBULA_NOISE_AMP_4=噪音振动 4
 
+option.ES_NEBULA_NOISE_AMP_5=噪音振动 5
 
+option.ES_NEBULA_NOISE_AMP_6=噪音振动 6
 
+option.ES_NEBULA_NOISE_AMP_7=噪音振动 7
 
+option.ES_NEBULA_NOISE_AMP_8=噪音振动 8
 
+option.SUBTLER_END_BEAMS=平板末端束。
+option.SUBTLER_END_BEAMS.comment=暗影终将使它们更加微妙，突出末影星云。
+value.SUBTLER_END_BEAMS.0=§a关闭
+value.SUBTLER_END_BEAMS.1=如果Mod已安装
+value.SUBTLER_END_BEAMS.2=开启
 
+screen.ENHANCEDCELESTIALS=增强的摄氏剂
 
+option.LUNAR_EVENT_LIGHTING_SATURATION=月球事件亮度饱和度
+option.LUNAR_EVENT_LIGHTING_SATURATION.comment=在月球事件中控制周围和天光饱和。
 
+option.LUNAR_EVENT_MOON_SATURATION=月球事件饱和度 §e[*]§r
+option.LUNAR_EVENT_MOON_SATURATION.comment=在月球事件中控制月球饱和。§e[*]§r 这只适用于月球。
 
+option.LUNAR_EVENT_SKY_SATURATION=月球事件天空饱和度
+option.LUNAR_EVENT_SKY_SATURATION.comment=控制月球事件中的天空饱和。
 
+option.SUPER_MOON_INFLUENCE=超级月球影响
+option.SUPER_MOON_INFLUENCE.comment=控制超级月球在多大程度上增加周围和天光。
 
+screen.GALOSPHERE=伽利略度
 
+option.GLOWING_ALLURITE=Glowing Allurite
+value.GLOWING_ALLURITE.0=§cOFF
+value.GLOWING_ALLURITE.1=水晶体
+value.GLOWING_ALLURITE.2=水晶和块
 
+option.GLOWING_LUMIERE=Glowing Lumiere
+value.GLOWING_LUMIERE.0=§cOFF
+value.GLOWING_LUMIERE.1=水晶体
+value.GLOWING_LUMIERE.2=水晶和块
 
+option.GLOWING_PINK_SALT=发光粉盐类
+value.GLOWING_PINK_SALT.0=§cOFF
+value.GLOWING_PINK_SALT.1=星团
+value.GLOWING_PINK_SALT.2=Cluster & Berserker
+value.GLOWING_PINK_SALT.3=集群与Berserker & PReserved
 
+option.GLOWING_ORE_SILVER_G=发光银矿石 §e[*]§r
+option.GLOWING_ORE_SILVER_G.comment=§e[*]§r 此设置只会影响Galosphere添加的银矿。
 
+option.WAVING_GILDED_BEADS=雕刻金色的蜜蜂。
+option.WAVING_GILDED_BEADS.comment=调整金色蜂蜜将挥动的强度。
+value.WAVING_GILDED_BEADS.0=§cOFF
+value.WAVING_GILDED_BEADS.1=亮色的
+value.WAVING_GILDED_BEADS.2=中度
+value.WAVING_GILDED_BEADS.3=强度
 
+screen.GENERAL_SETTINGS=A. 概况
 
+option.CIRRUS_CLOUDS=环形云§e[*]§r
+option.CIRRUS_CLOUDS.comment=将未绑定云的第二层转换成智能云。§e[*]§r 需要选项才能启用第二层未绑定云。
 
+option.CIRRUS_DISTORTION_INTENSITY=圆形电强度
+option.CIRRUS_DISTORTION_INTENSITY.comment=更改对第二层不受约束的云层的扭曲程度。
 
+option.CIRRUS_DISTORTION_INTENSITY_2=圆形失真强度2
+option.CIRRUS_DISTORTION_INTENSITY_2.comment=更改云噪声较高的曲线的扭曲程度。
 
+option.CIRRUS_DISTORTION_SCALE=圆形分形比例
+option.CIRRUS_DISTORTION_SCALE.comment=改变不受约束的第二层云在天空上扭曲方向的速度。
 
 
+option.GLOWING_POTION_EFFECT=发光药水效果
+option.GLOWING_POTION_EFFECT.comment=启用发光药水效果粒子。
 
+option.WAVING_ROPE=游泳道
+option.WAVING_ROPE.comment=允许从 Quk / Supplementaries / Farmers Delight 旋转到波浪。
 
+screen.NEARS=附近的
 
+option.GLOWING_NEARS=发光的近点
 
+screen.NETHEREXP=Jaden的地狱扩展
 
+option.ECTOPLASM_EDGE_EFFECT=迷幻边缘效果
+option.ECTOPLASM_EDGE_EFFECT.comment=当触碰到其他方块时，将一个边缘添加到ectoplasm 。§e[*]§r 此功能只有在性能设置启用高级彩色照明时才能起作用。
+value.ECTOPLASM_EDGE_EFFECT.0=§cOFF
+value.ECTOPLASM_EDGE_EFFECT.1=开启-亮度
+value.ECTOPLASM_EDGE_EFFECT.2=开启-深色
 
+screen.OREGANIZED=收缩化
 
+option.CRYSTAL_GLASS_OPACITY=水晶玻璃不透明度
+option.CRYSTAL_GLASS_OPACITY.comment=确定结晶玻璃的不透明度。
 
+option.GLOWING_ORE_LEAD=发光领先矿石
 
+option.GLOWING_ORE_SILVER_O=发光银矿石 §e[*]§r
+option.GLOWING_ORE_SILVER_O.comment=§e[*]§r 此设置只会影响俄勒冈代添加的银矿。
 
+screen.MOLTEN_LEAD=熔化线索
+screen.MOLTEN_LEAD.comment=与熔化铅相关的设置。
 
+option.MOLTEN_LEAD_EDGE_EFFECT=熔化潜在客户边缘效果
+option.MOLTEN_LEAD_EDGE_EFFECT.comment=当碰到其他方块时，添加熔化铅的边缘。§e[*]§r 此功能只有在性能设置启用高级彩色照明时才能起作用。
+value.MOLTEN_LEAD_EDGE_EFFECT.0=§cOFF
+value.MOLTEN_LEAD_EDGE_EFFECT.1=开启-亮度
+value.MOLTEN_LEAD_EDGE_EFFECT.2=开启-深色
 
+option.MOLTEN_LEAD_WAVINESS=瓦皮斯
+value.MOLTEN_LEAD_WAVINESS.0=§cOFF
+value.MOLTEN_LEAD_WAVINESS.1=亮色的
+value.MOLTEN_LEAD_WAVINESS.2=中度
+value.MOLTEN_LEAD_WAVINESS.3=强度
+option.MOLTEN_LEAD_WAVINESS.comment=调整熔化铅的波量。
 
+screen.PIGSTEEL=猪石
 
+option.GLOWING_PORKSLAG=发光的波克拉克
 
+screen.QUARK=夸克
 
+option.GLOWING_ORETORTOISE_MULT=发光抑制强度
+option.GLOWING_ORETORTOISE_MULT.comment=确定发光矿石的排放强度。
 
+option.GLOWING_ORETORTOISE=发光的气动抑制效果
+option.GLOWING_ORETORTOISE.comment=启用熔炼矿石的功能。
 
+option.SITUATIONAL_ORETORTOISE=情景受抑制效果
+option.SITUATIONAL_ORETORTOISE.comment=绿宝石上的矿石只会在洞穴和夜间发光。§e[*]§r Glowing Oretortoise 必须启用才能正常工作。
 
+screen.SCORCHFUL=可怜的
 
+screen.SCORCHFUL_SANDSTORM=沙暴雨
+screen.SCORCHFUL_SANDSTORM.comment=设置来自Scorchify的沙暴效果。
 
 
+option.SCORCHFUL_SANDSTORM_FOLIAGE_WAVING_INTENSITY=沙风暴闪烁强度
+option.SCORCHFUL_SANDSTORM_FOLIAGE_WAVING_INTENSITY.comment=测定沙风暴期间叶片波的强度。
 
+option.SCORCHFUL_SANDSTORM_HEIGHT=沙暴高度
+option.SCORCHFUL_SANDSTORM_HEIGHT.comment=确定形状的沙风暴的高度。降低这个值将导致沙风暴收集靠近其低姿态。
 
+option.SCORCHFUL_SANDSTORM_LEAVES_WAVING_INTENSITY=沙风暴留下的强度
+option.SCORCHFUL_SANDSTORM_LEAVES_WAVING_INTENSITY.comment=确定沙风暴中留下波浪的强度。
 
+option.SCORCHFUL_SANDSTORM_LOWER_ALT=沙暴低纬度
+option.SCORCHFUL_SANDSTORM_LOWER_ALT.comment=确定体积沙暴的较低起始点。 雾不会出现在这个高度，它会看起来最亮的高度。
 
 
+option.SCORCHFUL_SANDSTORM_OPACITY=沙暴不透明度
+option.SCORCHFUL_SANDSTORM_OPACITY.comment=调整沙风暴的不透明度。
 
+option.VOLUMETRIC_SCORCHFUL_SANDSTORM=体质沙风暴§e[*]§r
+option.VOLUMETRIC_SCORCHFUL_SANDSTORM.comment=在Scorchful的沙暴中启用体积雾效果。§c[-]§r 这个效果可以影响性能。§e[*]§r 这个设置是实验性的。
+value.VOLUMETRIC_SCORCHFUL_SANDSTORM.0=§c已禁用
+value.VOLUMETRIC_SCORCHFUL_SANDSTORM.1=低质量
+value.VOLUMETRIC_SCORCHFUL_SANDSTORM.2=高质量
 
+screen.SUPPLEMENTAL_VERSION=补丁§d0.8.0-beta
+screen.SUPPLEMENTAL_VERSION.comment=这是对Euphoria 补丁的修改，以更好地支持许多受欢迎的模式。
 
+option.info_1=什么是补充补丁
+option.info_1.comment=这是对Euphoria 补丁的修改，以更好地支持许多受欢迎的模式。 具体而言，它允许通过资源包为Euphoria Patches添加新的Shader材料，从而能够为各种模版材料创建新的详细的影子。
 
+option.info_2=添加新材料
+option.info_2.comment=您可以通过 https://github.com/jedlimlx/supplemental-patches/wiki 查阅更多文档。
 
+screen.SNOWYSPIRIT=Snowy Spirit
 
+option.GLOW_LIGHT_EXTRA_LIGHT=光亮额外灯
+option.GLOW_LIGHT_EXTRA_LIGHT.comment=确定发光灯应多长一点的光线(在预定义的方块灯上方)。
 
+screen.SOULFULNETHER=灵魂地狱：
 
+option.ANIMATED_FRIGHT_STEM=动画的右边图形 §e[*]§r
+option.ANIMATED_FRIGHT_STEM.comment=为右干块开启一种发光动画。§e[*]§r 此功能仅在启用神秘的地狱树时有效。
 
+screen.SPECIES=物种：
 
+option.SPECLIGHT_ACT=观光 ACT
+option.SPECLIGHT_ACT.comment=确定光谱是否使用 ACT 照明。除了默认颜色，推荐黄色彩光照亮。
 
+option.SPECLIGHT_B=光光
 
+option.SPECLIGHT_G=光照绿灯
 
+option.SPECLIGHT_R=光亮红色
 
+screen.UPGRADE_AQUATIC=升级水生设备
 
+option.GLOWING_CORALSTONE=发光的珊瑚石
 
+screen.WETLAND_WHIMSY=湿地鲸鱼
 
+option.GLOWING_BLOODCAP_MUSHROOM=发光的Fellcap Mushroom
+value.GLOWING_BLOODCAP_MUSHROOM.0=§cOFF
+value.GLOWING_BLOODCAP_MUSHROOM.1=Dim
+value.GLOWING_BLOODCAP_MUSHROOM.2=中度
+value.GLOWING_BLOODCAP_MUSHROOM.3=明亮的
 
+screen.YUNGS_CAVE_BIOMES=YUNG洞穴Biomes
 
+screen.YUNGS_SANDSTORM=沙暴雨
+screen.YUNGS_SANDSTORM.comment=关于丢失车间中发现的沙风暴的设置。
 
+option.YUNGS_SANDSTORM_FOG_BLOOM=沙风暴雾
+option.YUNGS_SANDSTORM_FOG_BLOOM.comment=确定沙风暴期间距离太远的天体应该模糊多少。
 
+option.YUNGS_SANDSTORM_FOG_INTENSITY=沙暴雾强度
+option.YUNGS_SANDSTORM_FOG_INTENSITY.comment=确定沙风暴期间雾的强度。
 
+option.YUNGS_SANDSTORM_WAVING_INTENSITY=沙暴唤醒强度
+option.YUNGS_SANDSTORM_WAVING_INTENSITY.comment=测定沙风暴期间叶片波的强度。
 
 
 #  // TerraFirmaGreg //
 
+screen.TERRAFIRMAGREG_VERSION=TerraFirmaGreg Compat
 
+option.TFGinfo1=重要信息
+option.TFGinfo1.comment=感谢您安装 §bTerraFirmaGreg shaders§r。阴影仍然在开发中，所以期待bug和不完善。 如果您有任何问题或建议，请在§dTerraFirmaGreg-shaders GitHub§r上留下它们。 Shader 基于 §dComplementy-Euphoria-Supply Shaders§r。感谢所有开发者允许我们使用他们的作品。
 
+option.TFGinfo2=§d§nGitHub
+option.TFGinfo2.comment=我们的 GitHub: §d§ngithub.com/TerraFirmaGreg-Team/Shaders-Complementary§r 请留下所有错误报告和建议来改善阴影，准确到那里。
 
+screen.TERRAFIRMAGREG_SETTINGS=Configure TFG compat
+screen.TERRAFIRMAGREG_SETTINGS.comment=§dTerraFirmaGreg compat§r 设置
 
+screen.TFG_ATMOSPHERIC=大气层：
+screen.TFG_ATMOSPHERIC.comment=大气设置
 
+screen.TFG_SPACE_TRANSITION=空间过渡
+screen.TFG_SPACE_TRANSITION.comment=天空的颜色取决于玩家的 Y 位置
 
+option.ST_TOGGLE=切换空格转换
 
+option.ST_HEIGHT=过渡高度
+option.ST_HEIGHT.comment=天空颜色变化开始的高度
 
+option.SPACE_TRANSITION_R=红色颜色
 
+option.SPACE_TRANSITION_G=绿色颜色
 
+option.SPACE_TRANSITION_B=蓝色颜色
 
+option.ST_STARS=切换空间恒星
+option.ST_STARS.comment=启用恒星在获得高度时出现的能力(恒星出现的高度取决于太空过渡的高度)
 
+screen.TFG_STARS=星星
+screen.TFG_STARS.comment=多个设置增强了星空星星云
+option.SPACE_STARS_MULTIPLIER=太空星倍数
+option.SPACE_STARS_MULTIPLIER.comment=改变行星上没有大气层的恒星数量
 
+screen.TFG_SPACE_STARS_COLORS=恒星颜色
+option.SPACE_STARS_SPECTRUM=使用恒星光谱颜色
+screen.TFG_M_STARS_COLORS=M-星颜色
+screen.TFG_G_STARS_COLORS=G-Stars 颜色
+screen.TFG_A_STARS_COLORS=A-恒星颜色
+screen.TFG_M_STARS_COLORS.comment=设置带M光谱类型的恒星颜色值
+screen.TFG_G_STARS_COLORS.comment=设置带有G光谱类型的恒星的颜色值
+screen.TFG_A_STARS_COLORS.comment=设置光谱类型的恒星颜色值
+option.M_STAR_COLOR_1_OW_R = 红色颜色
+option.M_STAR_COLOR_1_OW_G = 绿色颜色
+option.M_STAR_COLOR_1_OW_B = 蓝色颜色
+option.G_STAR_COLOR_1_OW_R = 红色颜色
+option.G_STAR_COLOR_1_OW_G = 绿色颜色
+option.G_STAR_COLOR_1_OW_B = 蓝色颜色
+option.A_STAR_COLOR_1_OW_R = 红色颜色
+option.A_STAR_COLOR_1_OW_G = 绿色颜色
+option.A_STAR_COLOR_1_OW_B = 蓝色颜色
 
 
