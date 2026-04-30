@@ -21,7 +21,7 @@ option.info0=§bPasse o mouse sobre um botão.
 option.info0.comment=Esta seção contém apenas botões que existem para fornecer informações.
 
 option.info1=Como deixar o jogo com mais desempenho.
-option.info1.comment=Desempenho é um tópico complexo no Minecraft porque isso pode ser afetado por várias coisas, mas você pode tentar qualquer um desses:. Reduzir sua render distance(distância renderização),A melhor configuração para a maioria dos dispositivos é entre 6 á 16 chunks. Reduza a configuração do shaders "Profile", Estes foram cuidadosamente testados para oferecer a melhor relação entre qualidade visual e desempenho. Mais informações serão adicionadas posteriormente.
+option.info1.comment=Performance é um tópico complexo no Minecraft porque é afetada por muitas coisas, mas você pode tentar o seguinte: Reduza sua distância de renderização, idealmente deve estar entre 6 e 16 para quase todos os dispositivos. Reduza a configuração de shader "Profile", esses foram cuidadosamente testados para a melhor relação visual/performance. Mais informações serão adicionadas posteriormente.
 
 option.info2=Quais são as melhores configurações?
 option.info2.comment=As melhores configurações são subjetiva,mas ao usar a configuração padrão será o ideal para a maioria das pessoas. As configurações padrão foram ajustadas ao longo de anos com base nas avaliações e no feedback da comunidade, sempre com muita atenção ao equilíbrio entre visual e desempenho. Mas você ainda deve se sentir à vontade para fazer ajustes e se divertir com isso!
@@ -44,7 +44,7 @@ option.info9=Como  apoiar o  §1Complementary §r
 option.info9.comment=A melhor forma de apoiar o desenvolvimento da  §1Complementary Shaders §r é compartilhando com seus amigos ou nas redes sociais, mas você pode apoiar diretamente os desenvolvedores no Patreon. acesse: www.patreon.com/emingt
 
 option.info10=Créditos
-option.info10.comment=§4EminGT§r: Desenvolvedor principal do Complementary Shaders  §5Capt Tatsu §r: Desenvolvedor do BSL Shaders,com a generosidade dele fez com que Complementary pudesse existir para inicio de conversa.  §6 Agradecimentos Especiais: §r  §1IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap §r
+option.info10.comment=§4EminGT§r: Desenvolvedor principal do Complementary Shaders §5Capt Tatsu §r: Desenvolvedor do BSL Shaders, com a generosidade dele fez com que Complementary pudesse existir para inicio de conversa. §6 Agradecimentos Especiais: §r §1IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE §r
 
 option.info11=§dTFG créditos shaders
 option.info11.comment=Um grande agradecimento a EminGT por Complementar, SpaceEagle para Euphoria-Patches, lemon41625 para complementos completos, e o time taidumcraft para o primeiro shader compatível com ad_astra que usamos extensamente!
@@ -734,7 +734,7 @@ option.MOTION_BLURRING_STRENGTH.comment=Ajuda a ajustar a intensidade do desfoqu
 
 option.WORLD_BLUR=§eDesfoque do Mundo
 option.WORLD_BLUR.comment=Ativa o desfoque do mundo. Desfoque de Distância: O desfoque é aplicado como neblina, dependendo da distância da câmera. Profundidade de Campo: O desfoque depende do ponto de foco da câmera. §c[-]§r Este efeito pode impactar bastante o desempenho.
-value.WORLD_BLUR.0=DESLIGADO
+value.WORLD_BLUR.0=§aOFF
 value.WORLD_BLUR.1=§cDesfoque de Distância
 value.WORLD_BLUR.2=§cProfundidade de Campo
 
