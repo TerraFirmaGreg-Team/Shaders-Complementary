@@ -618,7 +618,7 @@ option.SUN_MOON_DURING_RAIN=Sun/Moon During Rain. §e[*]§r
 option.SUN_MOON_DURING_RAIN.comment=Determines if the sun and moon will be visible during rain or not. §e[*]§r This setting also changes the balance of lighting during rain.
 
 option.NIGHT_STAR_AMOUNT=Night Star Amount
-option.NIGHT_STAR_AMOUNT.comment=Determines the amount of stars in the night sky.
+option.NIGHT_STAR_AMOUNT.comment=Determines the amount of stars in the night sky. §c(automatically turns off if the CAELUM mod is enabled)§r
 value.NIGHT_STAR_AMOUNT.0=Off
 value.NIGHT_STAR_AMOUNT.1=Low
 value.NIGHT_STAR_AMOUNT.2=Medium
@@ -3238,22 +3238,35 @@ option.SPACE_TRANSITION_G=Green color
 
 option.SPACE_TRANSITION_B=Blue color
 
-option.ST_STARS=Toggle space stars
-option.ST_STARS.comment=Enables the ability for stars to appear while gaining altitude (the altitude at which stars appear depends on the altitude of the space transition)
+option.SPACE_TRANSITION=Toggle space transition
 
-screen.TFG_STARS=Stars
-screen.TFG_STARS.comment=Various settings enhanced the starred sky
+option.SPACE_TRANSITION_START=Transition height start
+option.SPACE_TRANSITION_START.comment=The height of the beginning of the change in sky color
+
+option.SPACE_TRANSITION_END=Transition height end
+option.SPACE_TRANSITION_END.comment=The height of the end of the change in sky color
+
+option.SPACE_TRANSITION_R=§cRed color§r
+
+option.SPACE_TRANSITION_G=§aGreen color§r
+
+option.SPACE_TRANSITION_B=§9Blue color§r
+
+option.SPACE_TRANSITION_STARS=Toggle space stars
+option.SPACE_TRANSITION_STARS.comment=Enables the ability for stars to appear while gaining altitude (the altitude at which stars appear depends on the altitude of the space transition)
+
 option.SPACE_STARS_MULTIPLIER=Space stars multiplier
 option.SPACE_STARS_MULTIPLIER.comment=Changes the amount of stars on planets without an atmosphere
 
 screen.TFG_SPACE_STARS_COLORS=Star colors
-option.SPACE_STARS_SPECTRUM=Use star spectral colors
 screen.TFG_M_STARS_COLORS=M-Stars colors
 screen.TFG_G_STARS_COLORS=G-Stars colors
 screen.TFG_A_STARS_COLORS=A-Stars colors
 screen.TFG_M_STARS_COLORS.comment=Set color values of stars with M spectral type
 screen.TFG_G_STARS_COLORS.comment=Set color values of stars with G spectral type
 screen.TFG_A_STARS_COLORS.comment=Set color values of stars with A spectral type
+
+option.SPACE_STARS_SPECTRUM=Use star spectral colors
 option.M_STAR_COLOR_1_OW_R = Red color
 option.M_STAR_COLOR_1_OW_G = Green color
 option.M_STAR_COLOR_1_OW_B = Blue color
@@ -3263,5 +3276,4 @@ option.G_STAR_COLOR_1_OW_B = Blue color
 option.A_STAR_COLOR_1_OW_R = Red color
 option.A_STAR_COLOR_1_OW_G = Green color
 option.A_STAR_COLOR_1_OW_B = Blue color
-
 
