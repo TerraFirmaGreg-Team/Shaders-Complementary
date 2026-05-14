@@ -76,7 +76,7 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
 
     #if WATER_MAT_QUALITY >= 2 || WATER_STYLE >= 2
         #define WATER_SPEED_MULT_M WATER_SPEED_MULT * 0.018
-        float rawWind = frameTimeCounter * WATER_SPEED_MULT_M * PLANET_WIND_MULTIPLIER;
+        float rawWind = frameTimeCounter * WATER_SPEED_MULT_M;
         vec2 wind = vec2(0.0, -rawWind);
         vec3 worldPos = playerPos + cameraPosition;
         vec2 waterPos = worldPos.xz;
