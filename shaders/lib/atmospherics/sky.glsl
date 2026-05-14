@@ -103,7 +103,11 @@
 
                     glare *= mix(MOON_GLARE_AMOUNT * 0.1, SUN_GLARE_AMOUNT * 0.1, sunVisibility);
 
-                    finalSky += glare * shadowTime * glareColor;
+                    #ifdef MOD_TFCCAELUM
+                        vec3 finalSky = vec3(0.0, 0.0, 0.0);
+                    #else
+                        finalSky += glare * shadowTime * glareColor;
+                    #endif
                 }
             }
         #endif

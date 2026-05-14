@@ -1,6 +1,7 @@
 // this file is included at the end of /lib/common.glsl so it can override any user settings
 
 // disable clouds
+
 #ifndef WORLD_whatever //we dont have any planets we keep clouds, so i put whatever
     #undef VL_CLOUDS_ACTIVE
 #endif
@@ -32,6 +33,7 @@
     #undef  LENSFLARE
     #undef  BLOOM_FOG
 	#undef	BORDER_FOG
+    #define PLANET_WIND_MULTIPLIER 0.04
 #endif
 #ifdef WORLD_MOON
     #define HAS_NO_MOON
@@ -49,6 +51,7 @@
     #define SUN_SIZE 2000 //normal is 400
  //   #define NEBULA_AT_DAY
     #define DAYLIGHT_STARS
+    #define PLANET_WIND_MULTIPLIER 0.1
 	
 #endif
 
@@ -62,6 +65,7 @@
     #undef  LIGHTSHAFT_BEHAVIOUR
     #define LIGHTSHAFT_BEHAVIOUR 1
 	#undef	BORDER_FOG
+    #define PLANET_WIND_MULTIPLIER 0.3
 #endif
 
 #ifdef HAS_NO_ATMOSPHERE
@@ -69,4 +73,5 @@
     #define LIGHTSHAFT_BEHAVIOUR 0
     #define rainFactor 0
     #define invRainFactor 1
+    #define PLANET_WIND_MULTIPLIER 0
 #endif
