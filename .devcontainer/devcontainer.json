@@ -7,7 +7,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "mcgiver.mcshader",
+        "raczzalan.webgl-glsl-editor",
         "ms-vscode.vscode-json",
         "streetsidesoftware.code-spell-checker"
       ],
