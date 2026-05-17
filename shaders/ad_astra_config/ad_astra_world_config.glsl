@@ -1,7 +1,6 @@
 // this file is included at the end of /lib/common.glsl so it can override any user settings
 
 // disable clouds
-
 #ifndef WORLD_whatever //we dont have any planets we keep clouds, so i put whatever
     #undef VL_CLOUDS_ACTIVE
     #undef CLOUD_SHADOWS
@@ -10,9 +9,7 @@
 #ifdef AD_ASTRA_ORBIT
 	
 	#define UNLIT_SKY_OBJECTS //Sun doesnt fade when over the horizon
-	
-	#define CELESTIAL_BOTH_HEMISPHERES //Stars still appear below the horizon
-	
+
     #define NEBULA_AT_DAY //function not yet made
 	
     #define DAYLIGHT_STARS //stars appear at day
@@ -34,7 +31,6 @@
     #undef  LENSFLARE
     #undef  BLOOM_FOG
 	#undef	BORDER_FOG
-    #define PLANET_WIND_MULTIPLIER 0.04
 #endif
 #ifdef WORLD_MOON
     #define HAS_NO_MOON
@@ -43,7 +39,6 @@
     #define HAS_NO_ATMOSPHERE
 	#undef	BORDER_FOG
     #define ATM_FOG_MULT 0
-	#define HAS_NO_ATMOSPHERE
     #define BLOOM_STRENGTH 0.03 //[0 to 10]
 #endif
 
@@ -52,7 +47,6 @@
     #define SUN_SIZE 2000 //normal is 400
  //   #define NEBULA_AT_DAY
     #define DAYLIGHT_STARS
-    #define PLANET_WIND_MULTIPLIER 0.1
 	
 #endif
 
@@ -66,7 +60,6 @@
     #undef  LIGHTSHAFT_BEHAVIOUR
     #define LIGHTSHAFT_BEHAVIOUR 1
 	#undef	BORDER_FOG
-    #define PLANET_WIND_MULTIPLIER 0.3
 #endif
 
 #ifdef HAS_NO_ATMOSPHERE
@@ -74,5 +67,4 @@
     #define LIGHTSHAFT_BEHAVIOUR 0
     #define rainFactor 0
     #define invRainFactor 1
-    #define PLANET_WIND_MULTIPLIER 0
 #endif

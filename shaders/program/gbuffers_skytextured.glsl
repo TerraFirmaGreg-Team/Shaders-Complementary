@@ -111,10 +111,6 @@ void main() {
 					// vec3 pixelGlareColor = color.rgb;
 					// pixelGlareColor = mix(pixelGlareColor, pixelGlareColor * vec3(0.9, 0.95, 1.1), 0.5) * 1.3;
 					color.rgb *= smoothstep1(min1(length(color.rgb))) * 1.3;
-					
-					#ifdef MOD_TFCCAELUM
-						color.rgb *= 0.13;
-					#endif
 
 					#if BLOOD_MOON > 0
 						float luminance = GetLuminance(color.rgb);
@@ -210,7 +206,7 @@ void main() {
     gl_Position = ftransform();
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
     #ifdef ATLAS_ROTATION
-        texCoord += texCoord * float(hash33(mod(cameraPosition * 10.5, vec3(100.0))));
+        texCoord += texCoord * float(hash33(mod(cameraPosition * 0.5, vec3(100.0))));
     #endif
 
     glColor = gl_Color;

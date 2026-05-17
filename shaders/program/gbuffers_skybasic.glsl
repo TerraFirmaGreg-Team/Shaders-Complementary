@@ -9,7 +9,7 @@
 #include "/lib/common.glsl"
 #include "/lib/shaderSettings/tonemaps.glsl"
 #include "/lib/shaderSettings/stars.glsl"
-#include "/lib/shaderSettings/spaceTransition.glsl"
+//#define SECRET_CAELUM_SUPPORT_SETTING
 
 #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
     #include "/lib/misc/distortWorld.glsl"
@@ -24,6 +24,10 @@ flat in vec4 glColor;
 
 #ifdef OVERWORLD
     flat in float vanillaStars;
+#endif
+
+#ifdef SPACE_TRANSITION
+	flat in float atmFadeoutFactor;
 #endif
 
 //Pipeline Constants//
@@ -107,15 +111,15 @@ void main() {
         float VdotU = dot(nViewPos, upVec);
         float VdotS = dot(nViewPos, sunVec);
         float dither = Bayer8(gl_FragCoord.xy);
-
+		
 		#ifdef SPACE_TRANSITION
-            color.rgb = mix(GetSky(VdotU, VdotS, dither, true, false), vec3(0.0), getAtmosphereFadeoutFactor);
-        #else
-            color.rgb = GetSky(VdotU, VdotS, dither, true, false);
-        #endif
+			color.rgb = mix(GetSky(VdotU, VdotS, dither, true, false), vec3(SPACE_TRANSITION_R, SPACE_TRANSITION_G, SPACE_TRANSITION_B), atmFadeoutFactor);
+		#else
+			color.rgb = GetSky(VdotU, VdotS, dither, true, false);
+		#endif
 
-        #ifdef MOD_CAELUM
-             if (alphaColor < 1.0 && alphaColor > 0.0) color.rgb = glColor.rgb * alphaColor;
+        #ifdef SECRET_CAELUM_SUPPORT_SETTING
+        if (alphaColor < 1.0 && alphaColor > 0.0) color.rgb = glColor.rgb * alphaColor;
         #endif
 
         #ifdef ATM_COLOR_MULTS
@@ -276,6 +280,10 @@ flat out vec4 glColor;
     flat out float vanillaStars;
 #endif
 
+#ifdef SPACE_TRANSITION
+	flat out float atmFadeoutFactor;
+#endif
+
 //Attributes//
 
 #ifdef WAVE_EVERYTHING
@@ -297,15 +305,19 @@ flat out vec4 glColor;
 void main() {
     gl_Position = ftransform();
 
-    #ifdef AD_ASTRA
-	    // remove the orange line on sunset / sunrise
-	    glColor = vec4(0.0);
+	#ifdef AD_ASTRA
+	// remove the orange line on sunset / sunrise
+	glColor = vec4(0.0);
 	#else
-	    glColor = gl_Color;
+	glColor = gl_Color;
 	#endif
-
+	
     upVec = normalize(gbufferModelView[1].xyz);
     sunVec = GetSunVector();
+	
+	#ifdef SPACE_TRANSITION
+		atmFadeoutFactor = getAtmosphereFadeoutFactor(cameraPosition);
+	#endif
 
     #ifdef OVERWORLD
         vanillaStars = 0.0;
