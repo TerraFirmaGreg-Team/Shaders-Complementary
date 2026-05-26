@@ -5,11 +5,8 @@
     #include "/lib/shaderSettings/endBeams.glsl"
     #include "/lib/shaderSettings/lightAndAmbientColors.glsl"
     #include "/lib/shaderSettings/overworldBeams.glsl"
-	
-	#if defined AD_ASTRA
-        #include "/ad_astra_config/lightAndAmbientColors.glsl"
-		
-    #elif defined OVERWORLD
+
+    #if defined OVERWORLD
         #ifndef COMPOSITE1
             vec3 noonClearLightColor = vec3(0.65, 0.55, 0.375) * 2.05; //ground and cloud color
         #else

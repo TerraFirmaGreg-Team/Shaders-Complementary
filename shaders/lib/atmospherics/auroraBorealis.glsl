@@ -4,7 +4,6 @@
     #include "/lib/colors/colorMultipliers.glsl"
 #endif
 #include "/lib/util/colorConversion.glsl"
-#include "/lib/shaderSettings/spaceTransition.glsl"
 #define AURORA_CONDITION 3 //[-1 0 1 2 3 4]
 
 #define AURORA_COLOR_PRESET 0 //[-1 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14] // 0 is manual and default, 1 is daily, 2 is monthly and 3 is one color preset same with all numbers after
@@ -35,11 +34,7 @@
 #define AURORA_COLOR_MIX_POWER 2.0 //[0.5 1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0]
 
 float GetAuroraVisibility(in float VdotU, float VdotUAmount) {
-    #ifdef SPACE_TRANSITION
-		float visibility = sqrt1(clamp01(mix(1.0, VdotU, VdotUAmount) * (AURORA_DRAW_DISTANCE * 1.125 + 0.75) - 0.225)) - mix(sunVisibility + maxBlindnessDarkness, 0.0, getAtmosphereFadeoutFactor);
-	#else
-        float visibility = sqrt1(clamp01(mix(1.0, VdotU, VdotUAmount) * (AURORA_DRAW_DISTANCE * 1.125 + 0.75) - 0.225)) - sunVisibility - maxBlindnessDarkness;
-	#endif
+    float visibility = sqrt1(clamp01(mix(1.0, VdotU, VdotUAmount) * (AURORA_DRAW_DISTANCE * 1.125 + 0.75) - 0.225)) - sunVisibility - maxBlindnessDarkness;
     #if DOOM_AND_GLOOM_FOG == 1
         visibility *= FOG_AURORA_VISIBILITY;
     #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)

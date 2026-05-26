@@ -14,7 +14,6 @@ vec3 GetRawWave(in vec3 pos, float wind) {
     wave.y = magnitude * sin(wind*0.0015 + d2 + d0 + pos.x);
     wave.z = magnitude * sin(wind*0.0063 + d0 + d1 - pos.x + pos.z + pos.y);
 
-    wave *= PLANET_WIND_MULTIPLIER;
     return wave;
 }
 

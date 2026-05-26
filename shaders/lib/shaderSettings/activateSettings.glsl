@@ -1,5 +1,4 @@
 #include "/lib/shaderSettings/settingsFileDefines.glsl"
-#include "/lib/shaderSettings/TerraFirmaGregSettings.glsl"
 
 //Information//
 #define info0 0 //[0]

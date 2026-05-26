@@ -247,7 +247,6 @@ uniform vec2 texelSize;
 #if defined MOD_NETHEREXP
     uniform float betrayedSmooth;
 #endif
-uniform sampler2D spiral_clouds;
 #if defined MOD_OREGANIZED
     uniform float brainDamage;
 #endif
@@ -294,12 +293,7 @@ uniform float inSkyriseVale = 0.0;
     uniform float inVisceralHeap;
 #endif
 uniform float inWeepingWitchForest = 0.0;
-
-#ifdef AD_ASTRA //would be better if defined with HAS_NO_MOON, but its not yet defined
-	uniform vec3 moonColorSmooth = vec3(0.0);
-#else
-	uniform vec3 moonColorSmooth = vec3(1.0);
-#endif
+uniform vec3 moonColorSmooth = vec3(1.0);
 uniform float moonSizeSmooth = 20.0;
 #if defined MOD_ENDERSCAPE
     uniform float smoothEnderscapeNebulaAlpha;
@@ -322,6 +316,7 @@ uniform float moonSizeSmooth = 20.0;
 #if defined MOD_YUNGSCAVEBIOMES
     uniform vec3 yungSandstormWindDirection;
 #endif
+uniform sampler2D spiral_clouds;
 uniform sampler2D colortex15;
 uniform sampler2D colortex14;
 
