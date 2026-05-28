@@ -1,8 +1,8 @@
 #include "/lib/shaderSettings/enhancedCelestials.glsl"
 #ifndef INCLUDE_SKY_COLORS
     #define INCLUDE_SKY_COLORS
-
-    #ifdef OVERWORLD
+	
+    #if defined(OVERWORLD) && !defined(AD_ASTRA)
         vec3 skyColorSqrt = sqrt(skyColor);
         #ifdef MOD_SCORCHFUL
             vec3 sandstormM = mix(vec3(0.0), mix(vec3(0.4, 0.05, -0.4), vec3(0.25, 0.05, -0.25), hasRegularSandstorm), hasSandstorm);
@@ -59,7 +59,9 @@
         vec3 nightUpSkyColor     = pow(nightColFactor, vec3(0.90)) * 0.45;
         vec3 nightMiddleSkyColor = sqrt(nightUpSkyColor) * 0.65;
         vec3 nightDownSkyColor   = nightMiddleSkyColor * vec3(0.82, 0.82, 0.88);
+		
+	#elif defined(AD_ASTRA)
+		 #include "/ad_astra_config/skyColors.glsl"
     #endif
 
 #endif //INCLUDE_SKY_COLORS
-        

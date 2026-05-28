@@ -3,6 +3,10 @@
 
 #define NIGHT_STAR_AMOUNT 2 //[0 1 2 3 4]
 
+#ifdef MOD_CAELUM
+	#define NIGHT_STAR_AMOUNT 0
+#endif
+
 
 // Euphoria Patches Settings
 

@@ -71,8 +71,13 @@ vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float st
     star *= star;
 
     star *= max0(1.0 - pow(abs(VdotS) * 1.002, 100.0) * starsAroundSun) * starBelowHorizonBrightness - horizonFactor * 0.5;
+
     #ifndef DAYLIGHT_STARS
-        star *= pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility);
+        #ifdef SPACE_TRANSITION
+			    star *= min(1, pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility) + getAtmosphereFadeoutFactor); //not how taidum did it, will need to test
+		    #else
+			    star *= pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility);
+		    #endif
     #endif
 
     #ifdef CLEAR_SKY_WHEN_RAINING
@@ -87,7 +92,6 @@ vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float st
                                   vec3(STAR_COLOR_2_OW_R, STAR_COLOR_2_OW_G, STAR_COLOR_2_OW_B),
                                   vec3(STAR_COLOR_3_OW_R, STAR_COLOR_3_OW_G, STAR_COLOR_3_OW_B),
                                   float(STAR_COLOR_VARIATION_OW));
-
     vec3 stars = 40.0 * star * starColor * starBrightness;
 
     #if TWINKLING_STARS > 0

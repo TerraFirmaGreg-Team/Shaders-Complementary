@@ -1,4 +1,3 @@
-#shaders/lang/en_us.lang
 
 #Profiles
 profile.POTATO=§aPotato
@@ -62,9 +61,9 @@ option.info10=Credits
 value.info10.0=
 option.info10.comment=EminGT: The main developer of Complementary. Capt Tatsu: Developer of BSL Shaders, his generosity is what made Complementary possible in the first place. Special Thanks: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE
 
-option.info11=§dWhat is Euphoria Patches
+option.info11=§dTFG shaders credits
 value.info11.0=
-option.info11.comment=Euphoria Patches is an add-on for Complementary Shaders, developed by SpacEagle17. It aims to extend Complementary with more optional handcrafted features and settings.
+option.info11.comment=Big thanks to EminGT for Complementary, SpaceEagle for Euphoria-Patches, lemon41625 for supplemental-patches, and the taidumcraft team for the first ad_astra compatible shader that we used extensively!
 
 option.info12=Euphoria Patches Settings
 value.info12.0=
@@ -3205,4 +3204,64 @@ option.YUNGS_SANDSTORM_FOG_INTENSITY.comment=Determines intensity of the fog dur
 
 option.YUNGS_SANDSTORM_WAVING_INTENSITY=Sandstorm Waving Intensity
 option.YUNGS_SANDSTORM_WAVING_INTENSITY.comment=Determines how strongly foliage waves during a sandstorm.
+
+
+#  // TerraFirmaGreg //
+
+screen.TERRAFIRMAGREG_VERSION=TerraFirmaGreg Compat
+
+option.TFGinfo1=Important Information
+option.TFGinfo1.comment=Thank you for installing §bTerraFirmaGreg shaders§r. The shaders are still in development, so expect bugs and imperfections. If you have any problems or suggestions, please leave them on the §dTerraFirmaGreg-shaders GitHub§r. The shaders are based on the §dComplementary-Euphoria-Supplemental shaders§r. Thanks to all the developers for allowing us to use their work
+value.TFGinfo1.0=
+
+option.TFGinfo2=§d§nGitHub
+option.TFGinfo2.comment=Our GitHub: §d§ngithub.com/TerraFirmaGreg-Team/Shaders-Complementary§r please leave all bug reports and suggestions for improving shaders exactly there
+value.TFGinfo2.0=
+
+screen.TERRAFIRMAGREG_SETTINGS=Configure TFG compat
+screen.TERRAFIRMAGREG_SETTINGS.comment=§dTerraFirmaGreg compat§r settings
+
+screen.TFG_ATMOSPHERIC=Atmosphere
+screen.TFG_ATMOSPHERIC.comment=Atmosphere settings
+
+screen.TFG_SPACE_TRANSITION=Space transition
+screen.TFG_SPACE_TRANSITION.comment=The color of the sky depends on the player's Y position
+
+option.ST_TOGGLE=Toggle space transition
+
+option.ST_HEIGHT=Transition height
+option.ST_HEIGHT.comment=The height of the beginning of the change in sky color
+
+option.SPACE_TRANSITION_R=Red color
+
+option.SPACE_TRANSITION_G=Green color
+
+option.SPACE_TRANSITION_B=Blue color
+
+option.ST_STARS=Toggle space stars
+option.ST_STARS.comment=Enables the ability for stars to appear while gaining altitude (the altitude at which stars appear depends on the altitude of the space transition)
+
+screen.TFG_STARS=Stars
+screen.TFG_STARS.comment=Various settings enhanced the starred sky
+option.SPACE_STARS_MULTIPLIER=Space stars multiplier
+option.SPACE_STARS_MULTIPLIER.comment=Changes the amount of stars on planets without an atmosphere
+
+screen.TFG_SPACE_STARS_COLORS=Star colors
+option.SPACE_STARS_SPECTRUM=Use star spectral colors
+screen.TFG_M_STARS_COLORS=M-Stars colors
+screen.TFG_G_STARS_COLORS=G-Stars colors
+screen.TFG_A_STARS_COLORS=A-Stars colors
+screen.TFG_M_STARS_COLORS.comment=Set color values of stars with M spectral type
+screen.TFG_G_STARS_COLORS.comment=Set color values of stars with G spectral type
+screen.TFG_A_STARS_COLORS.comment=Set color values of stars with A spectral type
+option.M_STAR_COLOR_1_OW_R = Red color
+option.M_STAR_COLOR_1_OW_G = Green color
+option.M_STAR_COLOR_1_OW_B = Blue color
+option.G_STAR_COLOR_1_OW_R = Red color
+option.G_STAR_COLOR_1_OW_G = Green color
+option.G_STAR_COLOR_1_OW_B = Blue color
+option.A_STAR_COLOR_1_OW_R = Red color
+option.A_STAR_COLOR_1_OW_G = Green color
+option.A_STAR_COLOR_1_OW_B = Blue color
+
 

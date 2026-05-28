@@ -23,7 +23,12 @@
         float VdotSM1 = pow2(max(VdotS, 0.0));
         float VdotSM2 = pow2(VdotSM1);
         float VdotSM3 = pow2(pow2(max(-VdotS, 0.0)));
+		
+		#ifndef HAS_NO_MOON
         float VdotSML = sunVisibility > 0.5 ? VdotS : -VdotS;
+		#else
+		float VdotSML = VdotS;
+		#endif
 
         float VdotUmax0 = max(VdotU, 0.0);
         float VdotUmax0M = 1.0 - pow2(VdotUmax0);
@@ -98,7 +103,11 @@
 
                     glare *= mix(MOON_GLARE_AMOUNT * 0.1, SUN_GLARE_AMOUNT * 0.1, sunVisibility);
 
-                    finalSky += glare * shadowTime * glareColor;
+                    #ifdef MOD_TFCCAELUM
+                        vec3 finalSky = vec3(0.0, 0.0, 0.0);
+                    #else
+                        finalSky += glare * shadowTime * glareColor;
+                    #endif
                 }
             }
         #endif

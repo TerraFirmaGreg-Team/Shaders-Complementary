@@ -1,0 +1,10 @@
+#version 130
+
+#define FRAGMENT_SHADER
+#define OVERWORLD
+#define SHADOW
+#define SHADOW_COLORWHEEL
+#define WORLD_EUROPA
+#define AD_ASTRA
+
+#include "/program/shadow.glsl"

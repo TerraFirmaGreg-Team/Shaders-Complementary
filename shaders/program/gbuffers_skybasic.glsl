@@ -9,7 +9,7 @@
 #include "/lib/common.glsl"
 #include "/lib/shaderSettings/tonemaps.glsl"
 #include "/lib/shaderSettings/stars.glsl"
-//#define SECRET_CAELUM_SUPPORT_SETTING
+#include "/lib/shaderSettings/spaceTransition.glsl"
 
 #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
     #include "/lib/misc/distortWorld.glsl"
@@ -108,10 +108,14 @@ void main() {
         float VdotS = dot(nViewPos, sunVec);
         float dither = Bayer8(gl_FragCoord.xy);
 
-        color.rgb = GetSky(VdotU, VdotS, dither, true, false);
-		color.rgb *= vec3(sin(cameraPosition.x), sin(cameraPosition.y), sin(cameraPosition.z));
-        #ifdef SECRET_CAELUM_SUPPORT_SETTING
-        if (alphaColor < 1.0 && alphaColor > 0.0) color.rgb = glColor.rgb * alphaColor;
+		#ifdef SPACE_TRANSITION
+            color.rgb = mix(GetSky(VdotU, VdotS, dither, true, false), vec3(0.0), getAtmosphereFadeoutFactor);
+        #else
+            color.rgb = GetSky(VdotU, VdotS, dither, true, false);
+        #endif
+
+        #ifdef MOD_CAELUM
+             if (alphaColor < 1.0 && alphaColor > 0.0) color.rgb = glColor.rgb * alphaColor;
         #endif
 
         #ifdef ATM_COLOR_MULTS
@@ -146,7 +150,11 @@ void main() {
             float absVdotS = abs(VdotS);
             #if SUN_MOON_STYLE == 2
                 float sunSizeFactor1 = 0.9975;
-                float sunSizeFactor2 = 400.0;
+				#ifdef SUN_SIZE
+					float sunSizeFactor2 = SUN_SIZE;
+				#else
+					float sunSizeFactor2 = 400.0;
+				#endif
                 float moonCrescentOffset = 0.0055;
                 float moonPhaseFactor1 = 2.45;
                 float moonPhaseFactor2 = 750.0;
@@ -289,7 +297,12 @@ flat out vec4 glColor;
 void main() {
     gl_Position = ftransform();
 
-    glColor = gl_Color;
+    #ifdef AD_ASTRA
+	    // remove the orange line on sunset / sunrise
+	    glColor = vec4(0.0);
+	#else
+	    glColor = gl_Color;
+	#endif
 
     upVec = normalize(gbufferModelView[1].xyz);
     sunVec = GetSunVector();
