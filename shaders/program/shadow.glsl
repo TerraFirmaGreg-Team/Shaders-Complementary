@@ -6,7 +6,6 @@
 //Common//
 #include "/lib/common.glsl"
 #include "/lib/shaderSettings/wavingBlocks.glsl"
-#include "/lib/shaderSettings/shadowMainLighting.glsl"
 #define SHADOW_SATURATION 1.0 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 
 #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
@@ -60,6 +59,16 @@ void main() {
         vec4 overlayColor;
 
         clrwl_computeFragment(color1, color1, lmCoord, ao, overlayColor);
+    #endif
+
+    #if HIDE_ARMOR > 0
+        if (currentRenderedItemId == 45124 && !isElytraFlying) discard;
+    #endif
+
+    #if PLAYER_SHADOW == -1
+        if (entityId == 50016 || entityId == 50017) { // Player
+            discard;
+        }
     #endif
 
     #if SHADOW_QUALITY >= 1
@@ -198,7 +207,10 @@ void main() {
         }
     #endif
     #ifdef RAIN_ATMOSPHERE
-        if (entityId == 50004) discard; //remove lightning shadows
+        if (entityId == 50004) discard; // remove lightning shadows
+    #endif
+    #if END_CRYSTAL_VORTEX_INTERNAL / 2 == 1
+        if (entityId == 50200) discard; // remove end crystal healing beam
     #endif
 
     /* DRAWBUFFERS:0 */
@@ -254,6 +266,7 @@ vec2 lmCoord;
 
     #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0
         writeonly uniform uimage3D wsr_img;
+        writeonly uniform uimage3D wsr_lod_img;
     #endif
 
     #ifdef ACT_GROUND_LEAVES_FIX
@@ -289,6 +302,10 @@ vec2 lmCoord;
     #include "/lib/voxelization/endCrystalVoxelization.glsl"
 #endif
 
+#if DRAGON_DEATH_EFFECT_INTERNAL > 0
+    uniform isampler2D endcrystal_sampler;
+#endif
+
 //Program//
 void main() {
     texCoord = gl_MultiTexCoord0.xy;
@@ -314,7 +331,6 @@ void main() {
 
     #if defined WAVING_ANYTHING_TERRAIN || defined WAVING_WATER_VERTEX || defined WAVE_EVERYTHING
         DoWave(position.xyz, mat);
-        DoWave_BlockEntity(position.xyz, blockEntityId);
         #ifdef WAVE_EVERYTHING
             DoWaveEverything(position.xyz);
         #endif
@@ -397,15 +413,36 @@ void main() {
 
     #if DRAGON_DEATH_EFFECT_INTERNAL > 0
         #if MC_VERSION >= 12100
-            #define VALUE == 1.0
+            #define FUCK gl_Color.a == 1.0
+            #define THE && (entityId == 0 || entityId == 50204)
         #else
-            #define VALUE < 0.5
+            #define FUCK gl_Color.a < 0.5
+            #define THE && entityId == 0
         #endif
-        if (entityId == 0 && gl_Color.a VALUE && renderStage == MC_RENDER_STAGE_ENTITIES && abs(normal.y) > 0.999 && abs(normal.y) < 1.0) {
-            gl_Position = vec4(0);
+
+        #define DRAGON && renderStage == MC_RENDER_STAGE_ENTITIES
+
+        #ifndef IRIS_TAG_SUPPORT
+            #define DEATH && abs(normal.y) > 0.8 && abs(normal.y) < 1.0
+            #define BEAMS || gl_Color.a > 100.0
+        #else
+            float dragonDeathFactor = 0.0001 * texelFetch(endcrystal_sampler, ivec2(35, 0), 0).r;
+            float deathFadeFactor = exp(-3.0 * (1.0 - dragonDeathFactor)) * dragonDeathFactor;
+            #define DEATH && deathFadeFactor > 1.0
+            #if MC_VERSION >= 12100
+                #define BEAMS || renderStage == MC_RENDER_STAGE_NONE && gl_Color.a == 1.0
+            #else
+                #define BEAMS || renderStage == MC_RENDER_STAGE_NONE && gl_Color.a < 0.5
+            #endif
+        #endif
+
+        // AAAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH!!!!!!
+
+        if (FUCK THE DRAGON DEATH BEAMS) {
             #ifndef IRIS_TAG_SUPPORT
                 SetEndDragonDeath();
             #endif
+            gl_Position = vec4(0);
         }
     #endif
 

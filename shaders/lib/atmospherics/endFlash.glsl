@@ -13,7 +13,7 @@ vec3 DrawEndFlash(vec3 nViewPos, float VdotU, float dither) {
     float verticalDist = abs(nViewPosWorld.y - worldEndFlashPosition.y);
     float verticalFalloff = exp(-pow2(verticalDist * 5.5));
 
-    float endFlashFactor = endFlashIntensity * dirFactor * verticalFalloff;
+    float endFlashFactor = endFlashIntensityM * dirFactor * verticalFalloff;
 
     if (endFlashFactor < 0.001) return vec3(0.0);
 
@@ -25,7 +25,7 @@ vec3 DrawEndFlash(vec3 nViewPos, float VdotU, float dither) {
     float noise2 = texture2DLod(noisetex, noiseCoord * 2.7 - time * 0.17, 0).g;
     float noise3 = texture2DLod(noisetex, noiseCoord * 0.5 + time * 0.05, 0).b;
 
-    float rayFactor = pow(noise1 * noise2, 1.5) * 2.0;
+    float rayFactor = pow(max0(noise1 * noise2), 1.5) * 2.0;
 
     float stripeFactor = pow(horizDirFactor, 2.0 + 4.0 * pulse);
 

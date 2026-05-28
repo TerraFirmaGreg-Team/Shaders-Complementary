@@ -1,4 +1,3 @@
-#include "/lib/shaderSettings/doomAndGloomFog.glsl"
 //////////////////////////////////////////
 // Complementary Shaders by EminGT      //
 // With Euphoria Patches by SpacEagle17 //
@@ -63,14 +62,9 @@ vec4 GetLightCalculated(sampler3D lightSampler, ivec3 pos, ivec3 voxelVolumeSize
 
 	vec4 light = light_px + light_py + light_pz + light_nx + light_ny + light_nz;
     light /= 6.42; // Slightly higher than 6 to prevent the light from travelling too far
-    #if DOOM_AND_GLOOM_FOG == 1
-        light *= DG_ACT_FOG_SIZE;
-    #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
-        light *= mix(1, DG_ACT_FOG_SIZE, doomAndGloomFog);
-    #endif
 
-	if (voxel >= 30000u) {
-		vec3 tint = GetSpecialTintColor(voxel);
+	if (voxel >= 200u) {
+		vec3 tint = specialTintColor[min(voxel - 200u, specialTintColor.length() - 1u)];
 		light.rgb *= tint;
 		light.a *= dot(tint, vec3(0.333333));
 	}
@@ -131,7 +125,7 @@ void main() {
 
 	if (voxel == 1u) { // Solid Blocks
 		light = vec4(0.0);
-	} else if (voxel == 0u || voxel >= 30000u) { // Air, Non-solids, Translucents
+	} else if (voxel == 0u || voxel >= 200u) { // Air, Non-solids, Translucents
 		if (int(framemod2) == 0) {
 			#ifdef OPTIMIZATION_ACT_HALF_RATE_SPREADING
 				if (posM.z > 0.5) light = GetLightSample(floodfill_sampler, previousPos);
@@ -161,4 +155,3 @@ void main() {
 }
 
 #endif
-    

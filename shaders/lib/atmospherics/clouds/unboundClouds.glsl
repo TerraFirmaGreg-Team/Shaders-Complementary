@@ -29,10 +29,31 @@ const float cloudStretchModified = max(0.25, float(CLOUD_STRETCH) * 1.9 - 0.9);
     const float cloudTallness = cloudStretch * 2.0;
 #endif
 
-#if CLOUD_QUALITY > 1
+#if CLOUD_QUALITY_INTERNAL > 1
     const float cloudNarrowness = 0.00012;
 #else
     const float cloudNarrowness = 0.00006;
+#endif
+
+#if PIXELATED_UNBOUND_CLOUDS > 0
+const float pixelatedUnboundWindSpeedMult = 0.2;
+
+vec3 PixelateUnboundCloudPos(vec3 tracePos, float pixelStep) {
+    return (floor(tracePos / pixelStep) + 0.5) * pixelStep;
+}
+
+vec2 PixelateUnboundCloudPos(vec2 tracePos, float pixelStep) {
+    return (floor(tracePos / pixelStep) + 0.5) * pixelStep;
+}
+
+float QuantizeCloudValue(float value, float levels) {
+    return floor(value * levels + 0.5) / levels;
+}
+
+float GetVoxelCloudVariation(vec3 cloudTracePos, float pixelStep) {
+    vec3 voxelCoord = floor(cloudTracePos / pixelStep + 0.5);
+    return fract(sin(dot(voxelCoord, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
+}
 #endif
 
 
@@ -63,7 +84,26 @@ float GetCloudNoise(vec3 tracePos, int cloudAltitude, float lTracePosXZ, float c
         }
     #endif
 
-    #if CLOUD_QUALITY_INTERNAL == 1
+    #if PIXELATED_UNBOUND_CLOUDS > 0
+        float pixelStepM = PIXELATED_UNBOUND_CLOUDS * cloudNarrowness;
+
+        #if CLOUD_UNBOUND_SIZE_MULT != 100
+            pixelStepM *= CLOUD_UNBOUND_SIZE_MULT_M;
+        #endif
+
+        #ifdef DOUBLE_UNBOUND_CLOUDS
+            if (cloudAltitude != cloudAlt1i) {
+                pixelStepM *= CLOUD_UNBOUND_LAYER2_SIZE * 10.0 / CLOUD_UNBOUND_SIZE_MULT;
+            }
+        #endif
+    #endif
+
+    #if PIXELATED_UNBOUND_CLOUDS > 0
+        int sampleCount = 5;
+        float persistance = 0.43;
+        float noiseMult = 0.92;
+        wind *= pixelatedUnboundWindSpeedMult;
+    #elif CLOUD_QUALITY_INTERNAL == 1
         int sampleCount = 2;
         float persistance = 0.6;
         float noiseMult = 0.95;
@@ -86,31 +126,33 @@ float GetCloudNoise(vec3 tracePos, int cloudAltitude, float lTracePosXZ, float c
         noiseMult *= 1.2;
     #endif
 
-    vec3 totalDistortion = vec3(0.0);
-    #if defined DOUBLE_UNBOUND_CLOUDS && defined CIRRUS_CLOUDS
-        if (cloudAltitude != cloudAlt1i) {  // checking for 2nd layer
-            #if CLOUD_QUALITY_INTERNAL >= 2
-                totalDistortion = fbm3d_3d(CIRRUS_DISTORTION_SCALE * (tracePosM + vec3(wind, 0.0, 0.0)), 3);
-            #else
-                totalDistortion.xz = fbm2d_2d(CIRRUS_DISTORTION_SCALE * (tracePosM.xz + vec2(wind, 0.0)), 3);
-            #endif
-            totalDistortion *= CIRRUS_DISTORTION_INTENSITY * 0.05;
-        }
-    #endif    
     #if CLOUD_DIRECTION == 1
         tracePosM.xz = tracePosM.zx;
     #endif
 
     for (int i = 0; i < sampleCount; i++) {
-        #if CLOUD_QUALITY_INTERNAL >= 2
-            noise += Noise3D(tracePosM - vec3(0.0, 0.0, wind) + pow(1 + i, CIRRUS_DISTORTION_INTENSITY_2) * totalDistortion) * currentPersist;
+        vec3 windOffset = vec3(0.0, 0.0, wind);
+        #if PIXELATED_UNBOUND_CLOUDS > 0
+            vec3 pos = PixelateUnboundCloudPos(tracePosM - windOffset, pixelStepM);
         #else
-            noise += texture2DLod(noisetex, tracePosM.xz - vec2(0.0, wind) + pow(1 + i, CIRRUS_DISTORTION_INTENSITY_2) * totalDistortion.xz, 0.0).b * currentPersist;
+            vec3 pos = tracePosM - windOffset;
+        #endif
+
+        #if CLOUD_QUALITY_INTERNAL >= 2
+            noise += Noise3D(pos) * currentPersist;
+        #else
+            noise += texture2DLod(noisetex, pos.xz, 0.0).b * currentPersist;
         #endif
         total += currentPersist;
 
-        tracePosM *= 3.0;
-        wind *= 0.5;
+        float octaveOffset = 3.0;
+        tracePosM *= octaveOffset;
+        #if PIXELATED_UNBOUND_CLOUDS > 0
+            pixelStepM *= octaveOffset;
+            wind *= octaveOffset; // normalize wind speed across octaves to prevent different speed voxel grids
+        #else
+            wind *= 0.5;
+        #endif
         currentPersist *= persistance;
     }
     noise = pow2(noise / total);
@@ -178,8 +220,14 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
     if (maxPlaneDistance < 0.0) return vec4(0.0);
     float planeDistanceDif = maxPlaneDistance - minPlaneDistance;
 
+    float aboveClouds = clamp01((cameraPos.y - lowerPlaneAltitude) * 0.01);
+    float skyFadeM = mix(skyFade, 1.0, mix(0.4 * max(aboveClouds, rainFactor2), 1.0, clamp01(CLOUD_TRANSPARENCY - 1.0)));
+    float min1CloudTransparency = min1(CLOUD_TRANSPARENCY);
+
     #ifndef DEFERRED1
         float stepMult = 64.0;
+    #elif PIXELATED_UNBOUND_CLOUDS > 0
+        float stepMult = 3.0;
     #elif CLOUD_QUALITY_INTERNAL == 1
         float stepMult = 16.0;
     #elif CLOUD_QUALITY_INTERNAL == 2
@@ -246,6 +294,39 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
             else cloudMult = skyMult0;
         }
 
+        #if PIXELATED_UNBOUND_CLOUDS > 0
+            float cloudWind = 0.0006;
+            #if CLOUD_SPEED_MULT == 100
+                cloudWind *= syncedTime;
+            #else
+                cloudWind *= frameTimeCounter * (CLOUD_SPEED_MULT * 0.01);
+            #endif
+
+            float cloudTraceScale = cloudNarrowness;
+
+            #if CLOUD_UNBOUND_SIZE_MULT != 100
+                cloudWind *= CLOUD_UNBOUND_SIZE_MULT_M;
+                cloudTraceScale *= CLOUD_UNBOUND_SIZE_MULT_M;
+            #endif
+
+            #ifdef DOUBLE_UNBOUND_CLOUDS
+                if (cloudAltitude != cloudAlt1i) {
+                    float cloudLayer2Scale = CLOUD_UNBOUND_LAYER2_SIZE * 10.0 / CLOUD_UNBOUND_SIZE_MULT;
+                    cloudWind *= CLOUD_UNBOUND_LAYER2_SIZE * 30.0 * CLOUD_LAYER2_SPEED_MULT / CLOUD_UNBOUND_SIZE_MULT;
+                    cloudTraceScale *= cloudLayer2Scale;
+                }
+            #endif
+
+            vec3 cloudWindOffset = vec3(0.0, 0.0, (cloudWind / cloudTraceScale) * pixelatedUnboundWindSpeedMult);
+            #if CLOUD_DIRECTION == 1
+                cloudWindOffset.xz = cloudWindOffset.zx;
+            #endif
+
+            vec3 cloudTracePos = PixelateUnboundCloudPos(tracePos - cloudWindOffset, PIXELATED_UNBOUND_CLOUDS);
+        #else
+            vec3 cloudTracePos = tracePos;
+        #endif
+
         float cloudNoise = GetCloudNoise(tracePos, cloudAltitude, lTracePosXZ, cloudPlayerPos.y);
 
         if (cloudNoise > 0.00001) {
@@ -266,7 +347,7 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
 
             #endif
 
-            #if defined CLOUD_CLOSED_AREA_CHECK && SHADOW_QUALITY > -1
+            #if defined CLOUD_CLOSED_AREA_CHECK && SHADOW_QUALITY > -1 && !defined VOXY_PATCH
                 float shadowLength = shadowDistance * 0.9166667; //consistent08JJ622
                 if (shadowLength < lTracePos)
                 if (GetShadowOnCloud(tracePos, cameraPos, cloudAltitude, lowerPlaneAltitude, higherPlaneAltitude)) {
@@ -281,23 +362,60 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
                 #endif
             }
 
+            float opacityFactor = min1(cloudNoise * 8.0);
+
+            #if PIXELATED_UNBOUND_CLOUDS > 0
+                opacityFactor = QuantizeCloudValue(opacityFactor, 4.0);
+                float pixelStep = PIXELATED_UNBOUND_CLOUDS;
+                float hitDepth = max0(lTracePos - firstHitPos);
+                float depthFade = exp(-hitDepth / (pixelStep * 2.6));
+                opacityFactor *= mix(0.62, 1.0, depthFade);
+            #endif
+
             #if defined DOUBLE_UNBOUND_CLOUDS && CLOUD_UNBOUND_LAYER2_TRANSPARENCY != 20
-                float opacityFactor = cloudAltitude != cloudAlt1i
-                    ? min1(cloudNoise * 8.0) * (CLOUD_UNBOUND_LAYER2_TRANSPARENCY * 0.05)
-                    : min1(cloudNoise * 8.0) * CLOUD_TRANSPARENCY;
+                float cloudTransparency = cloudAltitude != cloudAlt1i ? opacityFactor * (CLOUD_UNBOUND_LAYER2_TRANSPARENCY * 0.05) : opacityFactor * min1CloudTransparency;
             #else
-                float opacityFactor = min1(cloudNoise * 8.0) * CLOUD_TRANSPARENCY;
+                float cloudTransparency = min1CloudTransparency;
+            #endif
+
+            opacityFactor *= cloudTransparency;
+
+
+            float cloudSampleY = tracePos.y;
+            #if PIXELATED_UNBOUND_CLOUDS > 0
+                cloudSampleY = mix(cloudTracePos.y, tracePos.y, 0.66);
             #endif
 
             #ifdef INVERTED_CLOUD_SHADING
-                float cloudShading = (higherPlaneAltitude - tracePos.y) / cloudTallness;
+                float cloudShading = (higherPlaneAltitude - cloudSampleY) / cloudTallness;
             #else
-                float cloudShading = 1.0 - (higherPlaneAltitude - tracePos.y) / cloudTallness;
+                float cloudShading = 1.0 - (higherPlaneAltitude - cloudSampleY) / cloudTallness;
             #endif
 
             cloudShading *= 1.0 + 0.2 * VdotSM3 * (1.0 - opacityFactor) + VdotSM4;
             #if CLOUD_SHADING_AMOUNT != 10
                 cloudShading = pow(max0(cloudShading), CLOUD_SHADING_AMOUNT * 0.1);
+            #endif
+            #if PIXELATED_UNBOUND_CLOUDS > 0
+                cloudShading *= 0.9;
+                float layer2ShadeFactor = 0.0;
+                #ifdef DOUBLE_UNBOUND_CLOUDS
+                    layer2ShadeFactor = float(cloudAltitude != cloudAlt1i);
+                #endif
+
+                float voxelVariation = GetVoxelCloudVariation(cloudTracePos, pixelStep);
+                float voxelShade = mix(0.85, 1.2, voxelVariation);
+                voxelShade = mix(voxelShade, voxelShade * mix(0.3, 0.55, layer2ShadeFactor) + mix(0.7, 0.45, layer2ShadeFactor), aboveClouds);
+                float cloudHeight01 = clamp01((tracePos.y - lowerPlaneAltitude) / cloudTallness);
+                #ifdef INVERTED_CLOUD_SHADING
+                    float reverseHeight01 = cloudHeight01;
+                #else
+                    float reverseHeight01 = 1.0 - cloudHeight01;
+                #endif
+                float undersideLift = reverseHeight01 * mix(0.05, 0.10, sunVisibility) * mix(1.0, 1.8, layer2ShadeFactor);
+
+                cloudShading *= voxelShade;
+                cloudShading += undersideLift + reverseHeight01 * 0.13 * layer2ShadeFactor;
             #endif
 
             #ifdef AURORA_INFLUENCE
@@ -332,6 +450,10 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
                         bloodMoonCloudColor = mix(bloodMoonCloudColor, vec3(0.302, 0.0078, 0.0078) * 5, getBloodMoon(sunVisibility));
                     #endif
 
+                    #if PIXELATED_UNBOUND_CLOUDS > 0
+                        visibilityFactor *= 0.2;
+                    #endif
+
                     cloudLightColor += bloodMoonCloudColor * sunShadingFactor * 0.3 * visibilityFactor;
                     cloudShading += sunShadingFactor * 0.45 * visibilityFactor;
                 }
@@ -356,20 +478,31 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
                 colorSample += highlightBoost;
             #endif
 
-            vec3 cloudSkyColor = GetSky(VdotU, VdotS, dither, isEyeInWater == 0, false);
+            float distanceRatio = (distanceThreshold - lTracePosXZ) / distanceThreshold;
+            float cloudDistanceFactor = clamp(distanceRatio, 0.0, 0.8) * 1.25;
+            float cloudFogFactor = pow2(pow1_5(clamp(distanceRatio, 0.0, 1.0))) * 0.69;
+            cloudFogFactor = mix(1.0, cloudFogFactor, skyFadeM);
+
+            bool isCustomSky;
+            vec3 cloudSkyColor = GetSky(VdotU, VdotS, dither, isEyeInWater == 0, false, isCustomSky, false);
+            #ifdef SAVE_SKYBOX_DATA
+                if (isCustomSky) {
+                    vec3 averageSkyColor = texelFetch(colortex14, texelCoord, 0).rgb;
+                    cloudSkyColor = mix(cloudSkyColor, averageSkyColor, cloudFogFactor);
+                }
+            #endif
             #ifdef ATM_COLOR_MULTS
                 cloudSkyColor *= sqrtAtmColorMult; // C72380KD - Reduced atmColorMult impact on some things
             #endif
-            float distanceRatio = (distanceThreshold - lTracePosXZ) / distanceThreshold;
-            float cloudDistanceFactor = clamp(distanceRatio, 0.0, 0.8) * 1.25;
-            float cloudFogFactor = pow2(pow1_5(clamp(distanceRatio, 0.0, 1.0)));
-            float skyMult1 = 1.0 - 0.2 * (1.0 - skyFade) * max(sunVisibility2, nightFactor);
-            float skyMult2 = 1.0 - 0.33333 * skyFade;
-            colorSample = mix(cloudSkyColor, colorSample * skyMult1, cloudFogFactor * skyMult2 * 0.72);
+            colorSample *= 1.0 - 0.2 * (1.0 - skyFadeM) * max(sunVisibility2, nightFactor);
+            colorSample = mix(cloudSkyColor, colorSample, cloudFogFactor * 0.69);
             colorSample *= pow2(1.0 - maxBlindnessDarkness);
 
             volumetricClouds.rgb = mix(volumetricClouds.rgb, colorSample, 1.0 - min1(volumetricClouds.a));
             volumetricClouds.a += opacityFactor * pow(cloudDistanceFactor, 0.5 + 10.0 * pow(abs(VdotSM1M), 90.0)) * cloudMult;
+            #if PIXELATED_UNBOUND_CLOUDS > 0
+                volumetricClouds.a += mix(0.0, min(1.0 - pow5(distanceRatio * 0.99), 0.2), cloudTransparency);
+            #endif
 
             if (volumetricClouds.a > 0.9) {
                 volumetricClouds.a = 1.0;
@@ -382,6 +515,8 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
     if (volumetricClouds.a > 0.5)
     #endif
     { cloudLinearDepth = sqrt(firstHitPos / renderDistance); }
+
+    volumetricClouds.a *= 0.5 + 0.5 * skyFadeM;
 
     return volumetricClouds;
 }

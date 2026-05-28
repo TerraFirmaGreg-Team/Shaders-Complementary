@@ -56,9 +56,9 @@ float DoAmbientOcclusionDH(float z0_raw, float linearZ0_current_context, sampler
     float shaped_ao = smoothstep(0.0, smoothstepUpperEdge, normalized_ao);
 
     float ssaoFactorOriginal = 0.075f; // DH-specific factor
-    float result_exponent = clamp(SSAO_I * ssaoFactorOriginal * (1.0 - emission), 0.0, 3.0);
+    float result_exponent = clamp(SSAO_I * ssaoFactorOriginal * (1.0 - emission), 0.0001, 3.0);
 
-    float powered_ao = pow(shaped_ao, result_exponent);
+    float powered_ao = pow(max(shaped_ao, 0.0001), result_exponent);
 
     float base_min_occlusion = 0.5;
     float distance_fade_end = 0.3;

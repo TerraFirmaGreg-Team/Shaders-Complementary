@@ -20,7 +20,7 @@ if (mat < 11024) {
                                 else /*if (mat < 10006)*/ { // Grounded Waving Foliage
                                     subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
 
-                                    #ifdef GBUFFERS_TERRAIN
+                                    #if defined GBUFFERS_TERRAIN || defined VOXY_PATCH
                                         DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, viewPos, nViewPos, lViewPos, dither);
 
                                         #ifdef COATED_TEXTURES
@@ -28,7 +28,7 @@ if (mat < 11024) {
                                         #endif
                                     #endif
 
-                                    #if SHADOW_QUALITY == -1
+                                    #if SHADOW_QUALITY == -1 && !defined VOXY_PATCH
                                         shadowMult *= 1.0 - 0.3 * (signMidCoordPos.y + 1.0) * (1.0 - abs(signMidCoordPos.x))
                                         + 0.5 * (1.0 - signMidCoordPos.y) * invNoonFactor; // consistency357381
                                     #endif
@@ -121,7 +121,7 @@ if (mat < 11024) {
                                 else /*if (mat < 10024)*/ { // Upper Waving Foliage
                                     subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
 
-                                    #ifdef GBUFFERS_TERRAIN
+                                    #if defined GBUFFERS_TERRAIN || defined VOXY_PATCH
                                         DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, viewPos, nViewPos, lViewPos, dither);
 
                                         #ifdef COATED_TEXTURES
@@ -129,7 +129,7 @@ if (mat < 11024) {
                                         #endif
                                     #endif
 
-                                    #if SHADOW_QUALITY == -1
+                                    #if SHADOW_QUALITY == -1 && !defined VOXY_PATCH
                                         shadowMult *= 1.0 + invNoonFactor; // consistency357381
                                     #endif
 
@@ -156,7 +156,7 @@ if (mat < 11024) {
                                 }
                             } else {
                                 if (mat < 10025) { // Auto Modded Ores - Stone
-                                    #ifdef GLOWING_ORE_MODDED
+                                    #if defined GLOWING_ORE_MODDED && !defined VOXY_PATCH
                                         #include "/lib/materials/specificMaterials/terrain/autoModdedOres.glsl"
                                         if (emission < 0.1) {
                                             #include "/lib/materials/specificMaterials/terrain/stone.glsl"
@@ -171,11 +171,11 @@ if (mat < 11024) {
                                 } else if (mat < 10026) {  // Short Foliage / Foliage Lower Half - No Subsurface Scattering
                                     noSmoothLighting = true;
 
-                                    #ifdef GBUFFERS_TERRAIN
+                                    #if defined GBUFFERS_TERRAIN || defined VOXY_PATCH
                                         DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, viewPos, nViewPos, lViewPos, dither);
                                     #endif
 
-                                    #if SHADOW_QUALITY == -1
+                                    #if SHADOW_QUALITY == -1 && !defined VOXY_PATCH
                                         shadowMult *= 1.0 - 0.3 * (signMidCoordPos.y + 1.0) * (1.0 - abs(signMidCoordPos.x))
                                         + 0.5 * (1.0 - signMidCoordPos.y) * invNoonFactor; // consistency357381
                                     #endif
@@ -183,7 +183,7 @@ if (mat < 11024) {
                                     sandNoiseIntensity = 0.8, mossNoiseIntensity = 0.0, isFoliage = true;
 
                                 } else if (mat < 10027) { // Auto Modded Ores - Netherrack
-                                    #ifdef GLOWING_ORE_MODDED
+                                    #if defined GLOWING_ORE_MODDED && !defined VOXY_PATCH
                                         #include "/lib/materials/specificMaterials/terrain/autoModdedOres.glsl"
                                         if (emission < 0.1) {
                                             #include "/lib/materials/specificMaterials/terrain/netherrack.glsl"
@@ -198,18 +198,18 @@ if (mat < 11024) {
                                 } else if (mat < 10028) { // Tall Foliage / Foliage Upper Half - No Subsurface Scattering
                                     noSmoothLighting = true;
 
-                                    #ifdef GBUFFERS_TERRAIN
+                                    #if defined GBUFFERS_TERRAIN || defined VOXY_PATCH
                                         DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, viewPos, nViewPos, lViewPos, dither);
                                     #endif
 
-                                    #if SHADOW_QUALITY == -1
+                                    #if SHADOW_QUALITY == -1 && !defined VOXY_PATCH
                                         shadowMult *= 1.0 + invNoonFactor; // consistency357381
                                     #endif
 
                                     sandNoiseIntensity = 0.8, mossNoiseIntensity = 0.0, isFoliage = true;
 
                                 } else if (mat < 10029) { // Auto Modded Ores - Endstone
-                                    #ifdef GLOWING_ORE_MODDED
+                                    #if defined GLOWING_ORE_MODDED && !defined VOXY_PATCH
                                         #include "/lib/materials/specificMaterials/terrain/autoModdedOres.glsl"
                                         if (emission < 0.1) {
                                             #include "/lib/materials/specificMaterials/terrain/endStone.glsl"
@@ -224,11 +224,11 @@ if (mat < 11024) {
                                 } else if (mat < 10030) { // Crimson Roots
                                     subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
 
-                                    #ifdef GBUFFERS_TERRAIN
+                                    #if defined GBUFFERS_TERRAIN || defined VOXY_PATCH
                                         DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, viewPos, nViewPos, lViewPos, dither);
                                     #endif
 
-                                    #if SHADOW_QUALITY == -1
+                                    #if SHADOW_QUALITY == -1 && !defined VOXY_PATCH
                                         shadowMult *= 1.0 - 0.3 * (signMidCoordPos.y + 1.0) * (1.0 - abs(signMidCoordPos.x))
                                         + 0.5 * (1.0 - signMidCoordPos.y) * invNoonFactor; // consistency357381
                                     #endif
@@ -241,7 +241,7 @@ if (mat < 11024) {
                                 } else if (mat < 10032) { // Short foliage - no interactive foliage
                                     subsurfaceMode = 1, noSmoothLighting = true, noDirectionalShading = true;
 
-                                    #ifdef GBUFFERS_TERRAIN
+                                    #if defined GBUFFERS_TERRAIN || defined VOXY_PATCH
                                         DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, viewPos, nViewPos, lViewPos, dither);
 
                                         #ifdef COATED_TEXTURES
@@ -249,7 +249,7 @@ if (mat < 11024) {
                                         #endif
                                     #endif
 
-                                    #if SHADOW_QUALITY == -1
+                                    #if SHADOW_QUALITY == -1 && !defined VOXY_PATCH
                                         shadowMult *= 1.0 - 0.3 * (signMidCoordPos.y + 1.0) * (1.0 - abs(signMidCoordPos.x))
                                         + 0.5 * (1.0 - signMidCoordPos.y) * invNoonFactor; // consistency357381
                                     #endif
@@ -278,9 +278,7 @@ if (mat < 11024) {
                                 }
                             } else {
                                 if (mat < 10044) { // Rails
-                                    #if ANISOTROPIC_FILTER == 0
-                                        color = texture2DLod(tex, texCoord, 0);
-                                    #endif
+                                    color = texture2DLod(tex, texCoord, 0);
 
                                     noSmoothLighting = true;
                                     if (color.r > 0.1 && color.g + color.b < 0.1) { // Redstone Parts
@@ -1157,7 +1155,7 @@ if (mat < 11024) {
                                 if (mat < 10308) { // Pink and Purple Modded Ores
                                     // if (mat < 10306) { // Pink Modded Ores
                                         if (color.r - color.g > 0.1) { // Redstone Ore:Lit:Redstone Part
-                                            #ifdef GLOWING_ORE_MODDED
+                                            #if defined GLOWING_ORE_MODDED && !defined VOXY_PATCH
                                                 emission = min(1.5, pow2(color.r) * color.r * 4.5 * color.b);
                                                 overlayNoiseIntensity = 0.5, overlayNoiseEmission = 0.5;
                                                 #ifdef SITUATIONAL_ORES
@@ -1278,7 +1276,7 @@ if (mat < 11024) {
                                             // vec3 worldPos = playerPos.xyz + cameraPosition.xyz;
                                             // vec3 blockPos = abs(fract(worldPos) - vec3(0.5));
                                             // float maxBlockPos = max(blockPos.x, max(blockPos.y, blockPos.z));
-                                            float maxBlockPos = maxAll(abs(fract(blockUV) - vec3(0.5))); // change to blockUV to make it work with colorwheel
+                                            float maxBlockPos = maxOf(abs(fract(blockUV) - vec3(0.5))); // change to blockUV to make it work with colorwheel
                                             emission = pow2(max0(1.0 - maxBlockPos * 1.85) * color.g) * 7.0;
 
                                             if (CheckForColor(color.rgb, vec3(254, 203, 230)))
@@ -1554,6 +1552,10 @@ if (mat < 11024) {
                                 else /*if (mat < 10408)*/ { // Sea Pickle:Waterlogged
                                     noSmoothLighting = true;
 
+                                    #if ANISOTROPIC_FILTER == 0 && !defined IPBR_COMPAT_MODE
+                                        color = texture2DLod(tex, texCoord, 0);
+                                    #endif
+
                                     overlayNoiseIntensity = 0.3;
 
                                     if (color.b > 0.5) { // Sea Pickle:Emissive Part
@@ -1727,7 +1729,7 @@ if (mat < 11024) {
                                 }
                             } else {
                                 if (mat < 10460) { // Command Block+
-                                    #ifndef DURING_WORLDSPACE_REF
+                                    #ifndef IPBR_COMPAT_MODE
                                         color = texture2DLod(tex, texCoord, 0);
                                     #endif
 
@@ -2534,7 +2536,7 @@ if (mat < 11024) {
                                 else /*if (mat < 10648)*/ { // Repeater, Comparator
                                     noSmoothLighting = true;
 
-                                    #if ANISOTROPIC_FILTER > 0 && !defined DURING_WORLDSPACE_REF
+                                    #if ANISOTROPIC_FILTER > 0 && !defined IPBR_COMPAT_MODE
                                         color = texture2D(tex, texCoord); // Fixes artifacts
                                         color.rgb *= glColor.rgb;
                                     #endif
@@ -2713,14 +2715,14 @@ if (mat < 11024) {
                                 }
                             }
                         } else {
-                            if (mat < 10696) {
+                            if (mat < 10695) {
                                 if (mat < 10692) { // Pearlescent Froglight
                                     float frogPow = 24.0;
                                     #include "/lib/materials/specificMaterials/terrain/froglights.glsl"
 
                                     overlayNoiseIntensity = 0.3;
                                 }
-                                else /*if (mat < 10696)*/ { // Reinforced Deepslate
+                                else /*if (mat < 10695)*/ { // Reinforced Deepslate
                                     if (abs(color.r - color.g) < 0.01) { // Reinforced Deepslate:Deepslate Part
                                         #include "/lib/materials/specificMaterials/terrain/deepslate.glsl"
                                     } else { // Reinforced Deepslate:Sculk
@@ -2733,7 +2735,6 @@ if (mat < 11024) {
                                     }
                                 }
                             } else {
-                                //#define INTENSE_DEEP_DARK
                                 if (mat < 10700) { // Sculk, Sculk Catalyst, Sculk Vein, Sculk Sensor:Unlit
                                     float boneFactor = max0(color.r * 1.25 - color.b);
 
@@ -3099,7 +3100,7 @@ if (mat < 11024) {
                                         #ifdef COATED_TEXTURES
                                             noiseFactor = 0.66;
                                         #endif
-                                    } else { // Sculk Part
+                                    } else if (checkColor.g + checkColor.b > checkColor.r * 2.2) { // Sculk Part
                                         emission = pow2(max0(color.g - color.r)) * 7.0 + 0.7;
                                     }
 
@@ -3632,152 +3633,7 @@ if (mat < 11024) {
         bool doesNothing;
         emission = DoAutomaticEmission(noSmoothLighting, doesNothing, color.rgb, 0.0, 15, 1.0);
     #endif
-} else if (mat != 0 && mat != 65535) {
-    if (mat < 12320) {
-        if (mat < 12304) {
-            if (mat < 12296) {
-                if (mat < 12292) {
-                    // block.12288 = chorus_flower
-                    #ifndef NOT_GLOWING_CHORUS_FLOWER
-                        vec3 checkColor = texture2DLod(tex, texCoord, 0).rgb;
-                        if (
-                            CheckForColor(checkColor, vec3(164, 157, 126)) ||
-                            CheckForColor(checkColor, vec3(201, 197, 176)) ||
-                            CheckForColor(checkColor, vec3(226, 221, 188)) ||
-                            CheckForColor(checkColor, vec3(153, 142, 95))
-                        ) {
-                            emission = min(GetLuminance(color.rgb), 0.75) / 0.75;
-                            emission = pow2(pow2(emission)) * 6.5;
-                            color.gb *= 0.85;
-                
-                            overlayNoiseIntensity = 0.1, overlayNoiseEmission = 0.8;
-                        } else emission = max0(GetLuminance(color.rgb) - 0.5) * 3.0;
-                    #endif
-                } else /*if (mat < 12296)*/ {
-                    // block.12292 = twisting_vines
-                    const uint voxelNumbers[4] = uint[](251u, -1u, 252u, -1u);
-                    uint voxelNumber = voxelNumbers[mat % 4];
-                    noSmoothLighting = true;
-                
-                    #if defined COATED_TEXTURES && defined GBUFFERS_TERRAIN
-                        doTileRandomisation = false;
-                    #endif
-                
-                    if (color.r > color.g) {
-                        emission = 1.5 * color.b;
-                    } else if (color.r > 0.4) {
-                        emission = pow2(color.r);
-                        maRecolor = vec3(0.1);
-                
-                        #ifdef GBUFFERS_TERRAIN
-                            vec2 bpos = floor(playerPos.xz + cameraPosition.xz + 0.501)
-                                      + floor(playerPos.y + cameraPosition.y + 0.501);
-                            bpos = bpos * 0.01 + 0.004 * frameTimeCounter;
-                            emission *= texture2D(noisetex, bpos).r * pow1_5(texture2D(noisetex, bpos * 0.5).r);
-                            emission *= 16.0;
-                        #endif
-                    }
-                
-                    isFoliage = false;
-                }
-            } else /*if (mat < 12304)*/ {
-                if (mat < 12300) {
-                    // block.12296 = warped_fungus
-                    noSmoothLighting = true;
-                
-                    #ifdef MOD_NETHEREXP
-                        if (color.r > 0.73 && color.b > 0.73) {
-                            emission = 1.5 * color.b;
-                
-                            overlayNoiseIntensity = 0.5;
-                        }
-                    #endif
-                
-                    if (color.r > 0.91) {
-                        emission = 3.0 * color.g;
-                        color.r *= 1.2;
-                        maRecolor = vec3(0.1);
-                
-                        overlayNoiseIntensity = 0.5;
-                    }
-                
-                    sandNoiseIntensity = 0.3, mossNoiseIntensity = 0.0;
-                    isFoliage = false;
-                } else /*if (mat < 12304)*/ {
-                    // block.12300 = weeping_vines
-                    const uint voxelNumbers[4] = uint[](65u, 65u, 65u, 65u);
-                    uint voxelNumber = voxelNumbers[mat % 4];
-                    #if defined COATED_TEXTURES && defined GBUFFERS_TERRAIN
-                        doTileRandomisation = false;
-                    #endif
-                
-                    if (color.r > 0.91) {
-                        emission = 3.0 * color.g;
-                        color.r *= 1.2;
-                        maRecolor = vec3(0.1);
-                    }
-                
-                    isFoliage = false;
-                }
-            }
-        } else /*if (mat < 12320)*/ {
-            if (mat < 12312) {
-                if (mat < 12308) {
-                    // block.12304 = blue_nether_bricks
-                    float factor = color.b * 0.8;
-                    factor = color.b > 0.3 ? factor : factor * 0.25;
-                    smoothnessG = factor;
-                    smoothnessD = factor;
-                
-                    #ifdef COATED_TEXTURES
-                        noiseFactor = 0.77;
-                    #endif
-                } else /*if (mat < 12312)*/ {
-                    // block.12308 = myalite
-                    vec2 num = (playerPos.xz + cameraPosition.xz) + (playerPos.y + cameraPosition.y);
-                    vec2 noise = texture2D(noisetex, num / 128.0).rb;
-                
-                    smoothnessG = 0.5 * pow2(color.b) * (0.4 + (pow2(sin(noise.r) + cos(noise.g))));
-                    smoothnessD = smoothnessG;
-                    highlightMult = 3.0 * pow2(pow2(color.r)) * smoothnessG;
-    
-                }
-            } else /*if (mat < 12320)*/ {
-                if (mat < 12316) {
-                    // block.12312 = alphacene_mushroom
-                    if (color.r > 0.9) {
-                        emission = color.r > 0.95 ? 1.0 : 0.7 * pow2(color.r);
-                        color.rgb *= color.rgb;
-                    }
-                } else /*if (mat < 12320)*/ {
-                    // block.12316 = kinetic_core
-                    #include "/lib/materials/specificMaterials/terrain/kineticCore.glsl"
-                }
-            }
-        }
-    } else /*if (mat < 12328)*/ {
-        if (mat < 12324) {
-            // block.12320 = speclight
-            if (color.b > 0.6) {
-                emission = 1.5 * pow2(color.b);
-                color.rgb = pow1_5(color.rgb);
-            } else {
-                smoothnessG = color.b + 0.4;
-                smoothnessD = smoothnessG;
-            }
-        } else /*if (mat < 12328)*/ {
-            // block.12324 = spectralibur_pedestal
-            if (GetMaxColorDif(color.rgb) > 0.05) {
-                emission = 1.5 * pow2(color.b);
-                color.rgb = pow1_5(color.rgb);
-            } else {
-                #include "/lib/materials/specificMaterials/terrain/stone.glsl"
-            }
-        }
-    }
-    
 }
-
 }
 }
 

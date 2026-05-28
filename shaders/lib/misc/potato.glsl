@@ -150,7 +150,8 @@ vec3 printPhrase(vec3 color, int verticalTextOffset){
 }
 
 vec3 printNumbers(vec3 color, int verticalTextOffset) {
-    beginTextM(5, vec2(12, 140 + verticalTextOffset * 2));text.fgCol = vec4(0.2157, 0.0, 1.0, 0.85);
+    beginTextM(5, vec2(12, 140 + verticalTextOffset * 2));
+    text.fgCol = vec4(0.2157, 0.0, 1.0, 0.85);
     printFloat(frameTimeCounter);printLine();
     printFloat(worldDay + worldTime / 24000.0);printLine();
     printFloat(aspectRatio);
@@ -168,9 +169,21 @@ vec3 printNumbers(vec3 color, int verticalTextOffset) {
     return color;
 }
 
+vec4 getWatermarkColor(vec3 color, vec2 displacedCoord) {
+    #if defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000009
+        return waterMarkFunction(ivec2(100, 29), vec2(0.1, 0.3), displacedCoord, 1.3, false);
+    #else
+        beginTextM(7, vec2(110  + displacedCoord.x, 105 + displacedCoord.y));
+        text.fgCol = vec4(0.9137, 0.3059, 0.9137, 0.85);
+        printString((_E, _u, _p, _h, _o, _r, _i, _a, _space, _P, _a, _t, _c, _h, _e, _s));
+        endText(color);
+        return vec4(color, 1.0);
+    #endif
+}
+
 vec3 potatoWatermark(vec3 color, vec2 displacedCoord, vec2 flickerNoiseVec) {
     // Apply offset to watermark position
-    vec4 watermarkColor = waterMarkFunction(ivec2(100, 29), vec2(0.1, 0.3), displacedCoord.xy, 1.3, false);
+    vec4 watermarkColor = getWatermarkColor(color, displacedCoord);
 
     // Rest of the effect processing remains the same
     float flickerNoise = max(flickerNoiseVec.r, flickerNoiseVec.g);
@@ -239,7 +252,7 @@ vec3 potatoError(){
     vec2 pixelCoords = (vec2(transformedCoords.x, transformedCoords.y * -1) + 1.0) * potatoSize * 0.5;
     color.rgb = getPixelPotato(floor(pixelCoords), color, potatoSize);
 
-    color.rgb = potatoWatermark(color.rgb, displacedCoord, noiseVec);
+    color.rgb = potatoWatermark(color.rgb, displacedCoord + verticalTextOffset, noiseVec);
 
     if(mod(frameTimeCounter + 10, 42.0) < 8.0) color = rareShaderError(texCoordBorder); // Why 42? Because it's the answer to everything
 

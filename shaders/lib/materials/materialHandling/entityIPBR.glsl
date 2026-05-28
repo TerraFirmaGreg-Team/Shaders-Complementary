@@ -16,8 +16,8 @@ if (entityId < 50128) { // 50000 to 50128
                         #include "/lib/materials/specificMaterials/others/lightningBolt.glsl"
                     }
                 } else { // 50008 to 50016
-                    if (entityId == 50008) { // Item Frame, Glow Item Frame
-                        noSmoothLighting = true;
+                    if (entityId == 50008) { //
+
                     } else if (entityId == 50012) { // Iron Golem
                         #include "/lib/materials/specificMaterials/terrain/ironBlock.glsl"
 
@@ -273,21 +273,18 @@ if (entityId < 50128) { // 50000 to 50128
             }
         }
     }
-} else if (entityId < 50128) { // 50128 to 50256
+} else { // 50128 to 50256
     if (entityId < 50192) { // 50128 to 50192
         if (entityId < 50160) { // 50128 to 50160
             if (entityId < 50144) { // 50128 to 50144
                 if (entityId < 50136) { // 50128 to 50136
-                    if (entityId < 50132) { // 50128 to 50132
-                        // 50128
-                        // 50129
-                        // 50130
-                        // 50131
-                    } else { // 50132 to 50136
-                        // 50132
-                        // 50133
-                        // 50134
-                        // 50135
+                    if (entityId < 50132) { // Item Frame
+                        noSmoothLighting = true;
+                        noDirectionalShading = true;
+                    } else { // Glow Item Frame
+                        noSmoothLighting = true;
+                        noDirectionalShading = true;
+                        lmCoordM.y = eyeBrightnessM;
                     }
                 } else { // 50136 to 50144
                     if (entityId < 50140) { // 50136 to 50140
@@ -495,101 +492,4 @@ if (entityId < 50128) { // 50000 to 50128
             }
         }
     }
-}
- else if (entityId != 65535) {
-    if (entityId < 51216) {
-        if (entityId < 51208) {
-            if (entityId < 51204) {
-                // entity.51200 = crimson_forest_enderman
-                if (color.r > 0.91) {
-                    emission = 3.0 * color.g;
-                    color.r *= 1.2;
-            
-                    overlayNoiseIntensity = 0.5;
-                }
-            
-                smoothnessG = color.r * 0.5;
-                smoothnessD = smoothnessG;
-            
-                #ifdef COATED_TEXTURES
-                    noiseFactor = 0.77;
-                #endif
-            } else /*if (entityId < 51208)*/ {
-                // entity.51204 = crimson_forest_enderman
-                if (color.r > 0.91) {
-                    emission = 3.0 * color.g;
-                    color.r *= 1.2;
-            
-                    overlayNoiseIntensity = 0.5;
-                }
-            
-                smoothnessG = color.r * 0.5;
-                smoothnessD = smoothnessG;
-            
-                #ifdef COATED_TEXTURES
-                    noiseFactor = 0.77;
-                #endif
-            }
-        } else /*if (entityId < 51216)*/ {
-            if (entityId < 51212) {
-                // entity.51208 = ice_spikes_enderman
-                smoothnessG = pow2(color.g) * color.g;
-                smoothnessD = smoothnessG;
-            } else /*if (entityId < 51216)*/ {
-                // entity.51212 = spirit
-                if (color.b > 1.3 * color.r || color.b > 0.9) {
-                    emission = 1.5;
-                    color.rgb = pow1_5(color.rgb);
-            
-                    overlayNoiseIntensity = 0.0;
-                    color.a = pow1_5(color.b) - 0.05;
-                }
-            }
-        }
-    } else /*if (entityId < 51232)*/ {
-        if (entityId < 51224) {
-            if (entityId < 51220) {
-                // entity.51216 = stone_enderman
-                #include "/lib/materials/specificMaterials/terrain/stone.glsl"
-            } else /*if (entityId < 51224)*/ {
-                // entity.51220 = warped_forest_enderman
-                #ifdef MOD_NETHEREXP
-                    if (color.r > 0.73) {
-                        emission = 1.5 * color.b;
-            
-                        overlayNoiseIntensity = 0.5;
-                    }
-                #else
-                    if (color.r > 0.91) {
-                        emission = 3.0 * color.g;
-                        color.r *= 1.2;
-            
-                        overlayNoiseIntensity = 0.5;
-                    }
-                #endif
-            
-                smoothnessG = color.g * 0.5;
-                smoothnessD = smoothnessG;
-            
-                #ifdef COATED_TEXTURES
-                    noiseFactor = 0.77;
-                #endif
-            }
-        } else /*if (entityId < 51232)*/ {
-            if (entityId < 51228) {
-                // entity.51224 = quake
-                #include "/lib/materials/specificMaterials/terrain/kineticCore.glsl"
-            } else /*if (entityId < 51232)*/ {
-                // entity.51228 = spectre
-                if (color.b > 0.6) {
-                    emission = 1.5 * pow2(color.b);
-                    color.rgb = pow1_5(color.rgb);
-                } else {
-                    smoothnessG = color.b + 0.4;
-                    smoothnessD = smoothnessG;
-                }
-            }
-        }
-    }
-    
 }

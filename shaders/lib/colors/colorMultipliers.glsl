@@ -50,9 +50,6 @@
             atmColorMult = netherAtmMult;
         #elif defined END
             vec3 endAtmMult = vec3(ATM_END_R, ATM_END_G, ATM_END_B) * ATM_END_I;
-            #ifdef (DARKER_END_SKY == 1 && defined MOD_ENDERSCAPE) || DARKER_END_SKY == 2
-                endAtmMult *= 0.5;
-            #endif
 
             atmColorMult = endAtmMult;
         #endif
@@ -69,4 +66,3 @@
     vec3 sqrtAtmColorMult;
 
 #endif //INCLUDE_LIGHT_AND_AMBIENT_MULTIPLIERS
-            

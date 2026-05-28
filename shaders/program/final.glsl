@@ -21,7 +21,7 @@ noperspective in vec2 texCoord;
 //Common Variables//
 vec2 view = vec2(viewWidth, viewHeight);
 
-#if WORLD_SPACE_REFLECTIONS_INTERNAL > 0
+#if WORLD_SPACE_REFLECTIONS_INTERNAL > 0 && WORLD_SPACE_PLAYER_REF == 1
     #include "/lib/voxelization/SSBOs/clearSSBOs.glsl"
 #endif
 
@@ -251,13 +251,13 @@ void beginTextM(int textSize, vec2 offset) {
 #endif
 
 #include "/lib/misc/pixelCraft.glsl"
+#include "/lib/misc/endCreditsBackground.glsl"
 
 //Program//
 void main() {
     vec3 color = vec3(0.0);
     float viewWidthM = viewWidth;
     float viewHeightM = viewHeight;
-    float animation = 0.0;
     #if PIXELATED_SCREEN_SIZE > 0 || defined SCREEN_DITHERING_INTERNAL
         vec2 cellSize = getCellSize();
     #endif
@@ -374,7 +374,7 @@ void main() {
 
     #if LETTERBOXING > 0
         #if BORDER_AMOUNT > 0
-            viewWidth   M = viewWidth - viewWidth * BORDER_AMOUNT * 0.04;
+            viewWidthM = viewWidth - viewWidth * BORDER_AMOUNT * 0.04;
         #endif
         float letterboxMargin = 0.5 - viewWidthM / (2 * viewHeightM * ASPECT_RATIO);
         #if LETTERBOXING == 2
@@ -424,7 +424,7 @@ void main() {
     #ifdef ENTITIES_ARE_LIGHT
         vec4 texture10 = texture2D(colortex10, texCoordM);
         color = texture10.a * mix(vec3(1), texture10.rgb, texture6.a);
-        DoWorldOutline(color, z0, 1.0, vec3(1.0), far);
+        DoWorldOutline(color, z0, vec3(1.0), 0.0, 1.0);
     #endif
 
     #if WATERMARK > 0 && (defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000009)
@@ -492,7 +492,7 @@ void main() {
         #endif
     #endif
 
-    #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0
+    #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0 && WORLD_SPACE_PLAYER_REF == 1
         clearSSBOs();
     #endif
 
@@ -515,15 +515,18 @@ void main() {
     #endif
 
     #include "/lib/textRendering/all_text_messages.glsl"
+    // color.rgb = endCreditsEffect(texCoord);
 
     // Example of printing a float value (for debugging)
-    // float placeholder = texture2D(colortex2, ivec2(0)).g;
+    // float placeholder = texelFetch(endcrystal_sampler, ivec2(35, 8), 0).r;
     // beginTextM(2, vec2(5));
+    // text.bgCol = vec4(0.0, 0.0, 0.0, 0.8);
     // text.fpPrecision = 6;
     // printFloat(placeholder);
     // printLine();
     // endText(color.rgb);
-    // color.rgb = texture2D(colortex9, texCoord).rgb;
+
+    // color.rgb = texture2D(colortex13, texCoord).rgb;
 
     /* DRAWBUFFERS:0 */
     gl_FragData[0] = vec4(color, 1.0);

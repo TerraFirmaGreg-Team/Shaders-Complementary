@@ -16,7 +16,7 @@ float InterleavedGradientNoiseForClouds() {
     #endif
 }
 
-#if SHADOW_QUALITY > -1
+#if SHADOW_QUALITY > -1 && !defined VOXY_PATCH
     vec3 GetShadowOnCloudPosition(vec3 tracePos, vec3 cameraPos) {
         vec3 wpos = PlayerToShadow(tracePos - cameraPos);
         float distb = sqrt(wpos.x * wpos.x + wpos.y * wpos.y);
@@ -194,12 +194,5 @@ vec4 GetClouds(inout float cloudLinearDepth, float skyFade, vec3 cameraPosOffset
         clouds.rgb += nightNebula * 0.2;
     #endif
 
-    #if DOOM_AND_GLOOM_FOG == 1
-        clouds.rgb = vec3(0.5);
-    #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
-        if (doomAndGloomFog > 0.0001) {
-            clouds.rgb = vec3(0.5);
-        }
-    #endif    
     return clouds;
 }

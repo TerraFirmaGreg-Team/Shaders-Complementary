@@ -6,6 +6,10 @@
     #define OPTIFINE_AF_ERROR
 #endif
 
+#if defined VOXY && defined DISTANT_HORIZONS
+    #define MULTIPLE_LOD_MODS_ERROR
+#endif
+
 #if COLORED_LIGHTING > 0 && defined MC_OS_MAC
     #define APPLE_ACT_ERROR
 #endif
@@ -47,10 +51,6 @@
     #define OLD_VERSION_SSBL_ERROR
 #endif
 
-#ifdef NEW_EUPHORIA_PATCHES_UPDATE
-    #include "/lib/textRendering/new_Euphoria_Version.glsl"
-#endif
-
 #ifdef COLOR_CODED_PROGRAMS
     #include "/lib/textRendering/color_code_info.glsl"
 #endif
@@ -63,7 +63,32 @@
     #define WSR_MISSING_ACT_ERROR
 #endif
 
-#ifdef OLD_VERSION_SSBL_ERROR
+#if (defined PHOTONICS || defined EUPHORIA_PATCHES_IS_PHOTONICS_INSTALLED) && (PHOTONICS_VERSION < 301 || !defined PHOTONICS_VERSION) && PHOTONICS_LIGHTING_MODE > 0
+    #define OLD_PHOTONICS_ERROR
+#endif
+
+#if defined PHOTONICS && defined MC_OS_MAC
+    #define APPLE_PHOTONICS_ERROR
+#endif
+
+#if defined PHOTONICS && !defined IS_IRIS
+    #define OPTIFINE_PHOTONICS_ERROR
+#endif
+
+#if defined PHOTONICS_LIGHTING
+    #define PHOTONICS_COORDINATES_ERROR
+#endif
+
+#if COLORED_LIGHTING_INTERNAL > 0 && WORLD_SPACE_REFLECTIONS > 0 && WORLD_SPACE_PLAYER_REF == 1 && defined EUPHORIA_PATCHES_IS_3D_SKIN_LAYERS_INSTALLED
+    #define PLAYER_REFLECTION_3D_LAYERS_ERROR
+#endif
+
+vec3 textColor = vec3(0.0);
+float animation = min(starter * 0.3, 0.1) * 10.0;
+
+#ifdef MULTIPLE_LOD_MODS_ERROR
+        #include "/lib/textRendering/error_multiple_lod_mods.glsl"
+#elif defined OLD_VERSION_SSBL_ERROR
     #include "/lib/textRendering/old_version_ssbl_error.glsl"
 #elif defined OLD_SSBL_ERROR
     #include "/lib/textRendering/old_ssbl_error.glsl"
@@ -89,10 +114,20 @@
     #include "/lib/textRendering/error_optifine_end_crystal.glsl"
 #elif defined ACT_SHADOW_ERROR
     #include "/lib/textRendering/error_shadows_act.glsl"
+#elif defined APPLE_PHOTONICS_ERROR
+    #include "/lib/textRendering/error_apple_photonics.glsl"
+#elif defined OPTIFINE_PHOTONICS_ERROR
+    #include "/lib/textRendering/error_optifine_photonics.glsl"
+#elif defined OLD_PHOTONICS_ERROR
+    #include "/lib/textRendering/error_old_photonics.glsl"
+#elif defined PLAYER_REFLECTION_3D_LAYERS_ERROR
+    #include "/lib/textRendering/error_player_reflection_3d_layers.glsl"
+#elif defined NEW_EUPHORIA_PATCHES_UPDATE
+    #include "/lib/textRendering/new_Euphoria_Version.glsl"
 #elif USE_TEXTURE_PALETTE > 0 && defined PALETTE_SWAP
     #include "/lib/textRendering/error_palette_not_found.glsl"
 #else
-    #if defined COORDINATES_ACT_ERROR && !defined ACT_DISTANCE_WARNING_OVERRIDE
+    #ifdef COORDINATES_ACT_ERROR
         ivec2 absCameraPositionIntXZ = abs(cameraPositionInt.xz);
         if (max(absCameraPositionIntXZ.x, absCameraPositionIntXZ.y) > 8388550) {
             #include "/lib/textRendering/error_coordinates_act.glsl"
@@ -101,6 +136,11 @@
     #ifdef SHADOWDISTANCE_ACT_ERROR
         if (COLORED_LIGHTING_INTERNAL > shadowDistance*2) {
             #include "/lib/textRendering/error_shadowdistance_act.glsl"
+        }
+    #endif
+    #ifdef PHOTONICS_COORDINATES_ERROR
+        if (getPhotonicsAllowedDistance() < 1.0) {
+            #include "/lib/textRendering/error_coordinates_photonics.glsl"
         }
     #endif
 #endif

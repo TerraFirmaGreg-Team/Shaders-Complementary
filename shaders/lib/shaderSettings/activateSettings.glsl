@@ -1,5 +1,4 @@
 #include "/lib/shaderSettings/settingsFileDefines.glsl"
-#include "/lib/shaderSettings/TerraFirmaGregSettings.glsl"
 
 //Information//
 #define info0 0 //[0]
@@ -128,91 +127,4 @@
 #ifdef NO_WAVING_INDOORS
 #endif
 #ifdef SCREEN_DITHERING
-#endif
-
-#ifdef FLESH_WAVING
-#endif
-#ifdef FLESH_WAVING_ANYWHERE
-#endif
-#ifdef GLOWING_MIME_ENERGY
-#endif
-#ifdef GLOWING_ORE_SILVER_C
-#endif
-#ifdef GLOWING_ORE_SOULSILVER
-#endif
-#ifdef GLOWING_ORE_SPINEL
-#endif
-#ifdef GLOWING_ORE_ROSE_QUARTZ
-#endif
-#ifdef GLOWING_ORE_SMOKY_QUARTZ
-#endif
-#ifdef GLOWING_ORE_SULFUR
-#endif
-#ifdef GLOWING_ORE_SULFUR_QUARTZ
-#endif
-#ifdef GLOWING_ORE_DUSK_STONE
-#endif
-#ifdef GLOWING_ORE_ICE_STONE
-#endif
-#ifdef GLOWING_ORE_LEAF_STONE
-#endif
-#ifdef GLOWING_ORE_MOON_STONE
-#endif
-#ifdef GLOWING_ORE_SUN_STONE
-#endif
-#ifdef GLOWING_ORE_THUNDER_STONE
-#endif
-#ifdef GLOWING_ORE_WATER_STONE
-#endif
-#ifdef GLOWING_ORE_OBSIDIAN_DIAMOND
-#endif
-#ifdef ANIMATED_END_LAMP
-#endif
-#ifdef ES_LIGHTMAP
-#endif
-#ifdef BIOME_COLORED_ES_FLASH
-#endif
-#ifdef DISABLE_DEFAULT_FLASH
-#endif
-#ifdef GLOWING_CELESTIAL_GROWTHS
-#endif
-#ifdef NOT_GLOWING_CHORUS_FLOWER
-#endif
-#ifdef GLOWING_ORE_NEBULITE
-#endif
-#ifdef BIOME_COLORED_ES_NEBULA
-#endif
-#ifdef ES_NEBULA
-#endif
-#ifdef GLOWING_ALLURITE
-#endif
-#ifdef GLOWING_LUMIERE
-#endif
-#ifdef GLOWING_PINK_SALT
-#endif
-#ifdef GLOWING_ORE_SILVER_G
-#endif
-#ifdef WAVING_GILDED_BEADS
-#endif
-#ifdef CIRRUS_CLOUDS
-#endif
-#ifdef WAVING_ROPE
-#endif
-#ifdef GLOWING_NEARS
-#endif
-#ifdef GLOWING_ORE_LEAD
-#endif
-#ifdef GLOWING_ORE_SILVER_O
-#endif
-#ifdef GLOWING_PORKSLAG
-#endif
-#ifdef GLOWING_ORETORTOISE
-#endif
-#ifdef ANIMATED_FRIGHT_STEM
-#endif
-#ifdef SPECLIGHT_ACT
-#endif
-#ifdef GLOWING_CORALSTONE
-#endif
-#ifdef GLOWING_BLOODCAP_MUSHROOM
 #endif
