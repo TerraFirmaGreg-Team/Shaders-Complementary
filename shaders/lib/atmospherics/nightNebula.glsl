@@ -3,7 +3,6 @@
 // Nebula implementation by flytrap https://godotshaders.com/shader/2d-nebula-shader/
 #include "/lib/shaderSettings/stars.glsl"
 #include "/lib/shaderSettings/nightNebula.glsl"
-#include "/lib/shaderSettings/spaceTransition.glsl"
 
 #ifndef HQ_NIGHT_NEBULA
     const int OCTAVE = 5;
@@ -27,7 +26,7 @@ float cosM(float x) {
 }
 
 float rand(vec2 inCoord){
-    return fract(sinM(dot(inCoord, vec2(23.53, 44.0))) * 42350.45);
+    return fract(sinM(dot(inCoord, vec2(23.5, 44.0))) * 42350.45);
 }
 
 float perlin(vec2 inCoord){
@@ -92,15 +91,7 @@ vec3 GetNightNebula(vec3 viewPos, float VdotU, float VdotS) {
         VdotUFactor = pow(VdotUFactor, horizonPower);
     #endif
 
-    #ifdef NEBULA_AT_DAY //unused yet
-		float nightHideFactor = 1.0;
-	#else
-		#ifdef SPACE_TRANSITION
-			float nightHideFactor = mix(min1(nightFactor * 2.0), 1.0, getAtmosphereFadeoutFactor);
-		#else
-			float nightHideFactor = min(nightFactor * 2.0);
-		#endif
-	#endif
+    float nebulaFactor = pow2(VdotUFactor * min1(nightFactor * 2.0));
 
     #if NEBULA_HORIZON_STRENGTH < 10
         float brightnessCompensation = 1.0 - (1.0 - horizonPower) * 0.5 * max0(originalVdotUFactor);
@@ -108,9 +99,9 @@ vec3 GetNightNebula(vec3 viewPos, float VdotU, float VdotS) {
     #endif
 
     #ifdef CLEAR_SKY_WHEN_RAINING
-        nebulaFactor *= min1(invRainFactor + 0.4);
+        nebulaFactor *= min1(invRainFactorDynamic + 0.4);
     #else
-        nebulaFactor *= invRainFactor;
+        nebulaFactor *= invRainFactorDynamic;
     #endif
 
     nebulaFactor -= maxBlindnessDarkness;
@@ -183,8 +174,7 @@ vec3 GetNightNebula(vec3 viewPos, float VdotU, float VdotS) {
     float starGlow = pow2(clamp(starIntensity, 0.0, 0.3 + starAmount)) * starBrightness * NEBULA_STAR_BRIGHTNESS;
 
     #ifdef NEBULA_ONLY_STARS
-        nebulaTexture.a = step(0.15, nebulaTexture.a);
-        nebulaTexture.rgb = vec3(3.0 * starGlow);
+        nebulaTexture.rgb = vec3(10.0 * starGlow);
     #else
         nebulaTexture.rgb *= 1.5 + 10.0 * starGlow;
     #endif

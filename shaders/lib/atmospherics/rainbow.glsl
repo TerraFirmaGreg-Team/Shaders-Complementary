@@ -6,7 +6,7 @@ vec3 GetRainbow(vec3 translucentMult, vec3 nViewPos, float z0, float z1, float l
     float rainbowTime = min1(max0(SdotU - 0.1) / 0.15);
     rainbowTime = clamp(rainbowTime - pow2(pow2(pow2(noonFactor))) * 8.0, 0.0, 0.85);
     #if RAINBOWS == 1 // After Rain
-        rainbowTime *= sqrt2(max0(wetness - 0.333) * 1.5) * invRainFactor * inRainy;
+        rainbowTime *= sqrt2(max0(wetness - 0.333) * 1.5) * invRainFactorDynamic * inRainy;
     #endif
 
     if (rainbowTime > 0.001) {
@@ -54,7 +54,7 @@ vec3 GetRainbow(vec3 translucentMult, vec3 nViewPos, float z0, float z1, float l
             if (z1 > z0 && lViewPos < rainbowLength)
             rainbow *= mix(translucentMult, vec3(1.0), lViewPos / rainbowLength);
 
-            if (isEyeInWater != 0) rainbow *= sqrt1(VdotU);
+            if (isEyeInWater != 0) rainbow *= sqrt1(max0(VdotU));
 
             rainbow *= rainbowFactor;
         }

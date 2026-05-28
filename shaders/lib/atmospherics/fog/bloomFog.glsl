@@ -21,14 +21,6 @@ float GetBloomFog(float lViewPos) {
         float bloomFogMult;
         if (isEyeInWater != 1) {
             bloomFogMult = (rainFactor2 * rainBloomAdd + nightBloomAdd * (1.0 - sunFactor)) * eyeBrightnessM;
-            #ifdef MOD_YUNGSCAVEBIOMES
-                bloomFogMult += YUNGS_SANDSTORM_FOG_BLOOM * yungSandstormFactor * 10;
-            #endif
-            #if DOOM_AND_GLOOM_FOG == 1
-                bloomFogMult += FOG_BLOOM * eyeBrightnessM;
-            #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
-                bloomFogMult += FOG_BLOOM * doomAndGloomFog * eyeBrightnessM;
-            #endif
             #ifdef CAVE_FOG
                 bloomFogMult += GetCaveFactor() * caveBloomAdd;
             #endif
@@ -37,7 +29,7 @@ float GetBloomFog(float lViewPos) {
         }
     #elif defined NETHER
         float farM = min(renderDistance, NETHER_VIEW_LIMIT); // consistency9023HFUE85JG
-        float bloomFog = lViewPos / clamp(farM, 96.0, 256.0);
+        float bloomFog = lViewPos / clamp(farM, 96.0, 512.0);
         bloomFog *= bloomFog * bloomFog;
         bloomFog = 1.0 - exp(-8.0 * bloomFog);
         bloomFog *= float(isEyeInWater == 0);
@@ -52,4 +44,3 @@ float GetBloomFog(float lViewPos) {
 
     return 1.0 + bloomFog * bloomFogMult;
 }
-                        

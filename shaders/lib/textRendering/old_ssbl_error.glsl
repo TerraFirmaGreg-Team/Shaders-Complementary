@@ -1,4 +1,3 @@
-float animation = min(starter * 0.3, 0.1) * 10.0;
 color.rgb = mix(mix(vec3(GetLuminance(color.rgb)), vec3(0.0), 0.65), color.rgb, animation);
 
 beginTextM(4, vec2(20, 90));
@@ -19,6 +18,8 @@ beginTextM(4, vec2(20, 90));
     printString((
         _a, _n, _d, _space, _r, _e, _m, _o, _v, _e, _space, _t, _h, _e, _space, _l, _i, _n, _e, _space, _quote, _M, _U, _L, _T, _I, _C, _O, _L, _O, _R, _E, _D, _under, _B, _L, _O, _C, _K, _L, _I, _G, _H, _T, _equal, _t, _r, _u, _e, _quote, _space
     ));
-    vec3 textColor = color.rgb;
+    printLine();
+    printString((_M, _o, _v, _e, _space, _t, _o, _space, _d, _i, _s, _c, _a, _r, _d, _space, _e, _r, _r, _o, _r, _space, _m, _e, _s, _s, _a, _g, _e));
+    textColor = color.rgb;
 endText(textColor);
 color.rgb = mix(textColor, color.rgb, animation);

@@ -1,16 +1,7 @@
-
-
-//   ___                _                   _        _   ___      _      _
-//  / __|_  _ _ __ _ __| |___ _ __  ___ _ _| |_ __ _| | | _ \__ _| |_ __| |_  ___ ___
-//  \__ \ || | '_ \ '_ \ / -_) '  \/ -_) ' \  _/ _` | | |  _/ _` |  _/ _| ' \/ -_|_-<
-//  |___/\_,_| .__/ .__/_\___|_|_|_\___|_||_\__\__,_|_| |_| \__,_|\__\__|_||_\___/__/
-//           |_|  |_|
-// Settings added by Supplemental Patches
-
 #ifndef MAIN_FOG_SETTINGS_FILE
 #define MAIN_FOG_SETTINGS_FILE
 
-#define LESS_LAVA_FOG
+//#define LESS_LAVA_FOG
 
 
 // Euphoria Patches Settings
@@ -31,9 +22,5 @@
 #define BORDER_FOG_DISTANCE_END 3 //[1 2 3 6 10 50 100 500 1000]
 #define BORDER_FOG_DENSITY_END 1.00 //[0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00]
 
-
-#define FOG_INTENSITY 0.150 //[0.03 0.05 0.08 0.10 0.13 0.15 0.18 0.20 0.22 0.25 0.27 0.30]
-
-#define YUNGS_SANDSTORM_FOG_INTENSITY 0.150 //[0.025 0.050 0.075 0.100 0.125 0.150 0.175 0.200 0.225 0.250 0.275 0.300]
 
 #endif

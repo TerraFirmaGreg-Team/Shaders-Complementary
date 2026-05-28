@@ -67,9 +67,9 @@ vec3 GetShootingStars(vec2 starCoord, float VdotU, float VdotS) {
     #endif
 
     #ifdef CLEAR_SKY_WHEN_RAINING
-        visibility *= min1(invRainFactor + 0.4);
+        visibility *= min1(invRainFactorDynamic + 0.4);
     #else
-        visibility *= invRainFactor;
+        visibility *= invRainFactorDynamic;
     #endif
 
     if (visibility <= 0.01) return vec3(0.0);

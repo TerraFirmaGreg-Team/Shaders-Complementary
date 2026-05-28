@@ -5,72 +5,66 @@ vec2 worldOutlineOffset[4] = vec2[4] (
     vec2( 1.0, 0)
 );
 
-void DoWorldOutline(inout vec3 color, float linearZ0, float pixelFade, vec3 playerPos, float minecraft_far) {
-    float outlineFade = 1.0;
-    #ifdef DISTANT_HORIZONS
+void DoWorldOutline(inout vec3 color, float linearZ0, vec3 playerPos, float fresnel, float dither) {
+    #ifdef ENTITIES_ARE_LIGHT
+        #define WORLD_OUTLINE_THICKNESS_M 4
+    #else
+        #define WORLD_OUTLINE_THICKNESS_M WORLD_OUTLINE_THICKNESS
+    #endif
+
+    #ifndef WORLD_OUTLINE_SCALED
+        vec2 scale = vec2(1.0 / view);
+    #else
+        float scm = 0.005;
+        float fovScale = gbufferProjection[1][1];
+        float distScale = max((far - near) * linearZ0 + near, 3.0);
+        vec2 scale = vec2(scm / aspectRatio, scm) * fovScale / distScale;
+        scale *= 0.99 + 0.2 * dither;
+    #endif
+
+    // Fix screen edges
+    vec2 texCoordDirection = sign(texCoord - vec2(0.5));
+    vec2 checkCoord = texCoord + scale * vec2(texCoordDirection.x * WORLD_OUTLINE_THICKNESS_M, texCoordDirection.y * WORLD_OUTLINE_THICKNESS_M);
+    vec2 absCheckCoord = abs(checkCoord - vec2(0.5));
+    float outlineMult = max0(0.5 - max(absCheckCoord.x, absCheckCoord.y));
+          outlineMult = min1(outlineMult * 0.1 / (scale.x * WORLD_OUTLINE_THICKNESS_M));
+
+    #if defined DISTANT_HORIZONS || defined VOXY
         float horizontalDistance = length(playerPos.xz);
         float verticalDistance = abs(playerPos.y);
+        float fadeEndistance = max(horizontalDistance, verticalDistance);
 
-        float distanceToCamera = max(horizontalDistance, verticalDistance);
+        #ifdef DISTANT_HORIZONS
+            float farM = far * 0.8;
+        #else
+            float farM = far * 0.95;
+        #endif
+        float fade = smoothstep(far * 0.4, farM, fadeEndistance);
 
-        float fadeStart = minecraft_far * 0.7;
-        float fadeEnd = minecraft_far * 0.9;
-        if (fadeStart >= fadeEnd) {
-            fadeEnd = fadeStart + max(1.0, minecraft_far * 0.01);
-        }
-        outlineFade = (1.0 - smoothstep(fadeStart, fadeEnd, distanceToCamera)) * pixelFade;
-        if (outlineFade < 0.001) return;
+        outlineMult *= 1.0 - fade;
     #endif
 
-    vec2 scale = vec2(1.0 / view);
+    if (outlineMult < 0.0001) return;
 
-    float outlines[2] = float[2] (0.0, 0.0);
-    float outlined = 1.0;
-    float z = linearZ0 * far;
-    float totalz = 0.0;
-    float maxz = 0.0;
-    float sampleza = 0.0;
-    float samplezb = 0.0;
+    outlineMult *= 0.25;
 
-    #ifdef ENTITIES_ARE_LIGHT
-        #define WORLD_OUTLINE_THICKNESSM 4
-    #else
-        #define WORLD_OUTLINE_THICKNESSM WORLD_OUTLINE_THICKNESS
-    #endif
-    #if PIXELATED_SCREEN_SIZE > 0
-        int sampleCount = WORLD_OUTLINE_THICKNESSM * 4 + abs(9 - int(PIXELATED_SCREEN_SIZE_INTERNAL * 0.1));
-    #else
-        int sampleCount = WORLD_OUTLINE_THICKNESSM * 4;
-    #endif
+    float r0 = 1.0 / GetLinearDepth(texture2D(depthtex0, texCoord + vec2(-WORLD_OUTLINE_THICKNESS_M, -WORLD_OUTLINE_THICKNESS_M) * scale).r);
+    float r1 = 1.0 / GetLinearDepth(texture2D(depthtex0, texCoord + vec2(-WORLD_OUTLINE_THICKNESS_M,  WORLD_OUTLINE_THICKNESS_M) * scale).r);
+    float r2 = 1.0 / GetLinearDepth(texture2D(depthtex0, texCoord + vec2( WORLD_OUTLINE_THICKNESS_M, -WORLD_OUTLINE_THICKNESS_M) * scale).r);
+    float r3 = 1.0 / GetLinearDepth(texture2D(depthtex0, texCoord + vec2( WORLD_OUTLINE_THICKNESS_M,  WORLD_OUTLINE_THICKNESS_M) * scale).r);
+    float rA = 0.25 * (r0 + r1 + r2 + r3);
+    float slope = (1.0 / linearZ0 - rA) * (linearZ0 * linearZ0);
 
-    for (int i = 0; i < sampleCount; i++) {
-        vec2 offset = (1.0 + floor(i / 4.0)) * scale * worldOutlineOffset[int(mod(float(i), 4))];
-        float depthCheckP = GetLinearDepth(texture2D(depthtex0, texCoord + offset).r) * far;
-        float depthCheckN = GetLinearDepth(texture2D(depthtex0, texCoord - offset).r) * far;
+    float threshold = linearZ0 / 2000.0 * WORLD_OUTLINE_THICKNESS_M;
+    float outline = clamp(slope / threshold, 0.0, 1.0) * WORLD_OUTLINE_I;
 
-        outlined *= clamp(1.0 - ((depthCheckP + depthCheckN) - z * 2.0) * 32.0 / z, 0.0, 1.0);
-
-        if (i <= 4) maxz = max(maxz, max(depthCheckP, depthCheckN));
-        totalz += depthCheckP + depthCheckN;
-    }
-
-    float outlinea = 1.0 - clamp((z * 8.0 - totalz) * 64.0 / z, 0.0, 1.0) * clamp(1.0 - ((z * 8.0 - totalz) * 32.0 - 1.0) / z, 0.0, 1.0);
-    float outlineb = clamp(1.0 + 8.0 * (z - maxz) / z, 0.0, 1.0);
-    float outlinec = clamp(1.0 + 64.0 * (z - maxz) / z, 0.0, 1.0);
-
-    float outline = (0.35 * (outlinea * outlineb) + 0.65) * (0.75 * (1.0 - outlined) * outlinec + 1.0);
-    outline -= 1.0;
-
-    outline *= WORLD_OUTLINE_I / WORLD_OUTLINE_THICKNESSM;
-    if (outline < 0.0) outline = -outline * 0.25;
-
-    outline *= outlineFade;
+    outline *= outlineMult;
 
     #if RETRO_LOOK == 1
         color = outline * 10.0 * vec3(RETRO_LOOK_R, RETRO_LOOK_G, RETRO_LOOK_B) * RETRO_LOOK_I;
     #elif RETRO_LOOK == 2
         color = mix(color, outline * 10.0 * vec3(RETRO_LOOK_R, RETRO_LOOK_G, RETRO_LOOK_B) * RETRO_LOOK_I, nightVision);
     #else
-        color += min(color * outline * 2.5, vec3(outline));
+        color += min(color * outline, vec3(outline));
     #endif
 }

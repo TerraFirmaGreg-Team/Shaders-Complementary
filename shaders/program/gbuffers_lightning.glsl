@@ -66,7 +66,7 @@ void main() {
     if (entityId == 50004
         #if MC_VERSION >= 12105 && defined IS_IRIS
             // Iris broken lightning bolt detection after 1.21.5
-            || dot(color.rgb, color.rgb) > 0.01 && color.r < 0.45 && color.g < 0.45 && color.b < 0.5 && glColor.a == 0.0
+            || dot(color.rgb, color.rgb) > 0.01 && color.r < 0.45 && color.g < 0.45 && color.b < 0.5
         #endif
     ) { // Lightning Bolt
         #include "/lib/materials/specificMaterials/others/lightningBolt.glsl"
@@ -75,6 +75,9 @@ void main() {
         #ifdef END
             if (dither < 0.8) discard;
             color.rgb *= 15.0;
+            #if DRAGON_DEATH_EFFECT_INTERNAL == 1
+                discard;
+            #endif
         #endif
     }
 
@@ -159,11 +162,11 @@ void main() {
     #endif
 
     #if DRAGON_DEATH_EFFECT_INTERNAL > 0
-        if (entityId == 0 && (glColor.a < 0.2 || glColor.a == 1.0)) { // Only lightning bolts and dragon death effect run in this program, lightning has an entity ID assigned
+        if ((entityId == 0 || entityId == 50204) && (glColor.a < 0.2 || glColor.a == 1.0)) { // Only lightning bolts and dragon death effect run in this program, lightning has an entity ID assigned
+            SetEndDragonDeath();
             #if DRAGON_DEATH_EFFECT_INTERNAL == 1
                 gl_Position = vec4(0);
             #endif
-            SetEndDragonDeath();
         }
     #endif
 }

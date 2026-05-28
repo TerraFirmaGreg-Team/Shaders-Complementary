@@ -10,7 +10,7 @@ const float vortex_ballRadius = 5.0;
 const float death_radius = 70.0;
 
 #ifndef INCLUDE_ENDER_BEAMS
-    #ifdef GBUFFERS_WATER
+    #if defined GBUFFERS_WATER || defined VOXY_PATCH
         float vlFactor = 0.5;
     #endif
 #endif

@@ -8,10 +8,19 @@ const int colortex5Format = RGBA8;          //scene image for water reflections 
 const int colortex6Format = RGBA8;          //smoothnessD & materialMask & skyLightFactor & lmCoord.x with purkinje mask
 const int colortex7Format = RGBA16F;        //(cloud/water map on gbuffer) | reflection temporal image (rgb) & previous depth
 const int colortex8Format = RGBA16F;        //SSR results for WSR, topmost translucent opacity
-#ifdef SS_BLOCKLIGHT
+const int colortex12Format = RGBA8;         //Improved Rain
+#ifdef PHOTONICS_LIGHTING
+const int colortex9Format  = RGBA16F;       // Photonics indirect result (reused from SS colored light slot)
+const int colortex10Format = RGBA8;         // Photonics albedo cache (reused from SS colored light slot)
+const int colortex11Format = RGBA16F;       // Pixelation offset for photonics
+const int colortex20Format = RGBA16F;       // gl_Normal
+#elif defined SS_BLOCKLIGHT
 const int colortex9Format  = RGBA16F;       // Screenspace colored light
 const int colortex10Format = RGBA16F;       // Screenspace colored light Blurred
 #endif
+
+const int colortex18Format = R8;            //shadow for voxy chunks (needs reprojection)
+const int colortex19Format = RGBA8;         //scene image for voxy reflections (needs reprojection)
 */
 
 const bool colortex0Clear = true;
@@ -22,9 +31,18 @@ const bool colortex4Clear = false;
 const bool colortex5Clear = false;
 const bool colortex6Clear = true;
 const bool colortex7Clear = false;
-const bool colortex8Clear = true;
+
+const bool colortex12Clear = true;
+
 const bool colortex9Clear = true;
+#ifdef PHOTONICS_LIGHTING
+const bool colortex10Clear = true;
+const bool colortex11Clear = true;
+#else
 const bool colortex10Clear = false;
+#endif
+const bool colortex18Clear = false;
+const bool colortex19Clear = false;
 
 const bool shadowHardwareFiltering = true;
 const float shadowDistanceRenderMul = 1.0;
