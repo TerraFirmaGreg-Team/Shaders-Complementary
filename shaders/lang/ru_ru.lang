@@ -1773,7 +1773,7 @@ option.BORDER_FOG_OVERWORLD=Граничный туман обычного ми�
 option.NETHER_PORTAL_VARIATION=Предустановка портала в Незер
 option.NETHER_PORTAL_VARIATION.comment=Выбор стиля портала в Незер. §e[*]§r Требуется встроенный PBR+.
 value.NETHER_PORTAL_VARIATION.0=Ванильный
-value.NETHER_PORTAL_VARIATION.1=Дополнительный
+value.NETHER_PORTAL_VARIATION.1=Complementary
 value.NETHER_PORTAL_VARIATION.2=Фиолетовая пустота
 
 option.BIOME_COLORED_NETHER_PORTALS=Порталы-хамелеоны
@@ -1784,7 +1784,7 @@ option.NETHER_PORTAL_NOISE.comment=Добавляет шум к текстуре
 
 option.END_PORTAL_VARIATION=Предустановка портала в Энд
 option.END_PORTAL_VARIATION.comment=Выбор стиля портала в Энд. §e[*]§r Требуется встроенный PBR+.
-value.END_PORTAL_VARIATION.0=Дополнительный
+value.END_PORTAL_VARIATION.0=Complementary
 value.END_PORTAL_VARIATION.1=Размытые нити
 value.END_PORTAL_VARIATION.3=Пиксельная сальса
 
@@ -1814,7 +1814,7 @@ option.END_CURVATURE_SIZE=Кривизна Энда
 
 option.LAVA_VARIATION=Предустановка лавы
 option.LAVA_VARIATION.comment=Выберите стиль лавы.
-value.LAVA_VARIATION.0=Дополнительный
+value.LAVA_VARIATION.0=Complementary
 value.LAVA_VARIATION.1=Адаптивный шум (рекомендуется)
 value.LAVA_VARIATION.2=Пылающий румянец
 value.LAVA_VARIATION.3=Расплавленный сыр
@@ -1846,7 +1846,7 @@ option.NETHER_BRIGHTNESS.comment=Общая освещённость измер�
 
 option.END_ROD_COLOR_PROFILE=Профиль стержней Энда
 option.END_ROD_COLOR_PROFILE.comment=Цвет стержней Энда, используемый по умолчанию в Complementary, или ваш собственный.§e[*]§r Требуется «Поддержка наборов ресурсов»: встроенный PBR+.
-value.END_ROD_COLOR_PROFILE.0=Дополнительный
+value.END_ROD_COLOR_PROFILE.0=Complementary
 value.END_ROD_COLOR_PROFILE.1=Пользовательский
 value.END_ROD_COLOR_PROFILE.2=Радуга
 value.END_ROD_COLOR_PROFILE.3=Радуга (только обычный мир)
@@ -3140,11 +3140,7 @@ option.TFGinfo2.comment=Наш GitHub: §d§ngithub.com/TerraFirmaGreg-Team/Shad
 screen.TERRAFIRMAGREG_SETTINGS=Configure TFG compat
 screen.TERRAFIRMAGREG_SETTINGS.comment=§dTerraFirmaGreg compat§r Настройки
 
-screen.TFG_ATMOSPHERIC=Атмосфера
-screen.TFG_ATMOSPHERIC.comment=Настройки атмосферы
 
-screen.TFG_SPACE_TRANSITION=Переход к космосу
-screen.TFG_SPACE_TRANSITION.comment=Цвет неба зависит от координаты Y игрока
 
 option.ST_TOGGLE=Переключить переход к области
 
@@ -3160,19 +3156,10 @@ option.SPACE_TRANSITION_B=Синий цвет
 option.ST_STARS=Вкл/выкл звезды пробела
 option.ST_STARS.comment=Позволяет звёздочкам появляться при достижении высоты (высота, на которой появляются звезды, зависит от высоты перехода к пространству)
 
-screen.TFG_STARS=Звезды
-screen.TFG_STARS.comment=Различные настройки увеличили звездное небо
 option.SPACE_STARS_MULTIPLIER=Множитель звезд космоса
 option.SPACE_STARS_MULTIPLIER.comment=Изменяет количество звезд на планетах без атмосферы
 
-screen.TFG_SPACE_STARS_COLORS=Цвета звёзд
 option.SPACE_STARS_SPECTRUM=Использовать звёздочные цвета
-screen.TFG_M_STARS_COLORS=Цвет М-Звезд
-screen.TFG_G_STARS_COLORS=Цвета G-звезд
-screen.TFG_A_STARS_COLORS=Цвета А-Звезд
-screen.TFG_M_STARS_COLORS.comment=Установить значения цвета звезд с M спектральным типом
-screen.TFG_G_STARS_COLORS.comment=Установить значения цвета звезд с типом G спектра
-screen.TFG_A_STARS_COLORS.comment=Установить значения цвета звезд с спектральным типом
 option.M_STAR_COLOR_1_OW_R = Красный цвет
 option.M_STAR_COLOR_1_OW_G = Зеленый цвет
 option.M_STAR_COLOR_1_OW_B = Синий цвет
