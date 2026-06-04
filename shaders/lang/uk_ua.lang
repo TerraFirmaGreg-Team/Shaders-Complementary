@@ -38,41 +38,41 @@ option.info5.comment=Налаштування з жовтою назвою оз�
 
 
 option.info8=Як приєднатися до спільноти
-option.info8.comment=Ви можете приєднатися до Discord-сервера Complementary, вступивши до нашої дружньої спільноти ви можете мати можливість зв'язатися з розробниками або досвідченими членами спільноти. www.complementary.dev/discord.
+option.info8.comment=Ти можеш приєднатися до Discord‑сервера Complementary, щоб долучитися до нашої дружньої спільноти та мати змогу контактувати з розробниками чи досвідченими учасниками спільноти.  \nwww.complementary.dev/discord
 
 option.info9=Як підтримати Complementary
-option.info9.comment=Найкращий спосіб підтримати розробку Complementary — поділитися нею з друзями або в соціальних мережах, але ви також можете підтримати розробника безпосередньо на Patreon. www.patreon.com/emingt.
+option.info9.comment=Найкращий спосіб підтримати розробку Complementary — це поділитися ним із друзями чи в соціальних мережах, але ти також можеш безпосередньо підтримати розробника на Patreon.  \nwww.patreon.com/emingt
 
-option.info10=Згадки і подяки
-option.info10.comment=EminGT: головний розробник Complementary. Capt Tatsu: розробник BSL Shaders, його щедрість зробила можливим Complementary в першу чергу. Спеціальна подяка: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE.
+option.info10=Автори
+option.info10.comment=EminGT: Головний розробник Complementary. Capt Tatsu: Розробник BSL Shaders, його щедрість зробила Complementary можливим від самого початку. Особлива подяка: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE\n
 
 option.info11=§dАвтори шейдерів TFG
-option.info11.comment=Велика подяка EminGT за доповнення, SpaceEagle за Euphoria-Patches, lemon41625 за додаткові патчі та команді taidumcraft за перший сумісний з ad_astra шейдер, який ми широко використовували!
+option.info11.comment=Велика подяка EminGT за Complementary, SpaceEagle за Euphoria‑Patches, lemon41625 за supplemental‑patches та команді taidumcraft за перший сумісний з ad_astra шейдер, який ми широко використовували!
 
 option.info12=Налаштування Euphoria Patches
-option.info12.comment=Усі параметри Euphoria вимкнено усталено, і користувач може вирішити, що ввімкнути. У категорії «Популярні налаштування» можна знайти найпопулярніші функції Euphoria Patches. Існує незліченна кількість інших налаштувань, і з кожним оновленням додається більше, отримуйте задоволення!
+option.info12.comment=Усі параметри Euphoria типово вимкнені, і користувач може сам вирішити, що ввімкнути. У категорії «Популярні налаштування» можна знайти найпопулярніші функції Euphoria Patches. Існує безліч інших налаштувань, і з кожним оновленням додаються нові — отримуй задоволення від експериментів!
 
 option.info13=Підтримка модів Euphoria
-option.info13.comment=Euphoria Patches має на меті кращу підтримку блоків з модів, ніж Complementary завдяки підтримці блоків з модів усталено (див. block.properties). Виявлення джерела світла з автоматичним застосуванням випромінювання. Виявлення моделі листя з автоматичним застосуванням SSS.
+option.info13.comment=Euphoria Patches має на меті краще підтримувати модифіковані блоки, ніж звичайний Complementary, завдяки наявності стандартної підтримки модифікованих блоків (див. block.properties). Виявлення джерел світла з автоматично застосованим випромінюванням. Виявлення моделей рослинності з автоматично застосованим SSS.
 
 option.info14=Приєднуйтесь до спільноти
-option.info14.comment=Приєднуйтеся до Discord-сервера Euphoria Patches, аби задати питання або просто доєднатися до спільноти, і бути в курсі останніх оновлень. §d§l§neuphoriapatches.com/discord
+option.info14.comment=Приєднуйся до Discord‑сервера Euphoria Patches, щоб ставити запитання, долучитися до дружньої спільноти та залишатися в курсі останніх новин. §d§l§neuphoriapatches.com/discord
 
-option.info15=Згадки і подяки Euphoria Patches
-option.info15.comment=Усі титри можна знайти на сторінці https://www.euphoriapatches.com/credits. isuewo — колишній співрозробник Euphoria Patches. EminGT: головний розробник Complementary. Capt Tatsu, gri573, FoZy STYLE, JoKerTech, SixthSurge, WoMspace (aka Sasha), Septonious, fayer3, Xonk, Memokii, dragoncat, TheNukeLore, dbrighthd, Surisen (Ruri), Acer (Alex), Folox_, Helgust.
+option.info15=Автори Euphoria Patches
+option.info15.comment=Усіх авторів можна знайти на §deuphoriapatches.com/credits§r. isuewo — колишній співрозробник Euphoria Patches. EminGT: головний розробник Complementary. Capt Tatsu, gri573, FoZy STYLE, JoKerTech, SixthSurge, WoMspace (відомий як Sasha), Septonious, fayer3, Xonk, Memokii, dragoncat, TheNukeLore, dbrighthd, Surisen (Ruri), Acer (Alex), Folox_, Helgust.
 
 option.info16=§nЯк підтримати Euphoria Patches
-option.info16.comment=Ми можете підтримати Euphoria Patches цікавлячись новими оновленнями та ділячись ними з людьми, але ви також можете безпосередньо підтримувати SpacEagle17 на Patreon або Ko-Fi і отримати ексклюзивні бета-збірки. §l§neuphoriapatches.com/support.
+option.info16.comment=Ти можеш підтримати Euphoria Patches, цікавлячись новими оновленнями та поширюючи їх серед людей, а також безпосередньо підтримати SpacEagle17 на Patreon чи Ko‑Fi та отримати доступ до ексклюзивних бета‑версій. §d§l§neuphoriapatches.com/support
 
 option.info17=Бета-версія: SpacEagle17 Patreon
-option.info17.comment=Ви можете підтримати SpacEagle17 на Patreon або Ko-Fi і отримати версію для розробників. §l§neuphoriapatches.com/support.
+option.info17.comment=Ти можеш підтримати SpacEagle17 на Patreon чи Ko‑Fi та отримати доступ до ексклюзивних версій розробки. §d§l§neuphoriapatches.com/support
 
 option.info18=Для Complementary r5.7.1
-option.info18.comment=Дякую за встановлення Euphoria Patches :).
+option.info18.comment=Дякую за встановлення Euphoria Patches :)
 
 option.info19=§aНОВЕ ОНОВЛЕННЯ
 value.info19.0=§cX.Y.Z §r—>§a X.Y.Z
-option.info19.comment=Нова версія EuphoriaPatcher доступна. Завантажити: https://euphoriapatches.com/download.
+option.info19.comment=Доступна нова версія мода EuphoriaPatcher. Завантаж її з Modrinth: https://euphoriapatches.com/download.
 
 value.info20.0=§aeuphoriapatches.com/download
 option.info20.comment=Нова версія EuphoriaPatcher доступна. Завантажити: https://euphoriapatches.com/download.
@@ -110,25 +110,25 @@ screen.CLOUD_SETTINGS=Хмари
 screen.CLOUD_SETTINGS.comment=Налаштування, які стосуються хмар.
 
 screen.CLOUD_COLOR_SETTINGS=Колір хмар
-screen.CLOUD_COLOR_SETTINGS.comment=Змінює колір хмар.
+screen.CLOUD_COLOR_SETTINGS.comment=Налаштування для зміни кольору хмар.
 
-screen.CLOUD_UNBOUND_SETTINGS=Налаштування «непов'язаних» хмар
-screen.CLOUD_REIMAGINED_SETTINGS=Налаштування «переосмислених» хмар
+screen.CLOUD_UNBOUND_SETTINGS=Налаштування хмар у стилі Unbound
+screen.CLOUD_REIMAGINED_SETTINGS=Налаштування хмар у стилі Переосмислений
 
 screen.FOG_SETTINGS=Туман
-screen.FOG_SETTINGS.comment=Налаштування, які стосуються варіантів туману.
+screen.FOG_SETTINGS.comment=Налаштування, які стосуються різних типів туману.
 
-screen.SUN_MOON_SETTINGS=Сонце і Місяць
-screen.SUN_MOON_SETTINGS.comment=Налаштування, які стосуються Сонця і Місяця.
+screen.SUN_MOON_SETTINGS=Сонце / Місяць
+screen.SUN_MOON_SETTINGS.comment=Налаштування, які стосуються сонця та місяця.
 
-screen.NETHER_SETTINGS=Незер
-screen.NETHER_SETTINGS.comment=Налаштування, які стосуються Незеру.
+screen.NETHER_SETTINGS=Вимір Незер
+screen.NETHER_SETTINGS.comment=Налаштування, які стосуються виміру Незер.
 
-screen.WEATHER_SETTINGS=Дощ і погода
-screen.WEATHER_SETTINGS.comment=Налаштування, які стосуються погоди.
+screen.WEATHER_SETTINGS=Дощ / Погода
+screen.WEATHER_SETTINGS.comment=Налаштування, які  стосуються погодних умов
 
 screen.CAMERA_SETTINGS=Камера
-screen.CAMERA_SETTINGS.comment=Налаштування, стосуються камери і погляду.
+screen.CAMERA_SETTINGS.comment=Налаштування, які стосуються огляду/камери.
 
 screen.TONEMAP_SETTINGS=Баланс кольорів
 screen.TONEMAP_SETTINGS.comment=Налаштування, які стосуються балансу кольорів і вигляду.
