@@ -3129,58 +3129,6 @@ option.YUNGS_SANDSTORM_WAVING_INTENSITY.comment=Определяет, наско
 
 #  // TerraFirmaGreg //
 
-screen.TERRAFIRMAGREG_VERSION=TerraFirmaGreg Compat
-
-option.TFGinfo1=Важная информация
-option.TFGinfo1.comment=Спасибо за установку шейдеров TerraFirmaGreg. Шейдеры всё ещё находятся в разработке, поэтому ожидайте ошибок и несовершенств. Если у вас возникнут какие-либо проблемы или предложения, пожалуйста, оставьте их на TerraFirmaGreg-shaders GitHub. Шейдеры основаны на шейдерах Complementary-Euphoria-Supplemental. Спасибо всем разработчикам за предоставленную возможность использовать их труды
-
-option.TFGinfo2=§d§nGitHub
-option.TFGinfo2.comment=Наш GitHub: §d§ngithub.com/TerraFirmaGreg-Team/Shaders-Complementary§r Пожалуйста, отправляйте туда все баги и ваши предложения по улучшению шейдеров
-
-screen.TERRAFIRMAGREG_SETTINGS=Configure TFG compat
-screen.TERRAFIRMAGREG_SETTINGS.comment=§dTerraFirmaGreg compat§r Настройки
-
-screen.TFG_ATMOSPHERIC=Атмосфера
-screen.TFG_ATMOSPHERIC.comment=Настройки атмосферы
-
-screen.TFG_SPACE_TRANSITION=Переход к космосу
-screen.TFG_SPACE_TRANSITION.comment=Цвет неба зависит от координаты Y игрока
-
-option.ST_TOGGLE=Переключить переход к области
-
-option.ST_HEIGHT=Высота перехода
-option.ST_HEIGHT.comment=Высота начала изменения цвета неба
-
-option.SPACE_TRANSITION_R=Красный цвет
-
-option.SPACE_TRANSITION_G=Зеленый цвет
-
-option.SPACE_TRANSITION_B=Синий цвет
-
-option.ST_STARS=Вкл/выкл звезды пробела
-option.ST_STARS.comment=Позволяет звёздочкам появляться при достижении высоты (высота, на которой появляются звезды, зависит от высоты перехода к пространству)
-
-screen.TFG_STARS=Звезды
-screen.TFG_STARS.comment=Различные настройки увеличили звездное небо
-option.SPACE_STARS_MULTIPLIER=Множитель звезд космоса
-option.SPACE_STARS_MULTIPLIER.comment=Изменяет количество звезд на планетах без атмосферы
-
-screen.TFG_SPACE_STARS_COLORS=Цвета звёзд
-option.SPACE_STARS_SPECTRUM=Использовать звёздочные цвета
-screen.TFG_M_STARS_COLORS=Цвет М-Звезд
-screen.TFG_G_STARS_COLORS=Цвета G-звезд
-screen.TFG_A_STARS_COLORS=Цвета А-Звезд
-screen.TFG_M_STARS_COLORS.comment=Установить значения цвета звезд с M спектральным типом
-screen.TFG_G_STARS_COLORS.comment=Установить значения цвета звезд с типом G спектра
-screen.TFG_A_STARS_COLORS.comment=Установить значения цвета звезд с спектральным типом
-option.M_STAR_COLOR_1_OW_R = Красный цвет
-option.M_STAR_COLOR_1_OW_G = Зеленый цвет
-option.M_STAR_COLOR_1_OW_B = Синий цвет
-option.G_STAR_COLOR_1_OW_R = Красный цвет
-option.G_STAR_COLOR_1_OW_G = Зеленый цвет
-option.G_STAR_COLOR_1_OW_B = Синий цвет
-option.A_STAR_COLOR_1_OW_R = Красный цвет
-option.A_STAR_COLOR_1_OW_G = Зеленый цвет
-option.A_STAR_COLOR_1_OW_B = Синий цвет
+option.RABOTAITE_HLOPCHI=Автоперевод говно, поэтому я все удалил и прошу вас переделать (с любовью i_iht <3)
 
 

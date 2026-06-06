@@ -34,7 +34,9 @@
     #undef  LENSFLARE
     #undef  BLOOM_FOG
 	#undef	BORDER_FOG
-    #define PLANET_WIND_MULTIPLIER 0.04
+    #ifdef SWITCH_PLANET_WINDSPEED
+        #define PLANET_WIND_MULTIPLIER 0.04
+    #endif
 #endif
 #ifdef WORLD_MOON
     #define HAS_NO_MOON
@@ -52,7 +54,7 @@
     #define SUN_SIZE 2000 //normal is 400
  //   #define NEBULA_AT_DAY
     #define DAYLIGHT_STARS
-    #define PLANET_WIND_MULTIPLIER 0.1
+    #define HAS_NO_ATMOSPHERE
 	
 #endif
 
@@ -66,7 +68,9 @@
     #undef  LIGHTSHAFT_BEHAVIOUR
     #define LIGHTSHAFT_BEHAVIOUR 1
 	#undef	BORDER_FOG
-    #define PLANET_WIND_MULTIPLIER 0.3
+    #ifdef SWITCH_PLANET_WINDSPEED
+        #define PLANET_WIND_MULTIPLIER 0.3
+    #endif
 #endif
 
 #ifdef HAS_NO_ATMOSPHERE

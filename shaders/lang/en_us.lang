@@ -8,6 +8,7 @@ profile.HIGH=§eHigh (Default)
 profile.VERYHIGH=§cVery High
 profile.ULTRA=§4§lUltra
 profile.COMPLEMENTARY=§4§l§n§oComplementary
+profile.TRUE_DARKNESS=§0True Darkness
 profile.comment=Shader profiles change performance settings with the most optimised visual fidelity to performance ratio. §e[*]§r It's recommended to use one of these profiles for your settings unless you know what you are doing. §e[*]§r All affected settings can all be found in the "Performance Settings" menu. The Popular Settings Profile enables the community's favorite settings.
 
 #Information
@@ -3263,5 +3264,17 @@ option.G_STAR_COLOR_1_OW_B = Blue color
 option.A_STAR_COLOR_1_OW_R = Red color
 option.A_STAR_COLOR_1_OW_G = Green color
 option.A_STAR_COLOR_1_OW_B = Blue color
+
+screen.TFG_MATERIALS=Materials
+screen.TFG_MATERIALS.comment=Settings for specific blocks
+screen.TFG_PLANTS_SETTINGS=Plants
+screen.TFG_PLANTS_SETTINGS.comment=Settings for plants
+screen.TFG_PLANETS_SETTINGS=Planets
+screen.TFG_PLANETS_SETTINGS.comment=Settings on different planets
+option.DO_MORE_FOLIAGE_WAVING_TFG=More foliage waving
+option.DO_MORE_FOLIAGE_WAVING_TFG.comment=Allows more plants to wave
+option.SWITCH_PLANET_WINDSPEED=Windspeed multiplier
+option.SWITCH_PLANET_WINDSPEED.comment=Toggle wind speed multiplier on different planets
+screen.TFG_WATER_SETTINGS=DO NOT TOUCH (YET)
 
 

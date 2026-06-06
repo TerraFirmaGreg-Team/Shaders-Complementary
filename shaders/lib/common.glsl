@@ -904,4 +904,6 @@
 #endif
 
 // config for non-ad_astra specific modifications
+#define PLANET_WIND_MULTIPLIER 1.0
+
 #include "/TerraFirmaGreg.glsl"

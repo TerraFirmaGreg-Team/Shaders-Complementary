@@ -192,6 +192,10 @@ void DoWave(inout vec3 playerPos, int mat) {
                     || mat == 10769 // Torchflower
                     || mat == 10976 // Open Eye Blossom
                 #endif
+                #ifdef DO_MORE_FOLIAGE_WAVING_TFG
+                    || mat == 10771 // gleamflower
+                    || mat == 10775 // eyeblossom
+                #endif
             ) {
                 if (gl_MultiTexCoord0.t < mc_midTexCoord.t || fract(worldPos.y + 0.21) > 0.26)
                 DoWave_Foliage(playerPos.xyz, worldPos, 1.0);

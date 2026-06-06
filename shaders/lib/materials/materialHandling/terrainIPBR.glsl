@@ -2992,12 +2992,22 @@ if (mat < 11024) {
                     if (mat < 10800) {
                         if (mat < 10784) {
                             if (mat < 10776) {
-                                if (mat < 10772) { // Torchflower
-                                    #include "/lib/materials/specificMaterials/terrain/torchflower.glsl"
-                                }
-                                else /*if (mat < 10776)*/ { // Potted Torchflower
-                                    noSmoothLighting = true;
-
+                                if (mat < 10772) {
+                                    if (mat < 10770) { // Torchflower
+                                        #include "/lib/materials/specificMaterials/terrain/torchflower.glsl"
+                                    } else {
+                                        if (mat < 10772) { // Gleamflower
+                                            #include "/lib/materials/specificMaterials/terrain/gleamflower.glsl"
+                                        }
+                                    }
+                                } else {
+                                    if (mat < 10774) { // Potted Torchflower     
+                                        noSmoothLighting = true;
+                                    } else { 
+                                        if (mat < 10776) { // eyeblossom
+                                            #include "/lib/materials/specificMaterials/terrain/eyeblossom.glsl"
+                                        }
+                                    }
                                     float NdotE = dot(normalM, eastVec);
                                     if (abs(abs(NdotE) - 0.5) < 0.4) {
                                         #include "/lib/materials/specificMaterials/terrain/torchflower.glsl"
