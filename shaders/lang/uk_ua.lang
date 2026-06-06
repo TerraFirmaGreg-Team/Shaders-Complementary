@@ -3,12 +3,12 @@
 profile.POTATO=§aКартопля
 profile.VERYLOW=§aНаднизький
 profile.LOW=§aНизький
-profile.MEDIUM=§aПосередній
-profile.HIGH=§eВисокий (устал.)
+profile.MEDIUM=§aСередній
+profile.HIGH=§eВисокий (типово)
 profile.VERYHIGH=§cНадвисокий
 profile.ULTRA=§4§lУльтра
 profile.COMPLEMENTARY=§4§l§n§oВзаємодоповнюючий
-profile.comment=Профілі шейдерів змінюють налаштування продуктивности з максимально оптимізованим співвідношенням візуальної точности та продуктивности. §e[*]§r Рекомендовано використовувати один із цих профілів для налаштувань, якщо ви не знаєте, що робите. §e[*]§r Усі параметри, яких це стосується, можна знайти в меню «Продуктивність».
+profile.comment=Профілі шейдерів змінюють налаштування продуктивності з максимально оптимізованим співвідношенням візуальної якості до продуктивності. §e[*]§r Рекомендується використовувати один із цих профілів для своїх налаштувань, якщо ти не впевнений у тому, що робиш. §e[*]§r Усі відповідні параметри можна знайти в меню «Налаштування продуктивності». Профіль «Популярні налаштування» вмикає улюблені параметри спільноти.
 
 #Information
 screen.INFORMATION=Інформація
@@ -17,62 +17,62 @@ screen.INFORMATION.comment=Цей розділ містить кнопки, як
 screen.INFORMATION2=Інформація Complementary
 screen.INFORMATION2.comment=Цей розділ містить кнопки, які існують лише для надання інформації.
 
-option.info0=§bНаведіть курсор на кнопку
+option.info0=§bНаведи курсор на кнопку
 option.info0.comment=Цей розділ містить кнопки, які існують лише для надання інформації.
 
 option.info1=Як отримати кращу продуктивність
-option.info1.comment=Продуктивність є складною темою в Minecraft, оскільки на неї впливає дуже багато речей, але ви можете спробувати це: Зменште дальність промальовування, в ідеалі вона має бути від 6 до 16 майже для кожного пристрою. Зменште налаштування «Профіль», вони були ретельно перевірені на найкраще співвідношення візуальної якости та продуктивности. Більше інформації буде додано пізніше.
+option.info1.comment=Продуктивність — складна тема в Minecraft, адже на неї впливає дуже багато чинників, але можна спробувати таке:  \n- Зменшити дистанцію відтворення; оптимально вона має бути між 6 та 16 майже для кожного пристрою.  \n- Знизити параметр «Профіль» у налаштуваннях шейдерів — ці профілі ретельно протестовані для найкращого співвідношення візуальної якості та продуктивності.  \n\nБільше інформації буде додано пізніше.
 
 option.info2=Які налаштування найкращі
-option.info2.comment=Найкращі налаштування є суб'єктивними, але використання усталених налаштувань буде майже найкращим для більшости людей. Усталені налаштування були сформовані роками оцінок спільноти та відгуків, приділяючи велику увагу співвідношенню візуального вигляду та продуктивности. Але ви все одно можете сміливо налаштовувати та отримувати від цього задоволення!
+option.info2.comment=Найкращі налаштування є суб’єктивними, але використання стандартних налаштувань буде майже оптимальним для більшості людей. Стандартні налаштування сформовані роками оцінок і відгуків спільноти, з великою увагою до співвідношення візуальної якості та продуктивності. Втім, ти все одно можеш вільно експериментувати й отримувати задоволення від цього!\n
 
-option.info3=Що таке профілі та візуальний стиль
-option.info3.comment=«Профіль» змінює налаштування в «Продуктивність», при цьому не впливаючи на налаштування на основі переваг. «Візуальний стиль» змінює значення «Поточний стиль», які існують для багатьох налаштувань на основі переваг, але це не впливає на продуктивність значною мірою.
+option.info3=Що таке профілі чи візуальний стиль
+option.info3.comment=Налаштування «профіль» змінює параметри, що знаходяться в меню «налаштування продуктивності», при цьому не впливаючи на жодні налаштування, засновані на вподобаннях. «Візуальний стиль» змінює значення «встановлено стилем», які існують у багатьох налаштуваннях, заснованих на вподобаннях.
 
-option.info4=Що таке підтримка ПР
-option.info4.comment=Підтримка пакетів ресурсів керує тим, як пакет шейдерів обробляє різні блоки. Наприклад, §bIntegratedPBR+§r розглядає золоті блоки як відбивальні речі, тоді як §elabPBR§r або §eseuspbr§r вимагають встановлення пакета ресурсів, щоб повідомити це шейдеру. Якщо встановити «Підтримка ПР» на §aБазова§r, жоден блок не буде «особливим», окрім кількох винятків, таких як вода.
+option.info4=Що таке підтримка PR
+option.info4.comment=Опція RP Support визначає, як пак шейдерів обробляє різні блоки Minecraft. Наприклад, §bIntegratedPBR+§r розглядає золоті блоки як відбивні поверхні, тоді як §elabPBR§r або §eseuspbr§r вимагають встановлення пакета ресурсів, щоб повідомити про це шейдеру. Встановлення RP Support у значення §aBasic§r зробить так, що жоден блок не буде «особливим», окрім кількох винятків, як-от вода.
 
 option.info5=Що за жовті параметри
-option.info5.comment=Параметр із жовтою назвою означає, що параметр впливає на продуктивність вимірюваною величиною незважаючи на відсутність у категорії «Продуктивність». Якщо його ввімкнення призводить до червоного тексту параметра, це означає, що вартість продуктивности дуже висока.
+option.info5.comment=Налаштування з жовтою назвою означає, що воно впливає на продуктивність помітним чином, навіть якщо не належить до категорії «налаштування продуктивності». Якщо після ввімкнення воно зображається червоним текстом, це означає, що вартість продуктивності дуже висока.
 
 
 
 option.info8=Як приєднатися до спільноти
-option.info8.comment=Ви можете приєднатися до Discord-сервера Complementary, вступивши до нашої дружньої спільноти ви можете мати можливість зв'язатися з розробниками або досвідченими членами спільноти. www.complementary.dev/discord.
+option.info8.comment=Ти можеш приєднатися до Discord‑сервера Complementary, щоб долучитися до нашої дружньої спільноти та мати змогу контактувати з розробниками чи досвідченими учасниками спільноти.  \nwww.complementary.dev/discord
 
 option.info9=Як підтримати Complementary
-option.info9.comment=Найкращий спосіб підтримати розробку Complementary — поділитися нею з друзями або в соціальних мережах, але ви також можете підтримати розробника безпосередньо на Patreon. www.patreon.com/emingt.
+option.info9.comment=Найкращий спосіб підтримати розробку Complementary — це поділитися ним із друзями чи в соціальних мережах, але ти також можеш безпосередньо підтримати розробника на Patreon.  \nwww.patreon.com/emingt
 
-option.info10=Згадки і подяки
-option.info10.comment=EminGT: головний розробник Complementary. Capt Tatsu: розробник BSL Shaders, його щедрість зробила можливим Complementary в першу чергу. Спеціальна подяка: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE.
+option.info10=Автори
+option.info10.comment=EminGT: Головний розробник Complementary. Capt Tatsu: Розробник BSL Shaders, його щедрість зробила Complementary можливим від самого початку. Особлива подяка: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE\n
 
 option.info11=§dАвтори шейдерів TFG
-option.info11.comment=Велика подяка EminGT за доповнення, SpaceEagle за Euphoria-Patches, lemon41625 за додаткові патчі та команді taidumcraft за перший сумісний з ad_astra шейдер, який ми широко використовували!
+option.info11.comment=Велика подяка EminGT за Complementary, SpaceEagle за Euphoria‑Patches, lemon41625 за supplemental‑patches та команді taidumcraft за перший сумісний з ad_astra шейдер, який ми широко використовували!
 
 option.info12=Налаштування Euphoria Patches
-option.info12.comment=Усі параметри Euphoria вимкнено усталено, і користувач може вирішити, що ввімкнути. У категорії «Популярні налаштування» можна знайти найпопулярніші функції Euphoria Patches. Існує незліченна кількість інших налаштувань, і з кожним оновленням додається більше, отримуйте задоволення!
+option.info12.comment=Усі параметри Euphoria типово вимкнені, і користувач може сам вирішити, що ввімкнути. У категорії «Популярні налаштування» можна знайти найпопулярніші функції Euphoria Patches. Існує безліч інших налаштувань, і з кожним оновленням додаються нові — отримуй задоволення від експериментів!
 
 option.info13=Підтримка модів Euphoria
-option.info13.comment=Euphoria Patches має на меті кращу підтримку блоків з модів, ніж Complementary завдяки підтримці блоків з модів усталено (див. block.properties). Виявлення джерела світла з автоматичним застосуванням випромінювання. Виявлення моделі листя з автоматичним застосуванням SSS.
+option.info13.comment=Euphoria Patches має на меті краще підтримувати модифіковані блоки, ніж звичайний Complementary, завдяки наявності стандартної підтримки модифікованих блоків (див. block.properties). Виявлення джерел світла з автоматично застосованим випромінюванням. Виявлення моделей рослинності з автоматично застосованим SSS.
 
 option.info14=Приєднуйтесь до спільноти
-option.info14.comment=Приєднуйтеся до Discord-сервера Euphoria Patches, аби задати питання або просто доєднатися до спільноти, і бути в курсі останніх оновлень. §d§l§neuphoriapatches.com/discord
+option.info14.comment=Приєднуйся до Discord‑сервера Euphoria Patches, щоб ставити запитання, долучитися до дружньої спільноти та залишатися в курсі останніх новин. §d§l§neuphoriapatches.com/discord
 
-option.info15=Згадки і подяки Euphoria Patches
-option.info15.comment=Усі титри можна знайти на сторінці https://www.euphoriapatches.com/credits. isuewo — колишній співрозробник Euphoria Patches. EminGT: головний розробник Complementary. Capt Tatsu, gri573, FoZy STYLE, JoKerTech, SixthSurge, WoMspace (aka Sasha), Septonious, fayer3, Xonk, Memokii, dragoncat, TheNukeLore, dbrighthd, Surisen (Ruri), Acer (Alex), Folox_, Helgust.
+option.info15=Автори Euphoria Patches
+option.info15.comment=Усіх авторів можна знайти на §deuphoriapatches.com/credits§r. isuewo — колишній співрозробник Euphoria Patches. EminGT: головний розробник Complementary. Capt Tatsu, gri573, FoZy STYLE, JoKerTech, SixthSurge, WoMspace (відомий як Sasha), Septonious, fayer3, Xonk, Memokii, dragoncat, TheNukeLore, dbrighthd, Surisen (Ruri), Acer (Alex), Folox_, Helgust.
 
 option.info16=§nЯк підтримати Euphoria Patches
-option.info16.comment=Ми можете підтримати Euphoria Patches цікавлячись новими оновленнями та ділячись ними з людьми, але ви також можете безпосередньо підтримувати SpacEagle17 на Patreon або Ko-Fi і отримати ексклюзивні бета-збірки. §l§neuphoriapatches.com/support.
+option.info16.comment=Ти можеш підтримати Euphoria Patches, цікавлячись новими оновленнями та поширюючи їх серед людей, а також безпосередньо підтримати SpacEagle17 на Patreon чи Ko‑Fi та отримати доступ до ексклюзивних бета‑версій. §d§l§neuphoriapatches.com/support
 
 option.info17=Бета-версія: SpacEagle17 Patreon
-option.info17.comment=Ви можете підтримати SpacEagle17 на Patreon або Ko-Fi і отримати версію для розробників. §l§neuphoriapatches.com/support.
+option.info17.comment=Ти можеш підтримати SpacEagle17 на Patreon чи Ko‑Fi та отримати доступ до ексклюзивних версій розробки. §d§l§neuphoriapatches.com/support
 
 option.info18=Для Complementary r5.7.1
-option.info18.comment=Дякую за встановлення Euphoria Patches :).
+option.info18.comment=Дякую за встановлення Euphoria Patches :)
 
 option.info19=§aНОВЕ ОНОВЛЕННЯ
 value.info19.0=§cX.Y.Z §r—>§a X.Y.Z
-option.info19.comment=Нова версія EuphoriaPatcher доступна. Завантажити: https://euphoriapatches.com/download.
+option.info19.comment=Доступна нова версія мода EuphoriaPatcher. Завантаж її з Modrinth: https://euphoriapatches.com/download.
 
 value.info20.0=§aeuphoriapatches.com/download
 option.info20.comment=Нова версія EuphoriaPatcher доступна. Завантажити: https://euphoriapatches.com/download.
@@ -110,55 +110,55 @@ screen.CLOUD_SETTINGS=Хмари
 screen.CLOUD_SETTINGS.comment=Налаштування, які стосуються хмар.
 
 screen.CLOUD_COLOR_SETTINGS=Колір хмар
-screen.CLOUD_COLOR_SETTINGS.comment=Змінює колір хмар.
+screen.CLOUD_COLOR_SETTINGS.comment=Налаштування для зміни кольору хмар.
 
-screen.CLOUD_UNBOUND_SETTINGS=Налаштування «непов'язаних» хмар
-screen.CLOUD_REIMAGINED_SETTINGS=Налаштування «переосмислених» хмар
+screen.CLOUD_UNBOUND_SETTINGS=Налаштування хмар у стилі Unbound
+screen.CLOUD_REIMAGINED_SETTINGS=Налаштування хмар у стилі Переосмислений
 
 screen.FOG_SETTINGS=Туман
-screen.FOG_SETTINGS.comment=Налаштування, які стосуються варіантів туману.
+screen.FOG_SETTINGS.comment=Налаштування, які стосуються різних типів туману.
 
-screen.SUN_MOON_SETTINGS=Сонце і Місяць
-screen.SUN_MOON_SETTINGS.comment=Налаштування, які стосуються Сонця і Місяця.
+screen.SUN_MOON_SETTINGS=Сонце / Місяць
+screen.SUN_MOON_SETTINGS.comment=Налаштування, які стосуються сонця та місяця.
 
-screen.NETHER_SETTINGS=Незер
-screen.NETHER_SETTINGS.comment=Налаштування, які стосуються Незеру.
+screen.NETHER_SETTINGS=Вимір Незер
+screen.NETHER_SETTINGS.comment=Налаштування, які стосуються виміру Незер.
 
-screen.WEATHER_SETTINGS=Дощ і погода
-screen.WEATHER_SETTINGS.comment=Налаштування, які стосуються погоди.
+screen.WEATHER_SETTINGS=Дощ / Погода
+screen.WEATHER_SETTINGS.comment=Налаштування, які  стосуються погодних умов
 
 screen.CAMERA_SETTINGS=Камера
-screen.CAMERA_SETTINGS.comment=Налаштування, стосуються камери і погляду.
+screen.CAMERA_SETTINGS.comment=Налаштування, які стосуються огляду/камери.
 
 screen.TONEMAP_SETTINGS=Баланс кольорів
-screen.TONEMAP_SETTINGS.comment=Налаштування, які стосуються балансу кольорів і вигляду.
+screen.TONEMAP_SETTINGS.comment=Налаштування, які визначають баланс кольорів візуальних елементів.
 
 screen.COLORGRADING_SETTINGS=Градація кольорів
-screen.COLORGRADING_SETTINGS.comment=Налаштування для змішування кінцевих кольорових каналів.
+screen.COLORGRADING_SETTINGS.comment=Налаштування для змішування фінальних колірних каналів.
 
 screen.WORLD_BLUR_SETTINGS=Розмиття світу
-screen.WORLD_BLUR_SETTINGS.comment=Налаштування, які стосуються для красивого розмиття світу.
+screen.WORLD_BLUR_SETTINGS.comment=Налаштування, які стосуються ефектів розмиття світу.
 
-screen.TAA_SETTINGS=Налаштування тимчасового фільтру
-screen.TAA_SETTINGS.comment=Налаштування, які стосуються поведінки тимчасового згладжування.
+screen.TAA_SETTINGS=Налаштування тимчасового фільтра
+screen.TAA_SETTINGS.comment=Налаштування, які визначають поведінку тимчасового згладжування.
 
 screen.MATERIAL_SETTINGS=Матеріали
-screen.MATERIAL_SETTINGS.comment=Налаштування, які стосуються матеріалів гри.
+screen.MATERIAL_SETTINGS.comment=Налаштування, які стосуються матеріалів Minecraft.
 
 screen.IPBR_SETTINGS=Матеріали IntegratedPBR+
-screen.IPBR_SETTINGS.comment=Налаштування, які стосуються функції IntegratedPBR+.
+screen.IPBR_SETTINGS.comment=Налаштування, які стосуються функцій IntegratedPBR+.
 
 screen.GLOWING_ORE_SETTINGS=Сяйні руди
-screen.GLOWING_ORE_SETTINGS.comment=Налаштування, які стосуються сяйної руди
+screen.GLOWING_ORE_SETTINGS.comment=Налаштування для регулювання випромінювання рудних блоків.
 
-screen.GLOWING_STUFF_SETTINGS=Сяйні штучки
-screen.GLOWING_STUFF_SETTINGS.comment=Налаштування, які стосуються різних сяйних блоків.
+screen.GLOWING_STUFF_SETTINGS=Сяйні речі
+screen.GLOWING_STUFF_SETTINGS.comment=Налаштування для регулювання випромінювання різних блоків.
 
 screen.OTHER_IPBR_SETTINGS=Інші функції IPBR+
 screen.OTHER_IPBR_SETTINGS.comment=Різні налаштування IntegratedPBR+.
 
-screen.CUSTOM_PBR_SETTINGS=Матеріали labPBR і seuspbr
-screen.CUSTOM_PBR_SETTINGS.comment=Налаштування, які стосуються labPBR і seuspbr.
+screen.CUSTOM_PBR_SETTINGS=Матеріали labPBR/seuspbr
+screen.CUSTOM_PBR_SETTINGS.comment=Налаштування, які стосуються функцій labPBR/seuspbr.
 
 screen.LIGHTING_SETTINGS=Освітлення
 screen.LIGHTING_SETTINGS.comment=Налаштування, які стосуються освітлення.
@@ -655,7 +655,16 @@ value.BLOOM_ENABLED.1=§eУВІМК.
 
 option.BLOOM_STRENGTH=Сила світіння
 option.BLOOM_STRENGTH.comment=Керує інтенсивністю світіння яскравих речей і блиск від дощу вологости в печері. §c[-]§r Занадто багато світіння призведе до того, що зображення стане розмитішим і яскравішим, ніж передбачалося, особливо в вологих умовах.
+value.BLOOM_STRENGTH.0.15=80% §c[-]
+value.BLOOM_STRENGTH.0.16=85% §c[-]
 value.BLOOM_STRENGTH.0.17=90% §c[-]
+value.BLOOM_STRENGTH.0.18=95% §c[-]
+value.BLOOM_STRENGTH.0.19=100% §c[-]
+value.BLOOM_STRENGTH.0.21=110% §c[-]
+value.BLOOM_STRENGTH.0.23=120% §c[-]
+value.BLOOM_STRENGTH.0.25=130% §c[-]
+value.BLOOM_STRENGTH.0.28=150% §c[-]
+value.BLOOM_STRENGTH.0.32=180% §c[-]
 value.BLOOM_STRENGTH.10.00=§cБОЖЕВІЛЬНА
 
 option.IMAGE_SHARPENING=Різкість зображення
@@ -666,6 +675,11 @@ value.IMAGE_SHARPENING.2=2х
 value.IMAGE_SHARPENING.3=3х
 value.IMAGE_SHARPENING.4=4х
 value.IMAGE_SHARPENING.5=5х
+value.IMAGE_SHARPENING.6=6x §c[-]
+value.IMAGE_SHARPENING.7=7x §c[-]
+value.IMAGE_SHARPENING.8=8x §c[-]
+value.IMAGE_SHARPENING.9=9x §c[-]
+value.IMAGE_SHARPENING.10=10x §c[-]
 
 option.LENSFLARE_MODE=§eВідблиск об'єктива§r
 option.LENSFLARE_MODE.comment=Додає ефект відблиску об'єктива камери, коли він спрямований на Сонце чи Місяць. §c[-]§r Цей ефект може серйозно вплинути на продуктивність.
@@ -754,6 +768,7 @@ option.CHROMA_ABERRATION.comment=Розділяє різні кольори до
 value.CHROMA_ABERRATION.4=4[-] §c
 value.CHROMA_ABERRATION.5=5 §c[-]
 value.CHROMA_ABERRATION.6=6 §c[-]
+value.CHROMA_ABERRATION.7=7 §c[-]
 value.CHROMA_ABERRATION.8=8 §c[-]
 
 option.IPBR_EMISSIVE_MODE=Сяйний режим IPBR+
@@ -896,6 +911,8 @@ option.POM_QUALITY.comment=Керує різкістю і точність ок�
 value.POM_QUALITY.16=16 §e[*]
 value.POM_QUALITY.32=32 §e[*]
 value.POM_QUALITY.64=64 §e[*]
+value.POM_QUALITY.256=256 §c[-]
+value.POM_QUALITY.512=512 §c[-]
 
 option.POM_DISTANCE=§eДальність ОП§r
 option.POM_DISTANCE.comment=Керує дальністю оклюзії паралакса. §e[*]§r Рекомендується тримати це значення нижче 50, щоб отримати невеликий приріст продуктивности. §e[*]§r Підтримка ПР має бути labPBR або seuspbr, і потрібно використовувати сумісний пакет ресурсів.
@@ -935,6 +952,10 @@ option.WAVING_SPEED.comment=Керує тим, як швидко відбува�
 
 option.WAVING_I=Інтенсивність коливання
 option.WAVING_I.comment=Керує швидкістю руху блоків під час коливання. §c[-]§r Занадто велике значення може призвести до того, що блоки можуть «затискатися» між інших блоків.
+value.WAVING_I.1.25=1.25 §c[-]
+value.WAVING_I.1.50=1.50 §c[-]
+value.WAVING_I.1.75=1.75 §c[-]
+value.WAVING_I.2.00=2.00 §c[-]
 value.WAVING_I.50.0=§cБОЖЕВІЛЬНА
 
 option.NO_WAVING_INDOORS=Без конливань в кімнатах
@@ -942,6 +963,10 @@ option.NO_WAVING_INDOORS.comment=Запобігає коливанню блок�
 
 option.WAVING_I_RAIN_MULT=§eМножник коливання дощу§r
 option.WAVING_I_RAIN_MULT.comment=Збільшує швидкість та інтенсивність коливання під час дощу. §c[-]§r Занадто велика інтенсивність коливання може призвести до того, що коливальні блоки затискаються в інші блоки та виходять з них. §c[-]§r Це може вплинути на продуктивність, якщо його значення перевищує 100.
+value.WAVING_I.125=125 §c[-]
+value.WAVING_I.150=150 §c[-]
+value.WAVING_I.175=175 §c[-]
+value.WAVING_I.200=200 §c[-]
 
 option.WAVING_FOLIAGE=Коливання трави
 option.WAVING_FOLIAGE.comment=Додає коливання для трави і травоподібній, щоб імітувати вітер.

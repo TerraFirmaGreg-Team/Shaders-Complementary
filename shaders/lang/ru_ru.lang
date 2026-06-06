@@ -1773,7 +1773,7 @@ option.BORDER_FOG_OVERWORLD=Граничный туман обычного ми�
 option.NETHER_PORTAL_VARIATION=Предустановка портала в Незер
 option.NETHER_PORTAL_VARIATION.comment=Выбор стиля портала в Незер. §e[*]§r Требуется встроенный PBR+.
 value.NETHER_PORTAL_VARIATION.0=Ванильный
-value.NETHER_PORTAL_VARIATION.1=Дополнительный
+value.NETHER_PORTAL_VARIATION.1=Complementary
 value.NETHER_PORTAL_VARIATION.2=Фиолетовая пустота
 
 option.BIOME_COLORED_NETHER_PORTALS=Порталы-хамелеоны
@@ -1784,7 +1784,7 @@ option.NETHER_PORTAL_NOISE.comment=Добавляет шум к текстуре
 
 option.END_PORTAL_VARIATION=Предустановка портала в Энд
 option.END_PORTAL_VARIATION.comment=Выбор стиля портала в Энд. §e[*]§r Требуется встроенный PBR+.
-value.END_PORTAL_VARIATION.0=Дополнительный
+value.END_PORTAL_VARIATION.0=Complementary
 value.END_PORTAL_VARIATION.1=Размытые нити
 value.END_PORTAL_VARIATION.3=Пиксельная сальса
 
@@ -1814,7 +1814,7 @@ option.END_CURVATURE_SIZE=Кривизна Энда
 
 option.LAVA_VARIATION=Предустановка лавы
 option.LAVA_VARIATION.comment=Выберите стиль лавы.
-value.LAVA_VARIATION.0=Дополнительный
+value.LAVA_VARIATION.0=Complementary
 value.LAVA_VARIATION.1=Адаптивный шум (рекомендуется)
 value.LAVA_VARIATION.2=Пылающий румянец
 value.LAVA_VARIATION.3=Расплавленный сыр
@@ -1846,7 +1846,7 @@ option.NETHER_BRIGHTNESS.comment=Общая освещённость измер�
 
 option.END_ROD_COLOR_PROFILE=Профиль стержней Энда
 option.END_ROD_COLOR_PROFILE.comment=Цвет стержней Энда, используемый по умолчанию в Complementary, или ваш собственный.§e[*]§r Требуется «Поддержка наборов ресурсов»: встроенный PBR+.
-value.END_ROD_COLOR_PROFILE.0=Дополнительный
+value.END_ROD_COLOR_PROFILE.0=Complementary
 value.END_ROD_COLOR_PROFILE.1=Пользовательский
 value.END_ROD_COLOR_PROFILE.2=Радуга
 value.END_ROD_COLOR_PROFILE.3=Радуга (только обычный мир)
@@ -3129,6 +3129,45 @@ option.YUNGS_SANDSTORM_WAVING_INTENSITY.comment=Определяет, наско
 
 #  // TerraFirmaGreg //
 
-option.RABOTAITE_HLOPCHI=Автоперевод говно, поэтому я все удалил и прошу вас переделать (с любовью i_iht <3)
+screen.TERRAFIRMAGREG_VERSION=TerraFirmaGreg Compat
+
+option.TFGinfo1=Важная информация
+option.TFGinfo1.comment=Спасибо за установку шейдеров TerraFirmaGreg. Шейдеры всё ещё находятся в разработке, поэтому ожидайте ошибок и несовершенств. Если у вас возникнут какие-либо проблемы или предложения, пожалуйста, оставьте их на TerraFirmaGreg-shaders GitHub. Шейдеры основаны на шейдерах Complementary-Euphoria-Supplemental. Спасибо всем разработчикам за предоставленную возможность использовать их труды
+
+option.TFGinfo2=§d§nGitHub
+option.TFGinfo2.comment=Наш GitHub: §d§ngithub.com/TerraFirmaGreg-Team/Shaders-Complementary§r Пожалуйста, отправляйте туда все баги и ваши предложения по улучшению шейдеров
+
+screen.TERRAFIRMAGREG_SETTINGS=Configure TFG compat
+screen.TERRAFIRMAGREG_SETTINGS.comment=§dTerraFirmaGreg compat§r Настройки
+
+
+
+option.ST_TOGGLE=Переключить переход к области
+
+option.ST_HEIGHT=Высота перехода
+option.ST_HEIGHT.comment=Высота начала изменения цвета неба
+
+option.SPACE_TRANSITION_R=Красный цвет
+
+option.SPACE_TRANSITION_G=Зеленый цвет
+
+option.SPACE_TRANSITION_B=Синий цвет
+
+option.ST_STARS=Вкл/выкл звезды пробела
+option.ST_STARS.comment=Позволяет звёздочкам появляться при достижении высоты (высота, на которой появляются звезды, зависит от высоты перехода к пространству)
+
+option.SPACE_STARS_MULTIPLIER=Множитель звезд космоса
+option.SPACE_STARS_MULTIPLIER.comment=Изменяет количество звезд на планетах без атмосферы
+
+option.SPACE_STARS_SPECTRUM=Использовать звёздочные цвета
+option.M_STAR_COLOR_1_OW_R = Красный цвет
+option.M_STAR_COLOR_1_OW_G = Зеленый цвет
+option.M_STAR_COLOR_1_OW_B = Синий цвет
+option.G_STAR_COLOR_1_OW_R = Красный цвет
+option.G_STAR_COLOR_1_OW_G = Зеленый цвет
+option.G_STAR_COLOR_1_OW_B = Синий цвет
+option.A_STAR_COLOR_1_OW_R = Красный цвет
+option.A_STAR_COLOR_1_OW_G = Зеленый цвет
+option.A_STAR_COLOR_1_OW_B = Синий цвет
 
 

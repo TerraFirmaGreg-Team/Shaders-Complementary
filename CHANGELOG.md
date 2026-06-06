@@ -1,4 +1,13 @@
 # Changelog
+## [3.1.6] - 17-05-2026
+- Fixed a crash with very high and ultra settings
+- Added support for caelum and TFC caelum
+- Now each planet has its own wind speed, which determines the speed of plant waving and the speed of water waves
+- Fixed a bug with working glowing fireboxes
+- Fixed a bug with double plants where they wave strangely
+- Fixed a bug with glowing glass from create
+- Added more blocks to block.properties
+  
 ## [3.1.5] - 14-04-2026
 - Added TFG settings in the shader menu
 - Remove cloud shadows on dimensions without clouds
