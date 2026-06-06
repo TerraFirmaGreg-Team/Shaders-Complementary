@@ -131,34 +131,34 @@ screen.CAMERA_SETTINGS=Камера
 screen.CAMERA_SETTINGS.comment=Налаштування, які стосуються огляду/камери.
 
 screen.TONEMAP_SETTINGS=Баланс кольорів
-screen.TONEMAP_SETTINGS.comment=Налаштування, які стосуються балансу кольорів і вигляду.
+screen.TONEMAP_SETTINGS.comment=Налаштування, які визначають баланс кольорів візуальних елементів.
 
 screen.COLORGRADING_SETTINGS=Градація кольорів
-screen.COLORGRADING_SETTINGS.comment=Налаштування для змішування кінцевих кольорових каналів.
+screen.COLORGRADING_SETTINGS.comment=Налаштування для змішування фінальних колірних каналів.
 
 screen.WORLD_BLUR_SETTINGS=Розмиття світу
-screen.WORLD_BLUR_SETTINGS.comment=Налаштування, які стосуються для красивого розмиття світу.
+screen.WORLD_BLUR_SETTINGS.comment=Налаштування, які стосуються ефектів розмиття світу.
 
-screen.TAA_SETTINGS=Налаштування тимчасового фільтру
-screen.TAA_SETTINGS.comment=Налаштування, які стосуються поведінки тимчасового згладжування.
+screen.TAA_SETTINGS=Налаштування тимчасового фільтра
+screen.TAA_SETTINGS.comment=Налаштування, які визначають поведінку тимчасового згладжування.
 
 screen.MATERIAL_SETTINGS=Матеріали
-screen.MATERIAL_SETTINGS.comment=Налаштування, які стосуються матеріалів гри.
+screen.MATERIAL_SETTINGS.comment=Налаштування, які стосуються матеріалів Minecraft.
 
 screen.IPBR_SETTINGS=Матеріали IntegratedPBR+
-screen.IPBR_SETTINGS.comment=Налаштування, які стосуються функції IntegratedPBR+.
+screen.IPBR_SETTINGS.comment=Налаштування, які стосуються функцій IntegratedPBR+.
 
 screen.GLOWING_ORE_SETTINGS=Сяйні руди
-screen.GLOWING_ORE_SETTINGS.comment=Налаштування, які стосуються сяйної руди
+screen.GLOWING_ORE_SETTINGS.comment=Налаштування для регулювання випромінювання рудних блоків.
 
-screen.GLOWING_STUFF_SETTINGS=Сяйні штучки
-screen.GLOWING_STUFF_SETTINGS.comment=Налаштування, які стосуються різних сяйних блоків.
+screen.GLOWING_STUFF_SETTINGS=Сяйні речі
+screen.GLOWING_STUFF_SETTINGS.comment=Налаштування для регулювання випромінювання різних блоків.
 
 screen.OTHER_IPBR_SETTINGS=Інші функції IPBR+
 screen.OTHER_IPBR_SETTINGS.comment=Різні налаштування IntegratedPBR+.
 
-screen.CUSTOM_PBR_SETTINGS=Матеріали labPBR і seuspbr
-screen.CUSTOM_PBR_SETTINGS.comment=Налаштування, які стосуються labPBR і seuspbr.
+screen.CUSTOM_PBR_SETTINGS=Матеріали labPBR/seuspbr
+screen.CUSTOM_PBR_SETTINGS.comment=Налаштування, які стосуються функцій labPBR/seuspbr.
 
 screen.LIGHTING_SETTINGS=Освітлення
 screen.LIGHTING_SETTINGS.comment=Налаштування, які стосуються освітлення.
