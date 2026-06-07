@@ -1,4 +1,11 @@
 # Changelog
+## [3.1.7] - 07-06-2026
+- Some profile settings have been changed to reduce confusion for players
+- Gleamflower and eyeblossom were added to the PBR resource pack
+- Fixed stars in dimensions without atmospheres (again)
+- More blocks added into block.properties
+- Minor text corrections in settings
+  
 ## [3.1.6] - 17-05-2026
 - Fixed a crash with very high and ultra settings
 - Added support for caelum and TFC caelum
