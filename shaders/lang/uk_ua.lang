@@ -164,23 +164,23 @@ screen.LIGHTING_SETTINGS=Освітлення
 screen.LIGHTING_SETTINGS.comment=Налаштування, які стосуються освітлення.
 
 screen.LIGHT_COLOR_SETTINGS=Множник кольорів світла
-screen.LIGHT_COLOR_SETTINGS.comment=Умикає налаштування кольорів світла, помітно на всіх поверхнях.
+screen.LIGHT_COLOR_SETTINGS.comment=Дозволяє налаштовувати кольори освітлення, які видно на всіх поверхнях.
 
-screen.MORNING_LIGHT_MULTS=Схід і захід
+screen.MORNING_LIGHT_MULTS=Час сходу/заходу сонця
 screen.NOON_LIGHT_MULTS=Полудень
-screen.NIGHT_LIGHT_MULTS=Ніч
-screen.RAIN_LIGHT_MULTS=Дощ
-screen.NETHER_LIGHT_MULTS=Незер
-screen.END_LIGHT_MULTS=Енд
+screen.NIGHT_LIGHT_MULTS=Нічний час
+screen.RAIN_LIGHT_MULTS=Дощова погода
+screen.NETHER_LIGHT_MULTS=Вимір Незер
+screen.END_LIGHT_MULTS=Вимір Край
 
 screen.BLOCKLIGHT_SETTINGS=Світло блоків §e[*]§r
-screen.BLOCKLIGHT_SETTINGS.comment=Налаштування світла, випромінюваного блоками, які є джерелами світла. §e[*]§r Червоні/зелені/сині кольорів не впливатимуть на більшість джерел світла, якщо ввімкнено розширене кольорове трасування.
+screen.BLOCKLIGHT_SETTINGS.comment=Налаштування для регулювання освітлення, які випромінюється блоками-джерелами світла. §e[*]§r Параметри червоного/зеленого/синього кольорів не впливатимуть на більшість джерел світла, якщо ввімкнено параметр «Розширене трасування кольорів».
 
 screen.MOON_PHASE_INF_SETTINGS=Вплив фаз Місяця
-screen.MOON_PHASE_INF_SETTINGS.comment=Налаштування які стосуються впливу різних фаз Місяця на освітлення вночі.
+screen.MOON_PHASE_INF_SETTINGS.comment=Налаштування для визначення того, як різні фази місяця впливають на нічне освітлення.
 
-screen.ACT_FEATURES_SETTINGS=Ексклюзивні функції РКТ §e[*]§r
-screen.ACT_FEATURES_SETTINGS.comment=Налаштування, які стосуються ексклюзивних функцій розширеного кольорового трасування. §e[*]§r Лише якщо РКТ увімкнено та ваша система підтримує це.
+screen.ACT_FEATURES_SETTINGS=Ексклюзивні функції ACT §e[*]§r
+screen.ACT_FEATURES_SETTINGS.comment=Налаштування, що стосуються функцій, доступних лише в режимі «Розширене трасування кольорів». §e[*]§r Ці функції працюють лише тоді, коли «Розширене трасування кольорів» увімкнено в параметрах продуктивності та якщо твоя система їх підтримує.
 
 screen.PIXELATED_LIGHTING_SETTINGS=Піксельне освітлення
 screen.PIXELATED_LIGHTING_SETTINGS.comment=Налаштування піксельних ефектів освітлення.
@@ -192,9 +192,9 @@ screen.WATER_COLOR_SETTINGS=Колір поверхні води
 screen.UNDERWATER_COLOR_SETTINGS=Колір підводою
 
 screen.WATER_WAVE_SETTINGS=Хвилі на воді §e[*]§r
-screen.WATER_WAVE_SETTINGS.comment=Налаштування напрямку хвиль, які видно на воді. §e[*]§r Працює лише якщо «Стиль води» встановлено на «Переосмислений + хвилі» або «Непов'язаний».
+screen.WATER_WAVE_SETTINGS.comment=Налаштування для налаштування хвиль (нормалей), що визначають напрям поверхні води. §e[*]§r Ці параметри працюють лише тоді, коли стиль води встановлено як «Reimagined + Waves» або «Unbound».
 
-screen.WAVING_SETTINGS=Коливання
+screen.WAVING_SETTINGS=Коливання текстур
 screen.WAVING_SETTINGS.comment=Налаштування, які стосуються коливання.
 
 screen.OTHER_SETTINGS=Інше
@@ -207,46 +207,46 @@ screen.WORLD_OUTLINE_SETTINGS=Контур світу
 screen.WORLD_OUTLINE_SETTINGS.comment=Налаштування, які стосуються ефекту контуру.
 
 #Settings
-option.RP_MODE=Підтримка ПР
-option.RP_MODE.comment=Змінює багато внутрішніх розрахунків, щоб визначити, як промлаьовуються різні блоки та матеріали. §bIntegrated PBR+§r: розрахування PBR і додаткові ефекти, рекомендовані для більшості випадків використання. §aБазова§r: Без PBR або додаткового ефекту. §elabPBR або seuspbr§r: Матеріали використовуються в необхідних пакетах ресурсів.
+option.RP_MODE=Підтримка PR
+option.RP_MODE.comment=Змінює багато внутрішніх обчислень для визначення того, як різні блоки та матеріали будуть відображатися. §bIntegrated PBR+§r: Обчислене PBR та додаткові ефекти, настійно рекомендовано для більшості випадків використання. §aBasic§r: Без PBR та додаткових ефектів. §elabPBR/seuspbr§r: Матеріали, що використовують необхідні PBR-ресурс-паки.
 value.RP_MODE.0=§aБазова
 value.RP_MODE.1=§bIntegrated PBR+
-value.RP_MODE.2=§eseuspbr (треба ПР)
-value.RP_MODE.3=§elabPBR (треба ПР)
+value.RP_MODE.2=§eseuspbr (потрібно PR)
+value.RP_MODE.3=§elabPBR (потрібно PR)
 
 option.WATER_REFLECT_QUALITY=Якість відблиску води
-option.WATER_REFLECT_QUALITY.comment=Керує візуальною якістю відблиску, який з'являється на напівпрозорих ділянках. §cПосередня§r: трасування променів на воді і напівпрозорих ділянках. §eКартопля§r: замінює воду та напівпрозорі відблиски швидшим методом, в деяких ситуаціях може виглядати неправильно. §aВИМК.§r: Без відблису.
-value.WATER_REFLECT_QUALITY.-1=§aВИМК.
+option.WATER_REFLECT_QUALITY.comment=Регулює якість зображення на прозорих поверхнях. §cMedium§r: Відбиття з трасуванням променів у просторі екрана на воді та прозорих поверхнях. §ePotato§r: Замінює відбиття води та прозорих поверхонь швидшим методом, що може виглядати некоректно в деяких ситуаціях. §aOFF§r: Без відбиттів.
+value.WATER_REFLECT_QUALITY.-1=§aВИМК
 value.WATER_REFLECT_QUALITY.0=§aЛише небо
 value.WATER_REFLECT_QUALITY.1=§eКартопля
-value.WATER_REFLECT_QUALITY.2=§cПосередня
+value.WATER_REFLECT_QUALITY.2=§cСередня
 
 option.BLOCK_REFLECT_QUALITY=Якість відблиску блоків §eB[*]§r
-option.BLOCK_REFLECT_QUALITY.comment=Керує візуальною якістю відблиску, який з'являється на матеріалах. §cВисока§r: відблиски Сонця і Місяця + розширены дзеркальні відблиски. §aНизька§r: лише відблиски Сонця і Місяця. §e[*]§r Підтримка ПР має бути будь-яка, окрім «Базова», щоб з'явилися будь-які дзеркальні відблиски.
-value.BLOCK_REFLECT_QUALITY.0=§aВИМК.
+option.BLOCK_REFLECT_QUALITY.comment=Регулює якість відбиттів на твердих матеріалах. §cHigh§r: Відблиски сонця/місяця + розширені дзеркальні відбиття. §eLow§r: Лише відблиски сонця/місяця. §e[*]§r Параметр RP Support має бути встановлений на будь-що, крім Basic, щоб з’явилися дзеркальні відбиття.
+value.BLOCK_REFLECT_QUALITY.0=§aВИМК
 value.BLOCK_REFLECT_QUALITY.1=§eНизька
 value.BLOCK_REFLECT_QUALITY.3=§cВисока
 
 option.SHADOW_QUALITY=Тіні в реальному часі
-option.SHADOW_QUALITY.comment=Керує якістю тіней. Кожен рівень додатково зменшує артефакти тіньового шуму, значення нижче, ніж «§eВисокі§r» ввімкнуть оптимізовані тіні для листя, «§eНаднизькі§r» значно зменшує тіні багатьма способами, «§aВИМК.§r» повністю вимикає тіні та світлові потоки.
-value.SHADOW_QUALITY.-1=§aВИМК.
-value.SHADOW_QUALITY.0=§eНаднизькі
-value.SHADOW_QUALITY.1=§eНизькі
-value.SHADOW_QUALITY.2=§eПосередні
-value.SHADOW_QUALITY.3=§eВисокі
-value.SHADOW_QUALITY.4=§cНадвисокі
+option.SHADOW_QUALITY.comment=Регулює якість тіней. Кожен рівень додатково зменшує артефакти шуму тіней, параметри нижчі за §eHigh§r вмикають оптимізовані тіні на листі, §eVery Low§r суттєво погіршує тіні різними способами, §aOFF§r повністю вимикає тіні та світлові промені.
+value.SHADOW_QUALITY.-1=§aВИМК
+value.SHADOW_QUALITY.0=§eНаднизька
+value.SHADOW_QUALITY.1=§eНизька
+value.SHADOW_QUALITY.2=§eСередня
+value.SHADOW_QUALITY.3=§eВисока
+value.SHADOW_QUALITY.4=§cНадвисока
 value.SHADOW_QUALITY.5=§4§lУльтра
 
 option.LIGHTSHAFT_QUALI_DEFINE=Якість світлових потоків §e[*]§r
-option.LIGHTSHAFT_QUALI_DEFINE.comment=Керує якістю світлових потоків. Кожен рівень додатково зменшує шумові артефакти світлового потоку. §e[*]§r «Якість тіней» має бути будь-яким, але не вимкнено, щоб світлові потоки працювали.
-value.LIGHTSHAFT_QUALI_DEFINE.0=§aВИМК.
+option.LIGHTSHAFT_QUALI_DEFINE.comment=Регулює якість світлових променів. Кожен рівень додатково зменшує артефакти шуму світлових променів. §e[*]§r Параметр «Real-Time Shadows» має бути встановлений на будь-що, крім OFF, щоб світлові промені працювали.
+value.LIGHTSHAFT_QUALI_DEFINE.0=§aВИМК
 value.LIGHTSHAFT_QUALI_DEFINE.1=§eНизька
-value.LIGHTSHAFT_QUALI_DEFINE.2=§eПосередня
+value.LIGHTSHAFT_QUALI_DEFINE.2=§eСередня
 value.LIGHTSHAFT_QUALI_DEFINE.3=§cВисока
 value.LIGHTSHAFT_QUALI_DEFINE.4=§4§lНадвисока
 
 option.shadowDistance=Дальність тіней
-option.shadowDistance.comment=Керує відстаню від гравця, на якій тіні промальовуються в реальному часі. §c[-]§r Менші значення можуть спричинити надмірний витік світлового потоку.
+option.shadowDistance.comment=Регулює відстань від гравця, на якій зображаються тіні в реальному часі. §c[-]§r Нижчі значення можуть спричинити надмірне просочування світлових променів.
 value.shadowDistance.64.0=§a4 чанка §c[-]
 value.shadowDistance.80.0=§a5 чанків §c[-]
 value.shadowDistance.96.0=§a6 чанків §c[-]
@@ -262,8 +262,8 @@ value.shadowDistance.512.0=§4§l32 чанка
 value.shadowDistance.768.0=§4§k-§r§4§l§n§o48 чанків§r§4§k-
 value.shadowDistance.1024.0=§4§k-§r§4§l§n§o64 чанка§r§4§k-
 
-option.ENTITY_SHADOW=Тіні істоти
-option.ENTITY_SHADOW.comment=Дозволяє відтворювати тіні від сутностей і блокованих об'єктів. Звичайні об'єкти включають такі як тварини і монстри, в той час як параметр "Повний" також включає блокування об'єкти як скрині. §c[-]§r Затінення сутності впливають на продуктивність більш ніж очікувалося, коштуючи понад 50% ваших футів в деяких випадках.
+option.ENTITY_SHADOW=Тіні сутностей
+option.ENTITY_SHADOW.comment=Вмикає тіні від сутностей та блокових сутностей. «Звичайні сутності» включають таких, як тварини та монстри, тоді як параметр «Full» також охоплює блокові сутності, наприклад скрині. §c[-]§r Тіні від сутностей значно впливають на продуктивність, у деяких випадках знижуючи fps більш ніж на 50%.
 value.ENTITY_SHADOW.-1=§aВИМК
 value.ENTITY_SHADOW.1=§cЗвичайні сутності
 value.ENTITY_SHADOW.2=§4§k-§r§4§l§n§oFull§r§4§k- §r§c[-]
@@ -3037,5 +3037,6 @@ option.G_STAR_COLOR_1_OW_B = Синій колір
 option.A_STAR_COLOR_1_OW_R = Червоний колір
 option.A_STAR_COLOR_1_OW_G = Зелений колір
 option.A_STAR_COLOR_1_OW_B = Синій колір
+
 
 
