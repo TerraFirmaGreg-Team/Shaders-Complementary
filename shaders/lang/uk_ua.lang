@@ -215,20 +215,20 @@ value.RP_MODE.2=§eseuspbr (потрібно PR)
 value.RP_MODE.3=§elabPBR (потрібно PR)
 
 option.WATER_REFLECT_QUALITY=Якість відблиску води
-option.WATER_REFLECT_QUALITY.comment=Регулює якість зображення на прозорих поверхнях. §cMedium§r: Відбиття з трасуванням променів у просторі екрана на воді та прозорих поверхнях. §ePotato§r: Замінює відбиття води та прозорих поверхонь швидшим методом, що може виглядати некоректно в деяких ситуаціях. §aOFF§r: Без відбиттів.
+option.WATER_REFLECT_QUALITY.comment=Налаштовує якість зображення на прозорих поверхнях. §cMedium§r: Відбиття з трасуванням променів у просторі екрана на воді та прозорих поверхнях. §ePotato§r: Замінює відбиття води та прозорих поверхонь швидшим методом, що може виглядати некоректно в деяких ситуаціях. §aOFF§r: Без відбиттів.
 value.WATER_REFLECT_QUALITY.-1=§aВИМК
 value.WATER_REFLECT_QUALITY.0=§aЛише небо
 value.WATER_REFLECT_QUALITY.1=§eКартопля
 value.WATER_REFLECT_QUALITY.2=§cСередня
 
 option.BLOCK_REFLECT_QUALITY=Якість відблиску блоків §eB[*]§r
-option.BLOCK_REFLECT_QUALITY.comment=Регулює якість відбиттів на твердих матеріалах. §cHigh§r: Відблиски сонця/місяця + розширені дзеркальні відбиття. §eLow§r: Лише відблиски сонця/місяця. §e[*]§r Параметр RP Support має бути встановлений на будь-що, крім Basic, щоб з’явилися дзеркальні відбиття.
+option.BLOCK_REFLECT_QUALITY.comment=Налаштовує якість відбиттів на твердих матеріалах. §cHigh§r: Відблиски сонця/місяця + розширені дзеркальні відбиття. §eLow§r: Лише відблиски сонця/місяця. §e[*]§r Параметр RP Support має бути встановлений на будь-що, крім Basic, щоб з’явилися дзеркальні відбиття.
 value.BLOCK_REFLECT_QUALITY.0=§aВИМК
 value.BLOCK_REFLECT_QUALITY.1=§eНизька
 value.BLOCK_REFLECT_QUALITY.3=§cВисока
 
 option.SHADOW_QUALITY=Тіні в реальному часі
-option.SHADOW_QUALITY.comment=Регулює якість тіней. Кожен рівень додатково зменшує артефакти шуму тіней, параметри нижчі за §eHigh§r вмикають оптимізовані тіні на листі, §eVery Low§r суттєво погіршує тіні різними способами, §aOFF§r повністю вимикає тіні та світлові промені.
+option.SHADOW_QUALITY.comment=Налаштовує якість тіней. Кожен рівень додатково зменшує артефакти шуму тіней, параметри нижчі за §eHigh§r вмикають оптимізовані тіні на листі, §eVery Low§r суттєво погіршує тіні різними способами, §aOFF§r повністю вимикає тіні та світлові промені.
 value.SHADOW_QUALITY.-1=§aВИМК
 value.SHADOW_QUALITY.0=§eНаднизька
 value.SHADOW_QUALITY.1=§eНизька
@@ -238,7 +238,7 @@ value.SHADOW_QUALITY.4=§cНадвисока
 value.SHADOW_QUALITY.5=§4§lУльтра
 
 option.LIGHTSHAFT_QUALI_DEFINE=Якість світлових потоків §e[*]§r
-option.LIGHTSHAFT_QUALI_DEFINE.comment=Регулює якість світлових променів. Кожен рівень додатково зменшує артефакти шуму світлових променів. §e[*]§r Параметр «Real-Time Shadows» має бути встановлений на будь-що, крім OFF, щоб світлові промені працювали.
+option.LIGHTSHAFT_QUALI_DEFINE.comment=Налаштовує якість світлових променів. Кожен рівень додатково зменшує артефакти шуму світлових променів. §e[*]§r Параметр «Real-Time Shadows» має бути встановлений на будь-що, крім OFF, щоб світлові промені працювали.
 value.LIGHTSHAFT_QUALI_DEFINE.0=§aВИМК
 value.LIGHTSHAFT_QUALI_DEFINE.1=§eНизька
 value.LIGHTSHAFT_QUALI_DEFINE.2=§eСередня
@@ -246,7 +246,7 @@ value.LIGHTSHAFT_QUALI_DEFINE.3=§cВисока
 value.LIGHTSHAFT_QUALI_DEFINE.4=§4§lНадвисока
 
 option.shadowDistance=Дальність тіней
-option.shadowDistance.comment=Регулює відстань від гравця, на якій зображаються тіні в реальному часі. §c[-]§r Нижчі значення можуть спричинити надмірне просочування світлових променів.
+option.shadowDistance.comment=Налаштовує відстань від гравця, на якій зображаються тіні в реальному часі. §c[-]§r Нижчі значення можуть спричинити надмірне просочування світлових променів.
 value.shadowDistance.64.0=§a4 чанка §c[-]
 value.shadowDistance.80.0=§a5 чанків §c[-]
 value.shadowDistance.96.0=§a6 чанків §c[-]
@@ -269,39 +269,39 @@ value.ENTITY_SHADOW.1=§cЗвичайні сутності
 value.ENTITY_SHADOW.2=§4§k-§r§4§l§n§oFull§r§4§k- §r§c[-]
 
 option.DETAIL_QUALITY=Якість деталей
-option.DETAIL_QUALITY.comment=Налаштовує кілька дрібниць, які впливають на продуктивність. Налаштуйте якість: водяного матеріалу, TAA, налаштування освітлення, нічної туманности, бурі Незеру, променів Енду, ефекту відблиску неба, точности дощової калюжі, ефект коливання, розмивання у русі.
+option.DETAIL_QUALITY.comment=Налаштовує кілька дрібних параметрів, що впливають на продуктивність. Налаштовує якість: матеріалу води, TAA, коригування освітлення, нічної туманності, бурі в Незері, променів Краю, відбиттів ефектів неба, точності калюж від дощу, ефекту хвиль, розмиття руху.
 value.DETAIL_QUALITY.0=§aКартопля
-value.DETAIL_QUALITY.2=§eПосередня
+value.DETAIL_QUALITY.2=§eСередня
 value.DETAIL_QUALITY.3=§cВисока
 
 option.CLOUD_QUALITY=Якість хмар
-option.CLOUD_QUALITY.comment=Налаштовує освітлення, деталізацію та якість переосмисленого і непов'язаного стилю хмар. §e[*]§r Це працює лише з переосмисленим або непов'язаним стилями хмари.
-value.CLOUD_QUALITY.0=§aВИМК.
+option.CLOUD_QUALITY.comment=Налаштовує освітлення, деталізацію та якість вибірки для стилів хмар Reimagined/Unbound. §e[*]§r Цей параметр працює лише зі стилями хмар «Reimagined» або «Unbound».
+value.CLOUD_QUALITY.0=§aВИМК
 value.CLOUD_QUALITY.1=§aНизька
-value.CLOUD_QUALITY.2=§eПосередня
+value.CLOUD_QUALITY.2=§eСередня
 value.CLOUD_QUALITY.3=§cВисока
 
-option.FXAA_DEFINE=Згладжування (ШНЗ)
-option.FXAA_DEFINE.comment=Увімкнути швидке наближене згладжування (ШНЗ), це в основному ефект, який створює більш гладке зображення.
-value.FXAA_DEFINE.-1=§aВИМК.
-value.FXAA_DEFINE.1=§eУВІМК.
+option.FXAA_DEFINE=Згладжування (FXAA)
+option.FXAA_DEFINE.comment=Вмикає швидке наближене згладжування (FXAA), яке по суті є ефектом, що робить зображення більш плавним.
+value.FXAA_DEFINE.-1=§aВИМК
+value.FXAA_DEFINE.1=§eУВІМК
 
-option.SSAO_QUALI_DEFINE=§eЯкість краю тіней (НОПЕ)§r
-option.SSAO_QUALI_DEFINE.comment=Керує якістю навколишньої оклюзії простору екрана (НОПЕ), що додає додаткові тіні навколишнього середовища до країв сцени. Кожен рівень додатково зменшує шумові артефакти ЕПНО.
-value.SSAO_QUALI_DEFINE.0=§aВИМК.
-value.SSAO_QUALI_DEFINE.2=§eПосередня
+option.SSAO_QUALI_DEFINE=Якість тіней по краях (SSAO)
+option.SSAO_QUALI_DEFINE.comment=Налаштовує якість екранного просторового затемнення (SSAO), яке додає додаткове навколишнє затінення до країв сцени. Кожен рівень додатково зменшує артефакти шуму SSAO.
+value.SSAO_QUALI_DEFINE.0=§aВИМК
+value.SSAO_QUALI_DEFINE.2=§eСередня
 value.SSAO_QUALI_DEFINE.3=§cВисока
 
 option.ANISOTROPIC_FILTER=Фільтрування текстур
-option.ANISOTROPIC_FILTER.comment=Покращує якість неправильно промлаьованиз текстур за допомогою анізотропної фільтрації. §e[*]§r Переконайтеся що «Рівні MIP-текстурування» встановлено на максимум (4) або вийде не дуже хороший результат.
-value.ANISOTROPIC_FILTER.0=§aВИМК.
+option.ANISOTROPIC_FILTER.comment=Покращує якість текстур із міпмапами за допомогою анізотропної фільтрації. §e[*]§r Переконайся, що параметр «Mipmap Levels» у відеоналаштуваннях встановлено на Maximum (4), інакше результат буде незадовільним.
+value.ANISOTROPIC_FILTER.0=§aВИМК
 value.ANISOTROPIC_FILTER.4=§e4х
 value.ANISOTROPIC_FILTER.8=§e8х
 value.ANISOTROPIC_FILTER.16=§4§l16х
 
 option.COLORED_LIGHTING=Розширене кольорове трасування §e[*]§r
-option.COLORED_LIGHTING.comment=Особливість шейдерів Complementary. Використовує вокселізацію та заливне освітлення, щоб додати колір блоковому освітленню, а також представити деякі нові джерела світла. §e[*]§r Ця функція працює лише на Iris і підтримуваних платформах. §e[*]§r Це буде вимкнено, якщо «Якість тіней» вимкнено. §a[+]§r Ця система також активує деякі інші функції, які ви можете окремо вмикати або вимикати в меню «Інше» —> «Ексклюзивні функції РКТ». §c[-]§r Високі значення блоків для цього ефекту впливають на продуктивність набагато більше, ніж очікувалося, кожне збільшення на 2 чанки коштує більш ніж удвічі продуктивність попереднього рівня. §c[-]§r Кольорове освітлення може спричинити деякі проблеми з витоком світлого кольору під час роботи з неповними блоками або блоками з модів.
-value.COLORED_LIGHTING.0=§aВИМК.
+option.COLORED_LIGHTING.comment=Функція Complementary Shaders. Використовує вокселізацію та освітлення floodfill для додавання кольору до блокового світла, а також вводить кілька нових джерел світла. §e[*]§r Ця функція працює лише на Iris та підтримуваних платформах. §e[*]§r Цей параметр буде вимкнено, якщо «Real-Time Shadows» встановлено на OFF. §a[+]§r Система Advanced Color Tracing також вмикає деякі інші функції, які можна окремо вмикати/вимикати в меню «Other» -> «ACT Features». §c[-]§r Високі значення чанків для цього ефекту значно впливають на продуктивність, кожне збільшення може коштувати більш ніж удвічі більше продуктивності порівняно з попереднім рівнем. §c[-]§r Кольорове освітлення може спричиняти проблеми з просочуванням кольору світла при роботі з неповними блоками або модифікованими блоками.\n
+value.COLORED_LIGHTING.0=§aВИМК
 value.COLORED_LIGHTING.128=§e4 чанки
 value.COLORED_LIGHTING.192=§c6 чанків
 value.COLORED_LIGHTING.256=§4§l8 чанків
@@ -311,30 +311,30 @@ value.COLORED_LIGHTING.768=§4§l§n§o24 чанки§r§c[-]
 value.COLORED_LIGHTING.1024=§4§k-§r§4§l§n§o32 чанки§r§4§k- §r§c[-]
 
 option.WORLD_SPACE_REFLECTIONS=Відблиски простору світу §e[*]§r
-option.WORLD_SPACE_REFLECTIONS.comment=Обчислює відблиски у просторі світу, а не в просторі екрана. §c[-]§r Імовірно, ламається з блоками з модів. §e[*]§r Ця функція працює, лише якщо розширене кольорове трасування ввімкнено в налаштуваннях продуктивности та ваша система підтримує. §e[*]§r Максимальна дальність цього ефекту залежить від дільности розширеного кольорового трасування, але з технічних причин вона внутрішньо обмеження 16 чанків. §c[-]§r Цей ефект може серйозно вплинути на продуктивність, особливо з більшою відстанню розширеного кольорового трасування. §c[-]§r Відблиски світового простору можуть мати кілька типів проблем із модами чи пакетами ресурсів.
-value.WORLD_SPACE_REFLECTIONS.-1=§aВИМК.
-value.WORLD_SPACE_REFLECTIONS.1=§4§l§n§oУВІМК.
+option.WORLD_SPACE_REFLECTIONS.comment=Обчислює відбиття у світовому просторі, а не в просторі екрана. §c[-]§r Ймовірно, не працюватиме з модифікованими блоками. §e[*]§r Ця функція працює лише якщо Advanced Color Tracing увімкнено в налаштуваннях продуктивності та твоя система її підтримує. §e[*]§r Максимальна відстань цього ефекту залежить від дистанції Advanced Color Tracing, але внутрішньо обмежена 16 чанками з технічних причин. §c[-]§r Цей ефект може серйозно впливати на продуктивність, особливо при великих дистанціях Advanced Color Tracing. §c[-]§r Відбиття у світовому просторі можуть мати кілька типів проблем із модами чи ресурс-паками.
+value.WORLD_SPACE_REFLECTIONS.-1=§aВИМК
+value.WORLD_SPACE_REFLECTIONS.1=§4§l§n§oУВІМК
 
-option.WORLD_SPACE_REF_MODE=Режим ВПС §e[*]§r
-option.WORLD_SPACE_REF_MODE.comment=Керує режимом роботи відблиску простору світу. §e[*]§r Режим «Лише ВПС» підходить для усунення всіх артефактів відблисків простору екрана, оскільки він показує лише відблиски простору світу, але режим «ВПС + ВПЕ» кращий для отримання більшої кількости деталей у відблисках, оскільки відблиски простору екрана мають доступ до всіх деталей, які є на екрані, не обмежуючись блоками чи встановленою дальністю.
-value.WORLD_SPACE_REF_MODE.1=Лише ВПС
-value.WORLD_SPACE_REF_MODE.2=ВПС + ВПЕ
+option.WORLD_SPACE_REF_MODE=Режим WSR §e[*]§r
+option.WORLD_SPACE_REF_MODE.comment=Визначає режим роботи відбиттів у світовому просторі. §e[*]§r Режим «WSR Only» добре підходить для усунення всіх артефактів відбиттів у просторі екрана, оскільки показує лише відбиття у світовому просторі. Натомість режим «WSR + SSR» краще підходить для отримання більшої деталізації у відбиттях, адже відбиття у просторі екрана мають доступ до всіх деталей, що є на екрані, без обмеження блоками чи певною відстанню.
+value.WORLD_SPACE_REF_MODE.1=Лише WSR
+value.WORLD_SPACE_REF_MODE.2=WSR + SSR
 
-option.WORLD_SPACE_PLAYER_REF=Відблисковий гравець ПС
-option.WORLD_SPACE_PLAYER_REF.comment=Робить власну модель гравця поточного гравця віблисковий за відблисків простору світу.
-value.WORLD_SPACE_PLAYER_REF.-1=ВИМК.
-value.WORLD_SPACE_PLAYER_REF.1=УВІМК.
+option.WORLD_SPACE_PLAYER_REF=Відбиття гравця у світовому просторі
+option.WORLD_SPACE_PLAYER_REF.comment=Відображає власну модель гравця у відбиттях світового простору.
+value.WORLD_SPACE_PLAYER_REF.-1=ВИМК
+value.WORLD_SPACE_PLAYER_REF.1=УВІМК
 
-option.SSAO_I=Інтенсивність краю тіней (НОПЕ)
-option.SSAO_I.comment=Керує силою навколишньої оклюзії простору екрана (НОПЕ), що додає додаткові тіні навколишнього середовища до країв сцени. §e[*]§r Це не працюватиме, якщо НОПЕ вимкнено в «Продуктивність».
-value.SSAO_I.0=ВИМК.
+option.SSAO_I=Інтенсивність тіней по краях (SSAO)
+option.SSAO_I.comment=Визначає силу екранного просторового затемнення (SSAO), яке додає додаткове навколишнє затінення до країв сцени. §e[*]§r Цей параметр не працюватиме, якщо SSAO вимкнено в «Performance Settings».
+value.SSAO_I.0=ВИМК
 
-option.VANILLAAO_I=Інтенсивність краю тіней (усталено)
-option.VANILLAAO_I.comment=Керує силою навколишньої оклюзії гри, що додає додаткові тіні навколишнього середовища до країв сцени.
-value.VANILLAAO_I.0=ВИМК.
+option.VANILLAAO_I=Інтенсивність тіней по краях (Vanilla)
+option.VANILLAAO_I.comment=Визначає силу вбудованого затемнення в Minecraft, яке додає додаткове навколишнє затінення до країв сцени.
+value.VANILLAAO_I.0=ВИМК
 
 option.BORDER_FOG=Межа туману
-option.BORDER_FOG.comment=Інтенсивний туман на межі видимого світу, щоб приховати межі чанків. §e[*]§r Рекомендовано вимкнути це під час гри з менш ніж 8 чанками.
+option.BORDER_FOG.comment=Інтенсивний туман на краях завантаженого світу, щоб приховати межі чанків. §e[*]§r Рекомендується вимикати Border Fog під час гри з відстанню рендеру менш ніж 8 чанків.
 
 option.ATM_FOG_MULT=Атмосферний туман
 option.ATM_FOG_MULT.comment=Керує інтенсивність туману на основі висоти.
@@ -344,88 +344,88 @@ value.ATM_FOG_MULT.0.80=Нормальний
 value.ATM_FOG_MULT.0.95=Товстий
 
 option.ATM_FOG_DISTANCE=Дальн. атмосферного туману
-option.ATM_FOG_DISTANCE.comment=Керує відстаню від камери, на якій починає з'являтися атмосферний туман. §e[*]§r Зауважте, що відстань туману також автоматично регулюється «Дальність промальовування» в налаштуваннях відео.
+option.ATM_FOG_DISTANCE.comment=Налаштовує відстань від камери, на якій починає з’являтися атмосферний туман. §e[*]§r Зауваж, що дистанція туману також автоматично коригується параметром Render Distance у відеоналаштуваннях.
 
 option.ATM_FOG_ALTITUDE=Висота атмосферного туману
-option.ATM_FOG_ALTITUDE.comment=Керує висотою, на якій атмосферний туман є найбільш помітним.
+option.ATM_FOG_ALTITUDE.comment=Визначає висоту, на якій атмосферний туман проявляється найпомітніше.
 
 option.CAVE_FOG=Печерний туман
 option.CAVE_FOG.comment=Умикає або вимикає печерний туман.
 
-option.LIGHTSHAFT_BEHAVIOUR=Режим світлових потоків
-option.LIGHTSHAFT_BEHAVIOUR.comment=Керує поведінкою світлових потоків. §a[+]§r Свідомий режим автоматично перемикаються між звичайним і екстремальним режимами, щоб забезпечити найкращі результати. §c[-]§r Екстремальний режим не рекомендується використовувати для загального ігрового процесу, і він може серйозно вплинути на продуктивність.
-value.LIGHTSHAFT_BEHAVIOUR.0=ВИМК.
-value.LIGHTSHAFT_BEHAVIOUR.1=Свідомий §a[+]
+option.LIGHTSHAFT_BEHAVIOUR=Режим світлових променів
+option.LIGHTSHAFT_BEHAVIOUR.comment=Визначає поведінку світлових променів. §a[+]§r Scene Aware Light Shafts автоматично перемикаються між звичайним та екстремальним режимами, щоб забезпечити найкращий результат. §c[-]§r Екстремальний режим не рекомендується для звичайного геймплею, оскільки він може серйозно впливати на продуктивність.
+value.LIGHTSHAFT_BEHAVIOUR.0=ВИМК
+value.LIGHTSHAFT_BEHAVIOUR.1=Scene Aware §a[+]
 value.LIGHTSHAFT_BEHAVIOUR.2=Звичний
 value.LIGHTSHAFT_BEHAVIOUR.3=Величезний §c[-]
 
-option.LIGHTSHAFT_SMOKE=§eСвітлові потоки диму§r
-option.LIGHTSHAFT_SMOKE.comment=Додає об'ємний дим у світлові потоки. §c[-]§r Цей ефект може сильно вплинути на продуктивність.
+option.LIGHTSHAFT_SMOKE=§eСвітлові промені диму§r
+option.LIGHTSHAFT_SMOKE.comment=Додає об'ємний дим у світлові промені. §c[-]§r Цей ефект може сильно вплинути на продуктивність.
 
-option.SPECIAL_PALE_GARDEN_LIGHTSHAFTS=Спец. світл. потоки блідого саду
-option.SPECIAL_PALE_GARDEN_LIGHTSHAFTS.comment=Робить світлові потоки надзвичайно специфічними в блідого саду.
+option.SPECIAL_PALE_GARDEN_LIGHTSHAFTS=Спец. світл. промені блідого саду
+option.SPECIAL_PALE_GARDEN_LIGHTSHAFTS.comment=Робить світлові промені надзвичайно специфічними в блідого саду.
 
-option.LIGHTSHAFT_DAY_I=Множник удень
-option.LIGHTSHAFT_NIGHT_I=Множник уночі
-option.LIGHTSHAFT_RAIN_I=Множник при дощу
+option.LIGHTSHAFT_DAY_I=Множник світлових променів удень
+option.LIGHTSHAFT_NIGHT_I=Множник світлових променів уночі
+option.LIGHTSHAFT_RAIN_I=Множник світлових променів у дощь
 
-option.LIGHTSHAFT_SUNSET_SATURATION=Колір світла сонячних потоків
-option.LIGHTSHAFT_SUNSET_SATURATION.comment=Керує додатковою насиченістю кольору світлових потоків під час сходу та заходу сонця. Вищі значення дадуть червоно-помаранчевий відтінок, тоді як нижчі значення зсунуть його в бік жовтого.
+option.LIGHTSHAFT_SUNSET_SATURATION=Колір світлових променів під час заходу сонця
+option.LIGHTSHAFT_SUNSET_SATURATION.comment=Налаштовує додаткову насиченість кольору, яка надається світловим променям під час сходу та заходу сонця. Вищі значення створюють червонувато-оранжевий відтінок, тоді як нижчі значення зміщують його до жовтого.
 
 option.CLOUD_STYLE_DEFINE=Стиль хмар
-option.CLOUD_STYLE_DEFINE.comment=Установлює стиль хмар. §e[*]§r «Усталено» означає, що налаштування буде автоматично керуватиметься параметром «Візуальний стиль» у головному меню налаштувань шейдерів. §e[*]§r «Усталено» вимагає ввімкнення хмар у налаштуваннях відео.
+option.CLOUD_STYLE_DEFINE.comment=Визначає стиль хмар. §e[*]§r «Set by Style» означає, що параметр буде автоматично визначений налаштуванням «Visual Style» у головному меню Shader Options. §e[*]§r Стиль «Vanilla» вимагає, щоб хмари були ввімкнені у відеоналаштуваннях.
 value.CLOUD_STYLE_DEFINE.-1=Поточний стиль
-value.CLOUD_STYLE_DEFINE.0=ВИМК.
+value.CLOUD_STYLE_DEFINE.0=ВИМК
 value.CLOUD_STYLE_DEFINE.1=Переосмислений
 value.CLOUD_STYLE_DEFINE.3=Непов'язаний
-value.CLOUD_STYLE_DEFINE.50=Усталено §e[*]
+value.CLOUD_STYLE_DEFINE.50=Vanilla §e[*]
 
 option.CLOUD_SHADOWS=Тіні хмар
-option.CLOUD_SHADOWS.comment=Умикає тіні, що відкидаються від хмар. §e[*]§r Це працює лише з переосмисленим або непов'язаним стилями хмари. §e[*]§r Тіні хмар генеруватимуться випадковим чином, якщо для стилю хмар установлено значення непов'язаний, через додаткову складність непов'язаних хмар.
+option.CLOUD_SHADOWS.comment=Увімкнення тіней, які відкидають хмари. §e[*]§r Цей параметр працює лише зі стилями хмар «Reimagined» або «Unbound». §e[*]§r Тіні від хмар будуть генеруватися випадково, якщо стиль хмар встановлено на «Unbound», через додаткову складність хмар цього стилю.
 
-option.CLOUD_CLOSED_AREA_CHECK=Без хмар у кімнатах
-option.CLOUD_CLOSED_AREA_CHECK.comment=Проводить додаткові перевірки для видалення хмар у закритих приміщеннях. §e[*]§r Це працює лише з переосмисленим або непов'язаним стилями хмари. §e[*]§r Це налаштування буде вимкнено, якщо «Якість тіней» вимкнено.
+option.CLOUD_CLOSED_AREA_CHECK=Заборонити хмари в інтер’єрах
+option.CLOUD_CLOSED_AREA_CHECK.comment=Виконує додаткові перевірки для видалення хмар у закритих просторах. §e[*]§r Цей параметр працює лише зі стилями хмар «Reimagined» або «Unbound». §e[*]§r Цей параметр буде вимкнено, якщо «Real-Time Shadows» вимкнено.
 
 option.CLOUD_ALT1=Висота хмар
-option.CLOUD_ALT1.comment=Керує висотою, на якій з'являться хмари. §e[*]§r Це працює лише з переосмисленим або непов'язаним стилями хмари/
+option.CLOUD_ALT1.comment=Визначає висоту світу, на якій з’являються хмари. §e[*]§r Цей параметр працює лише зі стилями хмар «Reimagined» або «Unbound».
 
 option.CLOUD_SPEED_MULT=Швидкість хмар
-option.CLOUD_SPEED_MULT.comment=Керує з якою швидкістю рухаються хмари. «Синхронізовано зі світовим часом» використовує ігровий час для руху хмарі; це дозволяє хмарам виглядати однаково між гравцями на одному сервері. §e[*]§r Це працює лише з переосмисленим або непов'язаним стилями хмари.
-value.CLOUD_SPEED_MULT.100=Синхрон. час
+option.CLOUD_SPEED_MULT.comment=Визначає швидкість руху хмар. Параметр «Synced to World Time» використовує ігровий час світу Minecraft для зміни позицій хмар; це дозволяє хмарам виглядати однаково для всіх гравців на одному сервері. §e[*]§r Цей параметр працює лише зі стилями хмар «Reimagined» або «Unbound».
+value.CLOUD_SPEED_MULT.100=Синхронізовано з часом світу
 
-option.CLOUD_R=Множник червоного
-option.CLOUD_G=Множник зеленого
-option.CLOUD_B=Множник синього
+option.CLOUD_R=Множник червоного кольору хмар
+option.CLOUD_G=Множник зеленого кольору хмар
+option.CLOUD_B=Множник синього кольору хмар
 
 option.CLOUD_UNBOUND_AMOUNT=Кількість хмар
-option.CLOUD_UNBOUND_AMOUNT.comment=Керує кількістю непов'язаних хмар.
+option.CLOUD_UNBOUND_AMOUNT.comment=Налаштовує кількість хмар стилю Unbound.
 
-option.CLOUD_UNBOUND_SIZE_MULT=Драбність хмар §c[-]§r
-option.CLOUD_UNBOUND_SIZE_MULT.comment=Керує розміром непов'язаних хмар. Великі значення призведуть до маленьких хмар. §c[-]§r Зміна цього параметра вимкне функцію Complementary «синхронізації хмар між гравцями на одному сервері».
+option.CLOUD_UNBOUND_SIZE_MULT=Дрібність хмар §c[-]§r
+option.CLOUD_UNBOUND_SIZE_MULT.comment=Налаштовує розмір хмар стилю Unbound. Вищі значення створюють менші хмари. §c[-]§r Зміна цього параметра вимикає функцію Complementary «синхронізація хмар між гравцями на одному сервері».
 
-option.CLOUD_UNBOUND_RAIN_ADD=Доповнення дощових хмар
-option.CLOUD_UNBOUND_RAIN_ADD.comment=Налаштовує кількість хмар, які застосовуються під час дощу і снігопаду.
+option.CLOUD_UNBOUND_RAIN_ADD=Додавання дощових хмар
+option.CLOUD_UNBOUND_RAIN_ADD.comment=Налаштовує збільшення кількості хмар, яке застосовується під час дощу чи снігу.
 
-option.DOUBLE_REIM_CLOUDS=Подвійні хмари
-option.DOUBLE_REIM_CLOUDS.comment=Умикає другий шар для переосмислених хмар. §e[*]§r Це працює лише з переосмисленими хмарами.
+option.DOUBLE_REIM_CLOUDS=Подвоєні хмари стилю Reimagined
+option.DOUBLE_REIM_CLOUDS.comment=Увімкнення додаткового шару хмар стилю Reimagined. §e[*]§r Цей параметр працює лише зі стилем хмар «Reimagined».
 
 option.CLOUD_ALT2=Висота другого шару хмар
-option.CLOUD_ALT2.comment=Керує тим, на якій висоті буде з'являтися другий шар хмар. §e[*]§r «Подвійні хмари» має бути ввімкнено.
+option.CLOUD_ALT2.comment=Визначає висоту світу, на якій з’являтиметься другий шар хмар. §e[*]§r Цей параметр працює лише тоді, коли увімкнено опцію «Double Reimagined Clouds».
 
 option.NETHER_STORM=§eБуря Незеру§r
-option.NETHER_STORM.comment=Додає димоподібний об'ємний ефект до Незеру. §c[-]§r Цей ефект може вплинути на продуктивність.
+option.NETHER_STORM.comment=Додає об’ємний ефект, схожий на дим, у вимір Незер. §c[-]§r Цей ефект може впливати на продуктивність.
 
 option.NETHER_STORM_I=Непрозорість бурі Незеру
-option.NETHER_STORM_I.comment=Налаштовує непрозорість бурі Незеру
+option.NETHER_STORM_I.comment=Налаштовує непрозорість бурі у Незері.
 
 option.NETHER_STORM_LOWER_ALT=Нижня висота бурі Незеру
-option.NETHER_STORM_LOWER_ALT.comment=Керує нижньою початковою точкою бурі Незеру. Буря Незеру не з'явиться нижче цієї висоти, і вона виглядатиме найяскравішою прямо над цією висотою.
+option.NETHER_STORM_LOWER_ALT.comment=Визначає нижню початкову точку бурі у Nether. Буря у Nether не з’являтиметься нижче цієї висоти, а найяскравішою вона виглядатиме одразу над цією висотою.
 
 option.NETHER_STORM_HEIGHT=Висота бурі Незеру
-option.NETHER_STORM_HEIGHT.comment=Керує висотою бурі Незеру. Зменшення цього значення призведе до збирання бурі Незеру біля «Нижня висота бурі Незеру».
+option.NETHER_STORM_HEIGHT.comment=Визначає висоту, на якій формуватиметься буря у Незері. Зменшення цього значення призведе до того, що буря у Незері збиратиметься ближче до «Nether Storm Lower Altitude».
 
 option.NETHER_VIEW_LIMIT=§eЛіміт видимости Незеру§r
-option.NETHER_VIEW_LIMIT.comment=Керує максимальною дальністю, на якій туман буде видимим у Незері. §c[-]§r Збільшення цього параметра може вплинути на продуктивність, коли ввімкнено «Буря Незеру».
+option.NETHER_VIEW_LIMIT.comment=Визначає максимальну відстань, на якій туман дозволяє бачити у Незері. §c[-]§r Збільшення цього параметра може впливати на продуктивність, якщо увімкнено «Nether Storm».
 value.NETHER_VIEW_LIMIT.96.0=6 чанків
 value.NETHER_VIEW_LIMIT.112.0=7 чанків
 value.NETHER_VIEW_LIMIT.128.0=8 чанків
@@ -441,40 +441,40 @@ value.NETHER_VIEW_LIMIT.1024.0=64 чанка §c[-]
 value.NETHER_VIEW_LIMIT.99999.0=Безлімітна §c[-]
 
 option.NETHER_COLOR_MODE=Режим кольору
-option.NETHER_COLOR_MODE.comment=Керує тим, як оброблятимуться кольори середовища в Незері. Незмінний: кольори не змінюватимуться між біомами. Біом: кольори змінюватимуться залежно від біома. Біом (модиф.): базується на біомі, але кольори були перебалансовані, щоб краще відповідати стандартному візуальному напрямку Complementary.
-value.NETHER_COLOR_MODE.3=Біом (модиф.)
-value.NETHER_COLOR_MODE.2=Біом
+option.NETHER_COLOR_MODE.comment=Визначає спосіб обробки кольорів атмосфери у Незері.  \nConstant: Кольори не змінюються між біомами.  \nBiome Based: Кольори змінюються залежно від біома.  \nBiome Based (Modified): На основі біома, але кольори були збалансовані заново, щоб краще відповідати стандартному візуальному стилю Complementary.
+value.NETHER_COLOR_MODE.3=На основі біома (змінений)
+value.NETHER_COLOR_MODE.2=На основі біома
 value.NETHER_COLOR_MODE.0=Незмінний
 
 option.TM_EXPOSURE=Загальна яскравість
-option.TM_EXPOSURE.comment=Також відомий як «Експозиція мапи тонів». Керує загальною яскравістю всього зображення.
+option.TM_EXPOSURE.comment=Також відоме як «Tonemap Exposure». Налаштовує загальну яскравість усього зображення.
 
-option.TM_WHITE_CURVE=Біла яскравість
-option.TM_WHITE_CURVE.comment=Також відомий як «Біла крива мапи тонів». Керує тим, наскільки легко кольори досягають повного білого.
+option.TM_WHITE_CURVE=Яскравість білого
+option.TM_WHITE_CURVE.comment=Також відоме як «Tonemap White Curve». Налаштовує, наскільки легко кольори досягають повного білого.
 
 option.T_UPPER_CURVE=Контраст яскравіших кольорів
-option.T_UPPER_CURVE.comment=Також відомий як «Верхня крива мапи тонів». Керує контрастністю яскравіших кольорів.
+option.T_UPPER_CURVE.comment=Також відоме як «Tonemap Upper Curve». Налаштовує контраст яскравіших кольорів.
 
 option.T_LOWER_CURVE=Контраст темних кольорів
-option.T_LOWER_CURVE.comment=Також відомий як «нижня крива мапи тонів». Керує контрастністю темніших кольорів.
+option.T_LOWER_CURVE.comment=Також відоме як «Tonemap Lower Curve». Налаштовує контраст темніших кольорів.
 
 option.TM_CONTRAST=Загальний контраст
-option.TM_CONTRAST.comment=Регулює темність темних кольорів і яскравість яскравих кольорів.
+option.TM_CONTRAST.comment=Налаштовує темність темних кольорів та яскравість яскравих кольорів.
 
 option.T_SATURATION=Насиченість
-option.T_SATURATION.comment=Керує загальною забарвленістю зображення.
+option.T_SATURATION.comment=Налаштовує загальну насиченість кольорів зображення.
 
-option.T_VIBRANCE=Насиченість більш блідих кольорів
-option.T_VIBRANCE.comment=Також відомий як «жвавість». Керує барвистістю зображення, але вже кольорові пікселі зазнають меншого впливу.
+option.T_VIBRANCE=Насиченість блідіших кольорів
+option.T_VIBRANCE.comment=Також відоме як «Vibrance». Налаштовує насиченість кольорів зображення, але вже насичені пікселі змінюються менше.
 
-option.TM_DARK_DESATURATION=Знебарвлення темряви
-option.TM_DARK_DESATURATION.comment=Коригує ефект знебарвлення кольору, який буде застосовано до темніших областей.
+option.TM_DARK_DESATURATION=Знебарвлення темних кольорів
+option.TM_DARK_DESATURATION.comment=Налаштовує ступінь ефекту приглушення кольорів, який буде застосовано до темних ділянок.
 
-option.TM_WHITE_PATH=Біла доступність
-option.TM_WHITE_PATH.comment=Регулює, як легко яскравіші кольори досягають білого.
+option.TM_WHITE_PATH=Досяжність білого
+option.TM_WHITE_PATH.comment=Налаштовує, наскільки легко яскраві кольори досягають білого.
 
 option.COLORGRADING=§eГрадація кольорів
-option.COLORGRADING.comment=Умикає налаштування для вільного змішування кольорів.
+option.COLORGRADING.comment=Дозволяє вільно налаштовувати змішування фінальних колірних каналів.
 option.GR_RR=Червоний у червоний
 option.GR_RG=Червоний у зелений
 option.GR_RB=Червоний у синій
@@ -482,21 +482,21 @@ option.GR_RC=Крива червоного
 option.GR_GR=Зелений у червоний
 option.GR_GG=Зелений у зелений
 option.GR_GB=Зелений у синій
-option.GR_GC=Крива зеленого
+option.GR_GC=Зелена крива
 option.GR_BR=Синій у червоний
 option.GR_BG=Синій у зелений
 option.GR_BB=Синій у синій
-option.GR_BC=Крива синього
+option.GR_BC=Синя крива
 
 option.WATER_STYLE_DEFINE=Стиль води
-option.WATER_STYLE_DEFINE.comment=Керує стиль води. §e[*]§r «Усталено» означає, що параметр автоматично керуватиметься параметром «Візуальний стиль» в головному меню налаштувань шейдера.
+option.WATER_STYLE_DEFINE.comment=Визначає стиль води. §e[*]§r «Set by Style» означає, що параметр буде автоматично визначений налаштуванням «Visual Style» у головному меню Shader Options.
 value.WATER_STYLE_DEFINE.-1=Поточний стиль
 value.WATER_STYLE_DEFINE.1=Переосмислений
 value.WATER_STYLE_DEFINE.2=Переосмислений + хвилі
 value.WATER_STYLE_DEFINE.3=Непов'язаний
 
-option.WATER_CAUSTIC_STYLE_DEFINE=Стиль водяної каустики
-option.WATER_CAUSTIC_STYLE_DEFINE.comment=Керує стилкм водяних тіней, також відомих як водяна каустика.
+option.WATER_CAUSTIC_STYLE_DEFINE=Стиль каустики води
+option.WATER_CAUSTIC_STYLE_DEFINE.comment=Визначає стиль тіней від води, також відомих як каустика води.
 value.WATER_CAUSTIC_STYLE_DEFINE.-1=Як і вода
 value.WATER_CAUSTIC_STYLE_DEFINE.1=Переосмислений
 value.WATER_CAUSTIC_STYLE_DEFINE.3=Непов'язаний
@@ -1799,7 +1799,7 @@ value.tonemap_right.uchimura=Учімура
 value.tonemap_right.agxTonemap=АгІкс
 
 option.ACES_EXPOSURE=Виставлення
-option.ACES_EXPOSURE.comment=Регулює загальну яскравість зображення.
+option.ACES_EXPOSURE.comment=Налаштовує загальну яскравість зображення.
 option.ACES_WHITE=Крива білого
 option.ACES_WHITE.comment=Керує тим, наскільки легко кольори досягають повного білого.
 option.ACES_BRIGHTNESS_ROLLOFF=Зменшення яскравости
@@ -2817,7 +2817,7 @@ option.GLOWING_ORE_SILVER_G=Світлова руда §e[*]§r
 option.GLOWING_ORE_SILVER_G.comment=§e[*]§r цей параметр вплине тільки на срібну руду, додану Галосферою.
 
 option.WAVING_GILDED_BEADS=Розмальовані золотаві намистини
-option.WAVING_GILDED_BEADS.comment=Регулює інтенсивність, яку позолочені бури махають.
+option.WAVING_GILDED_BEADS.comment=Налаштовує інтенсивність, яку позолочені бури махають.
 value.WAVING_GILDED_BEADS.0=§cВИМК
 value.WAVING_GILDED_BEADS.1=Світла
 value.WAVING_GILDED_BEADS.2=Помірний
