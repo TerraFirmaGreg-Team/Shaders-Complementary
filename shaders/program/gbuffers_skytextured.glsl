@@ -78,7 +78,7 @@ void main() {
         vec4 color = texture2D(tex, texCoord);
         color.rgb *= max0(glColor.rgb);
 
-        #ifdef UNLIT_SKY_OBJECTS //TFGEDITS
+        #ifndef UNLIT_SKY_OBJECTS //TFGEDITS
             #ifdef SAVE_SKYBOX_DATA
                 if (renderStage == MC_RENDER_STAGE_SUNSET || renderStage == MC_RENDER_STAGE_CUSTOM_SKY || renderStage == MC_RENDER_STAGE_SKY) {
                     skyColor = color * glColor.a;
