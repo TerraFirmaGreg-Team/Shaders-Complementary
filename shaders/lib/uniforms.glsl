@@ -16,6 +16,7 @@ uniform bool isRightHanded = true;
 uniform bool heavyFog = false;
 uniform bool firstPersonCamera = true;
 uniform bool is_invisible = false;
+uniform bool isElytraFlying = false;
 
 uniform int renderStage;
 uniform int blockEntityId;
@@ -72,6 +73,7 @@ uniform vec3 previousCameraPosition;
 uniform vec3 skyColor;
 uniform vec3 eyePosition;
 uniform vec3 relativeEyePosition;
+uniform vec3 playerLookVector;
 
 uniform vec4 entityColor;
 uniform vec4 lightningBoltPosition = vec4(0);
@@ -94,10 +96,22 @@ uniform sampler2D colortex5;
 uniform sampler2D colortex6;
 uniform sampler2D colortex7;
 uniform sampler2D colortex8;
-#ifdef SS_BLOCKLIGHT
+uniform sampler2D colortex12;
+uniform sampler2D colortex13;
+uniform sampler2D colortex14;
+
+#if defined SS_BLOCKLIGHT || defined PHOTONICS_LIGHTING
 uniform sampler2D colortex9;
 uniform sampler2D colortex10;
 #endif
+
+#ifdef PHOTONICS_LIGHTING
+uniform sampler2D colortex11;
+uniform sampler2D colortex20;
+uniform float photonicsMasterTimer;
+uniform float photonicsOutsideRange;
+#endif
+
 uniform sampler2D depthtex0;
 uniform sampler2D depthtex1;
 uniform sampler2D depthtex2;
@@ -119,8 +133,9 @@ uniform vec3 previousCameraPositionFract;
 
 #ifdef IS_IRIS
     #if MC_VERSION >= 12109
-        uniform float endFlashIntensity;
+        uniform float endFlashIntensityM;
         uniform vec3 endFlashPosition;
+        // vec3 endFlashPosition = vec3(0.0, 0.0, -100.0);
     #endif
 #endif
 
@@ -142,6 +157,7 @@ uniform vec3 previousCameraPositionFract;
 
     uniform mat4 dhProjection;
     uniform mat4 dhProjectionInverse;
+    uniform mat4 dhPreviousProjection;
 
     uniform sampler2D dhDepthTex;
     uniform sampler2D dhDepthTex1;
@@ -158,6 +174,20 @@ uniform vec3 previousCameraPositionFract;
     mat4 gbufferProjectionInverse = dhProjectionInverse;
 #endif
 
+#ifdef VOXY
+    uniform int vxRenderDistance;
+
+    uniform mat4 vxProj;
+    uniform mat4 vxProjInv;
+    uniform mat4 vxProjPrev;
+    uniform mat4 vxModelView;
+    uniform mat4 vxModelViewInv;
+    uniform mat4 vxModelViewPrev;
+
+    uniform sampler2D vxDepthTexTrans;
+    uniform sampler2D vxDepthTexOpaque;
+#endif
+
 #if COLORED_LIGHTING_INTERNAL > 0 || defined END_PORTAL_BEAM_INTERNAL
     uniform usampler3D voxel_sampler;
     uniform sampler3D floodfill_sampler;
@@ -172,6 +202,7 @@ uniform vec3 previousCameraPositionFract;
     uniform sampler2D textureAtlas;
 
     uniform usampler3D wsr_sampler;
+    uniform usampler3D wsr_lod_sampler;
 
     #if WORLD_SPACE_PLAYER_REF == 1
         uniform sampler2D playerAtlas_sampler;
@@ -208,7 +239,7 @@ uniform float starter;
 uniform float frameTimeSmooth;
 uniform float eyeBrightnessM;
 uniform float eyeBrightnessM2;
-uniform float rainFactorUniform;
+uniform float rainFactor;
 uniform float inBasaltDeltas = 0.0;
 uniform float inCrimsonForest = 0.0;
 uniform float inNetherWastes = 1.0;
@@ -234,95 +265,3 @@ uniform float thunderFactor = 0.0;
 
 uniform vec2 viewSize;
 uniform vec2 texelSize;
-
-
-
-//   ___                _                   _        _   ___      _      _
-//  / __|_  _ _ __ _ __| |___ _ __  ___ _ _| |_ __ _| | | _ \__ _| |_ __| |_  ___ ___
-//  \__ \ || | '_ \ '_ \ / -_) '  \/ -_) ' \  _/ _` | | |  _/ _` |  _/ _| ' \/ -_|_-<
-//  |___/\_,_| .__/ .__/_\___|_|_|_\___|_||_\__\__,_|_| |_| \__,_|\__\__|_||_\___/__/
-//           |_|  |_|
-// Uniforms added by Supplemental Patches
-
-#if defined MOD_NETHEREXP
-    uniform float betrayedSmooth;
-#endif
-uniform sampler2D spiral_clouds;
-#if defined MOD_OREGANIZED
-    uniform float brainDamage;
-#endif
-#if defined MOD_DOOM_AND_GLOOM
-    uniform float doomAndGloomFog;
-#endif
-#if defined MOD_ENDERSCAPE && (MC_VERSION >= 12109)
-    uniform vec3 enderscapeFlashColor;
-#endif
-#if defined MOD_ENDERSCAPE
-    uniform float enderscapeNebulaAlpha;
-#endif
-#if defined MOD_ENDERSCAPE
-    uniform vec3 enderscapeNebulaColor;
-#endif
-#if defined MOD_ENDERSCAPE
-    uniform float enderscapeStarAlpha;
-#endif
-#if defined MOD_ENDERSCAPE
-    uniform vec3 enderscapeStarColor;
-#endif
-#if defined MOD_SCORCHFUL
-    uniform float hasRedSandstorm;
-#endif
-#if defined MOD_SCORCHFUL
-    uniform float hasRegularSandstorm;
-#endif
-#if defined MOD_SCORCHFUL
-    uniform float hasSandstorm;
-#endif
-uniform float inEnchantedTangle = 0.0;
-uniform float inForgottenForest = 0.0;
-#if defined MOD_YUNGSCAVEBIOMES
-    uniform float inFrostedCaves;
-#endif
-#if defined MOD_YUNGSCAVEBIOMES
-    uniform float inLostCaves;
-#endif
-uniform float inMagicBiome;
-uniform float inMysticGrove = 0.0;
-uniform float inPaleBog = 0.0;
-uniform float inSkyriseVale = 0.0;
-#if defined MOD_BIOMESOPLENTY
-    uniform float inVisceralHeap;
-#endif
-uniform float inWeepingWitchForest = 0.0;
-
-#ifdef AD_ASTRA //would be better if defined with HAS_NO_MOON, but its not yet defined
-	uniform vec3 moonColorSmooth = vec3(0.0);
-#else
-	uniform vec3 moonColorSmooth = vec3(1.0);
-#endif
-uniform float moonSizeSmooth = 20.0;
-#if defined MOD_ENDERSCAPE
-    uniform float smoothEnderscapeNebulaAlpha;
-#endif
-#if defined MOD_ENDERSCAPE
-    uniform float smoothEnderscapeNebulaBlue;
-#endif
-#if defined MOD_ENDERSCAPE
-    uniform float smoothEnderscapeNebulaGreen;
-#endif
-#if defined MOD_ENDERSCAPE
-    uniform float smoothEnderscapeNebulaRed;
-#endif
-#if defined MOD_YUNGSCAVEBIOMES
-    uniform float yungSandstorm;
-#endif
-#if defined MOD_YUNGSCAVEBIOMES
-    uniform float yungSandstormFactor;
-#endif
-#if defined MOD_YUNGSCAVEBIOMES
-    uniform vec3 yungSandstormWindDirection;
-#endif
-uniform sampler2D colortex15;
-uniform sampler2D colortex14;
-
-

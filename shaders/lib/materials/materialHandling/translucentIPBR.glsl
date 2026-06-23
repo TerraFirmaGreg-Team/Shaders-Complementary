@@ -10,7 +10,7 @@ if (mat < 32008) {
         } else {
             if (mat == 30008) { // Tinted Glass
                 #ifdef CONNECTED_GLASS_EFFECT
-                    uint voxelID = uint(30054);
+                    uint voxelID = uint(254);
                     bool isPane = false;
                     DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
                 #endif
@@ -65,7 +65,7 @@ if (mat < 32008) {
             } else { // (31XXX)
                 if (mat % 2 == 0) { // Stained Glass
                     #ifdef CONNECTED_GLASS_EFFECT
-                        uint voxelID = uint(30000 + (mat - 31000) / 2);
+                        uint voxelID = uint(200 + (mat - 31000) / 2);
                         bool isPane = false;
                         DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
                     #endif
@@ -74,7 +74,7 @@ if (mat < 32008) {
                     mossNoiseIntensity = 0.8;
                 } else /*if (mat % 2 == 1)*/ { // Stained Glass Pane
                     #ifdef CONNECTED_GLASS_EFFECT
-                        uint voxelID = uint(30000 + (mat - 31000) / 2);
+                        uint voxelID = uint(200 + (mat - 31000) / 2);
                         bool isPane = true;
                         DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
                     #endif
@@ -86,7 +86,7 @@ if (mat < 32008) {
                 }
             }
         } else {
-            if (mat == 32000) { // Water
+            if (mat < 32004) { // Water
                 #ifdef SHADER_WATER
                     #include "/lib/materials/specificMaterials/translucents/water.glsl"
                 #endif
@@ -105,13 +105,13 @@ if (mat < 32008) {
             }
         }
     }
-} else if (mat < 32064) {
+} else {
     if (mat < 32024) {
         if (mat < 32016) {
             if (mat < 32012) { // Glass
                 if (mat == 32008){
                     #ifdef CONNECTED_GLASS_EFFECT
-                        uint voxelID = uint(30017);
+                        uint voxelID = uint(217);
                         bool isPane = false;
                         DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
                     #endif
@@ -123,7 +123,7 @@ if (mat < 32008) {
             } else /*if (mat == 32012)*/ { // Glass Pane
                 if (mat == 32012) {
                     #ifdef CONNECTED_GLASS_EFFECT
-                        uint voxelID = uint(30018);
+                        uint voxelID = uint(218);
                         bool isPane = true;
                         DoConnectedGlass(colorP, color, noGeneratedNormals, playerPos, worldGeoNormal, voxelID, isPane);
                     #endif
@@ -187,8 +187,4 @@ if (mat < 32008) {
             }
         }
     }
-}
- else if (mat != 65535) {
-    // block.32128
-    
 }

@@ -5,10 +5,11 @@
 
 //Common//
 #include "/lib/common.glsl"
+#include "/lib/shaderSettings/water.glsl"
+#include "/lib/shaderSettings/emissionMult.glsl"
 #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
     #include "/lib/misc/distortWorld.glsl"
 #endif
-#include "/lib/shaderSettings/water.glsl"
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -160,7 +161,7 @@ void main() {
     float fresnelM = (pow3(fresnel) * 0.85 + 0.15) * reflectMult;
 
     float lengthCylinder = max(length(playerPos.xz), abs(playerPos.y) * 2.0);
-    color.a *= smoothstep(far * 0.5, far * 0.7, lengthCylinder);
+    color.a *= smoothstep(far * 0.4, far * 0.6, lengthCylinder);
 
     #if MONOTONE_WORLD > 0
         #if MONOTONE_WORLD == 1
@@ -177,6 +178,8 @@ void main() {
     #ifdef SS_BLOCKLIGHT
         blocklightCol = ApplyMultiColoredBlocklight(blocklightCol, screenPos, playerPos, lmCoord.x);
     #endif
+
+    emission *= EMISSION_MULTIPLIER;
 
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, 0.5,
                worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, noVanillaAO,
@@ -199,17 +202,17 @@ void main() {
         #endif
 
         vec4 reflection = GetReflection(normalM, viewPos.xyz, nViewPos, playerPos, lViewPos, -1.0,
-                                        dhDepthTex1, dither, skyLightFactor, fresnel,
+                                        dhDepthTex, dither, skyLightFactor, fresnel,
                                         smoothnessG, geoNormal, color.rgb, shadowMult, highlightMult, 0.0, vec2(0.0));
 
         color.rgb = mix(color.rgb, reflection.rgb, fresnelM);
     #endif
-    ////
+    //
 
     float sky = 0.0;
 
     float prevAlpha = color.a;
-    DoFog(color, sky, lViewPos, playerPos, VdotU, VdotS, dither, false, 0.0, 0.0);
+    DoFog(color, sky, lViewPos, playerPos, VdotU, VdotS, dither, false, 0.0);
     float fogAlpha = color.a;
     color.a = prevAlpha * (1.0 - sky);
 
@@ -219,17 +222,6 @@ void main() {
     #ifdef SS_BLOCKLIGHT
         /* DRAWBUFFERS:069 */
         gl_FragData[2] = vec4(lightAlbedo, SSBLAlpha);
-        #if WORLD_SPACE_REFLECTIONS > 0
-            /* DRAWBUFFERS:06948 */
-            gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, sqrt(fresnelM * color.a * fogAlpha));
-            gl_FragData[4] = vec4(reflection.rgb * fresnelM * color.a * fogAlpha, reflection.a);
-        #endif
-    #else
-        #if WORLD_SPACE_REFLECTIONS > 0
-            /* DRAWBUFFERS:0648 */
-            gl_FragData[2] = vec4(mat3(gbufferModelViewInverse) * normalM, sqrt(fresnelM * color.a * fogAlpha));
-            gl_FragData[3] = vec4(reflection.rgb * fresnelM * color.a * fogAlpha, reflection.a);
-        #endif
     #endif
 }
 
@@ -266,10 +258,7 @@ attribute vec4 at_tangent;
 
 //Program//
 void main() {
-    gl_Position = ftransform();
-    #ifdef TAA
-        gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
-    #endif
+    vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
 
     mat = dhMaterialId;
 
@@ -281,7 +270,7 @@ void main() {
     northVec = normalize(gbufferModelView[2].xyz);
     sunVec = GetSunVector();
 
-    playerPos = (gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex).xyz;
+    playerPos = position.xyz;
 
     mat3 tbnMatrix = mat3(
         eastVec.x, northVec.x, normal.x,
@@ -294,7 +283,6 @@ void main() {
     glColor = gl_Color;
 
     #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE || defined WAVE_EVERYTHING
-        vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
         #ifdef MIRROR_DIMENSION
             doMirrorDimension(position);
         #endif
@@ -304,7 +292,11 @@ void main() {
         #ifdef WAVE_EVERYTHING
             DoWaveEverything(position.xyz);
         #endif
-        gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
+    #endif
+
+    gl_Position = dhProjection * gbufferModelView * position;
+    #ifdef TAA
+        gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
     #endif
 }
 

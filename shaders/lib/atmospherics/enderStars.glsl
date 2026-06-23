@@ -5,6 +5,17 @@ vec3 GetEnderStars(vec3 viewPos, float VdotU, float sizeMult, float starAmount) 
     vec2 starCoord2 = starCoord.xz * 0.5 / (END_STAR_SIZE * sizeMult);
     starCoord2 += VdotU < 0.0 ? 100.0 : 0.0;
 
+    #if END_STAR_HEMISPHERE != 0
+        #if END_STAR_HEMISPHERE == 1
+            if (VdotU < 0.0) return vec3(0.0);
+        #else
+            if (VdotU > 0.0) return vec3(0.0);
+        #endif
+        float starBelowHorizonBrightness = min(1.0, (abs(VdotU)) * 3.0);
+    #else
+        float starBelowHorizonBrightness = 1.0;
+    #endif
+
     const float starFactor = 1024.0;
     vec2 fractPart = fract(starCoord2 * starFactor);
     starCoord2 = floor(starCoord2 * starFactor) / starFactor;
@@ -34,18 +45,20 @@ vec3 GetEnderStars(vec3 viewPos, float VdotU, float sizeMult, float starAmount) 
                                   vec3(STAR_COLOR_3_END_R, STAR_COLOR_3_END_G, STAR_COLOR_3_END_B),
                                   float(STAR_COLOR_VARIATION_END));
 
-    #if defined END && (defined ES_STAR_COLOR == 2 || (defined ES_STAR_COLOR == 1 && defined MOD_ENDERSCAPE))
-        starColor = 1e-2 * enderscapeStarColor * enderscapeStarAlpha;
-    #endif    
-    vec3 enderStars = star * starColor * 3000.0 * END_STAR_BRIGHTNESS;
+    vec3 enderStars = star * starColor * 3000.0 * END_STAR_BRIGHTNESS * starBelowHorizonBrightness;
 
-    float VdotUM1 = abs(VdotU);
-    float VdotUM2 = pow2(1.0 - VdotUM1);
-    enderStars *= VdotUM1 * VdotUM1 * (VdotUM2 + 0.015) + 0.015;
+    float absVdotU = abs(VdotU);
+    float VdotUM2 = pow2(1.0 - absVdotU);
+    enderStars *= min(VdotUM2 + 0.015, 0.05) + 0.015;
+
+    float VdotUM3 = smoothstep(0.0, 0.25, absVdotU);
+    float endBeamHeight = END_BEAM_HEIGHT * 200.0;
+    float beamFactor = END_BEAM_INTENSITY * max0(endBeamHeight - abs(END_BEAM_CENTER_ALT - cameraPosition.y)) / endBeamHeight;
+    enderStars *= pow(VdotUM3, min1(beamFactor + 0.001) * min1(END_BEAM_HEIGHT));
 
     #if END_TWINKLING_STARS > 0
         enderStars *= getTwinklingStars(starCoord2, float(END_TWINKLING_STARS));
     #endif
 
-    return enderStars;
+    return enderStars * END_STAR_INTENSITY;
 }

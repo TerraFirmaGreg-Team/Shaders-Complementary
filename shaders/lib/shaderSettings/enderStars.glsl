@@ -1,12 +1,3 @@
-
-
-//   ___                _                   _        _   ___      _      _
-//  / __|_  _ _ __ _ __| |___ _ __  ___ _ _| |_ __ _| | | _ \__ _| |_ __| |_  ___ ___
-//  \__ \ || | '_ \ '_ \ / -_) '  \/ -_) ' \  _/ _` | | |  _/ _` |  _/ _| ' \/ -_|_-<
-//  |___/\_,_| .__/ .__/_\___|_|_|_\___|_||_\__\__,_|_| |_| \__,_|\__\__|_||_\___/__/
-//           |_|  |_|
-// Settings added by Supplemental Patches
-
 #ifndef ENDER_STARS_SETTINGS_FILE
 #define ENDER_STARS_SETTINGS_FILE
 
@@ -34,6 +25,6 @@
 
 #define STAR_COLOR_VARIATION_END 0.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
-#define ES_STAR_COLOR 1 //[0 1 2]
+#define END_STAR_HEMISPHERE 0 //[-1 0 1]
 
 #endif

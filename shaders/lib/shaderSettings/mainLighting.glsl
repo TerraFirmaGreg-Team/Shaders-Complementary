@@ -1,21 +1,13 @@
-
-
-//   ___                _                   _        _   ___      _      _
-//  / __|_  _ _ __ _ __| |___ _ __  ___ _ _| |_ __ _| | | _ \__ _| |_ __| |_  ___ ___
-//  \__ \ || | '_ \ '_ \ / -_) '  \/ -_) ' \  _/ _` | | |  _/ _` |  _/ _| ' \/ -_|_-<
-//  |___/\_,_| .__/ .__/_\___|_|_|_\___|_||_\__\__,_|_| |_| \__,_|\__\__|_||_\___/__/
-//           |_|  |_|
-// Settings added by Supplemental Patches
-
 #ifndef MAIN_LIGHTING_SETTINGS_FILE
 #define MAIN_LIGHTING_SETTINGS_FILE
 
 #define VANILLAAO_I 100 //[0 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 110 120 130 140 150 160 170 180 190 200 220 240 260 280 300]
 
-#define HELD_LIGHTING_MODE 2 //[0 1 2]
 #define BLOCKLIGHT_FLICKERING 0 //[0 2 3 4 5 6 7 8 9 10]
 #define AMBIENT_MULT 100 //[50 55 60 65 70 75 80 85 90 95 100 110 120 130 140 150 160 170 180 190 200]
 //#define MOON_PHASE_INF_LIGHT
+
+#define HELD_LIGHTING_MODE 2 //[0 1 2]
 
 
 // Euphoria Patches
@@ -40,9 +32,5 @@
 #define DISTANCE_MIN_LIGHT 0 //[0 1 2 3 4 5 6 7 8 9 10]
 
 //#define BLOCKLIGHT_CAUSTICS
-
-#define ES_LIGHTMAP 1 //[0 1 2]
-
-#define COLORED_ES_FLASH_LIGHTING
 
 #endif

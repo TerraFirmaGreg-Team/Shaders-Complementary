@@ -20,7 +20,7 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
     #endif
 #endif
 
-#if PIXEL_WATER > 0 && (defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER || defined DH_WATER)
+#if PIXEL_WATER > 0 && (defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER || defined DH_WATER || defined VOXY_PATCH)
     const float water_scroll_speed = 0.002;
     vec3 worldPosPixel = playerPos + cameraPosition;
     vec3 waterPosPixel = worldPosPixel + (vec3(frameTimeCounter) * water_scroll_speed);
@@ -58,7 +58,7 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
 #ifdef WATER_GENERATED_NORMALS
 #endif
 
-#if defined GBUFFERS_WATER || defined DH_WATER
+#if defined GBUFFERS_WATER || defined DH_WATER || defined VOXY_PATCH
     SSBLAlpha = 0.0;
     lmCoordM.y = min(lmCoord.y * 1.07, 1.0); // Iris/Sodium skylight inconsistency workaround
 
@@ -76,7 +76,7 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
 
     #if WATER_MAT_QUALITY >= 2 || WATER_STYLE >= 2
         #define WATER_SPEED_MULT_M WATER_SPEED_MULT * 0.018
-        float rawWind = frameTimeCounter * WATER_SPEED_MULT_M * PLANET_WIND_MULTIPLIER;
+        float rawWind = frameTimeCounter * WATER_SPEED_MULT_M;
         vec2 wind = vec2(0.0, -rawWind);
         vec3 worldPos = playerPos + cameraPosition;
         vec2 waterPos = worldPos.xz;
@@ -105,7 +105,7 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
             #if WATER_STYLE >= 2
                 waterPosM *= 2.5; wind *= 2.5;
 
-                #if WATER_MAT_QUALITY >= 2
+                #if WATER_MAT_QUALITY >= 2 && defined GBUFFERS_WATER
                     vec2 parallaxMult = -0.01 * viewVector.xy / viewVector.z;
                     for (int i = 0; i < 4; i++) {
                         waterPosM += parallaxMult * texture2D(gaux4, waterPosM - wind).a;
@@ -172,6 +172,8 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
                 float depthT = texelFetch(depthtex1, texelCoord, 0).r;
             #elif defined DH_WATER
                 float depthT = texelFetch(dhDepthTex1, texelCoord, 0).r;
+            #elif defined VOXY_PATCH
+                float depthT = texelFetch(vxDepthTexOpaque, texelCoord, 0).r;
             #endif
             vec3 screenPosT = vec3(screenPos.xy, depthT);
             #ifdef TAA
@@ -180,6 +182,19 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
                 vec3 viewPosT = ScreenToView(screenPosT);
             #endif
             float lViewPosT = length(viewPosT);
+
+            #if defined GBUFFERS_WATER && defined VOXY
+                float depthLod = texelFetch(vxDepthTexOpaque, texelCoord, 0).r;
+                vec3 screenPosLod = vec3(screenPos.xy, depthLod);
+                vec4 iProjDiag = vec4(vxProjInv[0].x,
+                                      vxProjInv[1].y,
+                                      vxProjInv[2].zw);
+                vec3 p3 = screenPosLod * 2.0 - 1.0;
+                vec4 viewPosLod = iProjDiag * p3.xyzz + vxProjInv[3];
+                viewPosLod.xyz = viewPosLod.xyz / viewPosLod.w;
+                lViewPosT = min(lViewPosT, length(viewPosLod));
+            #endif
+
             float lViewPosDifM = lViewPos - lViewPosT;
 
             #if WATER_STYLE < 3 || PIXEL_WATER == 1
@@ -189,6 +204,7 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
             #endif
 
             #ifdef DISTANT_HORIZONS
+                // Don't do this on Voxy or else it will look broken
                 if (depthT == 1.0) color.a *= smoothstep(far, far * 0.9, lViewPos);
             #endif
 
@@ -213,6 +229,7 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
 
             // Water Foam //
             #if WATER_FOAM_I > 0 && defined GBUFFERS_WATER && !(defined MIRROR_DIMENSION || defined WORLD_CURVATURE)
+                if (mat == 32000) // Checks for actual water and not cauldron water
                 if (NdotU > 0.99) {
                     vec3 matrixM = vec3(
                         gbufferModelViewInverse[0].y,
@@ -292,22 +309,34 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
 
     color.a = mix(color.a, 1.0, fresnel4);
 
-    #ifdef GBUFFERS_WATER
-        #if WATER_STYLE == 3 || WATER_STYLE == 2 && SUN_MOON_STYLE >= 2
-            smoothnessG = 1.0;
 
-            const float WATER_BUMPINESS_M2 = min(WATER_BUMP_MED * WATER_BUMP_SMALL * WATER_BUMPINESS * 0.65, 1.0);
-            vec2 lightNormalP = WATER_BUMPINESS_M2 * (normalMed + 0.5 * normalSmall) * waterBumpNoise;
-            vec3 lightNormal = normalize(vec3(lightNormalP, 1.0) * tbnMatrix);
-            highlightMult = dot(lightNormal, lightVec);
-            highlightMult = max0(highlightMult) / max(dot(normal, lightVec), 0.17);
-            highlightMult = mix(pow2(pow2(highlightMult * 1.1)), 1.0, min1(sqrt(miplevel) * 0.45)) * 0.24;
+    #if WATER_STYLE == 3 || WATER_STYLE == 2 && SUN_MOON_STYLE >= 2
+        smoothnessG = 1.0;
+
+        const float WATER_BUMPINESS_M2 = min(WATER_BUMP_MED * WATER_BUMP_SMALL * WATER_BUMPINESS * 0.65, 1.0);
+        vec2 lightNormalP = WATER_BUMPINESS_M2 * (normalMed + 0.5 * normalSmall) * waterBumpNoise;
+        vec3 lightNormal = normalize(vec3(lightNormalP, 1.0) * tbnMatrix);
+        highlightMult = dot(lightNormal, lightVec);
+        highlightMult = max0(highlightMult) / max(dot(normal, lightVec), 0.17);
+        highlightMult = pow2(pow2(highlightMult * 1.1));
+
+        #ifdef GBUFFERS_WATER
+            float highlightBlend = min1(sqrt(miplevel) * 0.45);
         #else
-            smoothnessG = 0.5;
-
-            highlightMult = min(pow2(pow2(dot(colorP.rgb, colorP.rgb) * 0.4)), 0.5);
-            highlightMult *= (16.0 - 15.0 * fresnel2) * (sunVisibility > 0.5 ? 0.85 : 0.425);
+            float fovScale = gbufferProjection[1][1];
+            float scaleFactor = min1(fovScale * 20.0 / lViewPos);
+            float highlightBlend = 1.0 - scaleFactor;
         #endif
+        highlightMult = 0.24 * mix(highlightMult, 1.0, highlightBlend);
+    #else
+        smoothnessG = 0.5;
+
+        #if defined GBUFFERS_WATER || defined VOXY_PATCH
+            highlightMult = min(pow2(pow2(dot(colorP.rgb, colorP.rgb) * 0.4)), 0.5);
+        #else
+            highlightMult = 0.12;
+        #endif
+        highlightMult *= (16.0 - 15.0 * fresnel2) * (sunVisibility > 0.5 ? 0.85 : 0.425);
     #endif
     // ============================== End of Step 4 ============================== //
 #endif

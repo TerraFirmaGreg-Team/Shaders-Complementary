@@ -3,7 +3,8 @@
 #include "/lib/colors/skyColors.glsl"
 #include "/lib/shaderSettings/stars.glsl"
 
-vec2 GetStarCoord(vec3 viewPos, float sphereness) {
+#ifdef CELESTIAL_BOTH_HEMISPHERES
+vec2 GetStarCoordBothHemispheres(vec3 viewPos, float sphereness) {
     vec3 wpos = normalize((gbufferModelViewInverse * vec4(viewPos * 1000.0, 1.0)).xyz);
     float ySign = sign(wpos.y);
     float yMagnitude = abs(wpos.y);
@@ -20,9 +21,26 @@ vec2 GetStarCoord(vec3 viewPos, float sphereness) {
 
     return starCoord.xz;
 }
+#endif
+
+vec2 GetStarCoordUpperHemisphere(vec3 viewPos, float sphereness) {
+    vec3 wpos = normalize((gbufferModelViewInverse * vec4(viewPos * 1000.0, 1.0)).xyz);
+    vec3 starCoord = wpos / (wpos.y + length(wpos.xz) * sphereness);
+    starCoord.x += 0.006 * syncedTime;
+
+    return starCoord.xz;
+}
+
+vec2 GetStarCoord(vec3 viewPos, float sphereness) {
+    #ifdef CELESTIAL_BOTH_HEMISPHERES
+        return GetStarCoordBothHemispheres(viewPos, sphereness);
+    #else
+        return GetStarCoordUpperHemisphere(viewPos, sphereness);
+    #endif
+}
 
 vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float starAmount) {
-    #if NIGHT_STAR_AMOUNT == 0
+    #if NIGHT_STAR_AMOUNT == 0 || (defined EUPHORIA_PATCHES_IS_SPYGLASS_ASTRONOMY_INSTALLED && defined GBUFFERS_SKYBASIC)
         return vec3(0.0, 0.0, 0.0);
     #endif
     float starsAroundSun = 1.0;
@@ -34,11 +52,6 @@ vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float st
         #endif
     #else
         if (VdotU < 0.0) return vec3(0.0);
-        #if DOOM_AND_GLOOM_FOG == 1
-            return vec3(0.0);
-        #elif defined MOD_DOOM_AND_GLOOM && (DOOM_AND_GLOOM_FOG == 0)
-            if (doomAndGloomFog > 0.0001) return vec3(0.0);
-        #endif
         float starBelowHorizonBrightness = min1(VdotU * 3.0);
         float horizonFactor = 0.0;
     #endif
@@ -66,45 +79,28 @@ vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float st
         star *= 0.55;
     #endif
 
-    #ifdef HAS_NO_ATMOSPHERE
-        star *= SPACE_STARS_MULTIPLIER;    
-    #endif
-
     star = max0(star - starAmount * 0.1);
     star *= getStarEdgeFactor(fractPart, STAR_ROUNDNESS_OW / 10.0, STAR_SOFTNESS_OW);
     star *= star;
 
     star *= max0(1.0 - pow(abs(VdotS) * 1.002, 100.0) * starsAroundSun) * starBelowHorizonBrightness - horizonFactor * 0.5;
-
     #ifndef DAYLIGHT_STARS
-        #ifdef SPACE_TRANSITION
-			    star *= min(1, pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility) + getAtmosphereFadeoutFactor); //not how taidum did it, will need to test
-		    #else
-			    star *= pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility);
-		    #endif
+        star *= pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility);
     #endif
 
     #ifdef CLEAR_SKY_WHEN_RAINING
-        star *= min1(invRainFactor + 0.4);
+        star *= min1(invRainFactorDynamic + 0.4);
     #else
-        star *= invRainFactor;
+        star *= invRainFactorDynamic;
     #endif
 
-    #ifndef SPACE_STARS_SPECTRUM    
-        vec3 starColor = GetStarColor(starCoord,
-                                    vec3(0.38, 0.4, 0.5),
-                                    vec3(STAR_COLOR_1_OW_R, STAR_COLOR_1_OW_G, STAR_COLOR_1_OW_B),
-                                    vec3(STAR_COLOR_2_OW_R, STAR_COLOR_2_OW_G, STAR_COLOR_2_OW_B),
-                                    vec3(STAR_COLOR_3_OW_R, STAR_COLOR_3_OW_G, STAR_COLOR_3_OW_B),
-                                    float(STAR_COLOR_VARIATION_OW));
-    #else 
-        vec3 starColor = GetStarColor(starCoord,
-                                    vec3(0.38, 0.4, 0.5),
-                                    vec3(G_STAR_COLOR_1_OW_R, G_STAR_COLOR_1_OW_G, G_STAR_COLOR_1_OW_B),
-                                    vec3(A_STAR_COLOR_1_OW_R, A_STAR_COLOR_1_OW_G, A_STAR_COLOR_1_OW_B),
-                                    vec3(M_STAR_COLOR_1_OW_R, M_STAR_COLOR_1_OW_G, M_STAR_COLOR_1_OW_B),
-                                    float(SPECTRUM_STAR_COLOR_VARIATION_OW));
-    #endif
+    vec3 starColor = GetStarColor(starCoord,
+                                vec3(0.38, 0.4, 0.5),
+                                  vec3(STAR_COLOR_1_OW_R, STAR_COLOR_1_OW_G, STAR_COLOR_1_OW_B),
+                                  vec3(STAR_COLOR_2_OW_R, STAR_COLOR_2_OW_G, STAR_COLOR_2_OW_B),
+                                  vec3(STAR_COLOR_3_OW_R, STAR_COLOR_3_OW_G, STAR_COLOR_3_OW_B),
+                                  float(STAR_COLOR_VARIATION_OW));
+
     vec3 stars = 40.0 * star * starColor * starBrightness;
 
     #if TWINKLING_STARS > 0
@@ -114,4 +110,3 @@ vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float st
     return stars;
 }
 #endif
-        

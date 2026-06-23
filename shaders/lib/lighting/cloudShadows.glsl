@@ -2,6 +2,7 @@
     #define INCLUDE_CLOUD_SHADOWS
 
     #include "/lib/shaderSettings/cloudsAndLighting.glsl"
+    #include "/lib/shaderSettings/clouds.glsl"
 
     #ifdef CLOUDS_REIMAGINED
         #include "/lib/atmospherics/clouds/cloudCoord.glsl"
@@ -35,7 +36,7 @@
             vec2 cloudPos1 = GetRoundedCloudCoord(ModifyTracePos(worldPos + cloudOffset1, cloudAlt1i).xz, CLOUD_SHADOW_ROUNDNESS);
 
             #ifndef COMPOSITE
-                float cloudSample = mix(texture2D(gaux4, cloudPos1).b, texture2D(spiral_clouds, cloudPos1).b, inMagicBiome);
+                float cloudSample = texture2D(gaux4, cloudPos1).b;
             #else
                 float cloudSample = texture2D(cloudWaterTex, cloudPos1).b;
             #endif
@@ -48,7 +49,12 @@
                     cloudOffset2.z += distToCloudLayer2 / NVdotLM;
                 #endif
                 vec2 cloudPos2 = GetRoundedCloudCoord(ModifyTracePos(worldPos + cloudOffset2, cloudAlt2i).xz, CLOUD_SHADOW_ROUNDNESS);
-                float cloudSample2 = mix(texture2D(gaux4, cloudPos2).b, texture2D(spiral_clouds, cloudPos2).b, inMagicBiome);
+
+                #ifndef COMPOSITE
+                    float cloudSample2 = texture2D(gaux4, cloudPos2).b;
+                #else
+                    float cloudSample2 = texture2D(cloudWaterTex, cloudPos2).b;
+                #endif
                 cloudSample2 *= clamp(distToCloudLayer2 * 0.1, 0.0, 1.0);
 
                 cloudSample = 1.0 - (1.0 - cloudSample) * (1.0 - cloudSample2);
@@ -58,8 +64,19 @@
             cloudShadow = 1.0 - 0.85 * cloudSample;
         #else
             vec2 csPos = worldPos.xz + worldPos.y * 0.25;
-            csPos.x += syncedTime;
-            csPos *= 0.000002 * CLOUD_UNBOUND_SIZE_MULT * CLOUD_SHADOW_UNBOUND_SIZE;
+            float wind = 4.0;
+            #if CLOUD_SPEED_MULT == 100
+                #define CLOUD_SPEED_MULT_M CLOUD_SPEED_MULT * 0.01
+                wind *= syncedTime;
+            #else
+                #define CLOUD_SPEED_MULT_M CLOUD_SPEED_MULT * 0.01
+                wind *= frameTimeCounter * CLOUD_SPEED_MULT_M;
+            #endif
+            #if CLOUD_DIRECTION == 1
+                csPos.xy = csPos.yx;
+            #endif
+            csPos.y -= wind;
+            csPos *= 0.000002 * CLOUD_UNBOUND_SIZE_MULT;
 
             vec2 shadowoffsets[8] = vec2[8](
                 vec2( 0.0   , 1.0   ),
@@ -78,7 +95,12 @@
             cloudShadow = smoothstep1(pow2(min1(cloudSample * 0.2)));
         #endif
 
-        cloudShadow = mix(1.0, mix(cloudShadow, 1.0, NIGHT_CLOUD_UNBOUND_REMOVE * (1.0 - sunVisibility)), CLOUD_TRANSPARENCY);
+        cloudShadow = mix(1.0, mix(cloudShadow, 1.0, NIGHT_CLOUD_UNBOUND_REMOVE * (1.0 - sunVisibility)), min1(CLOUD_TRANSPARENCY));
+        cloudShadow = 1.0 - clamp01((1.0 - cloudShadow) * CLOUD_SHADOW_STRENGTH);
+
+        #if CLOUD_SHADOW_FADE_DISTANCE > 0
+            cloudShadow = mix(1.0, cloudShadow, clamp01(length(playerPos) / (CLOUD_SHADOW_FADE_DISTANCE * 10)));
+        #endif
 
         return cloudShadow;
     }

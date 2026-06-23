@@ -30,6 +30,11 @@
 #ifndef GBUFFERS_HAND
     vec3 oldColor = color.rgb; // Needed for entities
 
+    float paleGardenDetector = 1.0;
+    #if MC_VERSION >= 12104
+        paleGardenDetector -= inPaleGarden;
+    #endif
+
     #if SEASONS != 2 && SEASONS != 5
         // Color Desaturation
         vec3 desaturatedColor = color.rgb;
@@ -65,9 +70,9 @@
     #if SEASONS == 1 || SEASONS == 2
         vec3 summerColor = color.rgb;
         if (summerTime > 0) {
-            #if defined GBUFFERS_TERRAIN || defined DH_TERRAIN
+            #if defined GBUFFERS_TERRAIN || defined DH_TERRAIN || defined VOXY_PATCH
                 if (dhLeaves || (mat == 10132 || mat == 10133) && glColor.b < 0.999) { // Normal Grass Block
-                    summerColor = mix(summerColor, GetLuminance(summerColor) * vec3(1.0, 0.8941, 0.3725), 0.3 * SUMMER_STRENGTH);
+                    summerColor = mix(summerColor, GetLuminance(summerColor) * vec3(1.0, 0.8941, 0.3725), 0.15 * SUMMER_STRENGTH);
                 }
             #endif
         }
@@ -84,7 +89,7 @@
         if (autumnTime > 0) {
             autumnColor = mix(color.rgb, desaturatedColor, 0.65 * autumnOnlyForests);
 
-            #if defined GBUFFERS_TERRAIN || defined GBUFFERS_BLOCK || defined DH_TERRAIN
+            #if defined GBUFFERS_TERRAIN || defined GBUFFERS_BLOCK || defined DH_TERRAIN || defined VOXY_PATCH
                 const vec3 autumnLeafColor0 = vec3(0.9922, 0.5707, 0.098);
                 const vec3 autumnLeafColor1 = vec3(0.9922, 0.4786, 0.098);
                 const vec3 autumnLeafColor2 = vec3(0.9804, 0.4033, 0.1569);
@@ -191,7 +196,7 @@
 
                             leafVariable *= leafDecider;
 
-                            autumnColor *= mix(vec3(1.0), leafFloorColor, leafVariable * overlayNoiseIntensity * autumnOnlyForests * (1.0 - max(inPaleGarden, inPaleBog)));
+                            autumnColor *= mix(vec3(1.0), leafFloorColor, leafVariable * overlayNoiseIntensity * autumnOnlyForests * paleGardenDetector);
                         }
                     #endif
                 }
@@ -199,12 +204,12 @@
             #endif
 
             #ifndef GBUFFERS_ENTITIES
-                autumnColor *= mix(vec3(1.0), vec3(1.0, 0.7, 0.5), autumnTime * 0.7 * autumnOnlyForests * AUTUMN_STRENGTH * (1.0 - max(inPaleGarden, inPaleBog)));
+                autumnColor *= mix(vec3(1.0), vec3(1.0, 0.7, 0.5), autumnTime * 0.7 * autumnOnlyForests * AUTUMN_STRENGTH * paleGardenDetector);
             #endif
         }
     #endif
 
-    #if (SEASONS == 1 || SEASONS == 3 || SEASONS == 4) && (defined GBUFFERS_TERRAIN || defined DH_TERRAIN) && LESS_LEAVES > 0
+    #if (SEASONS == 1 || SEASONS == 3 || SEASONS == 4) && (defined GBUFFERS_TERRAIN || defined DH_TERRAIN || defined VOXY_PATCH) && LESS_LEAVES > 0
         if (mat == 10009 || mat == 10011) { // Except some leaves
             float autumnWinterTime = autumnTime + winterTime;
             #if SNOW_CONDITION != 2
@@ -226,7 +231,7 @@
             float snowSide = 0.0;
             #if !defined GBUFFERS_ENTITIES && defined GBUFFERS_TERRAIN
                 if (isFoliage) snowSide = mix(1.0, 0.0, 1.0 / (color.g * color.g) * 0.05); // make all foliage white
-                #ifndef DH_TERRAIN
+                #if !(defined DH_TERRAIN || defined VOXY_PATCH)
                 if (((mat == 10132 || mat == 10133) && glColor.b < 0.999) || (mat == 10126 && color.b + color.g < color.r * 2.0 && color.b > 0.3 && color.g < 0.45) || (mat == 10493 && color.r > 0.52 && color.b < 0.30 && color.g > 0.41 && color.g + color.b * 0.95 > color.r * 1.2)) { // Normal Grass Block and Dirt Path
                     snowSide = mix(0.0, 1.0, pow(blockUV.y, 3.0));
                     #if defined SSS_SEASON_SNOW && (SEASONS == 1 || SEASONS == 4)
@@ -356,7 +361,7 @@
                 ) { // Foliage except some leaves, Normal Grass Block
                     if (glColor.b < 0.99) springColor = mix(springColor, GetLuminance(springColor) * vec3(0.3725, 1.0, 0.4235), 0.5 * SPRING_GREEN_INTENSITY);
                 }
-                #if FLOWER_AMOUNT > 0 && !defined DH_TERRAIN
+                #if FLOWER_AMOUNT > 0 && !(defined DH_TERRAIN || defined VOXY_PATCH)
                     if ((mat == 10132 || mat == 10133)) { // Normal Grass Block
                         float flowerNoiseAdd = step(texture2DLod(noisetex, 0.0005 * (worldPos.xz + atMidBlock.xz / 64), 0.0).r, 0.25) * 3.5 + 1.0; // Noise to add more flowers
                         float flowerNoiseRemove = clamp01(step(texture2DLod(noisetex, 0.003 * (worldPos.xz + atMidBlock.xz / 64), 0.0).g, 0.69) + 0.15); // Noise to reduce the amount of flowers
@@ -472,7 +477,7 @@
             #ifdef DISABLE_SPRING_IN_DRY_BIOMES
                 dryBiome = 1.0 - inDry;
             #endif
-            springColor = mix(color.rgb, springColor, springTime * dryBiome * (1.0 - max(inPaleGarden, inPaleBog)));
+            springColor = mix(color.rgb, springColor, springTime * dryBiome * paleGardenDetector);
         }
     #endif
 

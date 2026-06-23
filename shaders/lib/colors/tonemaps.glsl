@@ -20,6 +20,12 @@ void doColorAdjustments(inout vec3 color) {
     doColorAdjustmentsWithoutExposure(color);
 }
 
+vec3 doSimpleTonemap(vec3 color) {
+    color = TM_EXPOSURE * color;
+    doColorAdjustmentsWithoutExposure(color);
+    return pow(color, vec3(1.0 / 2.2));
+}
+
 vec3 DoCompTonemap(inout vec3 color) {
     // Lottes tonemap modified for Complementary Shaders
     // Lottes 2016, "Advanced Techniques and Optimization of HDR Color Pipelines"

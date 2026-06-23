@@ -1,4 +1,4 @@
-#if defined GBUFFERS_TERRAIN || defined DH_TERRAIN
+#if defined GBUFFERS_TERRAIN || defined DH_TERRAIN || defined VOXY_PATCH
     float noise = -1.0 * LAVA_NOISE_AMOUNT;
     float lavaNoiseEmission = emission;
     float dhLavaSides = 0.0;

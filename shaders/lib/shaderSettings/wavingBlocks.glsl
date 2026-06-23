@@ -1,12 +1,3 @@
-
-
-//   ___                _                   _        _   ___      _      _
-//  / __|_  _ _ __ _ __| |___ _ __  ___ _ _| |_ __ _| | | _ \__ _| |_ __| |_  ___ ___
-//  \__ \ || | '_ \ '_ \ / -_) '  \/ -_) ' \  _/ _` | | |  _/ _` |  _/ _| ' \/ -_|_-<
-//  |___/\_,_| .__/ .__/_\___|_|_|_\___|_||_\__\__,_|_| |_| \__,_|\__\__|_||_\___/__/
-//           |_|  |_|
-// Settings added by Supplemental Patches
-
 #if !defined WAVING_BLOCKS_SETTINGS_FILE
 #define WAVING_BLOCKS_SETTINGS_FILE
 
@@ -17,7 +8,7 @@
 #define WAVING_FOLIAGE
 #define WAVING_LEAVES
 #define WAVING_LAVA
-#define WAVING_LILY_PAD
+//#define WAVING_LILY_PAD
 #define WAVING_WATER_VERTEX
 
 #ifdef NETHER
@@ -37,25 +28,5 @@
 
 
 //#define WAVING_SUGAR_CANE
-
-#define FLESH_WAVING
-
-//#define FLESH_WAVING_ANYWHERE
-
-#define FLESH_WAVING_SPEED 1.0 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
-
-#define FLESH_WAVING_STRENGTH 1.0 //[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
-
-#define WAVING_GILDED_BEADS 1 //[0 1 2 3]
-
-#define WAVING_ROPE
-
-#define MOLTEN_LEAD_WAVINESS 1 //[0 1 2 3]
-
-#define SCORCHFUL_SANDSTORM_FOLIAGE_WAVING_INTENSITY 6.0 //[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]
-
-#define SCORCHFUL_SANDSTORM_LEAVES_WAVING_INTENSITY 0.30 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60]
-
-#define YUNGS_SANDSTORM_WAVING_INTENSITY 0.30 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60]
 
 #endif

@@ -1,7 +1,5 @@
 #include "/lib/shaderSettings/mainLighting.glsl"
 #include "/lib/shaderSettings/cloudsAndLighting.glsl"
-#include "/lib/shaderSettings/shadowMainLighting.glsl"
-#include "/lib/shaderSettings/endFlash.glsl"
 #ifdef AURORA_INFLUENCE
     #include "/lib/atmospherics/auroraBorealis.glsl"
 #endif
@@ -11,12 +9,16 @@
 #include "/lib/lighting/ggx.glsl"
 #include "/lib/lighting/minimumLighting.glsl"
 
-#if SHADOW_QUALITY > -1 && (defined OVERWORLD || defined END)
+#if SHADOW_QUALITY > -1 && (defined OVERWORLD || defined END) && !defined DH_TERRAIN && !defined DH_WATER && !defined VOXY_PATCH
     #include "/lib/lighting/shadowSampling.glsl"
 #endif
 
 #if HELD_LIGHTING_MODE >= 1
     #include "/lib/lighting/heldLighting.glsl"
+#endif
+
+#ifdef BLOCKLIGHT_CAUSTICS
+    #include "/lib/lighting/blocklightCaustics.glsl"
 #endif
 
 #ifdef CLOUD_SHADOWS
@@ -40,6 +42,10 @@
     uniform isampler2D endcrystal_sampler;
 #endif
 
+#ifdef PHOTONICS_LIGHTING
+    #include "/lib/shaderSettings/photonics.glsl"
+#endif
+
 vec3 highlightColor = normalize(pow(lightColor, vec3(0.37))) * (0.3 + 1.5 * sunVisibility2) * (1.0 - 0.85 * rainFactor);
 
 //Lighting//
@@ -52,12 +58,19 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     #endif
 
     vec2 oldLightmap = lightmap.xy;
+    #ifdef PHOTONICS_LIGHTING
+        float phRtCoverage = getPhotonicsFade(playerPos);
+    #endif
 
     #ifdef DO_PIXELATION_EFFECTS
         vec2 pixelationOffset = ComputeTexelOffset(tex, texCoord);
 
         #if defined PIXELATED_SHADOWS || defined PIXELATED_BLOCKLIGHT
-            vec3 playerPosPixelated = TexelSnap(playerPos, pixelationOffset);
+            #if PIXELATED_SHADOWS_MODE == 0
+                vec3 playerPosPixelated = TexelSnap(playerPos, pixelationOffset);
+            #else
+                vec3 playerPosPixelated = floor((playerPos + cameraPosition) * PIXELATED_SHADOWS_MODE + 0.001) / PIXELATED_SHADOWS_MODE - cameraPosition + 0.5 / PIXELATED_SHADOWS_MODE;
+            #endif
         #endif
 
         #ifdef PIXELATED_SHADOWS
@@ -138,7 +151,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         }
     #endif
 
-    #if defined END && END_CENTER_LIGHTING > 0 && MC_VERSION >= 10900 && (defined GBUFFERS_BLOCK || defined GBUFFERS_ENTITIES || defined GBUFFERS_TERRAIN || defined GBUFFERS_HAND || defined GBUFFERS_WATER)
+    #if defined END && END_CENTER_LIGHTING > 0 && MC_VERSION >= 10900 && (defined GBUFFERS_BLOCK || defined GBUFFERS_ENTITIES || defined GBUFFERS_TERRAIN || defined GBUFFERS_HAND || defined GBUFFERS_WATER) && !defined VOXY_PATCH
         enderDragonDead = 1.0 - texelFetch(colortex5, ivec2(viewWidth-1, viewHeight-1), 0).a;
         vec3 endCenterCol = saturateColors(vec3(END_CENTER_LIGHTING_R, END_CENTER_LIGHTING_G, END_CENTER_LIGHTING_B) * 0.8, 1.1);
         vec3 endCenterPos = vec3(0.5, 60.5, 0.5) - (playerPos + cameraPositionBest);
@@ -203,7 +216,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
 
             NdotL *= 1.0 - 0.7 * (1.0 - pow2(pow2(NdotUmax0))) * NPdotU;
         #endif
-        #if SHADOW_QUALITY == -1 && defined GBUFFERS_TERRAIN
+        #if SHADOW_QUALITY == -1 && (defined GBUFFERS_TERRAIN || defined DH_TERRAIN || defined DH_WATER || defined VOXY_PATCH)
             if (subsurfaceMode == 1) {
                 NdotU = 1.0;
                 NdotUmax0 = 1.0;
@@ -247,15 +260,10 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         #endif
 
         if (shadowMult.r > 0.00001) {
-            #if SHADOW_QUALITY > -1
+            #if SHADOW_QUALITY > -1 && !defined DH_TERRAIN && !defined DH_WATER && !defined VOXY_PATCH
                 if (NdotLM > 0.0001) {
                     vec3 shadowMultBeforeLighting = shadowMult;
-
-                    #if !defined DH_TERRAIN && !defined DH_WATER
-                        float shadowLength = shadowDistance * 0.9166667 - lViewPos; //consistent08JJ622
-                    #else
-                        float shadowLength = 0.0;
-                    #endif
+                    float shadowLength = shadowDistance * 0.9166667 - lViewPos; //consistent08JJ622
 
                     if (shadowLength > 0.000001) {
                         #if SHADOW_SMOOTHING == 4 || SHADOW_QUALITY == 0
@@ -285,7 +293,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
                             } else {
                                 float centerFactor = max(glColor.a, lightmapYM);
 
-                                #if defined PERPENDICULAR_TWEAKS && SHADOW_QUALITY >= 2 && !defined DH_TERRAIN
+                                #if defined PERPENDICULAR_TWEAKS && SHADOW_QUALITY >= 2
                                     // Fake Variable Penumbra Shadows
                                     // Making centerFactor also work in daylight if AO gradient is facing towards sun
                                     if (geoNdotU > 0.99) {
@@ -319,9 +327,13 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
                             {
                                 float distanceBias = pow(dot(playerPos, playerPos), 0.75);
                                 distanceBias = 0.12 + 0.0008 * distanceBias;
-                                vec3 bias = worldGeoNormal * distanceBias * (2.0 - 0.95 * NdotLmax0); // 0.95 fixes pink petals noon shadows
+                                float NdotLmax0M = NdotLmax0;
+                                #ifdef END_FLASH_SHADOW_INTERNAL
+                                    NdotLmax0M = mix(NdotLmax0M, 1.0, endFlashIntensityM);
+                                #endif
+                                vec3 bias = worldGeoNormal * distanceBias * (2.0 - 0.95 * NdotLmax0M); // 0.95 fixes pink petals noon shadows
 
-                                #if defined GBUFFERS_TERRAIN && !defined DH_TERRAIN
+                                #ifdef GBUFFERS_TERRAIN
                                     if (subsurfaceMode == 2) {
                                         bias *= vec3(0.0, 0.0, -0.5);
                                         bias.z += 0.25 * signMidCoordPos.x * NdotE;
@@ -366,19 +378,19 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
                         #endif
 
                         int shadowSampleBooster = int(subsurfaceMode > 0 && lViewPos < 10.0);
-                        #if SHADOW_QUALITY == 0
-                            int shadowSamples = 0; // We don't use SampleTAAFilteredShadow on Shadow Quality 0
-                        #elif SHADOW_QUALITY == 1
-                            int shadowSamples = 1 + shadowSampleBooster;
-                        #elif SHADOW_QUALITY == 2 || SHADOW_QUALITY == 3
+                        #if SHADOW_QUALITY == 2 // Medium
                             int shadowSamples = 2 + 2 * shadowSampleBooster;
-                        #elif SHADOW_QUALITY == 4
+                        #elif SHADOW_QUALITY == 3 // High
                             int shadowSamples = 4 + 4 * shadowSampleBooster;
-                        #elif SHADOW_QUALITY == 5
+                        #elif SHADOW_QUALITY == 4 // Very High
                             int shadowSamples = 8 + 8 * shadowSampleBooster;
+                        #elif SHADOW_QUALITY == 5 // Ultra
+                            int shadowSamples = 16 + 16 * shadowSampleBooster;
+                        #else
+                            int shadowSamples = 0;
                         #endif
 
-                        shadowMult *= GetShadow(shadowPos, lightmap.y, offset, shadowSamples, leaves);
+                        shadowMult *= GetShadow(shadowPos, lightmap.y, offset, shadowSamples, leaves, playerPos);
                     }
 
                     float shadowSmooth = 16.0;
@@ -400,7 +412,46 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
                     }
                 }
             #else
-                shadowMult *= skyLightShadowMult;
+                #if SHADOW_QUALITY == -1 || !defined VOXY_PATCH
+                    shadowMult *= skyLightShadowMult;
+                #else
+                    // Screenspace shadows rendered in deferred1 of previous frame for Voxy
+                    // Previous frame reprojection from Chocapic13
+                    vec3 screenSpaceShadowPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
+                    vec4 viewPosPrev = vxProjInv * vec4(screenSpaceShadowPos * 2.0 - 1.0, 1.0);
+                    viewPosPrev /= viewPosPrev.w;
+
+                    viewPosPrev = vxModelViewInv * viewPosPrev;
+
+                    vec4 previousPosition = viewPosPrev + vec4(cameraPosition - previousCameraPosition, 0.0);
+                    previousPosition = vxModelViewPrev * previousPosition;
+                    previousPosition = vxProjPrev * previousPosition;
+                    screenSpaceShadowPos.xy = previousPosition.xy / previousPosition.w * 0.5 + 0.5;
+
+                    float screenSpaceShadowSample = texture2D(colortex18, screenSpaceShadowPos.xy).r;
+                    if (screenSpaceShadowSample >= OSIEBCA) {
+                        if (subsurfaceMode == 1) {
+                            shadowMult *= 0.82 * (0.2 + 0.8 * sqrt2(max(SdotU, nightFactor)));
+                        } else if (subsurfaceMode == 2) {
+                            float baseLeafShadowMult = 1.0;
+
+                            #ifdef LEAF_SHADOW_OPTIMISATION
+                                float extraLeafShadeMix = 0.25 + 0.125 * pow2(noonFactor);
+                            #else
+                                float extraLeafShadeMix = 0.125 + 0.125 * pow2(noonFactor);
+                            #endif
+
+                            shadowMult *= mix(baseLeafShadowMult, NdotU, extraLeafShadeMix);
+                        }
+                        shadowMult *= screenSpaceShadowSample * skyLightShadowMult;
+                    } else {
+                        shadowMult *= skyLightShadowMult;
+                    }
+                #endif
+            #endif
+
+            #ifdef END_FLASH_SHADOW_INTERNAL
+                shadowTime = mix(shadowTime, 1.0, endFlashIntensityM);
             #endif
 
             #ifdef CLOUD_SHADOWS
@@ -417,7 +468,8 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     #endif
 
     #ifdef END_FLASH_SHADOW_INTERNAL
-        shadowMult = mix(vec3(1.0), (shadowMult) * 2.0, endFlashIntensity);
+        vec3 endFlashShadowColor = END_FLASH_SHADOW * 0.12 * 0.82 + endOrangeCol * 0.18;
+        shadowMult = mix(vec3(0.0), endFlashShadowColor * shadowMult, endFlashIntensityM) + 1;
     #endif
 
     // Blocklight
@@ -440,7 +492,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
             lightmapXM = pow(lightmapXMSteep + lightmapXMCalm, 2.25);
         } else {
             float xLightCurveM = XLIGHT_CURVE > 0.999 ? XLIGHT_CURVE : sqrt2(XLIGHT_CURVE);
-            lightmapXM = pow(lightmap.x, 3.0 * xLightCurveM) * 10.0 * pow(lightmap.x, pow2(UPPER_LIGHTMAP_CURVE)) * UPPER_LIGHTMAP_CURVE * (UPPER_LIGHTMAP_CURVE * 0.7 + 0.3);
+            lightmapXM = pow(lightmap.x, 3.0 * xLightCurveM * pow2(UPPER_LIGHTMAP_CURVE)) * 10.0 * UPPER_LIGHTMAP_CURVE * (UPPER_LIGHTMAP_CURVE * 0.7 + 0.3);
         }
     #else
         if (!noSmoothLighting) {
@@ -461,7 +513,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     #endif
 
     #if defined DIRECTIONAL_LIGHTMAP_NORMALS && (defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER || defined GBUFFERS_BLOCK)
-        if (oldLightmap.x > 0.035) { // very specific value, do not change
+        if (oldLightmap.x > 0.035 && mat != 32008) { // very specific value, do not change
             float lightmapDir = lightmapXM;
             #ifdef USE_FINE_DERIVATIVES
                 vec2 dFdBlock = vec2(dFdxFine(oldLightmap.x), dFdyFine(oldLightmap.x)); // Get higher precision derivatives when available
@@ -500,10 +552,14 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         blocklightCol = vec3(RandR, RandG, RandB) * 0.875;
     #endif
 
-    #if defined END && (defined ES_LIGHTMAP == 2 || (defined ES_LIGHTMAP == 1 && defined MOD_ENDERSCAPE))
-        vec3 blockLighting = lightmapXM * blocklightCol + 0.4 * vec3(0.0, -oldLightmap.x * 0.1, oldLightmap.x * 0.16);
-    #else
-        vec3 blockLighting = lightmapXM * blocklightCol;
+    vec3 blockLighting = lightmapXM * blocklightCol;
+
+    #if defined PHOTONICS_LIGHTING && !defined GBUFFERS_WATER && !defined GBUFFERS_HAND && PHOTONICS_MAX_LIGHTS > 0
+        // Keep a small vanilla fallback near camera so scenes do not go black if RT energy is weak.
+        if (!isLightSource){
+            blockLighting *= 1.0 - (1.0 - PHOTONICS_VANILLA_LIGHT_FALLBACK * 0.01) * phRtCoverage;
+            lightmapXM *= 1.0 - (1.0 - PHOTONICS_VANILLA_LIGHT_FALLBACK * 0.01) * phRtCoverage;
+        }
     #endif
 
     #if COLORED_LIGHTING_INTERNAL > 0
@@ -558,7 +614,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         //if (heldItemId2 == 40000 && heldItemId != 40000) blockLighting = lightVolume.rgb; // Hold spider eye to see light volume
     #endif
 
-    #if defined END && END_CENTER_LIGHTING > 0 && MC_VERSION >= 10900 && defined END_CENTER_LIGHTING_AFFECT_BLOCKLIGHT && (defined GBUFFERS_BLOCK || defined GBUFFERS_ENTITIES || defined GBUFFERS_TERRAIN || defined GBUFFERS_HAND)
+    #if defined END && END_CENTER_LIGHTING > 0 && MC_VERSION >= 10900 && defined END_CENTER_LIGHTING_AFFECT_BLOCKLIGHT && (defined GBUFFERS_BLOCK || defined GBUFFERS_ENTITIES || defined GBUFFERS_TERRAIN || defined GBUFFERS_HAND) && !defined VOXY_PATCH
         blockLighting = mix(blockLighting, lightmapXM * clamp01(saturateColors(endCenterCol, 1.3)), clamp01(endCenterLightDist) * enderDragonDead);
     #endif
 
@@ -569,7 +625,18 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
             vec3 playerPosForHeldLighting = playerPosPixelated;
         #endif
 
-        vec3 heldLighting = GetHeldLighting(playerPosForHeldLighting, color.rgb, emission, worldGeoNormal, normalM, viewPos);
+        #if defined PHOTONICS_LIGHTING && PHOTONICS_MAX_LIGHTS > 0
+            vec3 vanillaHeldLighting = GetHeldLighting(playerPosForHeldLighting, color.rgb, emission, worldGeoNormal, normalM, viewPos);
+            vec3 heldLighting = vanillaHeldLighting * (1.0 - (1.0 - PHOTONICS_VANILLA_LIGHT_FALLBACK * 0.01) * phRtCoverage);
+        #else
+            vec3 heldLighting = GetHeldLighting(playerPosForHeldLighting, color.rgb, emission, worldGeoNormal, normalM, viewPos);
+        #endif
+
+        #if HAND_BLOCKLIGHT_FLICKERING > 0 && defined GBUFFERS_HAND
+            float heldLightHand1 = 0, heldLightHand2 = 0;
+            getHeldLight(heldLightHand1, heldLightHand2);
+            emission *= mix(1.0, getHeldLightFlicker(), min1(heldLightHand1 + heldLightHand2));
+        #endif
 
         #ifdef GBUFFERS_HAND
             blockLighting *= 0.5;
@@ -599,7 +666,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
                             (0.5 + 0.2 * sunFactor + 0.8 * noonFactor) * (1.0 - rainFactor * 0.5);
             #else
                 #define AMBIENT_MULT_M (AMBIENT_MULT - 100) * 0.002
-                shadowLightMult = mix(shadowLightMult, vec3(1.0), AMBIENT_MULT_M);
+                shadowLightMult = mix(shadowLightMult, vec3(1.0), AMBIENT_MULT_M * ambientMult);
                 lightColorM = mix(lightColorM, GetLuminance(lightColorM) * DoLuminanceCorrection(ambientColorM), (1.0 - shadowMultFloat) * AMBIENT_MULT_M);
             #endif
         #endif
@@ -618,24 +685,33 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         }
     #endif
     #ifdef END
-        #if defined IS_IRIS && MC_VERSION >= 12109
+        #ifdef END_FLASHES
             vec3 worldEndFlashPosition = mat3(gbufferModelViewInverse) * endFlashPosition;
-            worldEndFlashPosition = normalize(vec3(worldEndFlashPosition.x, 0.0, worldEndFlashPosition.z));
+            worldEndFlashPosition = normalize(vec3(
+                worldEndFlashPosition.x,
+                0.15 * (END_BEAM_CENTER_ALT - playerPos.y),
+                worldEndFlashPosition.z
+            ));
             float endFlashDirectionFactor = max0(1.0 + dot(worldGeoNormal, normalize(worldEndFlashPosition))) * 0.5;
                   endFlashDirectionFactor = pow2(pow2(endFlashDirectionFactor));
 
-            #ifdef COLORED_ES_FLASH_LIGHTING
-                vec3 endFlashColor = 1.5 * (enderscapeFlashColor / maxOf(enderscapeFlashColor)) * endFlashIntensity * pow2(lightmapYM);
-                ambientColorM *= mix(vec3(1.0), enderscapeFlashColor / maxOf(enderscapeFlashColor), endFlashIntensity);
-            #else
-                vec3 endFlashColor = (endOrangeCol + 0.5 * endLightColor) * endFlashIntensity * pow2(lightmapYM);
+            vec3 endFlashColor = (endOrangeCol + endLightColor) * endFlashIntensityM * pow2(lightmapYM);
+
+            #ifdef END_FLASH_SHADOW_INTERNAL
+                endFlashColor *= clamp01(shadowMult - 1);
             #endif
-            ambientColorM += endFlashColor * (0.2 * endFlashDirectionFactor);
+
+            ambientColorM += endFlashColor  * (0.2 * endFlashDirectionFactor);
         #endif
     #endif
 
     #ifdef GBUFFERS_HAND
         ambientMult *= 1.3; // To improve held map visibility
+    #endif
+
+    #if defined PHOTONICS_LIGHTING && !defined GBUFFERS_WATER && PHOTONICS_INDIRECT_INTENSITY > 0
+        float photonicsAmbientLightMult = 2.0 - PHOTONICS_AMBIENT_LIGHT_MULT;
+        ambientMult *= 1.0 - mix(0.0, 0.367 * photonicsAmbientLightMult, PHOTONICS_INDIRECT_INTENSITY * 0.06) * phRtCoverage;
     #endif
 
     // Directional Shading
@@ -678,6 +754,10 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     #endif
 
     // Scene Lighting Stuff
+    #ifdef GBUFFERS_VOXELS
+        shadowLightMult = vec3(0.0);
+    #endif
+
     vec3 sceneLighting = lightColorM * shadowLightMult + ambientColorM * ambientMult;
     float dotSceneLighting = dot(sceneLighting, sceneLighting);
 
@@ -688,59 +768,12 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     blockLighting *= XLIGHT_I;
 
     #ifdef BLOCKLIGHT_CAUSTICS
-        if (isEyeInWater == 1) {
-            vec3 worldPos = playerPos + cameraPosition;
-            #if defined DO_PIXELATION_EFFECTS && defined PIXELATED_SHADOWS
-                worldPos = playerPosPixelated + cameraPosition;
-            #endif
+        vec3 worldPos = playerPos + cameraPosition;
+        #if defined DO_PIXELATION_EFFECTS && defined PIXELATED_SHADOWS
+            worldPos = playerPosPixelated + cameraPosition;
+        #endif
 
-            float causticTime = frameTimeCounter * 0.045;
-            mat2 rot = rotate(causticTime * 35);
-
-            vec3 absNormal = abs(worldGeoNormal);
-            vec2 basePos = absNormal.y > max(absNormal.x, absNormal.z) ? worldPos.xz :
-                        absNormal.x > absNormal.z ? worldPos.yz : worldPos.xy;
-
-            basePos *= 1.35;
-
-            // Opposing directional movement for the two layers
-            vec2 causticWind1 = vec2(causticTime * 0.3, causticTime * 0.15);
-            vec2 causticWind2 = vec2(-causticTime * 0.17, -causticTime * 0.22);
-
-            vec2 cPos1 = basePos * 0.10 + causticWind1;
-            vec2 cPos2 = basePos * 0.05 + causticWind2;
-
-            float gradientNoise = fract(52.9829189 * fract(0.06711056 * gl_FragCoord.x + 0.00583715 * gl_FragCoord.y));
-            #ifdef TAA
-                gradientNoise = fract(gradientNoise + 0.618034 * mod(float(frameCounter), 3600.0));
-            #endif
-
-            float caustic = 0.0;
-            int causticSamples = 4;
-
-            for (int i = 0; i < causticSamples; i++) {
-                vec2 offset1 = causticOffsetDist(gradientNoise + float(i), causticSamples);
-                vec2 offset2 = causticOffsetDist(gradientNoise + float(i) + 0.5, causticSamples);
-
-                offset1 = rot * offset1;
-                offset2 = rot * offset2;
-
-                vec4 sample1a = texture2D(gaux4, cPos1 + offset1);
-                vec4 sample1b = texture2D(gaux4, cPos1 - offset1);
-                vec4 sample2a = texture2D(gaux4, cPos2 + offset2);
-                vec4 sample2b = texture2D(gaux4, cPos2 - offset2);
-
-                float caustic1 = dot(sample1a.rg - sample1b.rg, vec2(6.0));
-                float caustic2 = dot(sample2a.rg - sample2b.rg, vec2(6.0));
-
-                caustic += caustic1 + caustic2;
-            }
-
-            caustic /= causticSamples;
-
-            caustic = clamp(caustic, -0.15, 2.0) * 0.52 + 0.587;
-            blockLighting *= caustic * WATER_CAUSTIC_STRENGTH;
-        }
+        blockLighting *= GetBlocklightCaustics(worldGeoNormal, worldPos);
     #endif
 
     #ifdef LIGHT_COLOR_MULTS
@@ -750,9 +783,13 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         sceneLighting *= moonPhaseInfluence;
     #endif
 
+    #ifdef GBUFFERS_VOXELS
+        blockLighting = vec3(0.0);
+    #endif
+
     // Vanilla Ambient Occlusion
     float vanillaAO = 1.0;
-    #if VANILLAAO_I > 0
+    #if VANILLAAO_I > 0 && !defined GBUFFERS_VOXELS
         vanillaAO = glColor.a;
 
         #if defined DO_PIXELATION_EFFECTS && defined PIXELATED_AO

@@ -1,10 +1,16 @@
+#if defined END && defined COMPOSITE
+    #include "/lib/atmospherics/volumetricLight/enderBeams.glsl"
+    #include "/lib/atmospherics/volumetricLight/volumetricLight.glsl"
+#endif
+
 void AddBackgroundReflection(inout vec4 reflection, vec3 color, vec3 playerPos, vec3 normalM, vec3 normalMR, vec3 viewPos, vec3 nViewPos, vec3 nViewPosR,
                              vec3 shadowMult, float RVdotU, float RVdotS, float z0, float dither, float skyLightFactor, float smoothness, float highlightMult) {
     #ifdef OVERWORLD
+        bool isCustomSky;
         #if defined COMPOSITE || WATER_REFLECT_QUALITY >= 2
-            vec3 skyReflection = GetSky(RVdotU, RVdotS, dither, isEyeInWater == 0, true);
+            vec3 skyReflection = GetSkyReflected(RVdotU, RVdotS, dither, isEyeInWater == 0, true, isCustomSky);
         #else
-            vec3 skyReflection = GetLowQualitySky(RVdotU, RVdotS, dither, isEyeInWater == 0, true);
+            vec3 skyReflection = GetLowQualitySkyReflected(RVdotU, RVdotS, dither, isEyeInWater == 0, true, isCustomSky);
         #endif
 
         #ifdef ATM_COLOR_MULTS
@@ -36,12 +42,17 @@ void AddBackgroundReflection(inout vec4 reflection, vec3 color, vec3 playerPos, 
                         skyReflection += nightNebula;
                     #endif
 
-                    vec2 starCoord = GetStarCoord(nViewPos, 0.5);
                     #ifdef PIXELATED_WATER_REFLECTIONS
+                        #if WATER_STYLE < 2
+                            vec2 starCoord = GetStarCoord(nViewPosR, 0.5);
+                        #else
+                            vec2 starCoord = GetStarCoord(nViewPos, 0.5);
+                        #endif
                         vec3 absPlayerPos = abs(playerPos);
                         float sizeDecider = -clamp01(pow2(min1(length(absPlayerPos) / 10))) + 1.0; // The effect will only be around the player
                         float starSize = mix(1.0, 2.0, step(0.2, sizeDecider));
                     #else
+                        vec2 starCoord = GetStarCoord(nViewPosR, 0.5);
                         float starSize = 1.0;
                     #endif
                     #if STAR_BRIGHTNESS != 3
@@ -82,17 +93,21 @@ void AddBackgroundReflection(inout vec4 reflection, vec3 color, vec3 playerPos, 
     #elif defined END
         #ifdef COMPOSITE
             #ifdef END_BEAMS
-                vec3 skyReflection = (endSkyColor + 0.4 * DrawEnderBeams(RVdotU, playerPos, nViewPosR)) * skyLightFactor;
+                float vlFactorM = 0.0;
+                vec3 translucentMult = vec3(1.0);
+                float lViewPos = 100000.0;
+                float lViewPos1 = 100000.0;
+
+                vec4 volumetricEffect = GetVolumetricLight(vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPosR, RVdotS, RVdotU, z0, z0, z0, dither);
+
+                volumetricEffect.rgb = pow(volumetricEffect.rgb, vec3(1.0 / 2.2));
+                vec3 skyReflection = volumetricEffect.rgb * 1.25 * skyLightFactor;
             #else
                 vec3 skyReflection = endSkyColor * skyLightFactor;
             #endif
         #else
             vec3 skyReflection = endSkyColor * shadowMult;
-        #endif        
-        #if (defined ENDERSCAPE_ATMOSPHERE || defined MOD_ENDERSCAPE) && defined ES_NEBULA
-            skyReflection += GetEnderscapeNebula(nViewPosR, RVdotU);
         #endif
-
 
         #ifdef ATM_COLOR_MULTS
             skyReflection *= atmColorMult;
@@ -102,9 +117,11 @@ void AddBackgroundReflection(inout vec4 reflection, vec3 color, vec3 playerPos, 
     #endif
 
     #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0 && defined COMPOSITE && (BLOCK_REFLECT_QUALITY >= 2 || WATER_REFLECT_QUALITY >= 2)
-        vec4 wsrReflection = getWSR(playerPos, normalMR, nViewPosR, RVdotU, RVdotS, z0, dither);
+        float traceLength = far;
+        vec4 wsrReflection = getWSR(playerPos, normalMR, nViewPosR, RVdotU, RVdotS, z0, dither, traceLength);
+        refDist = min(refDist, traceLength);
+
         reflection = mix(wsrReflection, vec4(reflection.rgb, 1.0), reflection.a);
-        refDist = min(refDist, length(wsrHitPos - playerPos));
     #endif
 
     reflection.rgb = mix(skyReflection, reflection.rgb, reflection.a);

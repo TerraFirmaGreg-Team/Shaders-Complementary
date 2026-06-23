@@ -14,7 +14,6 @@ vec3 GetRawWave(in vec3 pos, float wind) {
     wave.y = magnitude * sin(wind*0.0015 + d2 + d0 + pos.x);
     wave.z = magnitude * sin(wind*0.0063 + d0 + d1 - pos.x + pos.z + pos.y);
 
-    wave *= PLANET_WIND_MULTIPLIER;
     return wave;
 }
 
@@ -45,11 +44,7 @@ void DoWave_Foliage(inout vec3 playerPos, vec3 worldPos, float waveMult) {
 
     #ifdef NO_WAVING_INDOORS
         #ifndef WAVE_EVERYTHING
-            #ifdef MOD_YUNGSCAVEBIOMES
-                wave *= mix(clamp(lmCoord.y - 0.87, 0.0, 0.1), YUNGS_SANDSTORM_WAVING_INTENSITY, yungSandstormFactor);
-            #else
-                wave *= clamp(lmCoord.y - 0.87, 0.0, 0.1);
-            #endif
+            wave *= clamp(lmCoord.y - 0.87, 0.0, 0.1);
         #else
             wave *= 0.1;
         #endif
@@ -65,9 +60,6 @@ void DoWave_Leaves(inout vec3 playerPos, vec3 worldPos, float waveMult) {
 
     vec3 wave = GetWave(worldPos, 170.0);
     wave *= vec3(4.0, 3.0, 8.0);
-    #ifdef MOD_SCORCHFUL
-        wave.x -= pow1_5(SCORCHFUL_SANDSTORM_LEAVES_WAVING_INTENSITY * (0.3 + 2 * wave.x)) * rainFactor * hasSandstorm;
-    #endif
 
     wave *= 1.0 - inSnowy; // Leaves with snow on top look wrong
 
@@ -93,7 +85,16 @@ void DoWave_Water(inout vec3 playerPos, vec3 worldPos) {
         wave *= 0.1;
     #endif
 
-    playerPos.y += wave * 0.125 - 0.05;
+    wave = wave * 0.125 - 0.05;
+
+    #ifdef VOXY
+        // Fixes water alignment between normal water and voxy water
+        float renderDisEdge = min1(max0(length(playerPos) * 2.0 - far) / far);
+        wave *= 1.0 - renderDisEdge;
+        wave += 0.02 * renderDisEdge;
+    #endif
+
+    playerPos.y += wave;
 
     #if defined GBUFFERS_WATER && WATER_STYLE == 1
         normal = mix(normal, tangent, wave * 0.01);
@@ -113,76 +114,18 @@ void DoWave_Lava(inout vec3 playerPos, vec3 worldPos) {
             else wave *= 2.0;
         #endif
 
+        #ifdef VOXY
+            // Fixes lava alignment between normal lava and voxy lava
+            float renderDisEdge = min1(max0(length(playerPos) * 2.0 - far) / far);
+            wave *= 1.0 - renderDisEdge;
+            wave += 0.02 * renderDisEdge;
+        #endif
+
         playerPos.y += wave * 0.0125;
     }
 }
 
-void DoWave_Curtain(inout vec3 playerPos, vec3 worldPos, float waveMult, float angle) {
-    worldPos.y *= 0.5;
-
-    vec3 wave = GetWave(worldPos, 170.0);
-    wave.x = wave.x * 10.0 * sin(angle) + wave.y * 4.0;
-    wave.y = 0.0;
-    wave.z = wave.z * 10.0 * cos(angle);
-
-    playerPos.xyz += wave * waveMult;
-}
-void DoWave_Flesh(inout vec3 playerPos, vec3 worldPos, float waveMult) {
-    worldPos *= 0.75;
-
-    vec3 wave = GetWave(worldPos, 100.0 * FLESH_WAVING_SPEED);
-    wave *= vec3(8.0, 16.0, 8.0);
-
-    playerPos.xyz += wave * waveMult;
-}
-void DoWave_TallFoliage(inout vec3 playerPos, vec3 worldPos, float _waveMult, int voxelNumber) {
-    float waveMult = _waveMult;
-
-    #if COLORED_LIGHTING_INTERNAL > 0
-        vec3 voxelPos = SceneToVoxel(playerPos);
-        if (CheckInsideVoxelVolume(voxelPos)) {
-            vec3 posBottom = SceneToVoxel(playerPos - vec3(0.0, 0.1, 0.0));
-            vec3 posTop = SceneToVoxel(playerPos + vec3(0.0, 0.1, 0.0));
-
-            int voxelBottom = int(texelFetch(voxel_sampler, ivec3(posBottom), 0).r);
-            int voxelTop = int(texelFetch(voxel_sampler, ivec3(posTop), 0).r);
-
-            if (
-                (voxelBottom != voxelNumber && voxelBottom != 0) ||
-                (voxelTop != voxelNumber && voxelTop != 0)
-            ) {
-                waveMult = 0.0;
-            }
-        }
-    #endif
-
-    DoWave_Foliage(playerPos, worldPos, waveMult);
-}
-
-void DoWave_Block(inout vec3 playerPos, int mat) {
-    vec3 worldPos = playerPos.xyz + cameraPosition.xyz;
-    #if defined GBUFFERS_TERRAIN || defined SHADOW
-        if (mat < 12296) {
-            #if defined WAVING_FOLIAGE && (defined NETHER || defined DO_NETHER_VINE_WAVING_OUTSIDE_NETHER)
-            if (mat >= 12292 && mat < 12296) {
-                const int voxelNumber = 251;
-                DoWave_TallFoliage(playerPos.xyz, worldPos, 1.0, voxelNumber);
-            }
-            #endif
-        } else { // mat >= 12296
-            #if defined WAVING_FOLIAGE && (defined NETHER || defined DO_NETHER_VINE_WAVING_OUTSIDE_NETHER)
-            if (mat >= 12300 && mat < 12304) {
-                const int voxelNumber = 65;
-                DoWave_TallFoliage(playerPos.xyz, worldPos, 1.0, voxelNumber);
-            }
-            #endif
-        }
-    #endif
-}
-
 void DoWave(inout vec3 playerPos, int mat) {
-    DoWave_Block(playerPos, mat);
-
     vec3 worldPos = playerPos.xyz + cameraPosition.xyz;
 
     #if defined GBUFFERS_TERRAIN || defined SHADOW
@@ -191,10 +134,6 @@ void DoWave(inout vec3 playerPos, int mat) {
                 #ifdef DO_MORE_FOLIAGE_WAVING
                     || mat == 10769 // Torchflower
                     || mat == 10976 // Open Eye Blossom
-                #endif
-                #ifdef DO_MORE_FOLIAGE_WAVING_TFG
-                    || mat == 10771 // gleamflower
-                    || mat == 10775 // eyeblossom
                 #endif
             ) {
                 if (gl_MultiTexCoord0.t < mc_midTexCoord.t || fract(worldPos.y + 0.21) > 0.26)
@@ -212,13 +151,6 @@ void DoWave(inout vec3 playerPos, int mat) {
                         wave.x = wave.x * 8.0 + wave.y * 4.0;
                         wave.y = 0.0;
                         wave.z = wave.z * 3.0;
-                        #ifdef MOD_YUNGSCAVEBIOMES
-                            wave.xz += YUNGS_SANDSTORM_WAVING_INTENSITY * 0.66 * yungSandstormWindDirection.xz * yungSandstormFactor;
-                        #endif
-                        #ifdef MOD_SCORCHFUL
-                            wave *= mix(1.0, SCORCHFUL_SANDSTORM_FOLIAGE_WAVING_INTENSITY, rainFactor * hasSandstorm);
-                            wave.x -= pow1_5(SCORCHFUL_SANDSTORM_LEAVES_WAVING_INTENSITY * (1 + 2 * wave.x)) * rainFactor * hasSandstorm;
-                        #endif
 
                         playerPos.xyz += wave * 0.1 * eyeBrightnessM; // lmCoord.y is unreliable for firefly bushes
                     }
@@ -325,11 +257,3 @@ void DoWaveEverything(inout vec3 playerPos) {
     DoWave_Leaves(playerPos.xyz, worldPos, 1.0);
     DoWave_Foliage(playerPos.xyz, worldPos, 1.0);
 }
-
-
-void DoWave_BlockEntity(inout vec3 playerPos, int blockEntityId) {
-    vec3 worldPos = playerPos.xyz + cameraPosition.xyz;
-    #if defined GBUFFERS_BLOCK || defined SHADOW
-    #endif
-}
-                                                    
