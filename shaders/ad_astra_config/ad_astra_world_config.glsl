@@ -7,6 +7,8 @@
     #undef CLOUD_SHADOWS
 #endif
 
+#define HAS_NO_MOON //ad astra handles astral object, no need on the shader side
+
 #ifdef AD_ASTRA_ORBIT
 	
 	#define UNLIT_SKY_OBJECTS //Sun doesnt fade when over the horizon
@@ -14,14 +16,11 @@
 	#define CELESTIAL_BOTH_HEMISPHERES //Stars still appear below the horizon
 	
     #define DAYLIGHT_STARS //stars appear at day
-	
-	#define HAS_NO_MOON
     #define HAS_NO_ATMOSPHERE
 	#undef	BORDER_FOG
 #endif
 
 #ifdef WORLD_EUROPA
-    #define HAS_NO_MOON
     #define DAYLIGHT_STARS
     #undef  LENSFLARE
     #undef  BLOOM_FOG
@@ -32,7 +31,6 @@
 #endif
 
 #ifdef WORLD_MOON
-    #define HAS_NO_MOON
     #define DAYLIGHT_STARS
     #define HAS_NO_ATMOSPHERE
 	#undef	BORDER_FOG
@@ -41,18 +39,16 @@
 #endif
 
 #ifdef WORLD_MERCURY
-    #define HAS_NO_MOON
     #define SUN_SIZE 2000 //normal is 400
     #define DAYLIGHT_STARS
     #define HAS_NO_ATMOSPHERE
 #endif
 
 #ifdef WORLD_MARS
-    #define HAS_NO_MOON
     #define SUN_SIZE 100 //normal is 400
 	#undef	BORDER_FOG
     #ifdef SWITCH_PLANET_WINDSPEED
-    #define PLANET_WIND_MULTIPLIER 0.3
+        #define PLANET_WIND_MULTIPLIER 0.3
     #endif
 #endif
 

@@ -77,125 +77,128 @@ void main() {
         vec2 tSize = textureSize(tex, 0);
         vec4 color = texture2D(tex, texCoord);
         color.rgb *= max0(glColor.rgb);
-        #ifdef SAVE_SKYBOX_DATA
-            if (renderStage == MC_RENDER_STAGE_SUNSET || renderStage == MC_RENDER_STAGE_CUSTOM_SKY || renderStage == MC_RENDER_STAGE_SKY) {
-                skyColor = color * glColor.a;
-                hasCustomSky = int(step(0.5, textureSize(tex, 0).x));
-                materialMask = OSIEBCA * 238.0 * hasCustomSky;
-                averageSkyColor = averageSkyColorM;
-            }
-        #endif
 
-        vec4 screenPos = vec4(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z, 1.0);
-        vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-        viewPos /= viewPos.w;
-        vec3 nViewPos = normalize(viewPos.xyz);
+        #ifdef UNLIT_SKY_OBJECTS //TFGEDITS
+            #ifdef SAVE_SKYBOX_DATA
+                if (renderStage == MC_RENDER_STAGE_SUNSET || renderStage == MC_RENDER_STAGE_CUSTOM_SKY || renderStage == MC_RENDER_STAGE_SKY) {
+                    skyColor = color * glColor.a;
+                   hasCustomSky = int(step(0.5, textureSize(tex, 0).x));
+                  materialMask = OSIEBCA * 238.0 * hasCustomSky;
+                  averageSkyColor = averageSkyColorM;
+              }
+            #endif
 
-        float VdotS = dot(nViewPos, sunVec);
-        float VdotU = dot(nViewPos, upVec);
+            vec4 screenPos = vec4(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z, 1.0);
+            vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
+            viewPos /= viewPos.w;
+            vec3 nViewPos = normalize(viewPos.xyz);
 
-        float sunMaskRadius = 0.95;
-        #ifdef IS_IRIS
-            bool sunSideCheck = VdotS > sunMaskRadius;
-            bool isSun = renderStage == MC_RENDER_STAGE_SUN;
-            bool isMoon = renderStage == MC_RENDER_STAGE_MOON;
-            bool aroundSunMoon = isSun || isMoon;
-            #if IRIS_VERSION < 10902
-                if (sunSideCheck) isSun = true; // Workaround for sun rendering as MC_RENDER_STAGE_MOON in some Iris versions
-                isMoon = VdotS < -sunMaskRadius; // Workaround for moon rendering as MC_RENDER_STAGE_SUN in some Iris versions
-                aroundSunMoon = abs(VdotS) > sunMaskRadius;
-                #ifdef EUPHORIA_PATCHES_IS_SPACE_MOD_INSTALLED
-                    isSun = false;
-                    isMoon = false;
-                    aroundSunMoon = false;
+            float VdotS = dot(nViewPos, sunVec);
+            float VdotU = dot(nViewPos, upVec);
+
+            float sunMaskRadius = 0.95;
+            #ifdef IS_IRIS
+                bool sunSideCheck = VdotS > sunMaskRadius;
+                bool isSun = renderStage == MC_RENDER_STAGE_SUN;
+                bool isMoon = renderStage == MC_RENDER_STAGE_MOON;
+                bool aroundSunMoon = isSun || isMoon;
+                #if IRIS_VERSION < 10902
+                    if (sunSideCheck) isSun = true; // Workaround for sun rendering as MC_RENDER_STAGE_MOON in some Iris versions
+                    isMoon = VdotS < -sunMaskRadius; // Workaround for moon rendering as MC_RENDER_STAGE_SUN in some Iris versions
+                    aroundSunMoon = abs(VdotS) > sunMaskRadius;
+                    #ifdef EUPHORIA_PATCHES_IS_SPACE_MOD_INSTALLED
+                        isSun = false;
+                        isMoon = false;
+                        aroundSunMoon = false;
+                    #endif
                 #endif
-            #endif
-        #else
-            bool sunSideCheck = VdotS > 0.0;
-            bool tSizeCheck = abs(tSize.y - 264.0) < 248.5; //tSize.y must range from 16 to 512
-            bool isSun = tSizeCheck && sunSideCheck;
-            bool isMoon = tSizeCheck && !sunSideCheck;
-            bool aroundSunMoon = isSun || isMoon;
-        #endif
-
-        if (isSun || isMoon) {
-            #if SUN_MOON_STYLE >= 2 && IRIS_VERSION >= 10902
-                discard;
+            #else
+                bool sunSideCheck = VdotS > 0.0;
+                bool tSizeCheck = abs(tSize.y - 264.0) < 248.5; //tSize.y must range from 16 to 512
+                bool isSun = tSizeCheck && sunSideCheck;
+                bool isMoon = tSizeCheck && !sunSideCheck;
+                bool aroundSunMoon = isSun || isMoon;
             #endif
 
-            #if defined SAVE_SKYBOX_DATA && defined EUPHORIA_PATCHES_IS_SKYBOX_MOD_INSTALLED && IRIS_VERSION < 10902 && SUN_MOON_STYLE >= 2
-                if (hasCustomSky < 1) discard;
-            #endif
-
-            #ifndef EUPHORIA_PATCHES_IS_SKYBOX_MOD_INSTALLED
-                #if SUN_MOON_STYLE >= 2 && IRIS_VERSION < 10902
+            if (isSun || isMoon) {
+                #if SUN_MOON_STYLE >= 2 && IRIS_VERSION >= 10902
                     discard;
                 #endif
 
-                #if SUN_MOON_IPBR == 1 || SUN_MOON_IPBR == 3
-                if (isSun) {
-                    float sunBrightness = 4.5;
-                    color.rgb = vec3(pow(dot(color.rgb, color.rgb) * 0.45, 6.0 - 5.0 * rainFactor));
-                    if (tonemap == ACESTonemap) color.rgb *= mix(vec3(1.0, 0.6275, 0.4549) * 1.2, vec3(0.35), rainFactor * 0.75) * sunBrightness * 0.5;
-                    else color.rgb *= mix(vec3(1.1, 0.55, 0.0), vec3(0.35), rainFactor * 0.75) * sunBrightness; // all other tonemaps
-                    color.rgb *= 0.25 + 0.75 * sunVisibility2 + 0.5 * noonFactor;
-                }
+                #if defined SAVE_SKYBOX_DATA && defined EUPHORIA_PATCHES_IS_SKYBOX_MOD_INSTALLED && IRIS_VERSION < 10902 && SUN_MOON_STYLE >= 2
+                    if (hasCustomSky < 1) discard;
                 #endif
 
-                #if SUN_MOON_IPBR == 2 || SUN_MOON_IPBR == 3
-                if (isMoon) {
-                    // vec3 pixelGlareColor = color.rgb;
-                    // pixelGlareColor = mix(pixelGlareColor, pixelGlareColor * vec3(0.9, 0.95, 1.1), 0.5) * 1.3;
-                    color.rgb *= smoothstep1(min1(length(color.rgb))) * 1.3;
-
-                    #if BLOOD_MOON > 0
-                        float luminance = GetLuminance(color.rgb);
-                        color.rgb = mix(color.rgb, pow2(luminance) * vec3(0.702, 0.0, 0.0) * 1.7, getBloodMoon(sunVisibility));
+                #ifndef EUPHORIA_PATCHES_IS_SKYBOX_MOD_INSTALLED
+                    #if SUN_MOON_STYLE >= 2 && IRIS_VERSION < 10902
+                        discard;
                     #endif
 
-                    // float pixelGlareFactor = 1 - step(0.09,luminance);
-                    // color.rgb = mix(color.rgb, pixelGlareColor, pixelGlareFactor);
-                }
-                #endif
+                    #if SUN_MOON_IPBR == 1 || SUN_MOON_IPBR == 3
+                    if (isSun) {
+                        float sunBrightness = 4.5;
+                        color.rgb = vec3(pow(dot(color.rgb, color.rgb) * 0.45, 6.0 - 5.0 * rainFactor));
+                        if (tonemap == ACESTonemap) color.rgb *= mix(vec3(1.0, 0.6275, 0.4549) * 1.2, vec3(0.35), rainFactor * 0.75) * sunBrightness * 0.5;
+                        else color.rgb *= mix(vec3(1.1, 0.55, 0.0), vec3(0.35), rainFactor * 0.75) * sunBrightness; // all other tonemaps
+                        color.rgb *= 0.25 + 0.75 * sunVisibility2 + 0.5 * noonFactor;
+                    }
+                    #endif
 
-                color.rgb *= GetHorizonFactor(VdotU);
+                    #if SUN_MOON_IPBR == 2 || SUN_MOON_IPBR == 3
+                    if (isMoon) {
+                        // vec3 pixelGlareColor = color.rgb;
+                        // pixelGlareColor = mix(pixelGlareColor, pixelGlareColor * vec3(0.9, 0.95, 1.1), 0.5) * 1.3;
+                        color.rgb *= smoothstep1(min1(length(color.rgb))) * 1.3;
 
-                #ifdef CAVE_FOG
-                    color.rgb *= 1.0 - 0.75 * GetCaveFactor();
+                        #if BLOOD_MOON > 0
+                            float luminance = GetLuminance(color.rgb);
+                            color.rgb = mix(color.rgb, pow2(luminance) * vec3(0.702, 0.0, 0.0) * 1.7, getBloodMoon(sunVisibility));
+                        #endif
+
+                        // float pixelGlareFactor = 1 - step(0.09,luminance);
+                        // color.rgb = mix(color.rgb, pixelGlareColor, pixelGlareFactor);
+                    }
+                    #endif
+
+                    color.rgb *= GetHorizonFactor(VdotU);
+
+                    #ifdef CAVE_FOG
+                        color.rgb *= 1.0 - 0.75 * GetCaveFactor();
+                    #endif
                 #endif
-            #endif
-        } else { // Custom Sky
-            #if MC_VERSION >= 11300 || defined IS_ANGELICA
-                #ifdef CUSTOM_SKY_SUPPORT
-                    color.rgb *= mix(vec3(1.0), color.rgb * smoothstep1(sqrt1(max0(VdotU))), float(aroundSunMoon)); // we only want it near the sun and moon
+            } else { // Custom Sky
+                #if MC_VERSION >= 11300 || defined IS_ANGELICA
+                    #ifdef CUSTOM_SKY_SUPPORT
+                        color.rgb *= mix(vec3(1.0), color.rgb * smoothstep1(sqrt1(max0(VdotU))), float(aroundSunMoon)); // we only want it near the sun and moon
+                    #else
+                        color.rgb *= color.rgb * smoothstep1(sqrt1(max0(VdotU)));
+                    #endif
                 #else
-                    color.rgb *= color.rgb * smoothstep1(sqrt1(max0(VdotU)));
+                    discard;
+                    // Old mc custom skyboxes are weirdly broken, so we discard.
                 #endif
-            #else
-                discard;
-                // Old mc custom skyboxes are weirdly broken, so we discard.
-            #endif
-        }
+            }
 
-        if (isEyeInWater == 1) color.rgb *= 0.25;
+            if (isEyeInWater == 1) color.rgb *= 0.25;
 
-        // Reduced visibility in rain
-        #ifndef EUPHORIA_PATCHES_IS_SKYBOX_MOD_INSTALLED
-            float rainFactorM = rainFactorDynamic;
-            #ifdef SUN_MOON_DURING_RAIN
-                rainFactorM *= 0.8;
+            // Reduced visibility in rain
+            #ifndef EUPHORIA_PATCHES_IS_SKYBOX_MOD_INSTALLED
+                float rainFactorM = rainFactorDynamic;
+                #ifdef SUN_MOON_DURING_RAIN
+                    rainFactorM *= 0.8;
+                #endif
+                color.a *= 1.0 - rainFactorM;
             #endif
-            color.a *= 1.0 - rainFactorM;
-        #endif
 
-        #ifdef CUSTOM_SKY_SUPPORT
-            // Complementary by default shows the sun/moon while raining. But in vanilla they have an alpha of 0 while raining.
-            float vanillaSunMoonMask = float(isSun || isMoon);
-            #ifdef EUPHORIA_PATCHES_IS_SKYBOX_MOD_INSTALLED
-                vanillaSunMoonMask = 0; // No mask with skybox mod as it breaks visuals
+            #ifdef CUSTOM_SKY_SUPPORT
+                // Complementary by default shows the sun/moon while raining. But in vanilla they have an alpha of 0 while raining.
+                float vanillaSunMoonMask = float(isSun || isMoon);
+                #ifdef EUPHORIA_PATCHES_IS_SKYBOX_MOD_INSTALLED
+                    vanillaSunMoonMask = 0; // No mask with skybox mod as it breaks visuals
+                #endif
+                color.rgb *= max0(clamp01(glColor.a) + vanillaSunMoonMask * rainStrength); // Support fop skybox altering mods
+                color.a *= max(mix(0.0, clamp01(glColor.a), step(0.02, glColor.a)), vanillaSunMoonMask); // Based on vanilla mask we only set alpha to 0 when glColor.a is 0 and not sun/moon
             #endif
-            color.rgb *= max0(clamp01(glColor.a) + vanillaSunMoonMask * rainStrength); // Support fop skybox altering mods
-            color.a *= max(mix(0.0, clamp01(glColor.a), step(0.02, glColor.a)), vanillaSunMoonMask); // Based on vanilla mask we only set alpha to 0 when glColor.a is 0 and not sun/moon
         #endif
     #endif
 
