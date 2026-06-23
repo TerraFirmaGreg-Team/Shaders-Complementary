@@ -150,7 +150,12 @@
     #define SPECIAL_PORTAL_EFFECTS
     #define REFLECTION_RES 0.5 //[1.0 0.5]
 
-    #define SUN_ANGLE -1 //[-1 0 -20 -30 -40 -50 -60 60 50 40 30 20]
+    //TFGEDITS
+	#ifdef AD_ASTRA
+		#define SUN_ANGLE 0 //[-1 0 -20 -30 -40 -50 -60 60 50 40 30 20]
+    #else 
+		#define SUN_ANGLE -1 //[-1 0 -20 -30 -40 -50 -60 60 50 40 30 20]
+	#endif
 
     #define SELECT_OUTLINE 1 //[0 1 3 4 2]
     //#define SELECT_OUTLINE_AUTO_HIDE
@@ -940,6 +945,17 @@
     #include "/lib/colors/blocklightColors.glsl"
 
     #include "/lib/materials/seasonsTime.glsl"
+
+// TFGEDITS
+#ifdef AD_ASTRA
+    // config for ad_astra worlds
+    #include "/ad_astra_config/ad_astra_world_config.glsl"
+#endif
+
+// config for non-ad_astra specific modifications
+#define PLANET_WIND_MULTIPLIER 1.0
+
+#define DO_MORE_FOLIAGE_WAVING_TFG
 
     const float OSIEBCA = 1.0 / 255.0; // One Step In Eight Bit Color Attachment
     /* materialMask steps
