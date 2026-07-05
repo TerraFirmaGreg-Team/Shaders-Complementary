@@ -3,8 +3,9 @@ run-name: "[📦]: Project Build #${{ github.run_number }}"
 
 on:
   push:
-    branches:
-      - dev
+    branches: 
+      - 'dev'
+      - 'release/*'
     paths:
       - 'shaders/**'
       - 'project.json'
