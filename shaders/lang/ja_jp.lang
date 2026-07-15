@@ -1,4 +1,4 @@
-#shaders/lang/ja_JP.lang
+#shaders/lang/en_us.lang
 
 #Profiles
 profile.POTATO=品質: §a最低
@@ -19,95 +19,69 @@ screen.INFORMATION2=Complementaryの情報
 screen.INFORMATION2.comment=このセクションには、情報提供のためだけに存在するボタンが含まれています。
 
 option.info0=§bボタンにマウスを乗せてください
-value.info0.0=
 option.info0.comment=このセクションには、情報提供のためだけに存在するボタンが含まれています。
 
 option.info1=パフォーマンスを向上させる方法
-value.info1.0=
 option.info1.comment=Minecraftにおけるパフォーマンスは、多くの要因に影響される複雑な問題ですが、一般的なアドバイスとしては以下が挙げられます:. 描写距離を減らす。 (ほとんどのデバイスでは6から16の範囲が理想的です). 「プロファイル」設定を下げる。 (これらはパフォーマンスと視覚的忠実度の比率が最適化されるよう慎重にテストされています). 詳細な情報は今後追加されます。
 
 option.info2=最適な設定とは
-value.info2.0=
 option.info2.comment=最適な設定が何かは主観的ですが、デフォルト設定を使用することでほとんどの人にとってほぼ最良の結果が得られます。. デフォルト設定は、コミュニティによる長年の評価とフィードバックに基づいて形作られ、パフォーマンスと視覚的忠実度の比率に細心の注意を払っています。. とはいえ、自由に設定を変更して楽しむのは良いことです！
 
 option.info3=プロファイルとビジュアルスタイル
-value.info3.0=
 option.info3.comment=「プロファイル」設定は「パフォーマンス設定」メニューの設定のみを変更し、ビジュアルスタイルなどの個人設定には影響を与えません。. 「ビジュアルスタイル」は、多くの個人設定にある「スタイル依存」に設定された値を変更しますが、パフォーマンスには大きな影響を与えません。
 
 option.info4=RPサポートとは
-value.info4.0=
 option.info4.comment=「RPサポート」設定は、シェーダーパックがMinecraftのブロックそれぞれをどのように扱うかを決定します。. たとえば、§bIntegratedPBR+§rでは金ブロックが光沢のあるものとして扱われますが、§elabPBR§rや§eseuspbr§rではリソースパックをインストールしてシェーダーにその情報を伝える必要があります。. RPサポートを§aBasic§rに設定すると、水などのいくつかの例外を除いて、ブロックは「特別」扱いされません。
 
 option.info5=黄色の設定はなんですか？
-value.info5.0=
 option.info5.comment=名前が黄色くなっている設定は、「パフォーマンス設定」カテゴリに含まれませんが、パフォーマンスに一定の影響を与える設定です。. 有効にしたときに赤くなる設定は、パフォーマンスコストが非常に大きいことを示しています。
 
-option.info6=
-value.info6.0=
-option.info6.comment=
 
-option.info7=
-value.info7.0=
-option.info7.comment=
 
 option.info8=コミュニティに参加する方法
-value.info8.0=
 option.info8.comment=ComplementaryのDiscordサーバーに参加して、フレンドリーなコミュニティに加わり、開発者や経験豊富なコミュニティメンバーと連絡を取ることができます。. www.complementary.dev/discord
 
 option.info9=Complementaryをサポートする方法
-value.info9.0=
 option.info9.comment=Complementaryの開発をサポートする最良の方法は、友人やSNSで共有することですが、Patreonで開発者を直接サポートすることもできます。. www.patreon.com/emingt
 
 option.info10=クレジット
-value.info10.0=
 option.info10.comment=EminGT: Complementaryのメイン開発者。. Capt Tatsu: BSLシェーダーの開発者であり、彼の寛大さがComplementaryの実現を可能にしました。. スペシャルサンクス: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE, plazmal
 
 option.info11=§dEuphoria Patchesとは
-value.info11.0=
 option.info11.comment=Euphoria Patchesは、SpacEagle17によって開発されたComplementary Shadersのアドオンです。. より多くの機能と設定を追加することで、Complementaryを拡張することを目的としています。
 
 option.info12=Euphoria Patchesの設定
-value.info12.0=
 option.info12.comment=Euphoriaのすべてのオプションはデフォルトで無効になっており、ユーザーが有効にする項目を選択できます。. 「人気の設定」カテゴリには、最も人気のあるEuphoria Patchesの機能があります。. その他にも無数の設定があり、アップデートごとにさらに追加されるので、自由に試して楽しんでください！
 
 option.info13=EuphoriaのModサポート
-value.info13.0=
 option.info13.comment=Euphoria Patchesはデフォルトで他Modブロックのサポートを追加することで、Complementaryよりも強力なMOD互換性を持っています。 (block.propertiesを参照). 自動発光テクスチャおよび光源ブロック検知。. SSS(サブサーフェス・スキャッタリング)が自動的に適用される植物モデルの検知。
 
 option.info14=コミュニティに参加
-value.info14.0=
 option.info14.comment=Euphoria PatchesのDiscordサーバーに参加して質問、楽しいコミュニティおよび最新のニュースにキャッチアップしましょう。. §d§l§neuphoriapatches.com/discord
 
 option.info15=Euphoria Patchesのクレジット
-value.info15.0=
 option.info15.comment=クレジットの全文は、§deuphoriapatches.com/credits§rに記載されています。. isuewo - Euphoria Patchesの元共同開発者。. EminGT: Complementaryのメイン開発者。. Capt Tatsu, gri573, FoZy STYLE, JoKerTech, SixthSurge, WoMspace (aka Sasha), Septonious, fayer3, Xonk, Memokii, dragoncat, TheNukeLore, dbrighthd, Surisen (Ruri), Acer (Alex), Folox_, Helgust.
 
 option.info16=§d§nEuphoria Patchesをサポートする方法
-value.info16.0=
 option.info16.comment=Euphoria Patchesをサポートする方法は、アップデートに興味を持ち他の人に共有することですが、PatreonやKo-FiでSpacEagle17を直接サポートし、限定のベータ版にアクセスすることもできます。. §d§l§neuphoriapatches.com/support
 
 option.info17=ベータ版: SpacEagle17のPatreon
-value.info17.0=
 option.info17.comment=PatreonやKo-FiでSpacEagle17をサポートして限定開発バージョンにアクセスできます。. §d§l§neuphoriapatches.com/support
 
 option.info18=Complementary r5.8.1用
-value.info18.0=
 option.info18.comment=Euphoria Patchesをご利用いただきありがとうございます :)
 
 option.info19=§a新しいアップデート
 value.info19.0=§cX.Y.Z §r->§a X.Y.Z
 option.info19.comment=EuphoriaPatcher Modの新しいバージョンが利用可能です。. Modrinthからダウンロードしてください: https://euphoriapatches.com/download
 
-option.info20=
 value.info20.0=§aeuphoriapatches.com/download
 option.info20.comment=EuphoriaPatcher Modの新しいバージョンが利用可能です。. Modrinthからダウンロードしてください: https://euphoriapatches.com/download
 
 option.info21=よくある質問
-value.info21.0=
 option.info21.comment=FAQページを参照してよくある質問への解答を確認してください。. §d§l§neuphoriapatches.com/faq
 
 option.info22=§dスクロールしてさらに設定を表示
-value.info22.0=
 option.info22.comment=GUIのサイズが大きいと、一部の設定が隠れてしまうことがあります。. 下にスクロールして表示しましょう。
 
 #Style
@@ -380,7 +354,7 @@ option.ATM_FOG_ALTITUDE=大気中の霧の高度
 option.ATM_FOG_ALTITUDE.comment=大気中の霧が最も顕著に現れる高度を決定します。
 
 option.CAVE_FOG=洞窟の霧
-option.CAVE_FOG.comment=地下深くのエリアで追加の霧を有効にします。
+option.CAVE_FOG.comment=洞窟の霧を有効または無効にします。
 
 option.LIGHTSHAFT_BEHAVIOUR=光芒設定
 option.LIGHTSHAFT_BEHAVIOUR.comment=光芒の挙動を決定します。. §a[+]§r「シーン認識」は、「通常」と「エクストリーム」の間を自動的に切り替え、最適な結果を提供します。. §c[-]§r 「エクストリーム」は通常のゲームプレイには推奨されず、パフォーマンスに大きく影響を与える可能性があります。
@@ -1248,9 +1222,9 @@ option.XLIGHT_I=ブロック光源 強度
 option.XLIGHT_CURVE=ブロック光源 コントラスト
 option.XLIGHT_CURVE.comment=光源から離れるにつれて、光源ブロックの光の強度が減衰する速さを調整します。
 
-####### Euphoria Patches #######
+####### Euphoria Patches #######
 profile2.DEFAULT=§bビジュアル:§r デフォルト
-profile2.SPACEAGLE17= §f۞ §kO§fデバッグ (使わないで)§f§kO
+profile2.SPACEAGLE17=  §f۞ §kO§fデバッグ (使わないで)§f§kO
 profile2.POPULAR=§bビジュアル: §d人気の§d設定
 profile2.comment=これらはEuphoria Patchesのプロファイル設定です。. §c[-] 警告:§r これを使用すると複数の設定が変更され、あなたが作り上げた設定を破壊してしまうおそれがあります。\n\n• デフォルト設定はComplementary Shaderのデフォルトの設定です。\n\n• §d人気の§d設定§rプロファイルはEuphoria PatchesとComplementaryで人気の設定が有効になります。\n\n• デバッグプロファイルはテスト用に使用され、一般のユーザーが使用するようには設計されていません。
 
@@ -1868,8 +1842,6 @@ option.DIRECTIONAL_LIGHTMAP_NORMALS.comment=統合された法線マップをブ
 option.DIRECTIONAL_LIGHTMAP_NORMALS_BLOCK_STRENGTH_NEW=ブロックの強度
 option.DIRECTIONAL_LIGHTMAP_NORMALS_HANDHELD_STRENGTH=手持ち光源の強度
 
-option.CAVE_FOG=洞窟の霧
-option.CAVE_FOG.comment=洞窟の霧を有効または無効にします。
 option.CAVE_FOG_R_NEW=洞窟の霧 - 赤
 option.CAVE_FOG_G_NEW=洞窟の霧 - 緑
 option.CAVE_FOG_B_NEW=洞窟の霧 - 青
@@ -1877,10 +1849,10 @@ option.CAVE_FOG_I=洞窟の霧 - 強度
 option.CAVE_FOG_DENSITY=洞窟の霧 - 密度
 
 option.ATMOSPHERIC_FOG=大気中の霧
-option.ATMOSPHERIC_FOG_R_NEW=大気中の霧 - 赤
-option.ATMOSPHERIC_FOG_G_NEW=大気中の霧 - 緑
-option.ATMOSPHERIC_FOG_B_NEW=大気中の霧 - 青
-option.ATMOSPHERIC_FOG_I=大気中の霧 - 強度
+option.ATMOSPHERIC_FOG_R_NEW= 大気中の霧 - 赤
+option.ATMOSPHERIC_FOG_G_NEW= 大気中の霧 - 緑
+option.ATMOSPHERIC_FOG_B_NEW= 大気中の霧 - 青
+option.ATMOSPHERIC_FOG_I= 大気中の霧 - 強度
 option.ATMOSPHERIC_FOG_DENSITY=大気中の霧 - 密度
 option.RADIOACTIVE_ATMOSPHERIC_FOG=放射性の大気中の霧
 option.RADIOACTIVE_ATMOSPHERIC_FOG.comment=不健康な習慣が一つ増えた感じです。夜間に非常に目立ちます。
@@ -2094,7 +2066,6 @@ value.tonemap_left.filmic=Filmic
 value.tonemap_left.GTTonemap=Gran Turismo
 value.tonemap_left.uchimura=Uchimura
 value.tonemap_left.agxTonemap=AgX
-value.tonemap.doSimpleTonemap=シンプル
 
 option.tonemap_right=右側のトーンマップ
 option.tonemap_right.comment=使用するトーンマップを変更します。
@@ -2111,7 +2082,6 @@ value.tonemap_right.filmic=フィルミック
 value.tonemap_right.GTTonemap=Gran Turismo
 value.tonemap_right.uchimura=Uchimura
 value.tonemap_right.agxTonemap=AgX
-value.tonemap.doSimpleTonemap=シンプル
 
 option.ACES_EXPOSURE=露出
 option.ACES_EXPOSURE.comment=画像全体の明るさを調整します。
@@ -2172,7 +2142,7 @@ value.SEASON_START.3=春
 option.SEASON_LENGTH=季節の期間
 option.SEASON_LENGTH.comment=季節の期間をMinecraft内の日数で変更します。
 value.SEASON_LENGTH.1=1 Minecraft日
-suffix.SEASON_LENGTH=\ Minecraft日
+suffix.SEASON_LENGTH= Minecraft日
 
 option.SEASON_TRANSITION_START=季節の移行開始
 option.SEASON_TRANSITION_START.comment=この割合の季節が過ぎた時点で次の季節への移行が始まります。
@@ -2184,7 +2154,7 @@ value.SEASON_TRANSITION_START.4=季節の80%
 value.SEASON_TRANSITION_START.9=季節の90%
 
 option.SEASON_COLOR_DESATURATION=色の彩度を下げる
-option.SEASON_COLOR_DESATURATION.comment=環境の色の彩度を下げます。
+option.SEASON_COLOR_DESATURATION.commnet=環境の色を荒らします。
 
 option.SNOW_CONDITION=雪の条件
 option.SNOW_CONDITION.comment=雪が現れる条件を決定します。
@@ -2305,10 +2275,10 @@ value.RETRO_LOOK.0=OFF
 value.RETRO_LOOK.1=輪郭線
 value.RETRO_LOOK.2=輪郭線 - 暗視のみ
 
-option.RETRO_LOOK_R=レトロな見た目 - 赤
-option.RETRO_LOOK_G=レトロな見た目 - 緑
-option.RETRO_LOOK_B=レトロな見た目 - 青
-option.RETRO_LOOK_I=レトロな見た目 - 強度
+option.RETRO_LOOK_R= レトロな見た目 - 赤
+option.RETRO_LOOK_G= レトロな見た目 - 緑
+option.RETRO_LOOK_B= レトロな見た目 - 青
+option.RETRO_LOOK_I= レトロな見た目 - 強度
 
 option.CURVE_DISPLAY=湾曲ディスプレイ
 option.CURVE_DISPLAY.comment=ディスプレイを湾曲させます。
@@ -2872,11 +2842,10 @@ option.COLORED_LIGHT_FOG_RAIN_I.comment=雨天時の色付きの光の霧の強�
 value.COLORED_LIGHT_FOG_RAIN_I.0=デフォルト
 
 option.BLOOD_MOON=ブラッドムーン
-option.BLOOD_MOON.comment=ここで設定した間隔のゲーム内日数で発生するブラッドムーンを有効にします。. 毎夜以上に設定されている場合、ブラッドムーンは最初の夜には発生しません。. 毎夜以上に設定されている場合、ブラッドムーンは新月の夜には発生しません。
+option.BLOOD_MOON.comment=ここで設定した間隔のゲーム内日数で発生するブラッドムーンを有効にします。
 value.BLOOD_MOON.0=OFF
 value.BLOOD_MOON.1=毎夜
 suffix.BLOOD_MOON=\ Minecraft夜
-option.BLOOD_MOON.comment=ここで設定した間隔のゲーム内日数で発生するブラッドムーンを有効にします。
 option.EMISSIVE_BLOOD_MOON_FLOWERS=ブラッドムーンで花が発光
 option.EMISSIVE_BLOOD_MOON_FLOWERS.comment=ブラッドムーンの間、赤い花が赤く輝くようにします。. §e[*]§r RPサポートオプションをIntegrated PBR+に設定する必要があります。
 
@@ -2933,7 +2902,7 @@ value.PHOTONICS_RESTIR_FLICKER_FIRE.0=OFF
 
 option.PHOTONICS_VANILLA_LIGHT_FALLBACK=バニラ光源へのフォールバック
 option.PHOTONICS_VANILLA_LIGHT_FALLBACK.comment=Photonicsのライティングが読み込まれなかった際の暗いエリアを防ぐために、フォールバックとして使用するバニラ光源のパーセンテージです。
-suffix.PHOTONICS_VANILLA_LIGHT_FALLBACK=\%
+suffix.PHOTONICS_VANILLA_LIGHT_FALLBACK=%
 
 option.PHOTONICS_ENCHANTING_GLINT_STRENGTH=エンチャントのオーラの強度
 option.PHOTONICS_ENCHANTING_GLINT_STRENGTH.comment=Photonicsのライティングを使用している際に、エンチャントされたアイテムから放たれる光の強さを変更します。
