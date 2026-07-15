@@ -1,7 +1,4 @@
-#shaders/lang/ru_ru.lang
-
-# ПЕРЕВОД, ВЫПОЛНЕННЫЙ СООБЩЕСТВОМ
-# Перевод от Folox_ (Nikita), mpustovoi и Slava_vas(MPLOC). Возможно, переводы устарели. SpacEagle17 не может этого гарантировать.
+#shaders/lang/en_us.lang
 
 #Profiles
 profile.POTATO=Производительность: §aкартошка
@@ -22,95 +19,69 @@ screen.INFORMATION2=Информация о Complementary
 screen.INFORMATION2.comment=Этот раздел содержит кнопки, которые существуют только для предоставления информации.
 
 option.info0=§bНаведите курсор на кнопку
-value.info0.0=
 option.info0.comment=Этот раздел содержит кнопки, которые существуют только для предоставления информации.
 
 option.info1=Как повысить производительность
-value.info1.0=
 option.info1.comment=Производительность в Minecraft зависит от многих факторов. Попробуйте следующее: уменьшите дальность прорисовки (оптимально от 6 до 16 для большинства устройств), выберите более низкий профиль шейдеров (они настроены для лучшего баланса качества и производительности). Дополнительная информация появится позже.
 
 option.info2=Какие настройки лучше
-value.info2.0=
 option.info2.comment=Лучшие настройки субъективны, но стандартные варианты подходят большинству. Они созданы на основе многолетнего опыта сообщества с учётом баланса качества и производительности. Не бойтесь экспериментировать!
 
 option.info3=Что такое профиль и визуальный стиль
-value.info3.0=
 option.info3.comment=Профиль изменяет настройки производительности, не затрагивая визуальные предпочтения. Визуальный стиль меняет параметры вроде «По стилю», но почти не влияет на производительность.
 
 option.info4=Поддержка наборов ресурсов
-value.info4.0=
 option.info4.comment=Определяет, как шейдеры обрабатывают блоки. Например, §bВстроенный PBR+§r делает золотые блоки отражающими, а §elabPBR§r/§eseuspbr§r требуют установки наборов ресурсов. Режим §aБазовый§r отключает 'особые' эффекты для большинства блоков.
 
-option.info5=Как исправить проблемы с модами
-value.info5.0=
+option.info5=Что такое желтые параметры
 option.info5.comment=Некоторые моды несовместимы со шейдерами. Посетите страницу с известными решениями: www.complementary.dev/mod-issues
 
-option.info6=
-value.info6.0=
-option.info6.comment=
 
-option.info7=
-value.info7.0=
-option.info7.comment=
 
 option.info8=Как присоединиться к сообществу
-value.info8.0=
 option.info8.comment=Присоединяйтесь к серверу Complementary в Discord: www.complementary.dev/discord
 
 option.info9=Как поддержать Complementary
-value.info9.0=
 option.info9.comment=Лучшая поддержка — рассказать друзьям. Также можно помочь разработчику через Patreon: www.patreon.com/emingt
 
 option.info10=Благодарности
-value.info10.0=
 option.info10.comment=EminGT: главный разработчик. Capt Tatsu: создатель BSL Shaders. Особая благодарность: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap.
 
 option.info11=§dЧто такое Euphoria Patches
-value.info11.0=
 option.info11.comment=Euphoria Patches — дополнение для Complementary от SpacEagle17, добавляющее новые настройки и функции.
 
 option.info12=Настройки Euphoria Patches
-value.info12.0=
 option.info12.comment=Все функции Euphoria по умолчанию отключены. В разделе «Популярные настройки» собраны самые востребованные опции. Существует также и много других опций, которые пополняются с каждым обновлением, так что можете в них покопаться.
 
 option.info13=Поддержка модов в Euphoria
-value.info13.0=
 option.info13.comment=Лучшая совместимость с модами через автоматическое определение источников света, листвы и свойств блоков (см. block.properties).
 
 option.info14=Присоединиться к сообществу
-value.info14.0=
 option.info14.comment=Discord-сервер Euphoria Patches: §d§l§neuphoriapatches.com/discord
 
 option.info15=Благодарности Euphoria Patches
-value.info15.0=
 option.info15.comment=Полный список: §deuphoriapatches.com/credits§r. Участники: isuewo, EminGT, Capt Tatsu, gri573, FoZy STYLE, SixthSurge, WoMspace, Septonious, fayer3, Xonk, Memokii, dragoncat, TheNukeLore, dbrighthd, Surisen, Acer, Folox_, Helgust.
 
 option.info16=§d§nКак поддержать Euphoria Patches
-value.info16.0=
 option.info16.comment=Рассказывайте о проекте или поддержите SpacEagle17 на Patreon/Ko-Fi: §d§l§neuphoriapatches.com/support
 
 option.info17=Бета-версии: Patreon SpacEagle17
-value.info17.0=
 option.info17.comment=Доступ к эксклюзивным версиям через поддержку: §d§l§neuphoriapatches.com/support
 
 option.info18=Для Complementary r5.8.1
-value.info18.0=
 option.info18.comment=Спасибо за установку Euphoria Patches :)
 
 option.info19=§aНОВОЕ ОБНОВЛЕНИЕ
 value.info19.0=§cX.Y.Z §r->§a X.Y.Z
 option.info19.comment=Доступна новая версия мода Euphoria Patcher. Скачайте: https://euphoriapatches.com/download.
 
-option.info20=
 value.info20.0=§aeuphoriapatches.com/download
 option.info20.comment=Доступна новая версия мода Euphoria Patcher. Скачайте: https://euphoriapatches.com/download.
 
 option.info21=Частые вопросы
-value.info21.0=
 option.info21.comment=Ответы на частые вопросы: §d§l§neuphoriapatches.com/faq
 
 option.info22=§dДополнительные настройки при прокрутке
-value.info22.0=
 option.info22.comment=При больших размерах интерфейса некоторые настройки могут быть скрыты — прокрутите вниз, чтобы увидеть их.
 
 #Style
@@ -383,7 +354,7 @@ option.ATM_FOG_ALTITUDE=Высота атмосферного тумана
 option.ATM_FOG_ALTITUDE.comment=Задаёт высоту максимальной плотности тумана.
 
 option.CAVE_FOG=Пещерный туман
-option.CAVE_FOG.comment=Добавляет дополнительный туман в глубоких подземных зонах.
+option.CAVE_FOG.comment=Включает/отключает туман в пещерах.
 
 option.LIGHTSHAFT_BEHAVIOUR=Режим световых лучей
 option.LIGHTSHAFT_BEHAVIOUR.comment=Определяет поведение световых лучей. §a[+]§r Адаптивные лучи автоматически переключаются между режимами. §c[-]§r Экстремальный режим не рекомендуется для игры, так как сильно влияет на FPS.
@@ -1253,7 +1224,7 @@ option.XLIGHT_CURVE.comment=Регулирует скорость уменьше
 
 ####### Euphoria Patches #######
 profile2.DEFAULT=§bВизуальный стиль:§r по умолчанию
-profile2.SPACEAGLE17=§f۞ §kO§fОТЛАДКА (не использовать)§f§kO
+profile2.SPACEAGLE17= §f۞ §kO§fОТЛАДКА (не использовать)§f§kO
 profile2.POPULAR=§bПопулярные §dнастройки
 profile2.comment=Это предустановки профиля Euphoria Patches. §c[-] ПРЕДУПРЕЖДЕНИЕ:§r Использование этого переключателя может изменить множество различных настроек и даже нарушить те, которые были установлены вручную.\n\n• Настройки по умолчанию — это настройки шейдера Complementary по умолчанию.\n\n• §bПопулярные §dнастройки§r это предустановка, в которой включены некоторые из самых популярных функций Euphoria Patches и Complementary.\n\n• Профиль отладки используется в целях тестирования и не предназначен для использования обычными пользователями.
 
@@ -1511,6 +1482,7 @@ value.CLOUD_ROUNDNESS.0.05=Угловатые §e[*]§r
 value.CLOUD_ROUNDNESS.0.125=Сбалансированные
 value.CLOUD_ROUNDNESS.0.2=Круглые
 option.CLOUD_ROUNDNESS.comment=Форма облаков. §e[*]§r Низкие значения увеличивают шум.
+
 
 option.CLOUD_SHADOW_ROUNDNESS=Закруглённость теней
 value.CLOUD_SHADOW_ROUNDNESS.0.15=Очень угловатые
@@ -1867,8 +1839,6 @@ option.DIRECTIONAL_LIGHTMAP_NORMALS.comment=Связывает нормали с
 option.DIRECTIONAL_LIGHTMAP_NORMALS_BLOCK_STRENGTH_NEW=Яркость блоков
 option.DIRECTIONAL_LIGHTMAP_NORMALS_HANDHELD_STRENGTH=Яркость в руках
 
-option.CAVE_FOG=Пещерный туман
-option.CAVE_FOG.comment=Включает/отключает туман в пещерах.
 option.CAVE_FOG_R_NEW=Красный для пещерного тумана
 option.CAVE_FOG_G_NEW=Зелёный для пещерного тумана
 option.CAVE_FOG_B_NEW=Синий для пещерного тумана
@@ -1876,10 +1846,10 @@ option.CAVE_FOG_I=Яркость пещерного тумана
 option.CAVE_FOG_DENSITY=Плотность пещерного тумана
 
 option.ATMOSPHERIC_FOG=Атмосферный туман
-option.ATMOSPHERIC_FOG_R_NEW=Красный для атмосферного тумана
-option.ATMOSPHERIC_FOG_G_NEW=Зелёный для атмосферного тумана
-option.ATMOSPHERIC_FOG_B_NEW=Синий для атмосферного тумана
-option.ATMOSPHERIC_FOG_I=Яркость атмосферного тумана
+option.ATMOSPHERIC_FOG_R_NEW= Красный для атмосферного тумана
+option.ATMOSPHERIC_FOG_G_NEW= Зелёный для атмосферного тумана
+option.ATMOSPHERIC_FOG_B_NEW= Синий для атмосферного тумана
+option.ATMOSPHERIC_FOG_I= Яркость атмосферного тумана
 option.ATMOSPHERIC_FOG_DENSITY=Плотность атмосферного тумана
 option.RADIOACTIVE_ATMOSPHERIC_FOG=Радиоактивный атмосферный туман
 option.RADIOACTIVE_ATMOSPHERIC_FOG.comment=Опасный для здоровья эффект. Более заметен ночью.
@@ -2180,7 +2150,7 @@ value.SEASON_TRANSITION_START.4=80% сезона
 value.SEASON_TRANSITION_START.9=90% сезона
 
 option.SEASON_COLOR_DESATURATION=Обесцвечивание
-option.SEASON_COLOR_DESATURATION.comment=Уменьшает насыщенность цветов окружения.
+option.SEASON_COLOR_DESATURATION.commnet=Изменяет цвета окружающей среды.
 
 option.SNOW_CONDITION=Условия снега
 option.SNOW_CONDITION.comment=Определяет условия появления снега.
@@ -2301,10 +2271,10 @@ value.RETRO_LOOK.0=Нет
 value.RETRO_LOOK.1=Контуры
 value.RETRO_LOOK.2=Контуры только с ночным зрением
 
-option.RETRO_LOOK_R=Красный для ретро
-option.RETRO_LOOK_G=Зелёный для ретро
-option.RETRO_LOOK_B=Синий для ретро
-option.RETRO_LOOK_I=Яркость ретро
+option.RETRO_LOOK_R= Красный для ретро
+option.RETRO_LOOK_G= Зелёный для ретро
+option.RETRO_LOOK_B= Синий для ретро
+option.RETRO_LOOK_I= Яркость ретро
 
 option.CURVE_DISPLAY=Изогнутый экран
 option.CURVE_DISPLAY.comment=Добавляет кривизну к изображению.
@@ -2342,7 +2312,7 @@ option.COLOR_LEVELS=Постеризация
 option.COLOR_LEVELS.comment=Уменьшает количество цветов в изображении для придания ему ретро-вида.
 option.POSTERIZE_STRENGTH=Сила постеризации
 option.POSTERIZE_STRENGTH.comment=Регулирует интенсивность эффекта постеризации. Влияет на итоговое количество цветов, объединяя соседние.
-value.POSTERIZE_STRENGTH.0=Нет
+value.POSTERIZE_STRENGTH.0.0=ВЫКЛ
 
 option.PALETTE_SWAP=Палитра
 option.PALETTE1R=Красный 1
@@ -2868,11 +2838,10 @@ option.COLORED_LIGHT_FOG_RAIN_I.comment=Регулирует интенсивн�
 value.COLORED_LIGHT_FOG_RAIN_I.0=По умолчанию
 
 option.BLOOD_MOON=Кровавая луна
-option.BLOOD_MOON.comment=Включает появление кровавой луны с периодичностью, указанной в этом параметре (в ночах Minecraft). Если установлено значение выше «Каждую ночь», первая ночь не будет кровавой, и кровавые луны не происходят в новолуние.
+option.BLOOD_MOON.comment=Включает Кровавые луны, которые происходят столько дней в Minecraft, сколько пользователь установил в этой опции.
 value.BLOOD_MOON.0=Нет
 value.BLOOD_MOON.1=Каждую ночь
 suffix.BLOOD_MOON=\ ночей Minecraft
-option.BLOOD_MOON.comment=Включает Кровавые луны, которые происходят столько дней в Minecraft, сколько пользователь установил в этой опции.
 option.EMISSIVE_BLOOD_MOON_FLOWERS=Светящиеся цветы при кровавой луне
 option.EMISSIVE_BLOOD_MOON_FLOWERS.comment=Делает красные цветы светящимися во время кровавой луны. §e[*]§r Требуется, чтобы параметр поддержки RP был установлен в «Встроенный PBR+».
 
@@ -2929,7 +2898,7 @@ value.PHOTONICS_RESTIR_FLICKER_FIRE.0=Нет
 
 option.PHOTONICS_VANILLA_LIGHT_FALLBACK=Откат ванильного освещения
 option.PHOTONICS_VANILLA_LIGHT_FALLBACK.comment=Процент ванильного освещения, используемый в качестве запасного варианта при использовании Photonics для предотвращения затемнения областей, где не было загружено освещение Photonics.
-suffix.PHOTONICS_VANILLA_LIGHT_FALLBACK=\%
+suffix.PHOTONICS_VANILLA_LIGHT_FALLBACK=%
 
 option.PHOTONICS_ENCHANTING_GLINT_STRENGTH=Сила блеска чар
 option.PHOTONICS_ENCHANTING_GLINT_STRENGTH.comment=Изменяет силу света, излучаемого зачарованными предметами, при использовании освещения Photonics.
