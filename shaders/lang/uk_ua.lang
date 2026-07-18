@@ -1,15 +1,15 @@
 #shaders/lang/en_us.lang
 
 #Profiles
-profile.POTATO=Продуктив.: §aКартопля
-profile.VERYLOW=Продуктив.: §aНаднизька
-profile.LOW=Продуктив.: §aНизька
-profile.MEDIUM=Продуктив.: §aПосередня
-profile.HIGH=Продуктив.: §eВисока (устал.)
-profile.VERYHIGH=Продуктив.: §cНадвисока
-profile.ULTRA=Продуктив.: §4§lУльтра
+profile.POTATO=Продуктивність: §aКартопля
+profile.VERYLOW=Продуктивність: §aНаднизька
+profile.LOW=Продуктивність: §aНизька
+profile.MEDIUM=Продуктивність: §aСередня
+profile.HIGH=Продуктивність: §aВисока(Усталено)
+profile.VERYHIGH=Продуктивність: §aНадвисока
+profile.ULTRA=Продуктивність: §aУльтра
 profile.COMPLEMENTARY=§4§l§n§oComplementary
-profile.comment=Профілі шейдерів змінюють налаштування продуктивності з максимально оптимізованим співвідношенням візуальної якості до продуктивності. §e[*]§r Рекомендується використовувати один із цих профілів для своїх налаштувань, якщо ти не впевнений у тому, що робиш. §e[*]§r Усі відповідні параметри можна знайти в меню «Налаштування продуктивності». Профіль «Популярні налаштування» вмикає улюблені параметри спільноти.
+profile.comment=Профілі шейдерів змінюють налаштування продуктивності з найбільш оптимізованим співвідношенням візуальної якості до продуктивності. §e[*]§r Рекомендується використовувати один із цих профілів для своїх налаштувань, якщо ти не впевнений у своїх діях. §e[*]§r Усі змінені параметри можна знайти в меню «Налаштування продуктивності».
 
 #Information
 screen.INFORMATION=Інформація
@@ -45,10 +45,10 @@ option.info9=Як підтримати Complementary
 option.info9.comment=Найкращий спосіб підтримати розробку Complementary — це поділитися ним із друзями чи в соціальних мережах, але ти також можеш безпосередньо підтримати розробника на Patreon.  \nwww.patreon.com/emingt
 
 option.info10=Автори
-option.info10.comment=EminGT: головний розробник Complementary. Capt Tatsu: розробник BSL Shaders, його щедрість зробила можливим Complementary в першу чергу. Спеціальна подяка: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE, plazmal.
+option.info10.comment=EminGT: головний розробник Complementary. Capt Tatsu: розробник BSL Shaders, його щедрість зробила Complementary можливим від самого початку. Особлива подяка: IMS212, sp614x, Chocapic13, Robobo1221, SixthSurge, null511, fayer3, catlikecoding, Builderb0y, Jessie, SpacEagle17, isuewo, flytrap, gri573, FoZy-STYLE, plazmal
 
 option.info11=§dЩо таке Euphoria Patches
-option.info11.comment=Euphoria Patches — це доповнення до шейдерів Complementary від SpacEagle17. Воно має на меті розширити Complementary за допомогою нових функцій і налаштувань ручної роботи.
+option.info11.comment=Euphoria Patches — це доповнення для Complementary Shaders, розроблене SpacEagle17. Воно має на меті розширити Complementary додатковими опціональними, ретельно створеними функціями та налаштуваннями.
 
 option.info12=Налаштування Euphoria Patches
 option.info12.comment=Усі параметри Euphoria типово вимкнені, і користувач може сам вирішити, що ввімкнути. У категорії «Популярні налаштування» можна знайти найпопулярніші функції Euphoria Patches. Існує безліч інших налаштувань, і з кожним оновленням додаються нові — отримуй задоволення від експериментів!
@@ -232,7 +232,7 @@ value.BLOCK_REFLECT_QUALITY.1=§eНизька
 value.BLOCK_REFLECT_QUALITY.3=§cВисока
 
 option.SHADOW_QUALITY=Тіні в реальному часі
-option.SHADOW_QUALITY.comment=Керує якістю тіней. Кожен рівень додатково зменшує шумові артефакти тіні, «§eНизькі§r» й «§eНаднизькі§r» використовують простішу фільтрацію тіней, «§eНаднизькі§r» також вимикає кольорові тіні, «§aВИМК.§r» повністю вимикає тіні та світлові потоки. §e[*]§r Цей параметр унутрішньо обмежено «Низькі», якщо ви вимкнете тимчасовий фільтр або ввімкнете налаштування піксельних тіней.
+option.SHADOW_QUALITY.comment=Змінює якість тіней. Кожен рівень ще більше зменшує артефакти шуму тіней, §eНизька§r та §eДуже низька§r використовують простіше фільтрування тіней, §eДуже низька§r також вимикає кольорові тіні, §aВИМК.§r повністю вимикає тіні та світлові промені. §e[*]§r Це налаштування внутрішньо обмежене рівнем «Низька», якщо ти вимикаєш тимчасовий фільтр або вмикаєш параметр «Піксельні тіні».
 value.SHADOW_QUALITY.-1=§aВИМК
 value.SHADOW_QUALITY.0=§eНаднизька
 value.SHADOW_QUALITY.1=§eНизька
@@ -861,8 +861,8 @@ option.MIRROR_TINTED_GLASS.comment=Збільшує відбивну здатн�
 option.MORE_REFLECTIVE_DISTANT_GLASS=Більш відбивлискове дальне скло
 option.MORE_REFLECTIVE_DISTANT_GLASS.comment=Збільшує відблискову здатність і непрозорість дальнього скла, щоб будівлі зі скляними вікнами виглядали привабливіше.
 
-option.HIDE_ARMOR=Пиховати обладунки §e[*]§r
-option.HIDE_ARMOR.comment=Приховує обладунки та елітри, які носить гравець або всі сутності. Елітри аидно лише під час польоту. §e[*]§r Цей параметр працює лише на Iris. §e[*]§r Параметр «На головному гравці» може виглядати безладно, якщо інші сутності в обладунках підходять дуже близько до головного гравця.
+option.HIDE_ARMOR=Приховати обладунки §e[*]§r
+option.HIDE_ARMOR.comment=Приховує обладунки та елітри, які носить гравець або всі сутності. Елітри видно лише під час польоту. §e[*]§r Цей параметр працює лише на Iris. §e[*]§r Параметр «На головному гравці» може виглядати безладно, якщо інші сутності в обладунках підходять дуже близько до головного гравця.
 value.HIDE_ARMOR.0=ВИМК.
 value.HIDE_ARMOR.1=На головному гравці §e[*]§r
 value.HIDE_ARMOR.2=На всіх сутностях
@@ -903,15 +903,15 @@ option.AMBIENT_MULT=Множник світла тіней
 option.AMBIENT_MULT.comment=Визначає кількість навколишнього освітлення, яке видно в тінях. §c[-]§r Радикальна зміна цього параметра може порушити баланс освітлення.
 
 option.PLAYER_SHADOW=Тінь гравця §e[*]§r
-option.PLAYER_SHADOW.comment=Визначає, чи буде гравець відкидати тінь чи ні. §e[*]§r Цей параметр працює лише в Iris. §e[*]§r Цей параметр буде вимкнено, якщо «Реальні тіні» вимкнені.
+option.PLAYER_SHADOW.comment=Визначає, чи буде гравець відкидати тінь чи ні. §e[*]§r Це налаштування повністю працює лише на Iris. §e[*]§r Це налаштування буде вимкнене, якщо «Реальні тіні» вимкнено.
 value.PLAYER_SHADOW.-1=ВИМК.
 value.PLAYER_SHADOW.1=УВІМК.
 
 option.GENERATED_NORMALS=Згенеровані нормалі
-option.GENERATED_NORMALS.comment=Додає автоматично створені нерівні деталі до поверхонь. §e[*]§r Підтримка ПР має бути «Integrated PBR+». §e[*]§r Може виглядати погано з деякими пакетами ресурсів або модами, які містять текстури нестандартної роздільности.
+option.GENERATED_NORMALS.comment=Додає автоматично згенеровані горбисті деталі на поверхні. §e[*]§r Параметр підтримки RP має бути встановлений на Integrated PBR+. §e[*]§r Може виглядати дивно з деякими ресурс паками або модами, що використовують нестандартну роздільну здатність текстур.
 
 option.COATED_TEXTURES=Покриті текстури
-option.COATED_TEXTURES.comment=Додає до текстур автоматично створені пилові деталі. Підтримка ПР має бути «Integrated PBR+». §e[*]§r Підтримка ПР має бути «Integrated PBR+». §e[*]§r Може виглядати погано з деякими пакетами ресурсів або модами, які містять текстури нестандартної роздільности.
+option.COATED_TEXTURES.comment=Додає автоматично згенеровані пилові деталі до текстур. §e[*]§r Параметр підтримки RP має бути встановлений на Integrated PBR+. §e[*]§r Може виглядати дивно з деякими ресурс паками або модами, що використовують нестандартну роздільну здатність текстур.
 
 option.ENTITY_GN_AND_CT=Дозволити GN та CT для сутностей
 option.ENTITY_GN_AND_CT.comment=Визначає, чи можуть згенеровані нормалі та покриті текстури з’являтися на сутностях. §e[*]§r Це не ввімкне GN чи CT для сутностей, якщо основні параметри GN або CT вимкнені.
@@ -919,8 +919,8 @@ option.ENTITY_GN_AND_CT.comment=Визначає, чи можуть згенер
 option.GENERATED_NORMAL_MULT=Сила згенерованих нормалей
 option.GENERATED_NORMAL_MULT.comment=Регулює силу автоматично згенерованих рельєфних деталей на поверхнях.
 
-option.GENERATED_NORMAL_RES=роздільність згенер. нерівностей
-option.GENERATED_NORMAL_RES.comment=Керує роздільністю/розміром автоматично згенерованих нерівностей на поверхнях. §e[*]§r Зауважте, що роздільність ГН також залежить від власної роздільности кожної текстури, а це означає, що пакети ресурсів або моди можуть зіпсувати роздільність ГН на різних блоках.
+option.GENERATED_NORMAL_RES=Роздільна здатність згенерованих нормалей
+option.GENERATED_NORMAL_RES.comment=Змінює роздільну здатність/розмір автоматично згенерованих горбистих деталей на поверхнях. §e[*]§r Зауваж, що роздільна здатність GN також залежить від власної роздільної здатності кожної текстури, що означає: ресурс паки або моди можуть порушувати роздільну здатність GN на різних блоках.
 
 option.GENERATED_NORMAL_ENTITY_MULT=Згенеровані нормалі для сутностей
 option.GENERATED_NORMAL_ENTITY_MULT.comment=Регулює силу автоматично згенерованих рельєфних деталей на сутностях.
@@ -1056,7 +1056,7 @@ option.WAVING_LAVA=Коливання текстури лави
 option.WAVING_LAVA.comment=Додає постійний рух лави. §e[*]§r Коливання лави зокрема не залежить від параметра «Без коливань у закритих областях».
 
 option.WAVING_LILY_PAD=Коливання латаття §c[-]§r
-option.WAVING_LILY_PAD.comment=Додає коливання для латаття, щоб імітувати водяних хвиль. §c[-]§r Через це подушечки лілій на залитих водою блоках стають невидимими.
+option.WAVING_LILY_PAD.comment=Додає рух лататтю та ікрі жаб, щоб імітувати вплив хвиль на воду. §c[-]§r Це призводить до того, що латаття на блоках із водою стають невидимими.
 
 option.WAVING_WATER_VERTEX=Висота коливання води
 option.WAVING_WATER_VERTEX.comment=Додає рух позиції води, щоб імітувати вітер. §e[*]§r Цей параметр не пов’язаний із налаштуванням «Сила хвиль води».
@@ -1084,8 +1084,8 @@ option.WORLD_OUTLINE_I.comment=Визначає інтенсивність еф�
 option.WORLD_OUTLINE_ON_ENTITIES=Контур світу на сутностях
 option.WORLD_OUTLINE_ON_ENTITIES.comment=Визначає, чи застосовуватиметься ефект контуру світу до сутностей. §c[-]§r Цей параметр може працювати неідеально з деякими користувацькими PBR ресурс паками.
 
-option.WORLD_OUTLINE_SCALED=Контур світу в масштабі відстані
-option.WORLD_OUTLINE_SCALED.comment=Змінює масштаб контуру світу відповідно до відстані.
+option.WORLD_OUTLINE_SCALED=Масштабований відстанню контур світу
+option.WORLD_OUTLINE_SCALED.comment=Робить розмір контуру світу масштабованим залежно від відстані.
 
 option.DARK_OUTLINE=§eТемний контур§r
 option.DARK_OUTLINE.comment=Додає темні контури навколо блоків. §c[-]§r Цей ефект може впливати на продуктивність.
@@ -1113,7 +1113,7 @@ value.SELECT_OUTLINE.3=Вибраний колір
 value.SELECT_OUTLINE.4=Універсальний
 
 option.SELECT_OUTLINE_AUTO_HIDE=Автоматично приховувати контур виділення
-option.SELECT_OUTLINE_AUTO_HIDE.comment=Приховує контур вибору блока, якщо гравець нічого не тримає в основній руці.
+option.SELECT_OUTLINE_AUTO_HIDE.comment=Ховає контур вибору блока, якщо гравець не тримає нічого в основній руці.
 
 option.SELECT_OUTLINE_I=Яскравість SO
 option.SELECT_OUTLINE_R=SO червоний
@@ -1223,10 +1223,10 @@ option.XLIGHT_CURVE=Контраст блокового освітлення
 option.XLIGHT_CURVE.comment=Визначає, наскільки швидко інтенсивність блокового освітлення згасає під час поширення на відстань від джерела світла.
 
 ####### Euphoria Patches #######
-profile2.DEFAULT=§bВигляд: §rУсталений
-profile2.SPACEAGLE17= §f۞§kO§fНалагодження(не чіпати)§f§kO
-profile2.POPULAR=§bВигляд: §dПопулярний
-profile2.comment=Усталений та Попопулярний Це пресети профілів Euphoria Patches. §c[-] ПОПЕРЕДЖЕННЯ:§r Використання цього може змінити багато різних налаштувань і навіть порушити створені вами налаштування.\n\n• Усталений — це налаштування додаткових шейдерів усталено.\n\n• §dПопулярний§r — це попередні налаштування, у яких увімкнено деякі з найпопулярніших Euphoria Patches та додаткових налаштувань.\n\n• Профіль налагодження використовується для тестування та не призначений для використання звичайними користувачами.
+profile2.DEFAULT=§bВізуальні налаштування:§r Усталено
+profile2.SPACEAGLE17= §f۞ §kO§fНАЛАШТУВАННЯ ДЛЯ ВІДЛАДКИ (Не використовувати)§f§kO
+profile2.POPULAR=§bВізуальні налаштування: §dПопулярні
+profile2.comment=Це профільне налаштування для Euphoria Patches.  §c[-] ПОПЕРЕДЖЕННЯ:§r Використання цього може змінити багато різних налаштувань і навіть зламати твої власноруч створені.\n\n- Default Settings — стандартні налаштування Complementary Shader.\n  \n- §bPopular §dSettings§r— пресет, у якому ввімкнено деякі з найпопулярніших параметрів Euphoria Patches та Complementary.  \n\n- Debug profile — використовується для тестування й не призначений для звичайних користувачів.
 
 #WATERMARK
 option.WATERMARK=Комплементарна
@@ -1259,9 +1259,9 @@ screen.END_SKY.comment=Налаштування, які стосуються н�
 screen.END_BEAMS_SETTINGS=Налаштування променя Енду
 screen.END_BEAMS_SETTINGS.comment=Налаштування, які стосуються променів Енду.
 screen.END_BEAMS_COLOR_SETTINGS=Кольори променів Енду
-screen.END_BEAMS_COLOR_SETTINGS.comment=Налашутвнаня, які стосуються кольору променів Енду.
+screen.END_BEAMS_COLOR_SETTINGS.comment=Налаштування, що стосуються кольору променів Енду.
 screen.END_BEAMS_FLASH_SETTINGS=Налаштування спалаху Енду
-screen.END_BEAMS_FLASH_SETTINGS.comment=Налаштування, що стосуються променів Енду при спалахах у небі. Лише на 1.21.9+.
+screen.END_BEAMS_FLASH_SETTINGS.comment=Налаштування, що стосуються променів Енду під час спалахів Енду. Працює лише на версії 1.21.9+.
 screen.END_STAR=Налаштування зірок Енду
 screen.END_STAR.comment=Налаштування, які стосуються зірок Енду.
 screen.STAR_COLORS_END=Колір зірок Енду
@@ -1382,20 +1382,20 @@ screen.POPULAR_SETTINGS_3=Сторінка 3
 screen.EP_VERSION=Euphoria Patches §d1.9.3
 screen.EP_VERSION.comment=§bТи можеш підтримати SpacEagle17 на Patreon або Ko-Fi та отримати нові ексклюзивні бета-версії. §r§d§l§neuphoriapatches.com/support
 
-screen.MODDED_SETTINGS=Модифіковані налаштування
-screen.MODDED_SETTINGS.comment=Налаштування, які працюють, лише якщо у вас встановлено певні моди. Ці налаштування зроблені для доповнення досвіду гри з цими модами, і вони нічого не дадуть, якщо у вас немає необхідних модів.
+screen.MODDED_SETTINGS=Налаштування модів
+screen.MODDED_SETTINGS.comment=Налаштування, які працюють лише за наявності певних модів. Вони створені для доповнення ігрового досвіду з цими модами й не матимуть жодного ефекту, якщо потрібні моди не встановлені.
 screen.PHOTONICS_SETTINGS=Photonics
-screen.PHOTONICS_SETTINGS.comment=Налаштування, які працюють, лише якщо у вас встановлений мод Photonics.
-screen.PHOTONICS_SETTINGS_BASIC=Виразний режим
-screen.PHOTONICS_SETTINGS_BASIC.comment=Налаштування виразного режиму освітлення.
+screen.PHOTONICS_SETTINGS.comment=Налаштування, які працюють лише за умови встановленого мода **Photonics**.
+screen.PHOTONICS_SETTINGS_BASIC=Режим чіткості
+screen.PHOTONICS_SETTINGS_BASIC.comment=Налаштування режиму освітлення
 screen.PHOTONICS_SETTINGS_RESTIR=Режим ReSTIR
 screen.PHOTONICS_SETTINGS_RESTIR.comment=Налаштування режиму освітлення ReSTIR.
 
 screen.DISTANT_HORIZONS_SETTINGS=Distant Horizons
-screen.DISTANT_HORIZONS_SETTINGS.comment=Налаштування, які працюють, лише якщо у вас встановлений мод Distant Horizons.
+screen.DISTANT_HORIZONS_SETTINGS.comment=Налаштування, які працюють лише за умови встановленого мода **Distant Horizons**.
 
-screen.MODDED_SKYBOX_SETTINGS=Налаштування неба
-screen.MODDED_SKYBOX_SETTINGS.comment=Налаштування, які стосуються неба з модів.
+screen.MODDED_SKYBOX_SETTINGS=Налаштування Skybox
+screen.MODDED_SKYBOX_SETTINGS.comment=Налаштування, пов’язані з модами, що змінюють небо.
 
 option.DAYLIGHT_CYCLE_COMPAT=Час анімації світу
 option.DAYLIGHT_CYCLE_COMPAT.comment=Використовуй це лише тоді, коли ти граєш із gamerule `doDaylightCycle false`.  \nЯкщо ввімкнено, хмари та інші елементи анімуються у світах із вимкненим циклом дня й ночі, але вони більше не синхронізуються між гравцями.
@@ -1483,6 +1483,9 @@ value.CLOUD_ROUNDNESS.0.125=Збалансована
 value.CLOUD_ROUNDNESS.0.2=Кругла
 option.CLOUD_ROUNDNESS.comment=Змінює те, наскільки округлими виглядають хмари. §e[*]§r Менша закругленість призводить до появи більшої кількості шумових артефактів.
 
+option.REIMAGINED_CLOUDS_OUTLINE=Контури хмар
+option.REIMAGINED_CLOUDS_OUTLINE.comment=Увімкнути контур навколо переосмислених хмар.
+value.REIMAGINED_CLOUDS_OUTLINE.0=ВИМК.
 
 option.CLOUD_SHADOW_ROUNDNESS=Закругленість тіней від хмар
 value.CLOUD_SHADOW_ROUNDNESS.0.15=Додатково квадратні
@@ -1490,11 +1493,11 @@ value.CLOUD_SHADOW_ROUNDNESS.0.25=Квадратна
 value.CLOUD_SHADOW_ROUNDNESS.0.35=Кругла
 option.CLOUD_SHADOW_ROUNDNESS.comment=Змінює те, наскільки округлими виглядають тіні від хмар.
 
-option.CLOUD_SHADOW_STRENGTH=Сила хмарної тіні
-option.CLOUD_SHADOW_STRENGTH.comment=Керує лише темрявою хмарної тіні. Нижчі значення роблять тіні хмар яскравішими, вищі значення роблять їх темнішими.
+option.CLOUD_SHADOW_STRENGTH=Сила тіней від хмар
+option.CLOUD_SHADOW_STRENGTH.comment=Регулює лише темряву тіней від хмар. Нижчі значення роблять тіні світлішими, а вищі — темнішими.
 
-option.CLOUD_SHADOW_FADE_DISTANCE=Дальнітсь тіней хмар
-option.CLOUD_SHADOW_FADE_DISTANCE.comment=Керуж дальністю навколо гравця, на якій тіні хмар не промлаьовуватимуться.
+option.CLOUD_SHADOW_FADE_DISTANCE=Відстань тіней від хмар
+option.CLOUD_SHADOW_FADE_DISTANCE.comment=Визначає відстань навколо гравця, у межах якої тіні від хмар не pj,hf;fnbvenmcz.
 value.CLOUD_SHADOW_FADE_DISTANCE.0=ВИМК.
 
 option.CLOUD_NARROWNESS=Ширина хмар
@@ -1537,17 +1540,17 @@ option.CLOUD_SHADING_AMOUNT.comment=Визначає, наскільки сил�
 option.INVERTED_CLOUD_SHADING=Інверсне затінення хмар
 option.INVERTED_CLOUD_SHADING.comment=Інвертує ефект затінення хмар.
 
-option.CLOUD_LIGHT_MULTIPLIER=Множник денного світла хмар
-option.CLOUD_LIGHT_MULTIPLIER.comment=Збільшує яскравість освітленої сторони хмар протягом дня.
+option.CLOUD_LIGHT_MULTIPLIER=Множник денного світла для хмар
+option.CLOUD_LIGHT_MULTIPLIER.comment=Множить яскравість, яку освітлений бік хмар отримує вдень.
 
-option.CLOUD_NIGHT_LIGHT_MULTIPLIER=Множник нічного світла хмар
-option.CLOUD_NIGHT_LIGHT_MULTIPLIER.comment=Збільшує яскравість освітленої сторони хмар протягом ночі.
+option.CLOUD_NIGHT_LIGHT_MULTIPLIER=Множник нічного освітлення для хмар
+option.CLOUD_NIGHT_LIGHT_MULTIPLIER.comment=Множить яскравість, яку освітлений бік хмар отримує вночі.
 
 option.CLOUD_AMBIENT_MULTIPLIER=Множник навколишнього освітлення хмар
 option.CLOUD_AMBIENT_MULTIPLIER.comment=Множить яскравість навколишнього освітленого боку хмар.
 
-option.CLOUD_NIGHT_AMBIENT_MULTIPLIER=Множник нічного навколишнього освітлення хмар
-option.CLOUD_NIGHT_AMBIENT_MULTIPLIER.comment=Збільшує яскравість сторони навколишнього освітлення хмар протягом ночі.
+option.CLOUD_NIGHT_AMBIENT_MULTIPLIER=Множник нічного фонового освітлення для хмар
+option.CLOUD_NIGHT_AMBIENT_MULTIPLIER.comment=Множить яскравість фонового боку хмар уночі.
 
 option.ROTATE_REIMAGINED_CLOUDS_90_NEW=Обернути хмари на 90°
 option.ROTATE_REIMAGINED_CLOUDS_90_NEW.comment=Обертає переосмислені хмари на 90 градусів.
@@ -1560,8 +1563,8 @@ option.HIGH_QUALITY_CLOUDS.comment=Підвищує якість хмар пон
 
 option.CLOUD_LAYER2_SPEED_MULT=Множник швидкості 2 шару хмари
 
-option.PIXELATED_UNBOUND_CLOUDS=Піксельні непов'язані хмари
-option.PIXELATED_UNBOUND_CLOUDS.comment=Надає непов'язаним хмарам піксельний вигляд. Чим вище значення, тим більші пікселі.
+option.PIXELATED_UNBOUND_CLOUDS=Піксельні необмежені хмари
+option.PIXELATED_UNBOUND_CLOUDS.comment=Надає необмеженим хмарам піксельного вигляду. Чим більше значення, тим більші пікселі.
 value.PIXELATED_UNBOUND_CLOUDS.0=ВИМК.
 
 option.DOUBLE_UNBOUND_CLOUDS=Подвійні необмежені хмари
@@ -1637,8 +1640,8 @@ option.E_SKY_COLORR_NEW=Небо Енду — Червоний
 option.E_SKY_COLORG_NEW=Небо Енду — Зелений
 option.E_SKY_COLORB_NEW=Небо Енду — Синій
 option.E_SKY_COLORI=Небо Енду — Інтенсивний
-option.END_SKY_FOG_INFLUENCE=Затінення модових біомів Енду
-option.END_SKY_FOG_INFLUENCE.comment=Налаштуйте, наскільки колір туману модових біомів впливає на кольори неба та променів Енду. Якщо 1.00 небо та промені Енду матимуть той самий колір, що й колір туману, якщо 0.00 колір туману на них не впливатиме.
+option.END_SKY_FOG_INFLUENCE=Модифікований відтінок біома Енду
+option.END_SKY_FOG_INFLUENCE.comment=Налаштуйте, наскільки колір туману модифікованих біомів впливає на кольори неба Енду та променів Енду. При значенні 1.00 небо Енду та промені матимуть той самий колір, що й туман, а при значенні 0.00 вони не будуть залежати від кольору туману.
 
 option.GLOWING_EMERALD_BLOCK=Емісивний блок смарагду
 option.GLOWING_EMERALD_BLOCK.comment=Опція, що дозволяє блокам смарагду світитися. §e[*]§r Для цього параметр підтримки ресурс паків має бути встановлений на Integrated PBR+.
@@ -1668,13 +1671,13 @@ option.OW_BEAM_B_NEW=Промені Верхнього світу — Синій
 option.END_BEAMS=Промені Енду
 option.END_BEAMS.comment=Налаштування, яке вмикає промені, схожі на туманності, в Енді.
 option.END_CRYSTAL_VORTEX=Вихор кристала Енду
-option.END_CRYSTAL_VORTEX.comment=Налаштування, яке дозволяє променям енергії йти вгору від кінцевих кристалів до кінця. §4[***]§r Умикає §cтіні сутностей§r. §e[*]§r Лише Iris. §e[*]§r Не працює в MacOS. Дальність тіней в розширених налаштуваннях впливає на відстань, на якій видно вихори.
+option.END_CRYSTAL_VORTEX.comment=Налаштування, яке вмикає енергетичні промені, що підіймаються від кристалів Енду в Енді. §4[***]§r Вмикає §cтіні сутностей§r. §e[*]§r Працює лише на Iris. §e[*]§r не працює на MacOS. Відстань тіней у Complementary Settings впливає на дистанцію, на якій видно вихори.
 value.END_CRYSTAL_VORTEX.0=ВИМК.
 value.END_CRYSTAL_VORTEX.1=Вихровий
 value.END_CRYSTAL_VORTEX.2=Промінь зцілення
 value.END_CRYSTAL_VORTEX.3=Обидва
 option.DRAGON_DEATH_EFFECT=Ефект смерти дракона
-option.DRAGON_DEATH_EFFECT.comment=Налаштування, яке замінює промені смерти дракона об'ємним ефектом. §4[***]§r Умикає §cтіні сутностей§r. §e[*]§r Лише Iris. §e[*]§r Не працює в MacOS.
+option.DRAGON_DEATH_EFFECT.comment=Налаштування, яке замінює промені смерті дракона на об’ємний ефект. §4[***]§r Вмикає §cтіні сутностей§r. §e[*]§r Працює лише на Iris. §e[*]§r не працює на MacOS.
 value.DRAGON_DEATH_EFFECT.0=ВИМК.
 value.DRAGON_DEATH_EFFECT.1=Об'ємний
 value.DRAGON_DEATH_EFFECT.2=Об'ємний + оригінальні промені
@@ -1693,23 +1696,23 @@ option.E_DRAGON_BEAM_B_NEW.comment=Колір променів Енду під �
 option.E_DRAGON_BEAM_I=Промені дракона Енду — Інтенсивний
 option.E_DRAGON_BEAM_I.comment=Колір променів Енду під час бою з драконом — Інтенсивний
 option.END_BEAM_SCALE=Розмір
-option.END_BEAM_SCALE.comment=Змінює розмір променів Енду. Вищі значення роблять їх тоншими, нижчі — ширшими.
+option.END_BEAM_SCALE.comment=Змінює масштаб променів Енду. Вищі значення роблять їх тоншими, нижчі значення — ширшими.
 option.END_BEAM_DISTANCE_MULTIPLIER=Множник відстані
-option.END_BEAM_DISTANCE_MULTIPLIER.comment=Змінює відстань, на якій далекі або близькі промені Енду до гравця. Вищі значення змушують їх починати далі, нижчі – ближче.
+option.END_BEAM_DISTANCE_MULTIPLIER.comment=Змінює відстань, на якій промені Енду знаходяться від гравця. Вищі значення змушують їх починатися далі, нижчі значення — ближче.
 option.END_BEAM_POW=Сила променів
-option.END_BEAM_POW.comment=Змінює силу променів. Вищі значення роблять їх менш інтенсивними, а нижчі – більш інтенсивними.
-option.END_BEAM_DIRECTION_BIAS=Зсув по вертикалі
-option.END_BEAM_DIRECTION_BIAS.comment=Керує тим, яка сторона від центру променя є переважною. -100 надає нижчу перевагу, 0 однаково, 100 надає вищу перевагу.
+option.END_BEAM_POW.comment=Змінює потужність променів. Вищі значення роблять їх менш інтенсивними, нижчі значення — більш інтенсивними.
+option.END_BEAM_DIRECTION_BIAS=Вертикальне зміщення напрямку
+option.END_BEAM_DIRECTION_BIAS.comment=Керує тим, яка сторона від центру променя має пріоритет. -100 надає перевагу нижній стороні, 0 є дзеркальним, 100 надає перевагу верхній стороні.
 option.END_BEAM_FLASH_HEIGHT_MULTIPLIER=Множник висоти спалаху
-option.END_BEAM_FLASH_HEIGHT_MULTIPLIER.comment=Змінює висоту променів Енду при спахах у небі. Вищі значення роблять їх нижчими, нижчі — вищими.
+option.END_BEAM_FLASH_HEIGHT_MULTIPLIER.comment=Змінює висоту променів енду під час спалахів енду.
 option.END_BEAM_FLASH_POW_MULTIPLIER=Множник сили спалаху
-option.END_BEAM_FLASH_POW_MULTIPLIER.comment=Змінює силу променів Енду при спалахах у небі.
+option.END_BEAM_FLASH_POW_MULTIPLIER.comment=Змінює потужність променів енду під час спалахів енду.
 option.END_BEAM_FLASH_NARROWNESS=Вузькість спалаху
-option.END_BEAM_FLASH_NARROWNESS.comment=Змінює вузькість области, на яку впливає спалах Енду. Вищі значення спричиняють вплив спалаху на меншу область, нижчі значення — на більшу область.
+option.END_BEAM_FLASH_NARROWNESS.comment=Змінює вузькість зони, на яку впливає спалах енду. Вищі значення змушують спалах охоплювати меншу область, нижчі значення — більшу область.
 option.END_BEAM_SPEED=Швидкість
 option.END_BEAM_SPEED.comment=Змінює швидкість променів Енду.
-option.END_BEAM_FOG_BLEND=Змішування місцевости
-option.END_BEAM_FOG_BLEND.comment=Змінює, наскільки промені Енду зливаються з місцевістю на великих відстанях. §e[*]§r Менші значення роблять межі чанків видимими.
+option.END_BEAM_FOG_BLEND=Змішування ландшафту
+option.END_BEAM_FOG_BLEND.comment=Змінює ступінь змішування променів енду з ландшафтом на великих відстанях. §e[*]§r Нижчі значення роблять межі чанків видимими.
 
 option.END_STARS=Зірки Енду
 option.END_STARS.comment=Вмикання або вимикання зірок в Енді.
@@ -1743,8 +1746,8 @@ value.END_TWINKLING_STARS.17=1.7
 value.END_TWINKLING_STARS.18=1.8
 value.END_TWINKLING_STARS.19=1.9
 value.END_TWINKLING_STARS.20=2.0
-option.END_STAR_HEMISPHERE=Півкуля зірорк Енду
-option.END_STAR_HEMISPHERE.comment=Налаштування лише для відтворення зірок у верхній або нижній півкулі неба Енду.
+option.END_STAR_HEMISPHERE=Півкуля зоряного Енду
+option.END_STAR_HEMISPHERE.comment=Налаштування для відтворення зірок лише у верхній або нижній півкулі неба в Енді.
 value.END_STAR_HEMISPHERE.0=Повне небо
 value.END_STAR_HEMISPHERE.1=Верхня півкуля
 value.END_STAR_HEMISPHERE.-1=Нижня півкуля
@@ -1916,7 +1919,7 @@ option.NETHER_PORTAL_NOISE=Шум порталу Незеру
 option.NETHER_PORTAL_NOISE.comment=Додає шум до текстури порталу в Незер, роблячи його більш динамічним.
 value.NETHER_PORTAL_NOISE.0=ВИМК.
 value.NETHER_PORTAL_NOISE.1=Звичайний
-value.NETHER_PORTAL_NOISE.2=Пыксельний
+value.NETHER_PORTAL_NOISE.2=Піксельний
 
 option.END_PORTAL_VARIATION=Пресет порталу Енду
 option.END_PORTAL_VARIATION.comment=Опція для вибору між різними пресетами порталу в Енд. §e[*]§r Опція підтримки ресурс паків має бути встановлена на Integrated PBR+
@@ -2253,12 +2256,12 @@ option.NO_RAIN_ABOVE_CLOUDS=Без дощу над хмарами
 option.NO_RAIN_ABOVE_CLOUDS.comment=Вимикає дощ над хмарами. Погано працює, якщо висоту ванільних хмар було змінено при ввімкнених ванільних хмарах.
 
 option.RAIN_FADE_TIMER=Таймер зникнення дощу
-option.RAIN_FADE_TIMER.comment=Змінює час, потрібний для згасання ефектів дощу. Впливає ефекти хмар, дощові калюжі, туман, веселка тощо.§e[*]§r Лише на Iris та похідних.
+option.RAIN_FADE_TIMER.comment=Змінює час, за який ефекти, пов’язані з дощем, поступово з’являються та зникають. До таких ефектів належать хмари, калюжі від дощу, туман, веселка та інші. §e[*]§r Працює лише на Iris та його похідних.
 
-option.RAIN_TEX_OPACITY_MULTIPLIER=Множник непрозорости дощу
-option.RAIN_TEX_OPACITY_MULTIPLIER.comment=Змінює непрозорість текстури частинок дощу, щоб дощ виглядав важчим або легшим.
-option.SNOW_TEX_OPACITY_MULTIPLIER=Множник непрозорости снігу
-option.SNOW_TEX_OPACITY_MULTIPLIER.comment=Змінює непрозорість текстури частинок снігу, щоб сніг виглядав важчим або легшим.
+option.RAIN_TEX_OPACITY_MULTIPLIER=Множник прозорості дощу.
+option.RAIN_TEX_OPACITY_MULTIPLIER.comment=Змінює прозорість текстури частинок дощу, роблячи його візуально важчим або легшим.
+option.SNOW_TEX_OPACITY_MULTIPLIER=Множник прозорості снігу
+option.SNOW_TEX_OPACITY_MULTIPLIER.comment=Змінює прозорість текстури частинок снігу, роблячи його візуально важчим або легшим.
 
 option.DOF_SNEAKING=Глибина різкості під час підкрадання та використання підзорної труби
 option.DOF_SNEAKING.comment=Активує ефект розмиття світу лише під час підкрадання та утримання підзорної труби.
@@ -2517,17 +2520,17 @@ option.MOON_GLARE_AMOUNT=Кількість відблисків Місяця
 value.MOON_GLARE_AMOUNT.0=ВИМК.
 
 option.SUN_MOON_IPBR=IPBR Сонця/Місяця
-option.SUN_MOON_IPBR.comment=Умикає або вимикає IntegratedPBR для Сонця або Місяця.
+option.SUN_MOON_IPBR.comment=Увімкнення або вимкнення IntegratedPBR для сонця та місяця.
 value.SUN_MOON_IPBR.0=ВИМК.
-value.SUN_MOON_IPBR.1=Сонце
-value.SUN_MOON_IPBR.2=Мсяць
+value.SUN_MOON_IPBR.1=Тільки Сонце
+value.SUN_MOON_IPBR.2=Тільки Місяць
 value.SUN_MOON_IPBR.3=Сонце й Місяць
 
 option.DAYLIGHT_STARS=Денні зірки
 option.DAYLIGHT_STARS.comment=Умикає зірки вдень.
 
 option.FROZEN_TIME=Заморожений час
-option.FROZEN_TIME_COMMENT=Зупиняє час анімації та ефекти шейдерів, які покладаються на анімацію на основі кадрів, будуть зупинені, що дозволить створювати хороші знімки екрана для порівняння.
+option.FROZEN_TIME_COMMENT=Заморожує час анімації шейдерів. Ефекти шейдерів, які залежать від анімації по кадрах, будуть зупинені, що дозволяє робити якісні порівняльні скриншоти.
 
 option.DARKER_DEPTH_OCEANS=Темніші та глибші океани
 option.DARKER_DEPTH_OCEANS.comment=Світло зменшується з глибиною океану
@@ -2796,15 +2799,15 @@ option.NETHER_HEAT_DISTORTION=Теплове спотворення
 option.NETHER_HEAT_DISTORTION.comment=Додає ефект теплового викривлення до Незеру.
 value.NETHER_HEAT_DISTORTION.0=ВИМК.
 option.NETHER_HEAT_DISTORTION_SPEED=Швидкість
-option.NETHER_HEAT_DISTORTION_SPEED.comment=Змінює швидкість ефекту теплового спотворення.
+option.NETHER_HEAT_DISTORTION_SPEED.comment=Змінює швидкість ефекту теплової дисторсії.
 option.NETHER_HEAT_DISTORTION_SCALE=Масштаб
-option.NETHER_HEAT_DISTORTION_SCALE.comment=Змінює масштаб ефекту теплового спотворення.
+option.NETHER_HEAT_DISTORTION_SCALE.comment=Змінює масштаб ефекту теплової дисторсії.
 
-option.BLOCKLIGHT_CAUSTICS=Каустика світла блоків
-option.BLOCKLIGHT_CAUSTICS.comment=Додає каустичний ефект світла блоків під водою.
+option.BLOCKLIGHT_CAUSTICS=Каустика від світла блоків
+option.BLOCKLIGHT_CAUSTICS.comment=Додає ефект каустики до світла блоків під водою.
 
-option.LENS_FLARE_SHAPE=Форма відблиску об'єктива
-option.LENS_FLARE_SHAPE.comment=Змінює форму відблисків.
+option.LENS_FLARE_SHAPE=Форма відблиску лінзи
+option.LENS_FLARE_SHAPE.comment=Змінює форму відблисків лінзи.
 value.LENS_FLARE_SHAPE.0=Усталена
 value.LENS_FLARE_SHAPE.3=Трикутник
 value.LENS_FLARE_SHAPE.4=Квадрат
@@ -2813,108 +2816,110 @@ value.LENS_FLARE_SHAPE.6=Шестикутник
 value.LENS_FLARE_SHAPE.7=Семикутник
 value.LENS_FLARE_SHAPE.8=Восьмикутник
 
-option.LENS_FLARE_SHAPE_ROTATION=Оберт. форми відблиску об'єктива
-option.LENS_FLARE_SHAPE_ROTATION.comment=Змінює обертання форм відблиску об'єктива.
+option.LENS_FLARE_SHAPE_ROTATION=Обертання форми відблиску лінзи
+option.LENS_FLARE_SHAPE_ROTATION.comment=Змінює обертання форм відблисків лінзи.
 
-option.ANAMORPHIC_LENS_FLARE=Анаморфний відблиск
-option.ANAMORPHIC_LENS_FLARE.comment=Умикає або вимкнути анаморфотні відблиски.
+option.ANAMORPHIC_LENS_FLARE=Анаморфний відблиск лінзи
+option.ANAMORPHIC_LENS_FLARE.comment=Увімкнути або вимкнути анаморфні відблиски лінзи.
 value.ANAMORPHIC_LENS_FLARE.0=ВИМК.
 
-option.WATER_CAULDRON_COLOR_OVERRIDE=Перевизначення кольору казана води
-option.WATER_CAULDRON_COLOR_OVERRIDE.comment=Запобігає впливу користувацьких налаштувань кольорів поверхні води на казани.
+option.WATER_CAULDRON_COLOR_OVERRIDE=Перевизначення кольору казана з водою
+option.WATER_CAULDRON_COLOR_OVERRIDE.comment=Запобігає впливу налаштувань користувацьких кольорів поверхні води на казани з водою.
 
-option.END_FLASH_SHADOW=Тінь спахала Енду
-option.END_FLASH_SHADOW.comment=Тіні в Енді будуть спроєктовані зі спалахів Енду замість кута Сонця Енду. §e[*]§r Лише на Iris та лише 1.21.9+.
+option.END_FLASH_SHADOW=Тіні від спалаху Енду
+option.END_FLASH_SHADOW.comment=Тіні в Енді будуть проєктуватися від спалахів Енду замість кута сонця Енду. §e[*]§r Ця функція працює лише на Iris у версії 1.21.9+
 value.END_FLASH_SHADOW.0=ВИМК.
 
 option.EP_END_FLASH=Спалах Енду
 option.EP_END_FLASH.comment=Змінює тип спалаху в Енді — стандартний або власний «Euphoria», або обидва. §e[*]§r Ця функція працює лише на Iris у версії 1.21.9+.
 value.EP_END_FLASH.0=Лише усталений
-value.EP_END_FLASH.1=Euphoria
+value.EP_END_FLASH.1=Лише для Euphoria
 value.EP_END_FLASH.2=Обидва
 
 option.MIRROR_TINTED_GLASS_OPAQUE=Непрозоре тоноване скло
 option.MIRROR_TINTED_GLASS_OPAQUE.comment=Робить блоки тонованого скла непрозорими (переважно для дзеркал).
 
-option.COLORED_LIGHT_FOG_RAIN_I=Інтен. дощу за кольор. світл. туману
-option.COLORED_LIGHT_FOG_RAIN_I.comment=Змінює інтенсивність кольорового світла туману під час дощу.
+option.COLORED_LIGHT_FOG_RAIN_I=Інтенсивність туману від кольорового світла під час дощу
+option.COLORED_LIGHT_FOG_RAIN_I.comment=Змінює інтенсивність туману від кольорового світла під час дощу.
 value.COLORED_LIGHT_FOG_RAIN_I.0=Усталена
 
 option.BLOOD_MOON=Кривавий місяць
-option.BLOOD_MOON.comment=Умикає криваві місяці, які відбуваються протягом кількости днів Minecraft, які користувач встановив у цьому параметрі.
+option.BLOOD_MOON.comment=Увімкнення або вимкнення Кривавих місяців, які відбуваються з частотою, заданою користувачем у днях Minecraft.
 value.BLOOD_MOON.0=ВИМК.
 value.BLOOD_MOON.1=Щоночі
-suffix.BLOOD_MOON=\ ігрових ночей
-option.EMISSIVE_BLOOD_MOON_FLOWERS=Випром. квіти кривавого Місяця
-option.EMISSIVE_BLOOD_MOON_FLOWERS.comment=Змушує червоні квіти світитися під час кривавих Місяців. §e[*]§r Для параметра «Підтримка ПР» має бути встановлено значення Integrated PBR+.
+suffix.BLOOD_MOON=\ Ночі Minecraft
+option.EMISSIVE_BLOOD_MOON_FLOWERS=Випромінювання квіти кривавого Місяця
+option.EMISSIVE_BLOOD_MOON_FLOWERS.comment=Робить червоні квіти світними під час Кривавого Місяця. §e[*]§r Опція підтримки RP має бути встановлена на Integrated PBR+.
 
 option.PHOTONICS_LIGHTING_MODE=Режим освітлення
-option.PHOTONICS_LIGHTING_MODE.comment=Змінює алгоритм освітлення, який Photonics використовує для освітлення.\n\nВиразний — дуже виразний алгоритм освітлення без шуму, але з обмеженою кількістю світла (Максимальні зразки).\nReSTIR — Використовує ReSTIR для освітлення, підтримує необмежену (Максимальне світло) кількість світла, але може створювати шум у певних областях. §e[*]§r Цей параметр працює, лише якщо встановлено Photonics.
+option.PHOTONICS_LIGHTING_MODE.comment=Змінює алгоритм освітлення, який використовує Photonics.  \n\nSharp — чіткий алгоритм освітлення без шуму, але з обмеженою кількістю джерел світла (максимальні зразки).  \nReSTIR — використовує ReSTIR для освітлення, підтримує необмежену кількість джерел світла (максимальне світло), але може створювати шум у певних ділянках. §e[*]§r Ця опція працює лише якщо встановлено Photonics.
 value.PHOTONICS_LIGHTING_MODE.0=ВИМК.
 value.PHOTONICS_LIGHTING_MODE.1=Виразний
 value.PHOTONICS_LIGHTING_MODE.2=ReSTIR
 
 option.PHOTONICS_PIXELATED_SHADOWS=Піксельні тіні
-option.PHOTONICS_PIXELATED_SHADOWS.comment=Умикає або вимикає піксельні тіні в моді Photonics. §c[*]§rЦей параметр працює лише у виразному режимі.
+option.PHOTONICS_PIXELATED_SHADOWS.comment=Увімкнення або вимкнення піксельних тіней у моді Photonics. §c[*]§r Ця опція працює лише в режимі освітлення Sharp.
 
 option.PHOTONICS_ALPHA_MODE=Режим прозорости
-option.PHOTONICS_ALPHA_MODE.comment=Керує тим, як Photonics обробляє прозорі блоки.\n\nЖоден — прозорі блоки розглядаються як непрозорі.\nБлок — прозорість застосовується до кожного блока (§aНезначний вплив на продуктивність)§r.\nВоксель — прозорість застосовується до кожного вокселя (§cВИСОКИЙ ВПЛИВ НА ПРОДУКИВНІСТЬ)§r
+option.PHOTONICS_ALPHA_MODE.comment=Встановлює спосіб обробки прозорих блоків у Photonics.  \n\nЖоден— прозорі блоки розглядаються як непрозорі.  \nБлок — прозорість застосовується до кожного блоку (§aМінімальний вплив на продуктивність)§r.  \nВоксель — прозорість застосовується до кожного вокселя (§cВЕЛИКИЙ ВПЛИВ НА ПРОДУКТИВНІСТЬ)§r.
 value.PHOTONICS_ALPHA_MODE.NONE=Жоден
 value.PHOTONICS_ALPHA_MODE.BLOCK=Блок
 value.PHOTONICS_ALPHA_MODE.VOXEL=Воксель
 
 option.PHOTONICS_RENDER_SCALE=Масштаб промальовування
-option.PHOTONICS_RENDER_SCALE.comment=Змінює масштаб промальовування світла Photonics.\n\n§aНижчі значення можуть покращити продуктивність, але можуть призвести до погіршення світла.\n\n§cВищі значення можуть покращити якість світла, але можуть спричинити проблеми з продуктивністю.\n\n
+option.PHOTONICS_RENDER_SCALE.comment=Змінює масштаб промалосвітлення Photonics.  \n\n§aМенші значення можуть покращити продуктивність, але погіршити вигляд освітлення.  \n\n§cБільші значення можуть підвищити якість освітлення, але спричинити проблеми з продуктивністю.
 
 option.PHOTONICS_INDIRECT_INTENSITY=Глобальне світло
-option.PHOTONICS_INDIRECT_INTENSITY.comment=Змінює інтенсивність непрямого освітлення в моді Photonics. §e[*]§r Цей параметр працює, лише якщо встановлено Photonics.
+option.PHOTONICS_INDIRECT_INTENSITY.comment=Змінює інтенсивність непрямого освітлення у моді Photonics. §e[*]§r Ця опція працює лише якщо встановлено Photonics.
+value.PHOTONICS_INDIRECT_INTENSITY.0=ВИМК.
 
 option.PHOTONICS_MAX_LIGHTS=Максимлаьне освітлення
-option.PHOTONICS_MAX_LIGHTS.comment=Максимальна кількість трасованих світил, які можна завантажити.\n\n§6Середній вплив на продуктивність.§r\n\nЯкщо вимкнуир, світло блоків Photonics не використовуватиметься, а замість нього буде стандартне.
+option.PHOTONICS_MAX_LIGHTS.comment=Максимальна кількість відстежуваних джерел світла, які можна завантажити.  \n\n§6Середній вплив на продуктивність.§r  \n\nЯкщо встановлено ВИМК., блокове світло Photonics не використовується, натомість застосовується стандартне блокове світло ванілі.
 value.PHOTONICS_MAX_LIGHTS.0=ВИМК.
 
 option.PHOTONICS_MAX_SAMPLES=Максимальна кількість зразків
 option.PHOTONICS_MAX_SAMPLES.comment=Кількість світла поблизу, яке може проливати світло на об'єкт\n\n§cВИСОКИЙ ВПЛИВ НА ПРОДУКТИВНІСТЬ.
 
 option.PHOTONICS_RESTIR_INITIAL_SAMPLES=Початкові зразки ReSTIR
-option.PHOTONICS_RESTIR_INITIAL_SAMPLES.comment=Скільки світил ReSTIR має передбачити спочатку.\n\n§6Середній вплив на продуктивність.
+option.PHOTONICS_RESTIR_INITIAL_SAMPLES.comment=Кількість джерел світла, які ReSTIR має враховувати на початковому етапі.  \n\n§6Середній вплив на продуктивність
 
 option.PHOTONICS_RESTIR_SOFT_SHADOWS=ReSTIR М'які тіні
-option.PHOTONICS_RESTIR_SOFT_SHADOWS.comment=Чи має ReSTIR мати м’які тіні.\n\n§aНезначний вплив на продуктивність.
+option.PHOTONICS_RESTIR_SOFT_SHADOWS.comment=Чи має ReSTIR використовувати м’які тіні \n\n§aНезначний вплив на продуктивність
 
-option.PHOTONICS_RESTIR_SPATIAL_REUSE_SAMPLES=Зразки просторового повторного використання ReSTIR
-option.PHOTONICS_RESTIR_SPATIAL_REUSE_SAMPLES.comment=Скільки зразків ReSTIR використовує для просторового повторного використання.\n\n§6Середній вплив на продуктивність.
+option.PHOTONICS_RESTIR_SPATIAL_REUSE_SAMPLES=ReSTIR Просторові повторні вибірки
+option.PHOTONICS_RESTIR_SPATIAL_REUSE_SAMPLES.comment=Скільки вибірок ReSTIR використовує для просторового повторного використання  \n\n§6Середній вплив на продуктивність
 
-option.PHOTONICS_RESTIR_SPATIAL_REUSE_RADIUS=Радіус просторового перевикористання ReSTIR
+option.PHOTONICS_RESTIR_SPATIAL_REUSE_RADIUS=ReSTIR Радіус просторового повторного використання
 
-option.PHOTONICS_RESTIR_ACCUMULATION_FRAMES=Кадри накопичення ReSTIR
-option.PHOTONICS_RESTIR_ACCUMULATION_FRAMES.comment=Максимальна кількість кадрів, які ReSTIR використовує для накопичення. Нижчі значення призведуть до більшої чутливости освітлення за рахунок збільшення шуму.\n\nЖодного впливу на продуктивність.
+option.PHOTONICS_RESTIR_ACCUMULATION_FRAMES=ReSTIR Кадри акумуляції
+option.PHOTONICS_RESTIR_ACCUMULATION_FRAMES.comment=Максимальна кількість кадрів, які ReSTIR використовує для акумуляції. Нижчі значення зроблять освітлення більш чутливим, але ціною більшого шуму. \n\nБез впливу на продуктивність
 
 option.PHOTONICS_RESTIR_DENOISER_PASSES=Проходи знешумлення
 option.PHOTONICS_RESTIR_DENOISER_PASSES.comment=Кількість проходів, які використовує знешумлення для ReSTIR.\n\n§cВИСОКИЙ ВПЛИВ НА ПРОДУКТИВНІСТЬ.
-value.PHOTONICS_RESTIR_DENOISER_PASSES.0=ВИМК.
+value.PHOTONICS_RESTIR_DENOISER_PASSES.0=Вимк.
 
 option.PHOTONICS_RESTIR_FLICKER_FIRE=Мерехтливий вогонь ReSTIR
-option.PHOTONICS_RESTIR_FLICKER_FIRE.comment=Вогняні джерела світла мерехтять. §c[*]§r Цей параметр працює лише з режимом ReSTIR.
+option.PHOTONICS_RESTIR_FLICKER_FIRE.comment=Джерела світла від вогню мерехтітимуть. §c[*]§r Цей параметр працює лише в режимі освітлення ReSTIR.
+value.PHOTONICS_RESTIR_FLICKER_FIRE.0=ВИМК.
 
 option.PHOTONICS_VANILLA_LIGHT_FALLBACK=Резерв стандартного світла
-option.PHOTONICS_VANILLA_LIGHT_FALLBACK.comment=Відсоток стандартного освітлення для використання в як резерву під час використання Photonics для запобігання темних ділянок, де освітлення Photonics не завантажувалося.
+option.PHOTONICS_VANILLA_LIGHT_FALLBACK.comment=Відсоток стандартного освітлення, який слід використовувати як резерв під час використання Photonics, щоб запобігти затемненим ділянкам, де освітлення Photonics не було завантажене.
 suffix.PHOTONICS_VANILLA_LIGHT_FALLBACK=%
 
 option.PHOTONICS_ENCHANTING_GLINT_STRENGTH=Сила блиску зачарування
-option.PHOTONICS_ENCHANTING_GLINT_STRENGTH.comment=Змінює силу світла, випромінюваного зачарованими предметами під час використання світла Photonics.
+option.PHOTONICS_ENCHANTING_GLINT_STRENGTH.comment=Змінює силу світла, яке випромінюють зачаровані предмети при використанні освітлення Photonics.
 
 option.PHOTONICS_SEPARATE_HANDHELD_RAYS=Окремі портативні промені
-option.PHOTONICS_SEPARATE_HANDHELD_RAYS.comment=Чи повинні обидва портативні світильники відкидати тіні. Якщо вимкнено, відкидається лише одна тінь.\n\n§aМінімальний вплив на продуктивність.
+option.PHOTONICS_SEPARATE_HANDHELD_RAYS.comment=Чи повинні обидва ручні джерела світла відкидати тіні. Якщо вимкнено, буде відкинута лише одна тінь  \n\n§aМінімальний вплив на продуктивність
 
 option.PHOTONICS_AMBIENT_LIGHT_MULT=Множник навколишнього освітлення
-option.PHOTONICS_AMBIENT_LIGHT_MULT.comment=Керує тим, яка кількість навколишнього освітлення усталено має використовуватися разом із освітленням Photonics. §e[*]§r Цей параметр працює лише, якщо встановлено Photonics.
+option.PHOTONICS_AMBIENT_LIGHT_MULT.comment=Опція зміни кількості стандартного навколишнього світла, яке слід використовувати разом з освітленням Photonics. §e[*]§r Цей параметр працює лише якщо Photonics встановлено.
 
-option.PHOTONICS_COMBINED_GI=Уключення світла неба ЗО
-option.PHOTONICS_COMBINED_GI.comment=Чи слід запускати загальне освітлення через шумозаглушувач ReSTIR замість звичайного шляху. \nПризводить до набагато більшої інтенсивности ЗО за рахунок зниження продуктивности та шуму.\n\n§cВИСОКИЙ ВПЛИВ НА ПРОДУКТИВНІСТЬ. §b[*]§r Рекомендується використовувати з кількістю проходів шумозаглушувача 5 або більше.
+option.PHOTONICS_COMBINED_GI=Увімкнути глобальне освітлення від небесного світла
+option.PHOTONICS_COMBINED_GI.comment=Чи слід запускати глобальне освітлення через денойзер ReSTIR замість його звичайного шляху.  \nРезультат — значно інтенсивніше GI, але ціною продуктивності та шуму  \n\n§cВисокий вплив на продуктивність. §b[*]§r Рекомендовано використовувати з кількістю проходів денойзера 5 або більше
 
 option.PHOTONICS_MAX_ALLOWED_DISTANCE=Дозволена дальність
-option.PHOTONICS_MAX_ALLOWED_DISTANCE.comment=Максимальна дальність, на якій освітлення Photonics буде застосовано до сутностей. За межами замість цього буде використано стандартне освітлення. Це зроблено для запобігання проблемам, коли віддалені джерела світла не висвітлюють речі. §e[*]§r Макс. кількість світла може знадобитися збільшити, щоб вищі значення цього параметра працювали належним чином.
+option.PHOTONICS_MAX_ALLOWED_DISTANCE.comment=Максимальна відстань, на якій освітлення Photonics застосовуватиметься до об’єктів. За межами цієї відстані використовуватиметься стандартне освітлення. Це потрібно, щоб уникнути проблем, коли віддалені джерела світла не освітлюють об’єкти. §e[*]§r Для коректної роботи з більшими значеннями цього параметра може знадобитися збільшити кількість джерел світла.
 value.PHOTONICS_MAX_ALLOWED_DISTANCE.6=6 чанків
 value.PHOTONICS_MAX_ALLOWED_DISTANCE.7=7 чанків
 value.PHOTONICS_MAX_ALLOWED_DISTANCE.8=8 чанків
@@ -2946,18 +2951,19 @@ value.PHOTONICS_MAX_ALLOWED_DISTANCE.100=Дальність промальову
 
 
 option.CUSTOM_SKY_SUPPORT=Підтримка власного неба
-option.CUSTOM_SKY_SUPPORT.comment=Додає підтримку для власного неба, включаючи модові, наприклад Stellar View.
+option.CUSTOM_SKY_SUPPORT.comment=Додає підтримку користувацьких небесних сфер, включно з модифікованими, такими як Stellar View.
 
 option.CUSTOM_SKY_MOD_SUPPORT=Підтримка модів неба
-option.CUSTOM_SKY_MOD_SUPPORT.comment=Додає пітримку модів на власні неба, як-от Caelum чи Astrocraft. може порушити деякі речі, не перевірено з багатьма модами.
+option.CUSTOM_SKY_MOD_SUPPORT.comment=Додає підтримку користувацьких модів неба, таких як Caelum або Astrocraft. Може потенційно спричинити проблеми, оскільки не тестувалося з багатьма модами.
 
 option.DISTANT_HORIZONS_SSAO=Край тіней (НОПЕ)
-option.DISTANT_HORIZONS_SSAO.comment=Умикає НОПЕ (Навколишня оклюзія простору екрана) у чанках Distant Horizons. §e[*]§r Цей параметр працює, лише якщо встановлено Distant Horizons. §e[*]§r Вимагає, щоб якість краю тіней (НОПЕ) була вимкнена в параметрах продуктивности.
+option.DISTANT_HORIZONS_SSAO.comment=Увімкнути SSAO (Screen Space Ambient Occlusion) у чанках Distant Horizons. §e[*]§r Цей параметр працює лише якщо встановлено Distant Horizons. §e[*]§r Потрібно, щоб якість Edge Shadow (SSAO) не була встановлена на OFF у налаштуваннях продуктивності.
 
-option.DH_BLENDING.comment=Плавно змішує перехід між чанками Distant Horizons і звичайними. §e[*]§r Цей параметр працює лише, якщо встановлено Distant Horizons.
+option.DH_BLENDING=Змішування Distant Horizons
+option.DH_BLENDING.comment=Плавно згладжує перехід між чанками Distant Horizons та звичайними чанками. §e[*]§r Цей параметр працює лише якщо встановлено Distant Horizons.
 
 option.PIXELATED_SHADOWS_MODE=Режим піксельних тіней
-option.PIXELATED_SHADOWS_MODE.comment=Змінює спосіб промальовування піксельних тіней. Автоматично встановлено усталено і найкраще для більшости випадків, ручні роздільності слід використовувати лише тоді, коли використані пакети ресурсів мають невідповідну роздільну здатність текстур. §e[*]§r Щоб цей параметр працював, потрібно ввімкнути піксельні тіні.
+option.PIXELATED_SHADOWS_MODE.comment=Змінює спосіб відображення піксельних тіней. Автоматичний режим є стандартним і найкращим для більшості випадків, ручні роздільні здатності слід використовувати лише тоді, коли ресурс паки мають різні роздільні здатності текстур. §e[*]§r Для роботи цього параметра потрібно, щоб піксельні тіні були увімкнені.
 value.PIXELATED_SHADOWS_MODE.0=Автоматично
 value.PIXELATED_SHADOWS_MODE.8=Уручну 8x
 value.PIXELATED_SHADOWS_MODE.16=Уручну 16x
