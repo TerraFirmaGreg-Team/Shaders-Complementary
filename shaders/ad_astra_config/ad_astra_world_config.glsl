@@ -2,7 +2,7 @@
 // this file is included at the end of /lib/common.glsl so it can override any user settings
 
 // disable clouds
-#ifndef WORLD_whatever //we dont have any planets we keep clouds, so i put whatever
+#ifndef WORLD_MARS //we dont have any planets we keep clouds, so i put whatever
     #undef VL_CLOUDS_ACTIVE
     #undef CLOUD_SHADOWS
 #endif
