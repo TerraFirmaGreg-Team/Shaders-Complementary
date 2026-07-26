@@ -2,7 +2,7 @@
 #define STARS_FILE_INCLUDED
 #include "/lib/colors/skyColors.glsl"
 #include "/lib/shaderSettings/stars.glsl"
-#include "TerraFirmaGregSettings.glsl"
+#include "TerraFirmaGreg.glsl"
 
 #ifdef CELESTIAL_BOTH_HEMISPHERES
 vec2 GetStarCoordBothHemispheres(vec3 viewPos, float sphereness) {

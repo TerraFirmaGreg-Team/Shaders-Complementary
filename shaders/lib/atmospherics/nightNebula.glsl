@@ -3,6 +3,7 @@
 // Nebula implementation by flytrap https://godotshaders.com/shader/2d-nebula-shader/
 #include "/lib/shaderSettings/stars.glsl"
 #include "/lib/shaderSettings/nightNebula.glsl"
+#include "/TerraFirmaGreg.glsl"
 
 #ifndef HQ_NIGHT_NEBULA
     const int OCTAVE = 5;

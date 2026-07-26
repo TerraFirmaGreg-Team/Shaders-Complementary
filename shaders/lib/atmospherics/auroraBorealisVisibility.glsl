@@ -1,4 +1,4 @@
-#include "TerraFirmaGregSettings.glsl"
+#include "/TerraFirmaGreg.glsl"
 
 #if !defined AURORA_BOREALIS_VISIBILITY_GLSL
 #define AURORA_BOREALIS_VISIBILITY_GLSL

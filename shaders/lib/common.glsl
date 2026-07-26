@@ -952,6 +952,8 @@
     #include "/ad_astra_config/ad_astra_world_config.glsl"
 #endif
 
+#include "/TerraFirmaGreg.glsl" //config for everything TFG
+
 // config for non-ad_astra specific modifications
 #define PLANET_WIND_MULTIPLIER 1.0
 

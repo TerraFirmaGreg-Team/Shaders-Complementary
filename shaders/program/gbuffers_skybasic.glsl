@@ -7,7 +7,6 @@
 #include "/lib/common.glsl"
 #include "/lib/shaderSettings/tonemaps.glsl"
 #include "/lib/shaderSettings/stars.glsl"
-#include "TerraFirmaGregSettings.glsl"
 #define CUSTOM_SKY_MOD_SUPPORT
 #ifdef CUSTOM_SKY_MOD_SUPPORT
 #endif
