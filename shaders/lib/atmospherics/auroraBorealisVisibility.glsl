@@ -11,9 +11,9 @@ float GetAuroraVisibility(in float VdotU, float VdotUAmount) {
 
     //TFGEDITS
     #ifdef SPACE_TRANSITION
-    float visibility = sqrt1(clamp01(mix(1.0, VdotU, VdotUAmount) * (AURORA_DRAW_DISTANCE * 1.125 + 0.75) - 0.225)) - mix(sunVisibility + maxBlindnessDarkness, 0.0, getAtmosphereFadeoutFactor);
+        float visibility = sqrt1(clamp01(mix(1.0, VdotU, VdotUAmount) * (AURORA_DRAW_DISTANCE * 1.125 + 0.75) - 0.225)) - mix(sunVisibility + maxBlindnessDarkness, 0.0, getAtmosphereFadeoutFactor);
     #else
-    float visibility = sqrt1(clamp01(mix(1.0, VdotU, VdotUAmount) * (AURORA_DRAW_DISTANCE * 1.125 + 0.75) - 0.225)) - sunVisibility - maxBlindnessDarkness;
+        float visibility = sqrt1(clamp01(mix(1.0, VdotU, VdotUAmount) * (AURORA_DRAW_DISTANCE * 1.125 + 0.75) - 0.225)) - sunVisibility - maxBlindnessDarkness;
     #endif
 
     #ifdef CLEAR_SKY_WHEN_RAINING

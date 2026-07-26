@@ -30,12 +30,12 @@
     #endif
 #endif
 
-#ifdef WORLD_MOON
-    #define DAYLIGHT_STARS
-    #define HAS_NO_ATMOSPHERE
+#ifdef WORLD_MARS
+    #define SUN_SIZE 100 //normal is 400
 	#undef	BORDER_FOG
-	#define HAS_NO_ATMOSPHERE
-    #define BLOOM_STRENGTH 0.03 //[0 to 10]
+    #ifdef SWITCH_PLANET_WINDSPEED
+        #define PLANET_WIND_MULTIPLIER 0.3
+    #endif
 #endif
 
 #ifdef WORLD_MERCURY
@@ -44,12 +44,12 @@
     #define HAS_NO_ATMOSPHERE
 #endif
 
-#ifdef WORLD_MARS
-    #define SUN_SIZE 100 //normal is 400
+#ifdef WORLD_MOON
+    #define DAYLIGHT_STARS
+    #define HAS_NO_ATMOSPHERE
 	#undef	BORDER_FOG
-    #ifdef SWITCH_PLANET_WINDSPEED
-        #define PLANET_WIND_MULTIPLIER 0.3
-    #endif
+	#define HAS_NO_ATMOSPHERE
+    #define BLOOM_STRENGTH 0.03 //[0 to 10]
 #endif
 
 #ifdef HAS_NO_ATMOSPHERE
