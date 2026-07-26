@@ -7,6 +7,7 @@
 #include "/lib/common.glsl"
 #include "/lib/shaderSettings/tonemaps.glsl"
 #include "/lib/shaderSettings/stars.glsl"
+#include "TerraFirmaGregSettings.glsl"
 #define CUSTOM_SKY_MOD_SUPPORT
 #ifdef CUSTOM_SKY_MOD_SUPPORT
 #endif
@@ -115,7 +116,12 @@ void main() {
         float dither = Bayer8(gl_FragCoord.xy);
 
         bool isCustomSky;
-        color.rgb = GetSky(VdotU, VdotS, dither, true, false, isCustomSky, false);
+        #ifdef SPACE_TRANSITION
+            color.rgb = mix(GetSky(VdotU, VdotS, dither, true, false, isCustomSky, false), vec(0.0), getAtmosphereFadeoutFactor);
+        #else
+            color.rgb = GetSky(VdotU, VdotS, dither, true, false, isCustomSky, false);
+        #endif
+
         #if defined CUSTOM_SKY_MOD_SUPPORT && MC_VERSION >= 11605
             if (alphaColor < 1.0 && alphaColor > 0.0 && renderStage != MC_RENDER_STAGE_SKY) color.rgb = glColor.rgb * alphaColor;
         #endif

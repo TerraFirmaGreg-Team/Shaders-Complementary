@@ -9,6 +9,7 @@
 #include "/lib/shaderSettings/overworldBeams.glsl"
 #include "/lib/shaderSettings/longExposure.glsl"
 #include "/lib/shaderSettings/raindropColor.glsl"
+#include "TerraFirmaGregSettings.glsl"
 #define NETHER_STORM
 #define NETHER_STORM_LOWER_ALT 28 //[-296 -292 -288 -284 -280 -276 -272 -268 -264 -260 -256 -252 -248 -244 -240 -236 -232 -228 -224 -220 -216 -212 -208 -204 -200 -196 -192 -188 -184 -180 -176 -172 -168 -164 -160 -156 -152 -148 -144 -140 -136 -132 -128 -124 -120 -116 -112 -108 -104 -100 -96 -92 -88 -84 -80 -76 -72 -68 -64 -60 -56 -52 -48 -44 -40 -36 -32 -28 -24 -20 -16 -12 -8 -4 0 4 8 12 16 20 22 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120 124 128 132 136 140 144 148 152 156 160 164 168 172 176 180 184 188 192 196 200 204 208 212 216 220 224 228 232 236 240 244 248 252 256 260 264 268 272 276 280 284 288 292 296 300]
 #define NETHER_STORM_HEIGHT 200 //[25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 110 120 130 140 150 160 170 180 190 200 220 240 260 280 300 325 350 375 400 425 450 475 500 550 600 650 700 750 800 850 900]
@@ -268,8 +269,15 @@ void main() {
     float vlFactorM = 0.0;
     #ifdef LIGHTSHAFTS_ACTIVE
         vlFactorM = vlFactor;
-
-        volumetricEffect = GetVolumetricLight(vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU, z0, z1, z1lod, dither);
+        //TFGEDITS
+        #ifdef SPACE_TRANSITION
+			if (getAtmosphereFadeoutFactor < 1.0) {
+				volumetricEffect = GetVolumetricLight(color, vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU, texCoord, z0, z1, dither);
+				volumetricEffect *= (1.0 - getAtmosphereFadeoutFactor);
+			}
+		#else
+			volumetricEffect = GetVolumetricLight(color, vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU, texCoord, z0, z1, dither);
+		#endif
     #endif
 
     float lightFogLength = 0.0;
