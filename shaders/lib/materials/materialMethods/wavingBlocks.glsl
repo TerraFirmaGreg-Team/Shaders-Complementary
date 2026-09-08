@@ -4,6 +4,136 @@
     #include "/lib/voxelization/lightVoxelization.glsl"
 #endif
 
+// Material ID groups shared between the MCWind override below and DoWave's
+// built-in waving fallback further down, so the two lists can't drift apart.
+#define MAT_GROUNDED_FOLIAGE (mat == 10003 || mat == 10005 || mat == 10029 || mat == 10025) // Grounded Foliage
+#define MAT_UPPER_LAYER_FOLIAGE (mat == 10021 || mat == 10023 || mat == 10027) // Upper Layer Foliage
+#define MAT_LEAVES (mat == 10007 || mat == 10009 || mat == 10011) // Leaves
+#define MAT_VINE_WALL (mat == 11009 || mat == 10544) // Vine, Glow Lichen
+#define MAT_VINE_CEILING (mat == 10923 || mat == 10629 || mat == 10632) // Pale Hanging Moss, Cave Vines
+#define MAT_WEEPING_VINES (mat == 10884 || mat == 10885) // Weeping Vines - hangs from the block above, like MAT_VINE_CEILING
+#define MAT_TWISTING_VINES (mat == 10887) // Twisting Vines - bottom-anchored, grows upward
+#define MAT_VINE (mat == 11009 || mat == 10923) // Vine, Pale Hanging Moss (just those 2 from default Comp) - used by DoWave's own fallback below
+#define MAT_FIRE (mat == 10072 || mat == 10076) // Fire, Soul Fire
+#define MAT_CAMPFIRE_LIT (mat == 10652 || mat == 10656) // Campfire:Lit, Soul Campfire:Lit
+#define MAT_STALK (mat == 10039 || mat == 10753) // Sugar Cane, Bamboo
+#define MAT_LILY_PAD (mat == 10489) // Lily Pad
+#define MAT_PENDANT (mat == 10562 || mat == 10743 || mat == 10564 || mat == 10988 || mat == 10291) // All types of Lanterns, Chains
+#if defined DO_MORE_FOLIAGE_WAVING || defined MCWIND_INTERNAL
+    #define MAT_GROUNDED_FOLIAGE_EXTRA (mat == 10769 || mat == 10976) // Torchflower, Open Eye Blossom
+#endif
+
+#if defined MCWIND_INTERNAL && (defined GBUFFERS_TERRAIN || defined SHADOW)
+
+    #define MCW_CAVE_CALM 0.75 // How calm the wind is in caves
+
+    // arm is the length of the chain/lantern, 1 is just a single lantern. The longer the chain, the more it swings
+    // Caps at 9 and then it has 0.42 as the max radius of movement. 0.018 is the minimum radius of movement for a single lantern.
+    #define MCW_PENDANT_RADIUS (mix(0.018, 0.42, smoothstep(1.0, 9.0, float(arm)))) // Amount of movement in lanterns
+    #define MCW_PENDULUM // Makes the lanterns swing like a pendulum instead
+
+    #include "/mcwind/mcwind.glsl"
+
+bool DoWave_MCWIND(inout vec3 playerPos, vec3 worldPos, int mat) {
+    vec3 blockCenter = worldPos + clamp(at_midBlock.xyz / 64.0, -2.0, 2.0);
+
+    #ifdef MCWIND_FOLIAGE
+        if (MAT_GROUNDED_FOLIAGE
+            #if defined DO_MORE_FOLIAGE_WAVING || defined MCWIND_INTERNAL
+                || MAT_GROUNDED_FOLIAGE_EXTRA
+                || mat == 10972 // Firefly Bush
+            #endif
+        ) {
+            float h = mcw_grassHeight(worldPos, blockCenter, 0.0);
+            playerPos.xz += mcw_grassPush(blockCenter, h);
+            return true;
+        }
+
+        if (MAT_UPPER_LAYER_FOLIAGE) {
+            float h = mcw_grassHeight(worldPos, blockCenter, 1.0);
+            playerPos.xz += mcw_grassPush(blockCenter, h);
+            return true;
+        }
+    #endif
+
+    #ifdef MCWIND_LEAVES
+        if (MAT_LEAVES) {
+            float weld = mcw_leafWeld(worldPos, blockCenter);
+            playerPos += mcw_leafSway(worldPos, blockCenter, weld);
+            return true;
+        }
+    #endif
+
+    #ifdef MCWIND_VINES
+        if ((MAT_VINE_CEILING || MAT_WEEPING_VINES) && mcw_hasOccupancy()) {
+            float weld = mcw_leafWeld(worldPos, blockCenter);
+            vec3 delta = mcw_leafSway(worldPos, blockCenter, weld);
+            delta.xz += mcw_vineSwing(worldPos, blockCenter, weld);
+            playerPos += mcw_vineDrop(delta, worldPos, blockCenter);
+            return true;
+        }
+
+        if (MAT_VINE_WALL && mcw_hasOccupancy()) {
+            float weld = mcw_leafWeld(worldPos, blockCenter);
+            vec3 delta = mcw_leafSway(worldPos, blockCenter, weld);
+            delta.xz += mcw_vineSwing(worldPos, blockCenter, weld);
+
+            #ifdef GBUFFERS_TERRAIN
+                vec3 worldFaceNormal = normalize(mat3(gbufferModelViewInverse) * gl_NormalMatrix * gl_Normal);
+            #else
+                vec3 worldFaceNormal = normalize(mat3(shadowModelViewInverse) * gl_NormalMatrix * gl_Normal);
+            #endif
+
+            playerPos += mcw_vineMotion(delta, worldPos, blockCenter, worldFaceNormal);
+            return true;
+        }
+
+        if (MAT_TWISTING_VINES && mcw_hasOccupancy()) {
+            float weld = mcw_leafWeld(worldPos, blockCenter);
+            vec3 delta = mcw_leafSway(worldPos, blockCenter, weld);
+            delta.xz += mcw_vineSwing(worldPos, blockCenter, weld);
+            playerPos += mcw_vineRise(delta, worldPos, blockCenter);
+            return true;
+        }
+    #endif
+
+    #ifdef MCWIND_PENDANTS
+        if (MAT_PENDANT && mcw_hasOccupancy()) {
+            playerPos += mcw_pendantSwing(worldPos, blockCenter);
+            return true;
+        }
+    #endif
+
+    #ifdef MCWIND_FIRE
+        if (MAT_FIRE || MAT_CAMPFIRE_LIT) {
+            // Wooden base should not sway lol
+            bool base = MAT_CAMPFIRE_LIT ? abs(clamp(at_midBlock.y / 64.0, -2.0, 2.0)) > 0.5 : fract(worldPos.y + 0.21) > 0.26;
+            float topWeight = base ? 1.0 : 0.0;
+            playerPos += mcw_fireLean(blockCenter, topWeight);
+            return true;
+        }
+    #endif
+
+    #ifdef MCWIND_STALKS
+        if (MAT_STALK) {
+            float groundY = mcw_groundHeight(blockCenter, cameraPosition);
+            playerPos.xz += mcw_stalkSway(worldPos, blockCenter, groundY);
+            return true;
+        }
+    #endif
+
+    #ifdef MCWIND_LILY_PAD
+        if (MAT_LILY_PAD) {
+            float phase = mcw_hash(floor(blockCenter.xz)) * 6.28318531;
+            playerPos.y += sin(mcw_windPhase * 1.6 + phase) * 0.02 * (0.4 + 0.6 * mcw_windMag(blockCenter));
+            return true;
+        }
+    #endif
+
+    return false;
+}
+#endif
+
 vec3 GetRawWave(in vec3 pos, float wind) {
     float magnitude = sin(wind * 0.0027 + pos.x + pos.y) * 0.04 + 0.04;
     float d0 = sin(wind * 0.0127);
@@ -128,19 +258,22 @@ void DoWave_Lava(inout vec3 playerPos, vec3 worldPos) {
 void DoWave(inout vec3 playerPos, int mat) {
     vec3 worldPos = playerPos.xyz + cameraPosition.xyz;
 
+    #if defined MCWIND_INTERNAL && (defined GBUFFERS_TERRAIN || defined SHADOW)
+        if (DoWave_MCWIND(playerPos.xyz, worldPos, mat)) return;
+    #endif
+
     #if defined GBUFFERS_TERRAIN || defined SHADOW
         #ifdef WAVING_FOLIAGE
-            if (mat == 10003 || mat == 10005 || mat == 10029 || mat == 10025 // Grounded Foliage
+            if (MAT_GROUNDED_FOLIAGE
                 #ifdef DO_MORE_FOLIAGE_WAVING
-                    || mat == 10769 // Torchflower
-                    || mat == 10976 // Open Eye Blossom
+                    || MAT_GROUNDED_FOLIAGE_EXTRA
                 #endif
             ) {
                 if (gl_MultiTexCoord0.t < mc_midTexCoord.t || fract(worldPos.y + 0.21) > 0.26)
                 DoWave_Foliage(playerPos.xyz, worldPos, 1.0);
             }
 
-            else if (mat == 10021 || mat == 10023 || mat == 10027) { // Upper Layer Foliage
+            else if (MAT_UPPER_LAYER_FOLIAGE) {
                 DoWave_Foliage(playerPos.xyz, worldPos, 1.0);
             }
 
@@ -163,14 +296,14 @@ void DoWave(inout vec3 playerPos, int mat) {
         #endif
 
         #ifdef WAVING_LEAVES_ENABLED
-            if (mat == 10007 || mat == 10009 || mat == 10011) { // Leaves
+            if (MAT_LEAVES) {
                 DoWave_Leaves(playerPos.xyz, worldPos, 1.0);
-            } else if (mat == 10013 || mat == 10923) { // Vine
+            } else if (MAT_VINE) {
                 // Reduced waving on vines to prevent clipping through blocks
                 DoWave_Leaves(playerPos.xyz, worldPos, 0.75);
             }
             #if defined NETHER || defined DO_NETHER_VINE_WAVING_OUTSIDE_NETHER
-                else if (mat == 10884 || mat == 10885) { // Weeping Vines, Twisting Vines
+                else if (MAT_WEEPING_VINES || MAT_TWISTING_VINES) {
                     float waveMult = 1.0;
                     #if COLORED_LIGHTING_INTERNAL > 0
                         vec3 playerPosP = playerPos + vec3(0.0, 0.1, 0.0);
@@ -225,7 +358,7 @@ void DoWave(inout vec3 playerPos, int mat) {
         #endif
 
         #ifdef WAVING_LILY_PAD
-            if (mat == 10489) { // Lily Pad
+            if (MAT_LILY_PAD) {
                 DoWave_Water(playerPos.xyz, worldPos);
             }
         #endif
@@ -246,7 +379,7 @@ void DoWave(inout vec3 playerPos, int mat) {
 }
 void DoInteractiveWave(inout vec3 playerPos, int mat) {
     float strength = 2.0;
-    if (mat == 10003 || mat == 10023 || mat == 10015) { // Flowers
+    if (mat == 10003 || mat == 10023 || mat == 10015) { // Flowers & Seagrass
         strength = 1.0;
     }
     if (length(playerPos) < 2.0) playerPos.xz += playerPos.xz * max(5.0 / max(length(playerPos * vec3(8.0, 2.0, 8.0) - vec3(0.0, 2.0, 0.0)), 2.0) -0.625, 0.0) * clamp(2.0 / length(playerPos) - 1.0, 0.0, 1.0) * strength; // Emin's code from v4 + smooth transition by me

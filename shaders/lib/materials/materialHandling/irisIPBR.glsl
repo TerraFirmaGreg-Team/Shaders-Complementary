@@ -102,6 +102,9 @@ if (currentRenderedItemId < 45128) {
                             if (currentRenderedItemId == 45025) { // Netherite Armor
                                 HideArmor(color, playerPos);
                             }
+                            if (currentRenderedItemId == 45026) { // Netherite Trim
+                                HideArmorDontSkip(color, playerPos);
+                            }
                         #endif
                     } else { // Trident Item
                         #include "/lib/materials/specificMaterials/others/trident.glsl"

@@ -67,7 +67,7 @@
             float wind = 4.0;
             #if CLOUD_SPEED_MULT == 100
                 #define CLOUD_SPEED_MULT_M CLOUD_SPEED_MULT * 0.01
-                wind *= syncedTime;
+                wind *= syncedTimeDynamic;
             #else
                 #define CLOUD_SPEED_MULT_M CLOUD_SPEED_MULT * 0.01
                 wind *= frameTimeCounter * CLOUD_SPEED_MULT_M;

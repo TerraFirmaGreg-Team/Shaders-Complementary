@@ -19,8 +19,8 @@ const int colortex9Format  = RGBA16F;       // Screenspace colored light
 const int colortex10Format = RGBA16F;       // Screenspace colored light Blurred
 #endif
 
-const int colortex18Format = R8;            //shadow for voxy chunks (needs reprojection)
-const int colortex19Format = RGBA8;         //scene image for voxy reflections (needs reprojection)
+const int colortex18Format = R8;            //shadow for voxy chunks
+const int colortex19Format = RGBA8;         //scene image for voxy reflections
 */
 
 const bool colortex0Clear = true;

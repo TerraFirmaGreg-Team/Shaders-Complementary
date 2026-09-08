@@ -94,8 +94,18 @@
         "frameTimeCounter",
         "blindness",
         "darknessFactor",
+        "worldTimeSmooth",
+        "worldAgeSmooth",
 
-        #if MC_VERSION >= 12109
+        #ifdef EUPHORIA_PATCHES_UNIFORMS
+        "euphoriaPatchesIsDayAdvancing",
+        "euphoriaPatchesCurrentDayMillis",
+        "euphoriaPatchesCurrentSeasonTick",
+        "euphoriaPatchesSeasonDuration",
+        "euphoriaPatchesTotalSeasonDuration",
+        #endif
+
+        #if MC_VERSION >= 12109 || ANGELICA_VERSION >= 20155000
         "endFlashPosition",
         "endFlashIntensityM",
         #endif
@@ -118,6 +128,10 @@
 
         #if MC_VERSION >= 12104
         "inPaleGarden",
+        #endif
+
+        #if MC_VERSION >= 260200
+        "inSulfurCaves",
         #endif
 
         "inSand",

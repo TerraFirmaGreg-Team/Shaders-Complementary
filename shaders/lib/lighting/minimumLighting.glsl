@@ -21,5 +21,5 @@ vec3 GetMinimumLighting(float lightmapYM, vec3 playerPos) {
 
     minLighting += nightVision * vec3(0.5, 0.5, 0.75);
 
-    return minLighting;
+    return max(minLighting, vec3(0.0));
 }

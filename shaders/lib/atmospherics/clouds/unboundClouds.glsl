@@ -66,7 +66,7 @@ float GetCloudNoise(vec3 tracePos, int cloudAltitude, float lTracePosXZ, float c
 
     #if CLOUD_SPEED_MULT == 100
         #define CLOUD_SPEED_MULT_M CLOUD_SPEED_MULT * 0.01
-        wind *= syncedTime;
+        wind *= syncedTimeDynamic;
     #else
         #define CLOUD_SPEED_MULT_M CLOUD_SPEED_MULT * 0.01
         wind *= frameTimeCounter * CLOUD_SPEED_MULT_M;
@@ -297,7 +297,7 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
         #if PIXELATED_UNBOUND_CLOUDS > 0
             float cloudWind = 0.0006;
             #if CLOUD_SPEED_MULT == 100
-                cloudWind *= syncedTime;
+                cloudWind *= syncedTimeDynamic;
             #else
                 cloudWind *= frameTimeCounter * (CLOUD_SPEED_MULT * 0.01);
             #endif
@@ -501,7 +501,7 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
             volumetricClouds.rgb = mix(volumetricClouds.rgb, colorSample, 1.0 - min1(volumetricClouds.a));
             volumetricClouds.a += opacityFactor * pow(cloudDistanceFactor, 0.5 + 10.0 * pow(abs(VdotSM1M), 90.0)) * cloudMult;
             #if PIXELATED_UNBOUND_CLOUDS > 0
-                volumetricClouds.a += mix(0.0, min(1.0 - pow5(distanceRatio * 0.99), 0.2), cloudTransparency);
+                volumetricClouds.a += mix(0.0, min(1.0 - pow5(distanceRatio * 0.99), 0.2), cloudTransparency * (1.0 - min1(15 * pow(abs(VdotSM1M), 130.0))));
             #endif
 
             if (volumetricClouds.a > 0.9) {

@@ -76,7 +76,7 @@ uniform vec3 relativeEyePosition;
 uniform vec3 playerLookVector;
 
 uniform vec4 entityColor;
-uniform vec4 lightningBoltPosition = vec4(0);
+uniform vec4 lightningBoltPosition = vec4(0.0);
 
 uniform mat4 gbufferModelView;
 uniform mat4 gbufferModelViewInverse;
@@ -132,7 +132,7 @@ uniform vec3 cameraPositionFract;
 uniform vec3 previousCameraPositionFract;
 
 #ifdef IS_IRIS
-    #if MC_VERSION >= 12109
+    #if MC_VERSION >= 12109 || ANGELICA_VERSION >= 20155000
         uniform float endFlashIntensityM;
         uniform vec3 endFlashPosition;
         // vec3 endFlashPosition = vec3(0.0, 0.0, -100.0);
@@ -246,13 +246,14 @@ uniform float inNetherWastes = 1.0;
 uniform float inSoulValley = 0.0;
 uniform float inWarpedForest = 0.0;
 uniform float inPaleGarden = 0.0;
+uniform float inSulfurCaves = 0.0;
 uniform float isSneaking = 1.0;
 uniform float isSprinting = 0.0;
 uniform float inLushCave = 0.0;
 uniform float inSand = 0.0;
-uniform float inRedSand;
-uniform float lightningFlashOptifine;
-uniform float inForest;
+uniform float inRedSand = 0.0;
+uniform float lightningFlashOptifine = 0.0;
+uniform float inForest = 0.0;
 uniform float shaderStart;
 uniform float shaderStartSmooth;
 uniform float inVanillaEnd = 1.0;
@@ -262,6 +263,16 @@ uniform float eyeBrightnessXM2;
 uniform float waterAltitude = 61.9;
 uniform float inJungle = 0.0;
 uniform float thunderFactor = 0.0;
+uniform float worldTimeSmooth;
+uniform float worldAgeSmooth;
+#ifdef EUPHORIA_PATCHES_UNIFORMS
+    uniform bool euphoriaPatchesIsDayAdvancing = true;
+    uniform int euphoriaPatchesCurrentDayMillis = -1;
+
+    uniform int euphoriaPatchesCurrentSeasonTick;
+    uniform int euphoriaPatchesSeasonDuration;
+    uniform int euphoriaPatchesTotalSeasonDuration;
+#endif
 
 uniform vec2 viewSize;
 uniform vec2 texelSize;

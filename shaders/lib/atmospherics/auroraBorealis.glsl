@@ -162,7 +162,7 @@ vec3 GetAuroraBorealis(vec3 viewPos, float VdotU, float dither) {
         vec3 wpos = mat3(gbufferModelViewInverse) * viewPos;
              wpos.xz /= wpos.y;
         vec2 cameraPositionM = cameraPosition.xz * 0.0075;
-             cameraPositionM.x += syncedTime * 0.04;
+             cameraPositionM.x += syncedTimeDynamic * 0.04;
 
         #ifdef DEFERRED1
             int sampleCount = 25;

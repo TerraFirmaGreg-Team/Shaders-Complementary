@@ -19,8 +19,6 @@ flat in int mat;
 
 in vec2 texCoord;
 
-flat in vec3 sunVec, upVec;
-
 in vec4 position;
 flat in vec4 glColor;
 
@@ -30,8 +28,13 @@ flat in vec4 glColor;
 #endif
 
 //Pipeline Constants//
+#include "/lib/pipelineSettings.glsl"
 
 //Common Variables//
+vec3 upVec = normalize(gbufferModelView[1].xyz);
+
+vec3 sunVec = GetSunVector();
+
 float SdotU = dot(sunVec, upVec);
 float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
 
@@ -46,6 +49,8 @@ void DoNaturalShadowCalculation(inout vec4 color1, inout vec4 color2) {
 }
 
 //Includes//
+#include "/lib/util/dither.glsl"
+
 #ifdef CONNECTED_GLASS_EFFECT
     #include "/lib/materials/materialMethods/connectedGlass.glsl"
 #endif
@@ -65,11 +70,21 @@ void main() {
         if (currentRenderedItemId == 45124 && !isElytraFlying) discard;
     #endif
 
-    #if PLAYER_SHADOW == -1
-        if (entityId == 50016 || entityId == 50017) { // Player
-            discard;
-        }
-    #endif
+    if (entityId > 0) {
+        #if PLAYER_SHADOW == -1
+            if (entityId == 50016 || entityId == 50017) { // Player
+                discard;
+            }
+        #endif
+
+        // Entity Shadow Fade Out
+        float fadeEnd = shadowDistance * entityShadowDistanceMul + 2.0;
+        float fadeStart = fadeEnd * 0.8;
+        float opacity = 1.0 - smoothstep(fadeStart, fadeEnd, max(length(position.xz), abs(position.y)));
+
+        float dither = Bayer64(gl_FragCoord.xy);
+        if (opacity < dither) discard;
+    }
 
     #if SHADOW_QUALITY >= 1
         vec4 color2 = color1; // Light Shaft Color
@@ -155,7 +170,7 @@ void main() {
                         worldPosM *= WATER_FOG_MULT_M;
                     #endif
 
-                    vec2 waterWind = vec2(syncedTime * 0.01, 0.0);
+                    vec2 waterWind = vec2(syncedTimeDynamic * 0.01, 0.0);
                     float waterNoise = texture2DLod(noisetex, worldPosM.xz * 0.012 - waterWind, 0.0).g;
                           waterNoise += texture2DLod(noisetex, worldPosM.xz * 0.05 + waterWind, 0.0).g;
 
@@ -234,8 +249,6 @@ flat out int mat;
 
 out vec2 texCoord;
 
-flat out vec3 sunVec, upVec;
-
 out vec4 position;
 flat out vec4 glColor;
 
@@ -311,8 +324,6 @@ void main() {
     texCoord = gl_MultiTexCoord0.xy;
     lmCoord = GetLightMapCoordinates();
     glColor = gl_Color;
-    sunVec = GetSunVector();
-    upVec = normalize(gbufferModelView[1].xyz);
     mat = int(mc_Entity.x + 0.5);
 
     #if defined WORLD_CURVATURE || defined MIRROR_DIMENSION
@@ -357,7 +368,7 @@ void main() {
     #endif
 
     if (mat == 32000) { // Water
-        position.y += 0.015 * max0(length(position.xyz) - 50.0);
+        position.y += 0.015 * max0(length(position.xyz) - 50.0); // WS752GH42G
     }
 
     vec3 normal = mat3(shadowModelViewInverse) * gl_NormalMatrix * gl_Normal;
@@ -403,36 +414,40 @@ void main() {
         if (entityId == 50204) { // ender dragon
             UpdateDragonPos(position.xyz);
         }
-
-        #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0 && WORLD_SPACE_PLAYER_REF == 1
-            UpdatePlayerVertexList(position.xyz);
-        #endif
     #endif
 
     gl_Position = shadowProjection * shadowModelView * position;
 
     #if DRAGON_DEATH_EFFECT_INTERNAL > 0
-        #if MC_VERSION >= 12100
-            #define FUCK gl_Color.a == 1.0
-            #define THE && (entityId == 0 || entityId == 50204)
+        #if EUPHORIA_PATCHES_VERSION >= 10903 || ANGELICA_VERSION >= 20134000
+            #define FUCK entityId == 50208
+            #define THE || false
+            #define DRAGON || false
+            #define DEATH || false
+            #define BEAMS || false
         #else
-            #define FUCK gl_Color.a < 0.5
-            #define THE && entityId == 0
-        #endif
-
-        #define DRAGON && renderStage == MC_RENDER_STAGE_ENTITIES
-
-        #ifndef IRIS_TAG_SUPPORT
-            #define DEATH && abs(normal.y) > 0.8 && abs(normal.y) < 1.0
-            #define BEAMS || gl_Color.a > 100.0
-        #else
-            float dragonDeathFactor = 0.0001 * texelFetch(endcrystal_sampler, ivec2(35, 0), 0).r;
-            float deathFadeFactor = exp(-3.0 * (1.0 - dragonDeathFactor)) * dragonDeathFactor;
-            #define DEATH && deathFadeFactor > 1.0
             #if MC_VERSION >= 12100
-                #define BEAMS || renderStage == MC_RENDER_STAGE_NONE && gl_Color.a == 1.0
+                #define FUCK gl_Color.a == 1.0
+                #define THE && (entityId == 0 || entityId == 50204)
             #else
-                #define BEAMS || renderStage == MC_RENDER_STAGE_NONE && gl_Color.a < 0.5
+                #define FUCK gl_Color.a < 0.5
+                #define THE && entityId == 0
+            #endif
+
+            #define DRAGON && renderStage == MC_RENDER_STAGE_ENTITIES
+
+            #ifndef IRIS_TAG_SUPPORT
+                #define DEATH && abs(normal.y) > 0.8 && abs(normal.y) < 1.0
+                #define BEAMS || false
+            #else
+                float dragonDeathFactor = 0.0001 * texelFetch(endcrystal_sampler, ivec2(35, 0), 0).r;
+                float deathFadeFactor = exp(-3.0 * (1.0 - dragonDeathFactor)) * dragonDeathFactor;
+                #define DEATH && deathFadeFactor > 1.0
+                #if MC_VERSION >= 12100
+                    #define BEAMS || renderStage == MC_RENDER_STAGE_NONE && gl_Color.a == 1.0
+                #else
+                    #define BEAMS || renderStage == MC_RENDER_STAGE_NONE && gl_Color.a < 0.5
+                #endif
             #endif
         #endif
 
@@ -442,7 +457,7 @@ void main() {
             #ifndef IRIS_TAG_SUPPORT
                 SetEndDragonDeath();
             #endif
-            gl_Position = vec4(0);
+            gl_Position = vec4(0.0);
         }
     #endif
 

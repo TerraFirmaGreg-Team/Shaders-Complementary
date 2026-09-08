@@ -56,7 +56,7 @@ void main() {
 
     #ifdef ENTITIES_ARE_LIGHT
         /* DRAWBUFFERS:069 */
-        gl_FragData[2] = vec4(1);
+        gl_FragData[2] = vec4(1.0);
     #endif
 }
 

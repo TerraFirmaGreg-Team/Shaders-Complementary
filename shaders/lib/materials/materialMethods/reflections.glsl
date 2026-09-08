@@ -17,6 +17,11 @@
         #include "/lib/atmospherics/endCrystalVortex.glsl"
     #endif
     #include "/lib/atmospherics/fog/endCenterFog.glsl"
+    #include "/lib/shaderSettings/blackHole.glsl"
+
+    #if BLACK_HOLE > 0
+        #include "/lib/atmospherics/blackHole.glsl"
+    #endif
 #endif
 
 #ifdef ATM_COLOR_MULTS
@@ -38,7 +43,6 @@ float GetApproxDistance(float depth) {
 vec3 nvec3(vec4 pos) {
     return pos.xyz/pos.w;
 }
-
 float refDist = far;
 
 #include "/lib/materials/materialMethods/reflectionBackground.glsl"
@@ -82,7 +86,7 @@ vec4 GetReflection(inout vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerP
     #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0 && defined COMPOSITE && WATER_REFLECT_QUALITY >= 1
         // In COMPOSITE for translucents we just need to return WSR and that's it
         if (z0 != z1) {
-            vec4 reflection = getWSR(playerPos, normalMR, nViewPosR, RVdotU, RVdotS, z0, dither, refDist);
+            vec4 reflection = getWSR(playerPos, normalMR, nViewPosR, RVdotU, RVdotS, z0, dither, refDist, true);
             return reflection;
         }
     #endif
@@ -215,9 +219,13 @@ vec4 GetReflection(inout vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerP
                         #endif
                         reflection.rgb = pow2(reflection.rgb * 2.0);
                     #else
-                        float smoothnessDM = pow2(smoothness);
-                        float lodFactor = 1.0 - exp(-0.125 * (1.0 - smoothnessDM) * dist);
-                        float lod = log2(viewHeight / 8.0 * (1.0 - smoothnessDM) * lodFactor) * 0.45;
+                        #ifdef BETTER_LABPBR_REFLECTIONS_INTERNAL
+                            float roughnessDM = pow2(1.0 - smoothness); // ImprPBRPow2
+                        #else
+                            float roughnessDM = 1.0 - pow2(smoothness);
+                        #endif
+                        float lodFactor = 1.0 - exp(-0.125 * roughnessDM * dist);
+                        float lod = log2(viewHeight / 8.0 * roughnessDM * lodFactor) * 0.45;
                         if (z0 <= 0.56) lod *= 2.22; // Using more lod to compensate for less roughness noise on held items
                         lod = max(lod - 1.0, 0.0);
 
@@ -264,7 +272,7 @@ vec4 GetReflection(inout vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerP
 
             if (screenPosRM.x < rEdge.x && screenPosRM.y < rEdge.y) {
                 vec2 edgeFactor = pow2(pow2(pow2(screenPosRM / rEdge)));
-                screenPosR.y += (dither - 0.5) * (0.03 * (edgeFactor.x + edgeFactor.y) + 0.004);
+                screenPosR.y += (dither - 0.5) * (0.03 * (edgeFactor.x + edgeFactor.y) + 0.001);
                 float z1R = texture2D(depthtex1, screenPosR.xy).x;
                 screenPosR.z = z1R;
                 vec3 viewPosR = ScreenToView(screenPosR);
@@ -280,7 +288,7 @@ vec4 GetReflection(inout vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerP
                     z1R = min(z1R, z1RDH);
                 #endif
 
-                if (z1R < 0.9997 && lViewPos <= 2.0 + lViewPosR) {
+                if (z1R < 0.9999 && lViewPos <= 2.0 + lViewPosR) {
                     reflection.rgb = texture2D(gaux2, screenPosR.xy).rgb;
                     reflection.rgb = pow2(reflection.rgb * 2.0);
 
@@ -317,10 +325,10 @@ vec4 GetReflection(inout vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerP
         normalM = normalMR;
     #endif
 
-    #if (defined COMPOSITE || (WATER_REFLECT_QUALITY >= 2 && defined SKY_EFFECT_REFLECTION)) && (END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0)
+    #if (defined COMPOSITE || WATER_REFLECT_QUALITY >= 2) && (END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0)
         reflection.rgb += EndCrystalVortices(playerPos, worldRefDir, dither).rgb;
     #endif
-    #if (defined COMPOSITE || (WATER_REFLECT_QUALITY >= 2 && defined SKY_EFFECT_REFLECTION)) && defined END_PORTAL_BEAM_INTERNAL && !defined DH_WATER
+    #if (defined COMPOSITE || WATER_REFLECT_QUALITY >= 2) && defined END_PORTAL_BEAM_INTERNAL && !defined DH_WATER
         vec4 refPosPlayer = gbufferModelViewInverse * (gbufferProjectionInverse * vec4(refPos * 2.0 - 1.0, 1.0));
         refPosPlayer /= refPosPlayer.w;
         reflection.rgb += sqrt(GetEndPortalBeam(playerPos, refPosPlayer.xyz * reflection.a - playerPos).rgb);

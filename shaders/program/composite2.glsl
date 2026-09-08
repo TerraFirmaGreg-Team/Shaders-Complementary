@@ -39,7 +39,7 @@ vec2 view = vec2(viewWidth, viewHeight);
         float lz = GetLinearDepth(z);
 
         float distScale = clamp((far - near) * lz + near, 4.0, 128.0);
-        float fovScale = gbufferProjection[1][1] / 1.37;
+        float fovScale = gbufferProjection[1][1] / 1.37373871;
 
         vec2 blurstr = vec2(1.0 / (viewWidth / viewHeight), 1.0) * fovScale / distScale;
         vec4 previousColoredLight = vec4(0.0);

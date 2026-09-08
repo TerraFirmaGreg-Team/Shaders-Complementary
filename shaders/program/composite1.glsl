@@ -19,6 +19,9 @@
 #define COLORED_LIGHT_FOG_RAIN_I 0 //[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125 130 135 140 145 150 155 160 165 170 175 180 185 190 195 200]
 #ifdef COLORED_LIGHT_FOG_RAIN_I
 #endif
+#define COLORED_LIGHT_FOG_CAVE_I 0 //[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125 130 135 140 145 150 155 160 165 170 175 180 185 190 195 200]
+#ifdef COLORED_LIGHT_FOG_CAVE_I
+#endif
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -103,7 +106,7 @@ float GetLinearDepth(float depth) {
     #include "/lib/atmospherics/volumetricLight/volumetricLight.glsl"
 #endif
 
-#if WATER_MAT_QUALITY >= 3
+#if defined WATER_REFRACTION || defined BETTER_LABPBR_REFRACTIONS_INTERNAL
     #include "/lib/materials/materialMethods/refraction.glsl"
 #endif
 
@@ -146,6 +149,12 @@ void main() {
     vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
     viewPos /= viewPos.w;
     float lViewPos = length(viewPos.xyz);
+    vec3 nViewPos = normalize(viewPos.xyz);
+
+    #ifdef UNDERWATER_LIGHT_SOURCE_DETECTION
+        vec4 texture6 = texelFetch(colortex6, texelCoord, 0);
+        int materialMaskInt = int(texture6.g * 255.1);
+    #endif
 
     #if defined DISTANT_HORIZONS || defined VOXY
         #ifdef DISTANT_HORIZONS
@@ -172,8 +181,11 @@ void main() {
     vec4 volumetricEffect = vec4(0.0);
 
     vec2 texCoordM = texCoord;
-    #if WATER_MAT_QUALITY >= 3 && defined ALLOW_REFRACTION
+    #if defined WATER_REFRACTION && defined ALLOW_REFRACTION
         texCoordM = DoRefraction(color, z0, z1, viewPos.xyz, lViewPos);
+    #endif
+    #ifdef BETTER_LABPBR_REFRACTIONS_INTERNAL
+        texCoordM = DoLabPBRRefraction(color, z0, z1, viewPos.xyz, texCoordM);
     #endif
 
     #if defined PBR_REFLECTIONS || WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS_INTERNAL > 0
@@ -198,11 +210,19 @@ void main() {
             #endif
 
             float fresnelM = pow2(texture2D(colortex4, texCoord).a); // including attenuation through fog and clouds
+
+            #if defined DISTANT_HORIZONS || defined VOXY
+                fresnelM *= 1.0 - smoothstep(0.8, 1.05, lViewPos / far);
+            #endif
+
             if (abs(fresnelM - 0.5) < 0.5) { // 0.0 fresnel doesnt need ref calculations, and 1.0 fresnel basically means error
                 if (z0 == z1 || z0 <= 0.56) { // Solids
                     #ifdef PBR_REFLECTIONS
                         if (fresnelM > 0.00001) {
-                            compositeReflection = sampleBlurFilteredReflection(compositeReflection, dither, z0);
+                            #if BLURRED_REFLECTIONS_I > 0
+                                vec4 blurredReflection = sampleBlurFilteredReflection(compositeReflection, nViewPos, dither, z0);
+                                compositeReflection = mix(compositeReflection, blurredReflection, BLURRED_REFLECTIONS_I * 0.1);
+                            #endif
 
                             compositeReflection.rgb = max(compositeReflection.rgb, vec3(0.0)); // We seem to have some negative values for some reason
 
@@ -251,7 +271,6 @@ void main() {
     #endif
 
     #if defined LIGHTSHAFTS_ACTIVE || RAINBOWS > 0 && defined OVERWORLD
-        vec3 nViewPos = normalize(viewPos1.xyz);
         float VdotL = dot(nViewPos, lightVec);
         float VdotU = dot(nViewPos, upVec);
     #endif
@@ -261,6 +280,13 @@ void main() {
         vec3 nPlayerPos = normalize(playerPos);
     #endif
 
+    #if END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0 || defined END_PORTAL_BEAM_INTERNAL
+        vec4 screenPos0 = vec4(texCoord, z0, 1.0);
+        vec4 viewPos0 = gbufferProjectionInverse * (screenPos0 * 2.0 - 1.0);
+        viewPos0 /= viewPos0.w;
+        vec3 playerPos0 = ViewToPlayer(viewPos0.xyz);
+    #endif
+
     #if RAINBOWS > 0 && defined OVERWORLD
         color += GetRainbow(translucentMult, nViewPos, z0, z1, lViewPos, lViewPos1, VdotL, VdotU, dither);
     #endif
@@ -268,20 +294,13 @@ void main() {
     float vlFactorM = 0.0;
     #ifdef LIGHTSHAFTS_ACTIVE
         vlFactorM = vlFactor;
-        //TFGEDITS
-        #ifdef SPACE_TRANSITION
-			if (getAtmosphereFadeoutFactor < 1.0) {
-				volumetricEffect = GetVolumetricLight(color, vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU, texCoord, z0, z1, dither);
-				volumetricEffect *= (1.0 - getAtmosphereFadeoutFactor);
-			}
-		#else
-			volumetricEffect = GetVolumetricLight(color, vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU, texCoord, z0, z1, dither);
-		#endif
+
+        volumetricEffect = GetVolumetricLight(vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU, z0, z1, z1lod, dither);
     #endif
 
     float lightFogLength = 0.0;
     #if END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0
-        vec4 endCrystalVortex = pow4(EndCrystalVortices(vec3(0.0), playerPos, dither));
+        vec4 endCrystalVortex = pow4(EndCrystalVortices(vec3(0.0), playerPos0, dither)); // playerPos0 is needed as we also need translucent Depth
         volumetricEffect = sqrt(pow2(volumetricEffect) + endCrystalVortex);
         lightFogLength = sqrt(pow2(lightFogLength) + length(endCrystalVortex.rgb));
     #endif
@@ -298,7 +317,7 @@ void main() {
     #endif
 
     #ifdef END_PORTAL_BEAM_INTERNAL
-        vec4 endPortalBeam = pow2(GetEndPortalBeam(vec3(0.0), playerPos));
+        vec4 endPortalBeam = pow2(GetEndPortalBeam(vec3(0.0), playerPos0));
         volumetricEffect = sqrt(pow2(volumetricEffect) + endPortalBeam);
         lightFogLength = sqrt(pow2(lightFogLength) + length(endPortalBeam.rgb));
     #endif
@@ -308,7 +327,8 @@ void main() {
     #endif
 
     #ifdef COLORED_LIGHT_FOG
-        vec3 lightFog = GetColoredLightFog(nPlayerPos, translucentMult, lViewPos, lViewPos1, dither, vlFactorM);
+        float caveFactorColoredFog = GetCaveFactor() * (1.0 - clamp01(isEyeInWater));
+        vec3 lightFog = GetColoredLightFog(nPlayerPos, translucentMult, lViewPos, lViewPos1, dither, vlFactorM, caveFactorColoredFog);
         float lightFogMult = COLORED_LIGHT_FOG_I;
         #ifdef NIGHT_DESATURATION_REMOVE_NEAR_LIGHTS
             lightFogLength += length(lightFog);
@@ -317,6 +337,9 @@ void main() {
         #ifdef OVERWORLD
             #if COLORED_LIGHT_FOG_RAIN_I > 0
                 lightFogMult = mix(lightFogMult, COLORED_LIGHT_FOG_RAIN_I * 0.01, rainFactor * inRainy);
+            #endif
+            #if COLORED_LIGHT_FOG_CAVE_I > 0
+                lightFogMult = mix(lightFogMult, COLORED_LIGHT_FOG_CAVE_I * 0.01, caveFactorColoredFog);
             #endif
             lightFogMult *= 0.2 + 0.6 * mix(1.0, 1.0 - sunFactor * invRainFactor, eyeBrightnessM);
         #endif
@@ -331,7 +354,6 @@ void main() {
         #if DARKER_DEPTH_OCEANS > 0
             float renderDistanceFade = lViewPos * 20.0 / far;
             #ifdef UNDERWATER_LIGHT_SOURCE_DETECTION
-                vec4 texture6 = texelFetch(colortex6, texelCoord, 0);
                 float lightSourceFactor = pow3(1.0 - texture6.a);
             #else
                 float lightSourceFactor = 1.0 - eyeBrightnessXM;
@@ -428,7 +450,7 @@ void main() {
 
     #if defined LIGHTSHAFTS_ACTIVE || defined END_PORTAL_BEAM_INTERNAL
         #if defined END && defined TAA // Fix banding
-            volumetricEffect.rgb = max(vec3(0.0), volumetricEffect.rgb + (dither - 0.5) * 0.02);
+            volumetricEffect.rgb = max(vec3(0.0), volumetricEffect.rgb - dither * 0.005);
         #endif
         // We add volumetric effect AFTER the "pow color by 2.2" line to get nicer blending
         color += volumetricEffect.rgb;
@@ -443,6 +465,8 @@ void main() {
     #elif RETRO_LOOK == 2
         color.rgb *= mix(vec3(1.0), vec3(RETRO_LOOK_R, RETRO_LOOK_G, RETRO_LOOK_B) * 0.5, nightVision) * RETRO_LOOK_I;
     #endif
+
+    // color.rgb = translucentMult;
 
     /* DRAWBUFFERS:0 */
     gl_FragData[0] = vec4(color, 1.0);

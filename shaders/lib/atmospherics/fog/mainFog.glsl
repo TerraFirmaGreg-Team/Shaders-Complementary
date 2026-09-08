@@ -40,7 +40,7 @@
             #endif
         #endif
 
-        if (fog > 0.0) {
+        if (fog > 0.01 + 0.0025 * dither) {
             fog = clamp(fog, 0.0, 1.0);
 
             #ifdef OVERWORLD
@@ -129,7 +129,7 @@
         return altitudeFactor;
     }
 
-    void DoAtmosphericFog(inout vec4 color, vec3 playerPos, float lViewPos, float VdotS) {
+    void DoAtmosphericFog(inout vec4 color, vec3 playerPos, float lViewPos, float VdotS, float dither) {
         #if !defined DISTANT_HORIZONS && !defined VOXY
             float renDisFactor = min1(192.0 / renderDistance);
 
@@ -189,7 +189,7 @@
 
         fog *= altitudeFactor;
 
-        if (fog > 0.0) {
+        if (fog > 0.01 + 0.0025 * dither) {
             fog = clamp(fog, 0.0, 1.0);
 
             #ifdef OVERWORLD
@@ -273,7 +273,7 @@ void DoFog(inout vec4 color, inout float skyFade, float lViewPos, vec3 playerPos
         float lViewPosAtm = lViewPos;
         // Reduce fog if the reflecting block is already behind fog, and fogging the reflection would result in too much fog
         if (isReflection) lViewPosAtm *= max0(1.0 - lBlockPos / lViewPos);
-        DoAtmosphericFog(color, playerPos, lViewPosAtm, VdotS);
+        DoAtmosphericFog(color, playerPos, lViewPosAtm, VdotS, dither);
     #endif
     #ifdef BORDER_FOG
         DoBorderFog(color, skyFade, max(length(playerPos.xz), abs(playerPos.y)), VdotU, VdotS, dither);

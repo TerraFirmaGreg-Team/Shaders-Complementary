@@ -66,7 +66,7 @@
 #endif
 
 #if NETHER_PORTAL_NOISE > 0
-    vec2 portalUV;
+    vec2 portalUV = vec2(0.0);
     if (abs(worldGeoNormal.x) > 0.5) {
         portalUV = worldPos.yz;
     } else {
@@ -87,7 +87,7 @@
     float portalNoise = 1.0 - texture2DLod(noisetex, warpedUV, 0.0).g;
 
     color.rgb = mix(color.rgb * 0.66, color.rgb * 0.66 + pow2(vec3(portalNoise * 1.2)), portalNoise);
-    emission = mix(0, emission, portalNoise);
+    emission = mix(0.0, emission, portalNoise);
     noGeneratedNormals = portalNoise > 0.25;
 #endif
 
@@ -137,5 +137,5 @@
     color.rgb = normalize(netherColor) * GetLuminance(color.rgb) * 2.5;
 #endif
 
-// color.rgb = vec3(0);
+// color.rgb = vec3(0.0);
 // emission = 0;

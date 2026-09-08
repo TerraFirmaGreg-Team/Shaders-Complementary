@@ -25,6 +25,4 @@
 #ifdef BRIGHT_CAVE_WATER
 #endif
 
-// #define MIRROR_TINTED_GLASS_OPAQUE
-
 #endif

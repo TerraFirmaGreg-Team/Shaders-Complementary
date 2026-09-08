@@ -16,28 +16,27 @@
 // Euphoria Patches moves a lot of the shader settings to the shaderSettings folder.
 
 //User Settings//
-    #define SHADER_STYLE 4 //[1 4]
+    #define SHADER_STYLE 1 //[1 4]
 
     #define RP_MODE 1 //[1 0 3 2]
 
     #define SHADOW_QUALITY 2 //[-1 0 1 2 3 4 5]
     const float shadowDistance = 192.0; //[64.0 80.0 96.0 112.0 128.0 160.0 192.0 224.0 256.0 320.0 384.0 512.0 768.0 1024.0]
     #define FXAA_DEFINE 1 //[-1 1]
-    #define DETAIL_QUALITY 2 //[0 2 3]
+    #define DETAIL_QUALITY 2 //[0 2 3 4]
     #define CLOUD_QUALITY 2 //[0 1 2 3]
     #define LIGHTSHAFT_QUALI_DEFINE 2 //[0 1 2 3 4]
     #define WATER_REFLECT_QUALITY 2 //[-1 0 1 2]
     #define BLOCK_REFLECT_QUALITY 3 //[0 1 3]
     #define ANISOTROPIC_FILTER 0 //[0 4 8 16]
     #define ENTITY_SHADOW 1 //[-1 1 2]
+    #define RAIN_PUDDLES 0 //[0 1 2 3 4]
 
     #define COLORED_LIGHTING 0 //[128 192 256 384 512 768 1024]
     #define WORLD_SPACE_REFLECTIONS -1 //[-1 1]
     #if defined IRIS_FEATURE_CUSTOM_IMAGES && SHADOW_QUALITY > -1 && !defined MC_OS_MAC && !(defined DH_TERRAIN || defined DH_WATER || defined VOXY_PATCH)
         #define COLORED_LIGHTING_INTERNAL COLORED_LIGHTING
         #if COLORED_LIGHTING_INTERNAL > 0
-            #define COLORED_LIGHT_SATURATION 100 //[50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125]
-
             #define COLORED_LIGHT_FOG
             #define COLORED_LIGHT_FOG_I 0.65 //[0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50]
 
@@ -64,6 +63,9 @@
         #define WORLD_SPACE_REFLECTIONS_INTERNAL -1
     #endif
 
+    #define LEAF_SHADOW_OPTIMISATION_DEFINE -1 //[-1 0 1]
+    #define SKY_EFFECT_REFLECTION_DEFINE -1 //[-1 0 1 2]
+
     //#define COLORED_CANDLE_LIGHT
 
     #define WATER_STYLE_DEFINE -1 //[-1 1 2 3]
@@ -80,7 +82,6 @@
     #define WATER_SPEED_MULT 1.10 //[0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50 1.55 1.60 1.65 1.70 1.75 1.80 1.85 1.90 1.95 2.00 2.20 2.40 2.60 2.80 3.00 3.25 3.50 3.75 4.00 4.50 5.00]
 
     #define SHADOW_SMOOTHING 4 //[1 2 3 4]
-    #define RAIN_PUDDLES 0 //[0 1 2 3 4]
 
     #define AURORA_STYLE_DEFINE -1 //[-1 0 1 2]
     #define NIGHT_NEBULAE -1 //[-1 1]
@@ -118,10 +119,11 @@
     #define CAVE_FOG
     #define LIGHTSHAFT_BEHAVIOUR 1 //[0 1 2 3]
 
-    #define LENSFLARE_MODE 0 //[0 1 2]
+    #define LENSFLARE_MODE 0 //[0 1 2 3 4]
     #define LENSFLARE_I 1.00 //[0.05 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00 2.20 2.40 2.60 2.80 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00]
     #define DISTANT_LIGHT_BOKEH
-    #define TAA_MODE 1 //[0 1]
+
+    #define TAA_DEFINE -1 //[-1 0 1]
     #define TAA_SMOOTHING 3 //[2 3 4]
     #define TAA_JITTER 1 //[0 1 2 3]
     #define TAA_MOVEMENT_IMPROVEMENT_FILTER 1 //[0 1]
@@ -129,6 +131,8 @@
     #define FXAA_STRENGTH 75 //[-1 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100]
 
     #define IPBR_EMISSIVE_MODE 1 //[1 3 2]
+    #define MIRROR_TINTED_GLASS 0 //[0 35 70 100]
+    #define HIDE_ARMOR 0 //[0 1 2]
     //#define IPBR_COMPAT_MODE_DEFINE
     #ifdef IPBR_COMPAT_MODE_DEFINE
         #define IPBR_COMPAT_MODE
@@ -150,12 +154,7 @@
     #define SPECIAL_PORTAL_EFFECTS
     #define REFLECTION_RES 0.5 //[1.0 0.5]
 
-    //TFGEDITS
-	#ifdef AD_ASTRA
-		#define SUN_ANGLE 0 //[-1 0 -20 -30 -40 -50 -60 60 50 40 30 20]
-    #else 
-		#define SUN_ANGLE -1 //[-1 0 -20 -30 -40 -50 -60 60 50 40 30 20]
-	#endif
+    #define SUN_ANGLE -1 //[-1 0 -20 -30 -40 -50 -60 60 50 40 30 20]
 
     #define SELECT_OUTLINE 1 //[0 1 3 4 2]
     //#define SELECT_OUTLINE_AUTO_HIDE
@@ -197,6 +196,9 @@
     #define XLIGHT_B 1.00 //[0.01 0.03 0.05 0.07 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00]
     #define XLIGHT_I 1.00 //[0.01 0.03 0.05 0.07 0.10 0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.70 1.80 1.90 2.00]
     #define XLIGHT_CURVE 1.00 //[0.20 0.25 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.80 2.00 2.20 2.40 2.60 2.80 3.00]
+
+    #define COLORED_LIGHT_SATURATION 100 //[50 55 60 65 70 75 80 85 90 95 100 105 110 115 120 125]
+    #define ACT_FIRE_COLOR_WARMNESS 100 //[0 4 8 12 16 20 22 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120 124 128 132 136 140 144 148 152 156 160 164 168 172 176 180 184 188 192 196 200]
 
     #define IMPROVED_RAIN_DEFINE 1 //[0 1]
 
@@ -247,7 +249,8 @@
     #define PHOTONICS_MAX_ALLOWED_DISTANCE 10 //[6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 100]
     //#define PHOTONICS_PIXELATED_SHADOWS
 
-    //#define DAYLIGHT_CYCLE_COMPAT
+    //#define DAYLIGHT_CYCLE_FROZEN
+    #define SMOOTH_WORLD_ANIMATIONS
     //#define FROZEN_TIME
 
     //#define AURORA_INFLUENCE
@@ -262,6 +265,7 @@
 
     #define DRAGON_DEATH_EFFECT 0 //[0 1 2]
     #define END_CRYSTAL_VORTEX 0 //[0 1 2 3]
+    #define END_CRYSTAL_VOXEL_PIXEL 0 //[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64]
     //#define END_PORTAL_BEAM
 
     //#define BIOME_COLORED_NETHER_PORTALS
@@ -285,6 +289,10 @@
     //#define ATLAS_ROTATION
 
     #define SEASONS 0 //[0 1 2 3 4 5] 0 = off, 1 = cycling, 2 = summer, 3 = autumn, 4 = winter, 5 = spring
+    #ifndef OVERWORLD
+        #undef SEASONS
+        #define SEASONS 0
+    #endif
     #define SEASON_LENGTH 28 //[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120] in MC days: 1, 3, 7, 8, 14, 24, 28, 30, 60 , 91, 120. Default 28 - 672000
     #define SEASON_TRANSITION_START 4 //[0 1 2 3 4 9] 0 is immediately, 1 is 50%, 2 is 66%, 3 is 75%, 4 is 80%, 9 is 90% of the season
     #define SEASON_COLOR_DESATURATION 0.3 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
@@ -350,7 +358,7 @@
 
     //#define PIXELATED_WATER_REFLECTIONS // Using Nestorboy's pixelation functions
 
-    #define END_SUN_ANGLE 0 //[0 -20 -30 -40 -50 -60 60 50 40 30 20]
+    #define END_SUN_ANGLE 0 //[0 -10 -20 -30 -40 -50 -60 -70 -80 80 70 60 50 40 30 20 10]
 
     #define BORDER_FOG_NETHER
     #define BORDER_FOG_END
@@ -364,7 +372,7 @@
 
     #define END_FLASH_SHADOW 0 //[0 5 10 15 20 25 30 35 40 45 50 55 60]
 
-    #define BLOOD_MOON 0 //[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50]
+    #define BLOOD_MOON 0 //[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100]
 
     #define WATER_CAUSTIC_STRENGTH 1.0 //[0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 
@@ -375,9 +383,32 @@
     #define RAIN_TEX_OPACITY_MULTIPLIER 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
     #define SNOW_TEX_OPACITY_MULTIPLIER 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 
-    #define CUSTOM_SKY_SUPPORT
-    //#define SAVE_SKYBOX_DATA_OVERRIDE
+    #define CUSTOM_SKY_SUPPORT_SLIDER 10 //[0 1 2 3 4 5 6 7 8 9 10]
+    #define SAVE_SKYBOX_DATA_OVERRIDE
     #ifdef SAVE_SKYBOX_DATA_OVERRIDE
+    #endif
+
+    #define MCWIND_USER
+    #if defined MCWIND_USER && defined MCWIND
+        #define MCWIND_INTERNAL
+    #endif
+
+    // #define BETTER_LABPBR
+    #define BETTER_LABPBR_REFLECTIONS
+    #define BETTER_LABPBR_REFRACTIONS 100 //[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100]
+    #define BETTER_LABPBR_POROSITY
+    #define BETTER_LABPBR_AO
+    #if defined BETTER_LABPBR && RP_MODE == 3 && defined BETTER_LABPBR_REFLECTIONS
+        #define BETTER_LABPBR_REFLECTIONS_INTERNAL
+    #endif
+    #if defined BETTER_LABPBR && RP_MODE == 3 && BETTER_LABPBR_REFRACTIONS > 0
+        #define BETTER_LABPBR_REFRACTIONS_INTERNAL
+    #endif
+    #if defined BETTER_LABPBR && RP_MODE == 3 && defined BETTER_LABPBR_POROSITY && defined OVERWORLD
+        #define BETTER_LABPBR_POROSITY_INTERNAL
+    #endif
+    #if defined BETTER_LABPBR && RP_MODE == 3 && defined BETTER_LABPBR_AO
+        #define BETTER_LABPBR_AO_INTERNAL
     #endif
 
 //Internal Settings//
@@ -394,7 +425,9 @@
     #define FLICKERING_FIX
     //#define SAFER_GENERATED_NORMALS
 
-    #define SHADOW_FRUSTUM_FIT
+    #if MC_VERSION >= 260200
+        #define SULFUR_CAVE_FOG
+    #endif
 
     #include "/lib/misc/myFile.glsl"
 
@@ -407,10 +440,8 @@
         #define MORE_REFLECTIVE_DISTANT_GLASS
         //#define GENERATED_NORMALS
         //#define COATED_TEXTURES
-        //#define FANCY_GLASS
+        #define FANCY_GLASS
         //#define GREEN_SCREEN_LIME
-        //#define MIRROR_TINTED_GLASS
-        #define HIDE_ARMOR 0 //[0 1 2]
     #endif
     #if RP_MODE >= 2
         #define CUSTOM_PBR
@@ -466,6 +497,8 @@
     #ifdef END
         #if END_SUN_ANGLE == 0
             const float sunPathRotation = 0.0;
+        #elif END_SUN_ANGLE == 10
+            const float sunPathRotation = 10.0;
         #elif END_SUN_ANGLE == 20
             const float sunPathRotation = 20.0;
         #elif END_SUN_ANGLE == 30
@@ -476,6 +509,12 @@
             const float sunPathRotation = 50.0;
         #elif END_SUN_ANGLE == 60
             const float sunPathRotation = 60.0;
+        #elif END_SUN_ANGLE == 70
+            const float sunPathRotation = 70.0;
+        #elif END_SUN_ANGLE == 80
+            const float sunPathRotation = 80.0;
+        #elif END_SUN_ANGLE == -10
+            const float sunPathRotation = -10.0;
         #elif END_SUN_ANGLE == -20
             const float sunPathRotation = -20.0;
         #elif END_SUN_ANGLE == -30
@@ -486,6 +525,10 @@
             const float sunPathRotation = -50.0;
         #elif END_SUN_ANGLE == -60
             const float sunPathRotation = -60.0;
+        #elif END_SUN_ANGLE == -70
+            const float sunPathRotation = -70.0;
+        #elif END_SUN_ANGLE == -80
+            const float sunPathRotation = -80.0;
         #endif
     #else
         #if SUN_ANGLE == -1
@@ -550,28 +593,39 @@
         #define PBR_REFLECTIONS
     #endif
 
-    #if DETAIL_QUALITY == 0 // Potato
+    #if TAA_DEFINE == 1
+        #define TAA
+    #endif
+    #if LEAF_SHADOW_OPTIMISATION_DEFINE == 1
         #define LEAF_SHADOW_OPTIMISATION
+    #endif
+    #if SKY_EFFECT_REFLECTION_DEFINE >= 1
+        #define SKY_EFFECT_REFLECTION_TRANSLUCENT
+        #if SKY_EFFECT_REFLECTION_DEFINE == 2
+            #define SKY_EFFECT_REFLECTION_OPAQUE
+        #endif
+    #endif
+
+    #if DETAIL_QUALITY == 0 // Potato
+        #if LEAF_SHADOW_OPTIMISATION_DEFINE == -1
+            #define LEAF_SHADOW_OPTIMISATION
+        #endif
         #undef PERPENDICULAR_TWEAKS
         #define LOW_QUALITY_NETHER_STORM
         #define LOW_QUALITY_MOTION_BLUR
-        #define WATER_MAT_QUALITY 1
-    #endif
-    #if DETAIL_QUALITY >= 1 // not an option for now
-        #if TAA_MODE >= 1
-            #define TAA
-        #endif
-        #define WATER_MAT_QUALITY 1
+        #define LOW_QUALITY_WATER_MATERIAL
     #endif
     #if DETAIL_QUALITY >= 2 // Medium
-        #undef WATER_MAT_QUALITY
-        #define WATER_MAT_QUALITY 2
+        #if TAA_DEFINE == -1
+            #define TAA
+        #endif
     #endif
     #if DETAIL_QUALITY >= 3 // High
-        #undef WATER_MAT_QUALITY
-        #define WATER_MAT_QUALITY 3 // we use DETAIL_QUALITY >= 3 when writing in gbuffers_water because optifine bad
+        #if SKY_EFFECT_REFLECTION_DEFINE == -1
+            #define SKY_EFFECT_REFLECTION_TRANSLUCENT
+        #endif
+        #define WATER_REFRACTION
         #define HQ_NIGHT_NEBULA
-        #define SKY_EFFECT_REFLECTION
         #define CONNECTED_GLASS_CORNER_FIX
         #define ACT_CORNER_LEAK_FIX
         #define DO_NETHER_VINE_WAVING_OUTSIDE_NETHER
@@ -583,8 +637,13 @@
             #define ENTITY_TAA_NOISY_CLOUD_FIX
         #endif
     #endif
-    #if DETAIL_QUALITY >= 4 // Not an option yet
+    #if DETAIL_QUALITY >= 4 // Ultra
+        #if SKY_EFFECT_REFLECTION_DEFINE == -1
+            #define SKY_EFFECT_REFLECTION_OPAQUE
+        #endif
         #define REFLECTION_BLUR_DEPTH_CHECK
+        #define ACT_CORNER_LEAK_FIX_FOR_WSR
+        #define ANISOTROPIC_FILTER_ON_TRANSLUCENTS
     #endif
 
 //Define Handling//
@@ -683,7 +742,7 @@
         #endif
     #endif
 
-    #if !defined IS_IRIS || MC_VERSION < 12109
+    #if (!defined IS_IRIS || MC_VERSION < 12109) && (!defined ANGELICA_VERSION || ANGELICA_VERSION < 20155000)
         #undef END_FLASHES
     #endif
 
@@ -760,12 +819,18 @@
         #undef PHOTONICS_LIGHTING
     #endif
 
-    #if END_FLASH_SHADOW > 0 && defined IS_IRIS && defined END && MC_VERSION >= 12109
+    #if END_FLASH_SHADOW > 0 && defined IS_IRIS && defined END && (MC_VERSION >= 12109 || ANGELICA_VERSION >= 20155000)
         #define END_FLASH_SHADOW_INTERNAL
     #endif
 
-    #if (MC_VERSION >= 11605 || defined IS_ANGELICA) && defined CUSTOM_SKY_SUPPORT && !defined MC_OS_MAC && (defined EUPHORIA_PATCHES_IS_SKYBOX_MOD_INSTALLED || defined SAVE_SKYBOX_DATA_OVERRIDE)
+    #if (MC_VERSION >= 11605 || defined IS_ANGELICA) && CUSTOM_SKY_SUPPORT_SLIDER > 0 && !defined MC_OS_MAC && defined EUPHORIA_PATCHES_IS_SKYBOX_MOD_INSTALLED && defined SAVE_SKYBOX_DATA_OVERRIDE
         #define SAVE_SKYBOX_DATA
+    #endif
+
+    #ifdef EUPHORIA_PATCHES_VERSION_DEFINE
+        #define EUPHORIA_PATCHES_VERSION EUPHORIA_PATCHES_VERSION_DEFINE
+    #else
+        #define EUPHORIA_PATCHES_VERSION 0
     #endif
 
 // Activate Settings //
@@ -781,6 +846,20 @@
     #endif
     #ifdef END_CENTER_LIGHTING
     #endif
+    #ifdef SMOOTH_WORLD_ANIMATIONS
+    #endif
+    #ifdef DAYLIGHT_CYCLE_FROZEN
+    #endif
+    #ifdef BETTER_LABPBR
+    #endif
+    #ifdef BETTER_LABPBR_REFLECTIONS
+    #endif
+    #ifdef BETTER_LABPBR_REFRACTIONS
+    #endif
+    #ifdef BETTER_LABPBR_POROSITY
+    #endif
+    #ifdef BETTER_LABPBR_AO
+    #endif
 
 //Very Common Stuff//
     #ifndef VOXY_PATCH
@@ -789,7 +868,7 @@
     #include "/lib/materials/materialHandling/materialDefines.glsl"
 
     #if SHADOW_QUALITY == -1
-      float timeAngle = worldTime / 24000.0;
+      float timeAngle = worldTimeSmooth / 24000.0;
     #else
       float tAmin     = fract(sunAngle - 0.033333333);
       float tAlin     = tAmin < 0.433333333 ? tAmin * 1.15384615385 : tAmin * 0.882352941176 + 0.117647058824;
@@ -871,11 +950,16 @@
     float nightVisionWithAddedSupport = screenBrightness > 1.0 ? 1.0 : nightVision; // Add support for fullbright mods
     #define nightVision nightVisionWithAddedSupport
 
-    int modifiedWorldDay = int(mod(worldDay, 100) + 5.0);
-    #if defined DAYLIGHT_CYCLE_COMPAT || defined FROZEN_TIME
+    #ifdef FROZEN_TIME
         float syncedTime = frameTimeCounter;
+        float syncedTimeDynamic = frameTimeCounter;
     #else
-        float syncedTime = (worldTime + modifiedWorldDay * 24000) * 0.05;
+        float syncedTime = (worldAgeSmooth + 5.0 * 24000.0) * 0.05;
+        #if !defined DAYLIGHT_CYCLE_FROZEN && defined EUPHORIA_PATCHES_UNIFORMS
+            float syncedTimeDynamic = bool(euphoriaPatchesIsDayAdvancing) ? syncedTime : frameTimeCounter;
+        #else
+            float syncedTimeDynamic = syncedTime;
+        #endif
     #endif
 
     #if IRIS_VERSION >= 10800
@@ -945,19 +1029,6 @@
     #include "/lib/colors/blocklightColors.glsl"
 
     #include "/lib/materials/seasonsTime.glsl"
-
-// TFGEDITS
-#ifdef AD_ASTRA
-    // config for ad_astra worlds
-    #include "/ad_astra_config/ad_astra_world_config.glsl"
-#endif
-
-#include "/TerraFirmaGreg.glsl" //config for everything TFG
-
-// config for non-ad_astra specific modifications
-#define PLANET_WIND_MULTIPLIER 1.0
-
-#define DO_MORE_FOLIAGE_WAVING_TFG
 
     const float OSIEBCA = 1.0 / 255.0; // One Step In Eight Bit Color Attachment
     /* materialMask steps

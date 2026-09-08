@@ -73,11 +73,19 @@ void main() {
         materialMask = OSIEBCA * 254.0; // No SSAO, No TAA, Reduce Reflection
     } else { // Dragon Death Beams, and possibly modded effects
         #ifdef END
-            if (dither < 0.8) discard;
-            color.rgb *= 15.0;
-            #if DRAGON_DEATH_EFFECT_INTERNAL == 1
-                discard;
+            #if EUPHORIA_PATCHES_VERSION >= 10903 || ANGELICA_VERSION >= 20134000
+                bool applyDragonEffect = entityId == 50208;
+            #else
+                bool applyDragonEffect = true;
             #endif
+
+            if (applyDragonEffect) {
+                if (dither < 0.8) discard;
+                color.rgb *= 15.0;
+                #if DRAGON_DEATH_EFFECT_INTERNAL == 1
+                    discard;
+                #endif
+            }
         #endif
     }
 
@@ -162,10 +170,20 @@ void main() {
     #endif
 
     #if DRAGON_DEATH_EFFECT_INTERNAL > 0
-        if ((entityId == 0 || entityId == 50204) && (glColor.a < 0.2 || glColor.a == 1.0)) { // Only lightning bolts and dragon death effect run in this program, lightning has an entity ID assigned
+        #if EUPHORIA_PATCHES_VERSION >= 10903 || ANGELICA_VERSION >= 20134000
+            bool isDragonDeathBeams = entityId == 50208;
+        #else
+            vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
+            position.xyz += cameraPosition;
+            bool isDragonDeathBeams =
+                (entityId == 0 || entityId == 50204) && (glColor.a < 0.2 || glColor.a == 1.0)  // Only lightning bolts and dragon death effect run in this program, lightning has an entity ID assigned
+                && all(lessThan(abs(position.xz), vec2(20))) && position.y > 65; // Isolate it so it's only near the end center
+        #endif
+
+        if (isDragonDeathBeams) {
             SetEndDragonDeath();
             #if DRAGON_DEATH_EFFECT_INTERNAL == 1
-                gl_Position = vec4(0);
+                gl_Position = vec4(0.0);
             #endif
         }
     #endif

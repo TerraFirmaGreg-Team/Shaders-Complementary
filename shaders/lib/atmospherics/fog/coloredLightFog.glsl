@@ -1,11 +1,7 @@
-vec3 GetColoredLightFog(vec3 nPlayerPos, vec3 translucentMult, float lViewPos, float lViewPos1, float dither, float vlFactor) {
+vec3 GetColoredLightFog(vec3 nPlayerPos, vec3 translucentMult, float lViewPos, float lViewPos1, float dither, float vlFactor, float caveFactor) {
     vec3 lightFog = vec3(0.0);
 
     float stepMult = 8.0;
-
-    #ifdef CAVE_SMOKE
-        float caveFactor = GetCaveFactor() * (1.0 - clamp01(isEyeInWater));
-    #endif
 
     float maxDist = min(effectiveACTdistance * 0.5, far);
     int sampleCount = int(maxDist / stepMult + 0.001);

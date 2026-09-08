@@ -111,9 +111,9 @@ void main() {
     vec4 color = texture2D(tex, texCoord);
     float purkinjeOverwrite = 0.0, emission = 0.0;
 
-    float smoothnessD = 0.0, enderDragonDead = 1.0, materialMask = OSIEBCA * 254.0; // No SSAO, No TAA, Reduce Reflection
+    float smoothnessD = 0.0, enderDragonDead = 1.0, materialMask = OSIEBCA * 254.0, materialAO = 1.0; // No SSAO, No TAA, Reduce Reflection
     vec2 lmCoordM = lmCoord;
-    vec3 normalM = normal, shadowMult = vec3(0.5); // Reduced shadowMult for held items to not get too bright
+    vec3 normalM = normal, shadowMult = vec3(0.5), rawAlbedoM = vec3(1.0); // Reduced shadowMult for held items to not get too bright
     #ifdef PHOTONICS_LIGHTING
         vec3 oldAlbedo = vec3(0.0);
     #endif
@@ -171,11 +171,11 @@ void main() {
             #endif
 
             #if IPBR_EMISSIVE_MODE != 1
-                emission = GetCustomEmissionForIPBR(color, emission);
+                emission = GetCustomEmissionForIPBR(color, glColor, emission);
             #endif
         #else
             #ifdef CUSTOM_PBR
-                GetCustomMaterials(color, normalM, lmCoordM, NdotU, shadowMult, smoothnessG, smoothnessD, highlightMult, emission, materialMask, viewPos, 0.0);
+                GetCustomMaterials(color, normalM, lmCoordM, NdotU, shadowMult, smoothnessG, smoothnessD, highlightMult, emission, materialMask, materialAO, viewPos, 0.0);
             #endif
         #endif
 
@@ -207,10 +207,25 @@ void main() {
             oldAlbedo = color.rgb;
         #endif
 
+        rawAlbedoM = color.rgb;
+
+        // Tints the direct-light specular highlight for named labPBR metals with their F0 color
+        #ifdef BETTER_LABPBR_REFLECTIONS_INTERNAL
+            int materialMaskIntM = int(materialMask * 255.1);
+            vec3 metalHighlightTintM = (RP_MODE == 3 && materialMaskIntM >= 215 && materialMaskIntM <= 222) ? GetLabPBRMetalF0(materialMaskIntM, rawAlbedoM) : vec3(1.0);
+        #else
+            vec3 metalHighlightTintM = vec3(1.0);
+        #endif
+
         DoLighting(color, shadowMult, playerPos, viewPos, 0.0, geoNormal, normalM, 0.5,
                    worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, noVanillaAO,
                    false, 0, smoothnessG, highlightMult, emission, purkinjeOverwrite, false,
-                   enderDragonDead);
+                   enderDragonDead, metalHighlightTintM);
+
+        #ifdef BETTER_LABPBR_AO_INTERNAL
+            float lightExposureM = max(GetLuminance(shadowMult), lmCoordM.x);
+            color.rgb *= mix(materialAO, 1.0, lightExposureM);
+        #endif
 
         #ifdef SS_BLOCKLIGHT
             lightAlbedo = normalize(color.rgb) * min1(emission) * float(heldBlockLightValue > 0 || heldBlockLightValue2 > 0 || heldItemId == 45032 || heldItemId2 == 45032);
@@ -237,6 +252,7 @@ void main() {
         vec4 phAlbedoOut = vec4(oldAlbedo, 1.0);
     #endif
 
+    vec3 translucentMult = mix(vec3(0.666), color.rgb * (1.0 - pow2(pow2(color.a))), color.a);
     float skyLightFactor = GetSkyLightFactor(lmCoordM, shadowMult);
 
     float handSSBLMask = 0.0;
@@ -253,39 +269,42 @@ void main() {
     #endif
 
     float purkinjeData = 1.0;
+    float albedoData = 1.0;
     #if defined IS_IRIS || defined IS_ANGELICA || MC_VERSION >= 11600
         purkinjeData = lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission);
+        albedoData = clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0;
     #endif
 
-    /* DRAWBUFFERS:06 */
+    /* DRAWBUFFERS:036 */
     gl_FragData[0] = color;
-    gl_FragData[1] = vec4(smoothnessD, materialMask, skyLightFactor, purkinjeData);
+    gl_FragData[1] = vec4(1.0 - translucentMult, 1.0);
+    gl_FragData[2] = vec4(smoothnessD, materialMask, skyLightFactor, purkinjeData);
 
-    #if BLOCK_REFLECT_QUALITY >= 2 && (RP_MODE >= 2 || defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000008)
-        /* DRAWBUFFERS:064 */
-        gl_FragData[2] = vec4(mat3(gbufferModelViewInverse) * normalM, 1.0);
+    #if BLOCK_REFLECT_QUALITY >= 2 && (RP_MODE >= 2 || defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000008) || defined BETTER_LABPBR_REFRACTIONS_INTERNAL
+        /* DRAWBUFFERS:0364 */
+        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, albedoData);
 
         #ifdef SS_BLOCKLIGHT
-            /* DRAWBUFFERS:0649 */
-            gl_FragData[3] = vec4(lightAlbedo, handSSBLMask);
+            /* DRAWBUFFERS:03649 */
+            gl_FragData[4] = vec4(lightAlbedo, handSSBLMask);
         #endif
 
         #ifdef PHOTONICS_LIGHTING
-            /* RENDERTARGETS:0,6,4,10,11,20*/
-            gl_FragData[3] = phAlbedoOut; // SS_BLOCKLIGHT is undefined with Photonics
-            gl_FragData[4] = vec4(playerPosDelta, 1.0);
-            gl_FragData[5] = vec4(normal, 1.0);
+            /* RENDERTARGETS:0,3,6,4,10,11,20*/
+            gl_FragData[4] = phAlbedoOut; // SS_BLOCKLIGHT is undefined with Photonics
+            gl_FragData[5] = vec4(playerPosDelta, 1.0);
+            gl_FragData[6] = vec4(normal, 1.0);
         #endif
 
     #elif defined SS_BLOCKLIGHT
-        /* DRAWBUFFERS:069 */
-        gl_FragData[2] = vec4(lightAlbedo, handSSBLMask);
+        /* DRAWBUFFERS:0369 */
+        gl_FragData[3] = vec4(lightAlbedo, handSSBLMask);
     #elif defined PHOTONICS_LIGHTING
-        /* RENDERTARGETS:0,6,4,10,11,20 */
-        gl_FragData[2] = vec4(mat3(gbufferModelViewInverse) * normalM, 1.0);
-        gl_FragData[3] = phAlbedoOut;
-        gl_FragData[4] = vec4(playerPosDelta, 1.0);
-        gl_FragData[5] = vec4(normal, 1.0);
+        /* RENDERTARGETS:0,3,6,4,10,11,20 */
+        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, albedoData);
+        gl_FragData[4] = phAlbedoOut;
+        gl_FragData[5] = vec4(playerPosDelta, 1.0);
+        gl_FragData[6] = vec4(normal, 1.0);
     #endif
 }
 

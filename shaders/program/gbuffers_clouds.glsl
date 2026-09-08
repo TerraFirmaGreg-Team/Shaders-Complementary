@@ -15,7 +15,8 @@
 // We use CLOUD_STYLE_DEFINE instead of CLOUD_STYLE in this file because Optifine can't use generated defines for pipeline stuff
     in vec2 texCoord;
 
-    flat in vec3 upVec, sunVec;
+    flat in vec3 upVec, sunVec, northVec;
+    in vec3 normal;
 
     in vec4 glColor;
 #endif
@@ -37,7 +38,7 @@
     #include "/lib/colors/skyColors.glsl"
     #include "/lib/util/spaceConversion.glsl"
 
-    #if defined TAA && (defined BORDER_FOG || RAINBOW_CLOUD != 0 || defined AURORA_INFLUENCE)
+    #if defined TAA && (defined BORDER_FOG || RAINBOW_CLOUD != 0 || defined AURORA_INFLUENCE || defined VOXY)
         #include "/lib/antialiasing/jitter.glsl"
     #endif
 
@@ -62,7 +63,9 @@ void main() {
     #if CLOUD_STYLE_DEFINE != 50
         discard;
     #else
-        vec4 color = texture2D(tex, texCoord) * glColor;
+        vec4 color = texture2D(tex, texCoord) * vec4(vec3(1.0), glColor.a);
+
+        color.rgb *= 0.9 + 0.25 * dot(upVec, normal) - 0.1 * abs(dot(northVec, normal)) - rainFactor * 0.2;
 
         vec4 translucentMult = vec4(mix(vec3(0.666), color.rgb * (1.0 - pow2(pow2(color.a))), color.a), 1.0);
 
@@ -95,7 +98,14 @@ void main() {
                 #endif
 
                 cloudDistance = clamp((cloudDistance - xzMaxDistance) / cloudDistance, 0.0, 1.0);
-                color.a *= clamp01(cloudDistance * 3.0);
+
+                #if MC_VERSION < 12106
+                    cloudDistance *= 3.0;
+                #else
+                    cloudDistance *= 1.5;
+                #endif
+
+                color.a *= clamp01(cloudDistance);
             #endif
         #endif
 
@@ -144,7 +154,8 @@ void main() {
 #if CLOUD_STYLE_DEFINE == 50
     out vec2 texCoord;
 
-    flat out vec3 upVec, sunVec;
+    flat out vec3 upVec, sunVec, northVec;
+    out vec3 normal;
 
     out vec4 glColor;
 #endif
@@ -171,8 +182,11 @@ void main() {
 
         glColor = gl_Color;
 
+        normal = normalize(gl_NormalMatrix * gl_Normal);
+
         upVec = normalize(gbufferModelView[1].xyz);
         sunVec = GetSunVector();
+        northVec = normalize(gbufferModelView[2].xyz);
 
         vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
         gl_Position = gl_ProjectionMatrix * gbufferModelView * position;

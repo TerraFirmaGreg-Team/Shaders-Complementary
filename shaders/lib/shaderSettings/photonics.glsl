@@ -34,8 +34,6 @@
 #endif
 #endif
 
-#define PHOTONICS_SEPARATE_HANDHELD_RAYS
-#ifdef PHOTONICS_SEPARATE_HANDHELD_RAYS
-#endif
+#define PHOTONICS_HANDHELD_MODE 1 // [0 1 2]
 
 #endif

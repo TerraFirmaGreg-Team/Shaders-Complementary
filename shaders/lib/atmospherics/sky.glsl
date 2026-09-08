@@ -57,7 +57,7 @@
             // Set sky gradient
             float scatteredGroundMixerMult = 1.0;
             float VdotUM1 = pow2(1.0 - VdotUmax0);
-                  VdotUM1 = pow(VdotUM1, 1.0 - VdotSM2 * 0.4);
+                  VdotUM1 = pow(VdotUM1, (1.0 - VdotSM2 * 0.4) * (1.15 - 0.15 * rainFactor2));
                   VdotUM1 = mix(VdotUM1, 1.0, rainFactor2 * 0.15);
             vec3 finalSky = mix(upColor, middleColor, VdotUM1);
 
@@ -129,7 +129,7 @@
         #endif
 
         // Dither to fix banding
-        finalSky += (dither - 0.5) / 128.0;
+        finalSky = max(finalSky + (dither - 0.5) / 128.0, vec3(0.0));
 
         #if RETRO_LOOK == 1
             finalSky = vec3(0.0);

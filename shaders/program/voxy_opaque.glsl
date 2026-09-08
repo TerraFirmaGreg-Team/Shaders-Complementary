@@ -23,6 +23,8 @@ mat4 gbufferPreviousProjection = vxProjPrev;
 #include "/lib/shaderSettings/wavingBlocks.glsl"
 //#define NIGHT_DESATURATION
 
+#define CHUNKS_FADE_IN_NO_FRAG_MOD_INJECT
+
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
 
@@ -34,10 +36,11 @@ layout(location = 1) out vec4 gbufferData6;
 #endif
 
 //Common Variables//
-vec3 sunVec = GetSunVector();
 vec3 upVec = normalize(gbufferModelView[1].xyz);
 vec3 eastVec = normalize(gbufferModelView[0].xyz);
 vec3 northVec = normalize(gbufferModelView[2].xyz);
+
+vec3 sunVec = GetSunVector();
 
 float SdotU = dot(sunVec, upVec);
 float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
@@ -212,10 +215,14 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, dither,
                worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, noVanillaAO,
                centerShadowBias, subsurfaceMode, smoothnessG, highlightMult, emission, purkinjeOverwrite, isLightSource,
-               enderDragonDead);
+               enderDragonDead, vec3(1.0));
 
     #ifdef SS_BLOCKLIGHT
         vec3 lightAlbedo = normalize(color.rgb) * min1(emission);
+
+        #if defined END && END_ROD_COLOR_PROFILE == 0
+            if (mat == 10500) lightAlbedo = vec3(1.0, 0.6078, 0.9); // End Rod
+        #endif
 
         #ifdef COLORED_CANDLE_LIGHT
             if (mat >= 10900 && mat <= 10922) { // Candles:Lit

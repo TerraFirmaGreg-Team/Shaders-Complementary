@@ -13,10 +13,10 @@
         return noise / 3.0;
     }
 
-    vec3 DrawEnderBeams(vec3 playerPos, vec3 nViewPos, float scale) {
-    #ifndef END_BEAMS
-        return vec3(0.0);
-    #else
+    vec3 DrawEnderBeams(float vlFactor, vec3 playerPos, vec3 nViewPos, float scale) {
+        #ifndef END_BEAMS
+            return vec3(0.0);
+        #else
         float beamPowBeforeAltitude = 1.0;
         float beamPowAfterAltitude = END_BEAM_POW;
         float lPlayerPosXZ = length(playerPos.xz);
@@ -43,7 +43,7 @@
             beamPowAfterAltitude *= 1.0 - 0.4 * endFlashFactor * END_BEAM_FLASH_POW_MULTIPLIER; // make sure that it does not get <= 0
         #endif
 
-        vec3 beamPurple = normalize(endColorBeam * endColorBeam * endColorBeam) * (2.5 - beamPurpleReducer) * E_BEAM_I;
+        vec3 beamPurple = baseBeamPurple * (2.5 - beamPurpleReducer);
         vec3 beamOrange = endOrangeCol * (300.0 + 700.0 * beamOrangeIncreaser);
 
         vec2 planeCoordRaw = playerPos.xz + cameraPosition.xz;

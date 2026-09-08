@@ -84,7 +84,7 @@
     #endif
 
     #if SEASONS == 1 || SEASONS == 3
-        vec3 autumnColor = vec3(0);
+        vec3 autumnColor = vec3(0.0);
 
         if (autumnTime > 0) {
             autumnColor = mix(color.rgb, desaturatedColor, 0.65 * autumnOnlyForests);
@@ -225,7 +225,7 @@
     #endif
 
     #if SEASONS == 1 || SEASONS == 4
-        vec3 winterColor = vec3(0);
+        vec3 winterColor = vec3(0.0);
 
         if (winterTime > 0) {
             float snowSide = 0.0;
@@ -384,14 +384,14 @@
                         const ivec2 flower5Size = ivec2(5, 5);
 
                         vec4 flower1Pixels[flower1Size.x * flower1Size.y] = vec4[flower1Size.x * flower1Size.y](
-                            vec4(0), vec4(1)                       , vec4(0),
-                            vec4(1), vec4(1.0, 0.8784, 0.2706, 1.0), vec4(1),
-                            vec4(0), vec4(1)                       , vec4(0)
+                            vec4(0.0), vec4(1.0)                       , vec4(0.0),
+                            vec4(1.0), vec4(1.0, 0.8784, 0.2706, 1.0), vec4(1.0),
+                            vec4(0.0), vec4(1.0)                       , vec4(0.0)
                         );
                         vec4 flower2Pixels[flower2Size.x * flower2Size.y] = vec4[flower2Size.x * flower2Size.y](
-                            vec4(0), vec4(0.9922, 0.7686, 0.4078, 1.0)                          , vec4(0),
+                            vec4(0.0), vec4(0.9922, 0.7686, 0.4078, 1.0)                          , vec4(0.0),
                             vec4(0.9922, 0.7686, 0.4078, 1.0), vec4(0.8471, 0.5216, 0.0627, 1.0), vec4(0.9922, 0.7686, 0.4078, 1.0),
-                            vec4(0), vec4(0.9922, 0.7686, 0.4078, 1.0)                          , vec4(0)
+                            vec4(0.0), vec4(0.9922, 0.7686, 0.4078, 1.0)                          , vec4(0.0)
                         );
                         vec4 flower3Pixels[flower3Size.x] = vec4[flower3Size.x](vec4(1.0, 0.8784, 0.2706, 1.0));
                         vec4 flower4Pixels[flower4Size.x * flower4Size.y] = vec4[flower4Size.x * flower4Size.y](
@@ -399,11 +399,11 @@
                             vec4(0.1059, 0.3333, 0.0863, 1.0), vec4(0.1137, 0.3882, 0.1137, 1.0)
                         );
                         vec4 flower5Pixels[flower5Size.x * flower5Size.y] = vec4[flower5Size.x * flower5Size.y](
-                            vec4(0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0), vec4(0),
-                            vec4(0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.9137, 0.5882, 0.9647, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0),
+                            vec4(0.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.0), vec4(0.0),
+                            vec4(0.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.9137, 0.5882, 0.9647, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0),
                             vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.9137, 0.5882, 0.9647, 1.0), vec4(0.8667, 0.2627, 0.9569, 1.0), vec4(0.9137, 0.5882, 0.9647, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0),
-                            vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.9137, 0.5882, 0.9647, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0),
-                            vec4(0), vec4(0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0)
+                            vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.9137, 0.5882, 0.9647, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.0),
+                            vec4(0.0), vec4(0.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.6627, 0.4118, 0.7373, 1.0), vec4(0.0)
                         );
 
                         for (int i = 1; i <= FLOWER_AMOUNT; i++) {

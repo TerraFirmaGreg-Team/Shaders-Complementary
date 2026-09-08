@@ -1,7 +1,3 @@
-#ifdef MULTICOLORED_BLOCKLIGHT
-    #define OLD_SSBL_ERROR
-#endif
-
 #ifdef MC_ANISOTROPIC_FILTERING
     #define OPTIFINE_AF_ERROR
 #endif
@@ -43,7 +39,9 @@
 #endif
 
 #if COLORED_LIGHTING_INTERNAL > 0
-    #define COORDINATES_ACT_ERROR
+    #if IRIS_VERSION < 11103 && !defined EUPHORIA_PATCHES_AT_MIDBLOCK_FIX
+        #define COORDINATES_ACT_ERROR
+    #endif
     #define SHADOWDISTANCE_ACT_ERROR
 #endif
 
@@ -86,12 +84,16 @@
 vec3 textColor = vec3(0.0);
 float animation = min(starter * 0.3, 0.1) * 10.0;
 
+float animationDismissingTime = 4.5;
+#ifdef EUPHORIA_PATCHES_FIRST_LOADED
+    animationDismissingTime = 25.0;
+#endif
+float timeRemainingUntilDismissing = max(0.0, animationDismissingTime - frameTimeCounter);
+
 #ifdef MULTIPLE_LOD_MODS_ERROR
         #include "/lib/textRendering/error_multiple_lod_mods.glsl"
 #elif defined OLD_VERSION_SSBL_ERROR
     #include "/lib/textRendering/old_version_ssbl_error.glsl"
-#elif defined OLD_SSBL_ERROR
-    #include "/lib/textRendering/old_ssbl_error.glsl"
 #elif defined OPTIFINE_AF_ERROR
     #include "/lib/textRendering/error_optifine_af.glsl"
 #elif defined APPLE_ACT_ERROR
@@ -122,6 +124,8 @@ float animation = min(starter * 0.3, 0.1) * 10.0;
     #include "/lib/textRendering/error_old_photonics.glsl"
 #elif defined PLAYER_REFLECTION_3D_LAYERS_ERROR
     #include "/lib/textRendering/error_player_reflection_3d_layers.glsl"
+#elif defined EUPHORIA_PATCHES_NEOCULUS_WARNING
+    #include "/lib/textRendering/error_neoculus.glsl"
 #elif defined NEW_EUPHORIA_PATCHES_UPDATE
     #include "/lib/textRendering/new_Euphoria_Version.glsl"
 #elif USE_TEXTURE_PALETTE > 0 && defined PALETTE_SWAP

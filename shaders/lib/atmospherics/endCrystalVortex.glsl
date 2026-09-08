@@ -9,15 +9,19 @@ const float vortex_cylinderRadius = 3.0;
 const float vortex_ballRadius = 5.0;
 const float death_radius = 70.0;
 
-#ifndef INCLUDE_ENDER_BEAMS
-    #if defined GBUFFERS_WATER || defined VOXY_PATCH
-        float vlFactor = 0.5;
-    #endif
-#endif
-vec3 beamPurple = normalize(endColorBeam * endColorBeam * endColorBeam) * (2.5 - 1.0 * vlFactor) * E_BEAM_I;
+vec3 beamPurple = baseBeamPurple * (2.5 - 1.0 * vlFactor);
 
 vec3 endDragonColM = sqrt(endOrangeCol);
 vec3 beamColM = sqrt(beamPurple);
+
+const float endCrystalVoxelSize = 8.0 / END_CRYSTAL_VOXEL_PIXEL;
+
+vec3 VoxelizeEndCrystalPos(vec3 relPos) {
+    #if END_CRYSTAL_VOXEL_PIXEL == 0
+        return relPos;
+    #endif
+    return (floor(relPos / endCrystalVoxelSize) + 0.5) * endCrystalVoxelSize;
+}
 
 float GetBallRadius(float state) {
     return vortex_ballRadius * (1.0 + 4.0 * sqrt(1.0 - state));
@@ -34,6 +38,7 @@ float VortexWidth(float x, float ballRadius) {
 }
 
 vec4 SampleEndCrystalVortex(vec3 relPos, vec2 state, vec2 noiseOffset) {
+    relPos = VoxelizeEndCrystalPos(relPos);
     float thisBallRadius = GetBallRadius(state.x);
 
     float beamFactor = smoothstep(-thisBallRadius, thisBallRadius, relPos.y);
@@ -41,7 +46,7 @@ vec4 SampleEndCrystalVortex(vec3 relPos, vec2 state, vec2 noiseOffset) {
     vec2 horizontalScaledPos = featureWidth > 0.0 ? relPos.xz / featureWidth : vec2(2.0);
     float featureDist = length(horizontalScaledPos);
     if (length(relPos.xz) > featureWidth) {
-        return vec4(0);
+        return vec4(0.0);
     }
     float beamStrength = 2.5 * beamFactor * (cos(featureDist * 3.1416) * 0.5 + 0.5) * pow2(max(0.0, 1 - pow2(0.005 / (0.9 * state.x + 0.1) / pow2(pow2(state.y)) * relPos.y))) * state.x;
     float spiralStrength = 200 * beamFactor * pow(featureDist, 7) * pow2(1.0 - featureDist) * pow2(max(0.0, 1 - pow2(0.02 / (0.6 * state.x * state.x + 0.4) / state.y * relPos.y)));
@@ -65,13 +70,13 @@ vec4 SingleEndCrystalVortex(vec3 start, vec3 direction, vec3 center, vec2 state,
     vec3 closestPos = start + closestProgress * direction;
     float closestDist = length(closestPos.xz - center.xz);
     if (closestDist > thisBallRadius) {
-        return vec4(0);
+        return vec4(0.0);
     }
     float startProgress = closestProgress - sqrt((thisBallRadius * thisBallRadius - closestDist * closestDist)) * invHorizontalDirLen;
     float endProgress = min(1.0, 2 * closestProgress - startProgress);
     startProgress = max(0.0, startProgress);
     vec2 noiseOffset = (center.xz + cameraPosition.xz + vec2(3.0, 1.6) * frameTimeCounter) * 0.005;
-    vec4 colour = vec4(0);
+    vec4 colour = vec4(0.0);
     float dist = startProgress + dither * invHorizontalDirLen * stepSize;
     for (int k = 0; k < 100; k++) {
         if (dist > endProgress) break;
@@ -90,6 +95,7 @@ float EndCrystalBeamWidth(float x, float len) {
 }
 
 vec4 SampleEndCrystalBeam(vec3 relPos, float len) {
+    relPos = VoxelizeEndCrystalPos(relPos);
     float beamWidth = EndCrystalBeamWidth(relPos.x, len);
 
     if (beamWidth > 0.0001) {
@@ -98,7 +104,7 @@ vec4 SampleEndCrystalBeam(vec3 relPos, float len) {
 
         relPos.yz /= beamWidth;
         float strength = 0.0;
-        vec3 healBeamColor = vec3(0);
+        vec3 healBeamColor = vec3(0.0);
         for (int k = 0; k < 3; k++) {
             vec2 noiseCoords = vec2(0.2 / noiseTextureResolution * relPos.x, 0 + vec2(k, 6 * k) / noiseTextureResolution);
             vec4 zapNoise0 = texture2DLod(noisetex, noiseCoords + floor(8.0 * noisyTime) / noiseTextureResolution, 0.0);
@@ -139,12 +145,12 @@ vec4 EndCrystalBeam(vec3 start, vec3 direction, vec3 startPos, vec3 endPos, floa
     vec3 closestPos = start + closestProgress * direction;
     float closestDist = length(closestPos.yz - startPos.yz);
     if (closestDist > healing_boundRadius) {
-        return vec4(0);
+        return vec4(0.0);
     }
     float startProgress = closestProgress - sqrt((healing_boundRadius * healing_boundRadius - closestDist * closestDist)) * invHorizontalDirLen;
     float endProgress = min(1.0, 2 * closestProgress - startProgress);
     startProgress = max(0.0, startProgress);
-    vec4 colour = vec4(0);
+    vec4 colour = vec4(0.0);
     float dist = startProgress + dither * invHorizontalDirLen * stepSize;
     for (int k = 0; k < 100; k++) {
         if (dist > endProgress) break;
@@ -159,6 +165,7 @@ float GetDragonDeathFactor(float dragonDeathTime) {
 }
 
 vec4 SampleDeathBuildup(vec3 relPos, float dragonDeathTime) {
+    relPos = VoxelizeEndCrystalPos(relPos);
     float effectFactor = GetDragonDeathFactor(dragonDeathTime);
     float effectRadius = death_radius * effectFactor;
     float sizeNoiseFactor = 1.0 + 0.3 * texture2DLod(noisetex, vec2(0.2, dragonDeathTime * 5.0 / noiseTextureResolution), 0.0).r;
@@ -177,7 +184,7 @@ vec4 SampleDeathBuildup(vec3 relPos, float dragonDeathTime) {
 vec4 DragonDeathAnimation(vec3 start, vec3 direction, vec3 dragonPos, float dragonDeathTime, float dragonDeathFactor, float dither) {
     float dirLen = length(direction);
     float closestProgress = dot(dragonPos - start, direction) / pow2(dirLen);
-    vec4 colour = vec4(0);
+    vec4 colour = vec4(0.0);
     if (dragonDeathFactor >= 0.99) {
         float effectRadius = death_radius * GetDragonDeathFactor(dragonDeathTime);
         vec3 closestPos = start + closestProgress * direction;
@@ -203,7 +210,7 @@ vec4 DragonDeathAnimation(vec3 start, vec3 direction, vec3 dragonPos, float drag
 }
 
 vec4 EndCrystalVortices(vec3 start, vec3 direction, float dither) {
-    vec4 color = vec4(0);
+    vec4 color = vec4(0.0);
     #if END_CRYSTAL_VORTEX_INTERNAL / 2 == 1 || DRAGON_DEATH_EFFECT_INTERNAL > 0
         ivec4 rawDragonPos = ivec4(
             texelFetch(endcrystal_sampler, ivec2(35, 5), 0).r,

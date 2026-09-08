@@ -159,7 +159,7 @@ vec3 purkinjeShift(vec3 rgb, vec4 texture6, vec3 playerPos, float lViewPos, floa
     #endif
     float renderDistanceFade = mix(0, lViewPos * 2.5 / dynamicFar, distanceFadeSetting * (1.0 - lightFogFactor));
     if (isEyeInWater == 1) renderDistanceFade = lViewPos * 7.0 / dynamicFar;
-    float nightCaveDesaturation = NIGHT_CAVE_DESATURATION * 0.1;
+    float nightCaveDesaturation = max0(NIGHT_CAVE_DESATURATION * 0.1 - inSulfurCaves);
 
     float skyLightFactor = texture6.b;
 
@@ -381,7 +381,7 @@ void main() {
 
     /* DRAWBUFFERS:35 */
     gl_FragData[0] = vec4(color, 1.0);
-    gl_FragData[1] = vec4(vec3(0), texture5.a);
+    gl_FragData[1] = vec4(vec3(0.0), texture5.a);
 }
 
 #endif

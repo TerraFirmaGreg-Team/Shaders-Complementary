@@ -13,6 +13,8 @@
     #include "/lib/misc/distortWorld.glsl"
 #endif
 
+#define CHUNKS_FADE_IN_NO_FRAG_MOD_INJECT
+
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
 
@@ -200,11 +202,11 @@ void main() {
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, 0.5,
                worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, noVanillaAO,
                centerShadowBias, subsurfaceMode, smoothnessG, highlightMult, emission, purkinjeOverwrite, false,
-               enderDragonDead);
+               enderDragonDead, vec3(1.0));
 
     /* DRAWBUFFERS:06 */
     gl_FragData[0] = color;
-    gl_FragData[1] = gl_FragData[1] = vec4(smoothnessG, 0.0, 0.0, lmCoordM.x + clamp01(purkinjeOverwrite) + clamp01(emission));
+    gl_FragData[1] = vec4(smoothnessG, 0.0, 0.0, lmCoordM.x + clamp01(purkinjeOverwrite) + clamp01(emission));
     #ifdef SS_BLOCKLIGHT
         /* DRAWBUFFERS:069 */
         gl_FragData[2] = vec4(lightAlbedo, 0.0);

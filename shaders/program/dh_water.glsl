@@ -11,6 +11,8 @@
     #include "/lib/misc/distortWorld.glsl"
 #endif
 
+#define CHUNKS_FADE_IN_NO_FRAG_MOD_INJECT
+
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
 
@@ -46,7 +48,7 @@ vec2 lmCoordM = lmCoord;
     vec3 lightVec = sunVec;
 #endif
 
-#if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && WATER_MAT_QUALITY >= 2 || defined GENERATED_NORMALS || defined CUSTOM_PBR
+#if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && !defined LOW_QUALITY_WATER_MATERIAL || defined GENERATED_NORMALS || defined CUSTOM_PBR
     mat3 tbnMatrix = mat3(
         eastVec.x, northVec.x, normal.x,
         eastVec.y, northVec.y, normal.y,
@@ -77,7 +79,7 @@ float vlFactor = 0.0;
 #endif
 
 #if WATER_REFLECT_QUALITY >= 0
-    #if defined SKY_EFFECT_REFLECTION && defined OVERWORLD
+    #if defined SKY_EFFECT_REFLECTION_TRANSLUCENT && defined OVERWORLD
         #include "/lib/atmospherics/stars.glsl"
         #if NIGHT_NEBULAE == 1
             #include "/lib/atmospherics/nightNebula.glsl"
@@ -111,7 +113,7 @@ void main() {
     vec4 color = glColor;
 
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
-    if (texture2D(depthtex1, screenPos.xy).r < 1.0) discard;
+    if (texture2D(depthtex0, screenPos.xy).r < 1.0) discard;
     float lViewPos = length(playerPos);
 
     float dither = Bayer64(gl_FragCoord.xy);
@@ -184,7 +186,7 @@ void main() {
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, 0.5,
                worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, noVanillaAO,
                centerShadowBias, subsurfaceMode, smoothnessG, highlightMult, emission, purkinjeOverwrite, isLightSource,
-               enderDragonDead);
+               enderDragonDead, vec3(1.0));
 
     #ifdef SS_BLOCKLIGHT
         vec3 normalizedColor = normalize(color.rgb);

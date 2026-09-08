@@ -90,6 +90,6 @@ void GenerateNormals(inout vec3 normalM, vec3 color) {
     normalMap.xy *= vec2(normalMult * sqrt(GENERATED_NORMAL_RES / 128.0)) * (originalOffsetR / offsetR);
     normalMap.xy = clamp(normalMap.xy, vec2(-1.0), vec2(1.0));
 
-        if (normalMap.xy != vec2(0.0, 0.0))
-            normalM = clamp(normalize(normalMap * tbnMatrix), vec3(-1.0), vec3(1.0));
+    if (normalMap.xy != vec2(0.0, 0.0))
+        normalM = clamp(normalize(normalMap * tbnMatrix), vec3(-1.0), vec3(1.0));
 }

@@ -80,8 +80,6 @@
 #endif
 #ifdef HIGH_QUALITY_CLOUDS
 #endif
-#ifdef DAYLIGHT_CYCLE_COMPAT
-#endif
 #ifdef EMISSIVE_SOUL_SAND
 #endif
 #ifdef SAND_NOISE
@@ -127,4 +125,6 @@
 #ifdef NO_WAVING_INDOORS
 #endif
 #ifdef SCREEN_DITHERING
+#endif
+#ifdef MCWIND_USER
 #endif

@@ -22,24 +22,23 @@
 
     // Computes axis-aligned screen space offset to texel center.
     // https://forum.unity.com/threads/the-quest-for-efficient-per-texel-lighting.529948/#post-7536023
+    // Later tweaked by plazmal
     vec2 ComputeTexelOffset(vec2 uv, vec4 texelSize) {
-        // 1. Calculate how much the texture UV coords need to shift to be at the center of the nearest texel.
-        vec2 uvCenter = (floor(uv * texelSize.zw) + 0.5) * texelSize.xy;
-        vec2 dUV = uvCenter - uv;
+        vec2 dUV = (floor(uv * texelSize.zw) + 0.5) * texelSize.xy - uv;
 
-        // 2. Calculate how much the texture coords vary over fragment space.
-        //     This essentially defines a 2x2 matrix that gets texture space (UV) deltas from fragment space (ST) deltas.
         vec2 dUVdS = dFdx(uv);
         vec2 dUVdT = dFdy(uv);
 
-        if (abs(dUVdS) + abs(dUVdT) == vec2(0.0)) return vec2(0.0);
+        float a = dot(dUVdS, dUVdS);
+        float b = dot(dUVdS, dUVdT);
+        float c = dot(dUVdT, dUVdT);
 
-        // 3. Invert the texture delta from fragment delta matrix. Where the magic happens.
-        mat2x2 dSTdUV = mat2x2(dUVdT[1], -dUVdT[0], -dUVdS[1], dUVdS[0]) * (1.0 / (dUVdS[0] * dUVdT[1] - dUVdT[0] * dUVdS[1]));
+        float det = a * c - b * b;
+        if (det <= a * c * 0.01) return vec2(0.0, 0.0);
 
-        // 4. Convert the texture delta to fragment delta.
-        vec2 dST = dUV * dSTdUV;
-        return dST;
+        float inv = 1.0 / det;
+        vec2 proj = vec2(dot(dUV, dUVdS), dot(dUV, dUVdT));
+        return vec2(c * proj.x - b * proj.y, a * proj.y - b * proj.x) * inv;
     }
 
     vec2 ComputeTexelOffset(sampler2D tex, vec2 uv) {
