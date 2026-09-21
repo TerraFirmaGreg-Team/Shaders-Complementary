@@ -1,2 +1,2 @@
-// Euphoria Patches 1.9.3
+// Euphoria Patches 1.8.6
 // Developed by SpacEagle17

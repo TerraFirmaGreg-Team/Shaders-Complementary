@@ -55,7 +55,7 @@ if (blockEntityId < 5028) {
                 #ifdef COATED_TEXTURES
                     noiseFactor = 0.66;
                 #endif
-            } else /*if (blockEntityId == 5016)*/ { // Shulker Box+, Head+, Bed+
+            } else /*if (blockEntityId == 5016)*/ { // Shulker Box+, Banner+, Head+, Bed+
                 noSmoothLighting = true;
                 #ifdef COATED_TEXTURES
                     noiseFactor = 0.2;
@@ -81,7 +81,7 @@ if (blockEntityId < 5028) {
             }
         }
     }
-} else {
+} else if (blockEntityId < 5056 || blockEntityId == 10548) {
     if (blockEntityId < 5044) {
         if (blockEntityId < 5036) {
             if (blockEntityId == 5028) { // Bell
@@ -94,12 +94,8 @@ if (blockEntityId < 5028) {
                 #include "/lib/materials/specificMaterials/terrain/copperBlock.glsl"
             }
         } else {
-            if (blockEntityId == 5036) { // Banner+
-                noSmoothLighting = true;
-                #ifdef COATED_TEXTURES
-                    noiseFactor = 0.2;
-                #endif
-                noGeneratedNormals = true;
+            if (blockEntityId == 5036) { //
+
             } else /*if (blockEntityId == 5040)*/ { //
 
             }
@@ -124,4 +120,8 @@ if (blockEntityId < 5028) {
             }
         }
     }
+}
+ else if (blockEntityId != 65535) {
+    // block.5056
+    
 }

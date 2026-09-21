@@ -101,7 +101,13 @@ void main() {
         materialMask = OSIEBCA * 252.0; // Selection Outline
 
         #ifdef SELECT_OUTLINE_AUTO_HIDE
-            if (heldItemId == 40008) { // Main hand holding air
+            if (heldItemId == 40008 && (
+                heldItemId2 == 40008 ||
+                heldItemId2 == 45060 ||
+                heldItemId2 == 45108 ||
+                heldItemId2 >= 44000 &&
+                heldItemId2 < 45000)) {
+                // Both hands hold nothing or only a light/totem/shield in off-hand
                 discard;
             }
         #endif

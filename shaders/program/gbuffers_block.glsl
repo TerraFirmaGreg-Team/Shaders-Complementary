@@ -31,9 +31,10 @@ in vec3 atMidBlock;
 
 in vec4 glColor;
 
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0
+#if defined IS_IRIS || defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0
     in vec2 signMidCoordPos;
     flat in vec2 absMidCoordPos;
+    flat in vec2 midCoord;
 #endif
 
 #ifdef ACT_GROUND_LEAVES_FIX
@@ -136,10 +137,6 @@ float shadowTime = shadowTimeVar2 * shadowTimeVar2;
     #include "/lib/misc/shockwave.glsl"
 #endif
 
-#ifdef GBUFFERS_BLOCK_TRANSLUCENT
-    #include "/lib/atmospherics/fog/mainFog.glsl"
-#endif
-
 //Program//
 void main() {
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
@@ -161,10 +158,18 @@ void main() {
     #endif
     vec3 colorP = color.rgb;
     color *= glColor;
+    
+    float luminance = GetLuminance(color.rgb);
 
     float dither = Bayer64(gl_FragCoord.xy);
     #ifdef TAA
         dither = fract(dither + goldenRatio * mod(float(frameCounter), 3600.0));
+    #endif
+
+    #ifdef DISTANT_HORIZONS
+        if (getDHFadeFactor(playerPos) < dither) {
+            discard;
+        }
     #endif
 
     float overlayNoiseIntensity = 1.0;
@@ -182,12 +187,9 @@ void main() {
         sqrtAtmColorMult = sqrt(atmColorMult);
     #endif
 
-    bool noSmoothLighting = false, noDirectionalShading = false, noGeneratedNormals = false;
+    bool noSmoothLighting = false, noDirectionalShading = false;
     float smoothnessD = 0.0, skyLightFactor = 0.0, materialMask = 0.0, enderDragonDead = 1.0;
     float smoothnessG = 0.0, highlightMult = 1.0, emission = 0.0, noiseFactor = 1.0;
-    #ifdef PHOTONICS_LIGHTING
-        vec3 oldAlbedo = vec3(0.0);
-    #endif
     vec2 lmCoordM = lmCoord;
     vec3 normalM = VdotN > 0.0 ? -normal : normal; // Inverted Normal Workaround
     vec3 geoNormal = normalM, shadowMult = vec3(1.0);
@@ -211,6 +213,10 @@ void main() {
 
     #ifdef IPBR
         #include "/lib/materials/materialHandling/blockEntityIPBR.glsl"
+
+        #ifdef IS_IRIS
+            #include "/lib/materials/materialHandling/irisIPBR.glsl"
+        #endif
 
         #if IPBR_EMISSIVE_MODE != 1
             emission = GetCustomEmissionForIPBR(color, emission);
@@ -257,7 +263,7 @@ void main() {
     #endif
 
     #ifdef GENERATED_NORMALS
-        if (!noGeneratedNormals) GenerateNormals(normalM, colorP);
+        GenerateNormals(normalM, colorP);
     #endif
 
     #ifdef COATED_TEXTURES
@@ -271,10 +277,6 @@ void main() {
     emission *= EMISSION_MULTIPLIER;
 
     bool isLightSource = lmCoord.x > 0.99;
-
-    #ifdef PHOTONICS_LIGHTING
-        oldAlbedo = color.rgb;
-    #endif
 
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, 0.5,
                worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, false,
@@ -294,31 +296,8 @@ void main() {
         ColorCodeProgram(color, blockEntityId);
     #endif
 
-    #ifdef GBUFFERS_BLOCK_TRANSLUCENT
-        float VdotU = dot(nViewPos, upVec);
-        float VdotS = dot(nViewPos, sunVec);
-
-        float skyFade = 0.0;
-        float prevAlpha = color.a;
-        color.a = 1.0;
-        DoFog(color, skyFade, lViewPos, playerPos, VdotU, VdotS, dither, false, 0.0);
-        float fogAlpha = color.a;
-        color.a = prevAlpha * (1.0 - skyFade);
-    #endif
-
     #ifdef IRIS_FEATURE_FADE_VARIABLE
         skyLightFactor *= 0.5;
-    #endif
-
-    #ifdef PHOTONICS_LIGHTING
-        vec4 phAlbedoOut = vec4(oldAlbedo, 1.0);
-        vec3 playerPosDelta = vec3(0.0);
-        #ifdef DO_PIXELATION_EFFECTS
-            // Compute snap delta here where dFdx/dFdy are valid (same triangle in 2x2 quad)
-            // Store world-space delta so post-passes can apply it without any derivatives
-            vec2 pixelationOffset = ComputeTexelOffset(tex, texCoord);
-            playerPosDelta = TexelSnap(playerPos, pixelationOffset) - playerPos;
-        #endif
     #endif
 
     /* DRAWBUFFERS:036 */
@@ -334,22 +313,9 @@ void main() {
             /* DRAWBUFFERS:03649 */
             gl_FragData[4] = vec4(lightAlbedo, 0.0);
         #endif
-
-        #ifdef PHOTONICS_LIGHTING
-            /* RENDERTARGETS:0,3,6,4,10,11,20 */
-            gl_FragData[4] = phAlbedoOut;
-            gl_FragData[5] = vec4(playerPosDelta, 1.0);
-            gl_FragData[6] = vec4(normalize((gbufferModelViewInverse * vec4(normal, 0.0f)).xyz), 1.0);
-        #endif
     #elif defined SS_BLOCKLIGHT
         /* DRAWBUFFERS:0369 */
         gl_FragData[3] = vec4(lightAlbedo, 0.0);
-    #elif defined PHOTONICS_LIGHTING
-        /* RENDERTARGETS:0,3,6,4,10,11,20 */
-        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, 1.0);
-        gl_FragData[4] = phAlbedoOut;
-        gl_FragData[5] = vec4(playerPosDelta, 1.0);
-        gl_FragData[6] = vec4(normalize((gbufferModelViewInverse * vec4(normal, 0.0f)).xyz), 1.0);
     #endif
 }
 
@@ -377,9 +343,10 @@ out vec4 glColor;
 //     flat out ivec2 pixelTexSize;
 // #endif
 
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0
+#if defined IS_IRIS || defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0
     out vec2 signMidCoordPos;
     flat out vec2 absMidCoordPos;
+    flat out vec2 midCoord;
 #endif
 
 #if defined GENERATED_NORMALS || defined CUSTOM_PBR
@@ -393,7 +360,7 @@ out vec4 glColor;
 #endif
 
 //Attributes//
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0
+#if defined IS_IRIS || defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0
     attribute vec4 mc_midTexCoord;
 #endif
 
@@ -413,7 +380,7 @@ attribute vec4 mc_Entity;
     #include "/lib/antialiasing/jitter.glsl"
 #endif
 
-#ifdef WAVE_EVERYTHING
+#if defined WAVE_EVERYTHING || defined WAVING_ANYTHING_TERRAIN
     #include "/lib/materials/materialMethods/wavingBlocks.glsl"
 #endif
 
@@ -456,7 +423,7 @@ void main() {
         }*/
     #endif
 
-    #if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0
+    #if defined IS_IRIS || defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0
         if (blockEntityId == 5008) { // Chest
             float fractWorldPosY = fract((gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex).y + cameraPosition.y);
             if (fractWorldPosY > 0.56 && 0.57 > fractWorldPosY) gl_Position.z -= 0.0001;
@@ -473,10 +440,8 @@ void main() {
     // #endif
 
     #if defined GENERATED_NORMALS || defined CUSTOM_PBR
-        vec3 rawBinormal = gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w;
-        binormal = rawBinormal * inversesqrt(max(dot(rawBinormal, rawBinormal), 1e-8));
-        vec3 rawTangent = gl_NormalMatrix * at_tangent.xyz;
-        tangent = rawTangent * inversesqrt(max(dot(rawTangent, rawTangent), 1e-8));
+        binormal = normalize(gl_NormalMatrix * cross(at_tangent.xyz, gl_Normal.xyz) * at_tangent.w);
+        tangent  = normalize(gl_NormalMatrix * at_tangent.xyz);
     #endif
 
     #ifdef POM
@@ -492,7 +457,7 @@ void main() {
         vTexCoordAM.xy  = min(texCoord, midCoord - texMinMidCoord);
     #endif
 
-    #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE || defined WAVE_EVERYTHING
+    #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE || defined WAVE_EVERYTHING || defined WAVING_ANYTHING_TERRAIN
         vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
         #ifdef MIRROR_DIMENSION
             doMirrorDimension(position);
@@ -502,6 +467,9 @@ void main() {
         #endif
         #ifdef WAVE_EVERYTHING
             DoWaveEverything(position.xyz);
+        #endif
+        #ifdef WAVING_ANYTHING_TERRAIN
+            DoWave_BlockEntity(position.xyz, blockEntityId);
         #endif
         gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
     #endif

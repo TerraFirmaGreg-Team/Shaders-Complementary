@@ -1,3 +1,4 @@
+animation = min(starter * 0.3, 0.1) * 10.0;
 beginTextM(2, vec2(510, 413));
     text.bgCol = vec4(0.0, 0.0, 0.0, 0.5);
     text.fgCol = vec4(1.0, 0.0, 1.0, 1.0);
@@ -12,6 +13,6 @@ beginTextM(2, vec2(510, 413));
     text.fgCol = vec4(1.0, 1.0, 1.0, 1.0);
     printString((_D, _o, _w, _n, _l, _o, _a, _d, _colon, _space, _e, _u, _p, _h, _o, _r, _i, _a, _p, _a, _t, _c, _h, _e, _s, _dot, _c, _o, _m, _slash, _d, _o, _w, _n, _l, _o, _a, _d));
     printLine();
-    textColor = color.rgb;
+    vec3 textColor = color.rgb;
 endText(textColor);
 color.rgb = mix(textColor, color.rgb, animation);

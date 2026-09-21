@@ -23,10 +23,6 @@ in vec3 playerPos;
 
 flat in vec4 glColor;
 
-#ifdef IMPROVED_RAIN
-    in float lPos;
-#endif
-
 //Pipeline Constants//
 
 //Common Variables//
@@ -47,13 +43,8 @@ float sunVisibility2 = sunVisibility * sunVisibility;
 //Program//
 void main() {
     vec4 color = texture2D(tex, texCoord);
-
-    #ifdef IMPROVED_RAIN
-        vec4 sampleRain = texture2D(tex, texCoord * vec2(2.0, 1.0));
-        if (sampleRain.r + sampleRain.g < 1.5 && (sampleRain.a > 0.0 || color.r + color.g < 1.5)) color = sampleRain;
-    #endif
-
     color *= glColor;
+
     if (color.a < 0.1 || isEyeInWater == 3) discard;
 
     #ifdef NO_RAIN_ABOVE_CLOUDS
@@ -63,62 +54,33 @@ void main() {
     if (color.r + color.g < 1.5) color.a *= rainTexOpacity;
     else color.a *= snowTexOpacity;
 
-    int glitterFactor = 0;
+    color.rgb = sqrt3(color.rgb) * (blocklightCol * 2.0 * lmCoord.x + (ambientColor + 0.2 * lightColor) * lmCoord.y * (0.6 + 0.3 * sunFactor));
+
+    color.rgb *= vec3(WEATHER_TEX_R, WEATHER_TEX_G, WEATHER_TEX_B);
+
     #if GLITTER_RAIN > 0
-        int rainbowGlitterOn = 1;
+        float rainbowGlitterOn = 1.0;
         #if GLITTER_RAIN == 1
-            rainbowGlitterOn = 0;
+            rainbowGlitterOn = 0.0;
             float randomRainbowGlitterTime = 24000 * hash1(worldDay * 3); // Effect happens randomly throughout the day
             int rainbowGlitterEffect = (int(hash1(worldDay / 2)) % (2 * 24000)) + int(randomRainbowGlitterTime);
             if (worldTime > rainbowGlitterEffect && worldTime < rainbowGlitterEffect + 400) { // 400 in ticks - 20s, how long the effect will be on
-                rainbowGlitterOn = 1;
+                rainbowGlitterOn = 1.0;
             }
         #endif
 
-        glitterFactor = int(step(0.7, Noise3D((playerPos + cameraPosition) * 0.004 + frameTimeCounter * 0.02)) * step(0.1, rainFactor) * rainbowGlitterOn);
+        color.rgb = mix(color.rgb, vec3(0.752, 0.752, 0.752) * 5.0, mix(0.0, step(0.7, Noise3D((playerPos + cameraPosition) * 0.004 + frameTimeCounter * 0.02)), rainbowGlitterOn * rainFactor));
     #endif
 
-    #ifndef IMPROVED_RAIN
-        color.rgb = sqrt3(color.rgb) * (blocklightCol * 2.0 * lmCoord.x + (ambientColor + 0.2 * lightColor) * lmCoord.y * (0.6 + 0.3 * sunFactor));
+    #ifdef COLOR_CODED_PROGRAMS
+        ColorCodeProgram(color, -1);
+    #endif
 
-        color.rgb *= vec3(WEATHER_TEX_R, WEATHER_TEX_G, WEATHER_TEX_B);
-
-        #if GLITTER_RAIN > 0
-            color.rgb += glitterFactor * (vec3(0.752) * 5.0 - color.rgb);
-        #endif
-
-        #ifdef COLOR_CODED_PROGRAMS
-            ColorCodeProgram(color, -1);
-        #endif
-
-        /* DRAWBUFFERS:0 */
-        gl_FragData[0] = color;
-        #ifdef PBR_REFLECTIONS
-            /* DRAWBUFFERS:04 */
-            gl_FragData[1] = vec4(0.0);
-        #endif
-    #else
-        vec4 data;
-
-        // Distance to camera (max 100 blocks)
-        data.r = lPos / 100.0;
-
-        int rainBit = int(color.r + color.g < 1.5);
-
-        // Pack bits:
-        // bit 0 = is rain (1) or snow (0)
-        // bit 1 = glitter
-        int packedRain = rainBit | (glitterFactor << 1);
-        data.g = float(packedRain) / 255.0;
-
-        // Blocklight
-        data.b = lmCoord.x;
-
-        // Opacity
-        data.a = color.a;
-
-        /* RENDERTARGETS: 12 */
-        gl_FragData[0] = data;
+    /* DRAWBUFFERS:0 */
+    gl_FragData[0] = color;
+    #ifdef PBR_REFLECTIONS
+        /* DRAWBUFFERS:04 */
+        gl_FragData[1] = vec4(0);
     #endif
 }
 
@@ -135,10 +97,6 @@ flat out vec3 upVec, sunVec;
 out vec3 playerPos;
 
 flat out vec4 glColor;
-
-#ifdef IMPROVED_RAIN
-    out float lPos;
-#endif
 
 //Attributes//
 
@@ -168,11 +126,6 @@ void main() {
     #endif
 
     gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
-
-    #ifdef IMPROVED_RAIN
-        lPos = length(position.xyz);
-        gl_Position.z = 0.0;
-    #endif
 
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
     #ifdef ATLAS_ROTATION
