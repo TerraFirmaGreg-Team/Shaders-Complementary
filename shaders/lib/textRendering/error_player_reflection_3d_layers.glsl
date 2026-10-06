@@ -26,5 +26,7 @@ beginTextM(2, vec2(30, 147));
     printLine();
     printString((_M, _o, _v, _e, _space, _t, _o, _space, _d, _i, _s, _c, _a, _r, _d, _space, _t, _h, _e, _space, _e, _r, _r, _o, _r, _space, _m, _e, _s, _s, _a, _g, _e, _dot));
     printLine();
+    printFloat(timeRemainingUntilDismissing);
+    printString((_space, _s, _e, _c, _o, _n, _d, _space, _r, _e, _m, _a, _i, _n, _i, _n, _g, _space, _u, _n, _t, _i, _l, _space, _b, _e, _i, _n, _g, _space, _a, _b, _l, _e, _space, _t, _o, _space, _d, _i, _s, _m, _i, _s, _s, _space, _t, _h, _e, _space, _e, _r, _r, _o, _r, _space, _m, _e, _s, _s, _a, _g, _e, _dot));
 endText(textColor);
 color.rgb = mix(textColor, color.rgb, animation);

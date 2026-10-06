@@ -1,16 +1,20 @@
 #if SEASONS == 1
-    #if SEASON_LENGTH >= 24000
-        int seasonLength = SEASON_LENGTH;
+    #ifdef EUPHORIA_PATCHES_IS_SEASONS_MOD_INSTALLED
+        int seasonLength = euphoriaPatchesSeasonDuration;
+        float YearLoop = mod(float(euphoriaPatchesCurrentSeasonTick - seasonLength), float(euphoriaPatchesTotalSeasonDuration));
     #else
-        int seasonLength = SEASON_LENGTH * 24000;
+        #if SEASON_LENGTH >= 24000
+            int seasonLength = SEASON_LENGTH;
+        #else
+            int seasonLength = SEASON_LENGTH * 24000;
+        #endif
+        float YearLoop = int(worldDay * 24000 + worldTimeSmooth + SEASON_START * seasonLength) % (seasonLength * 4);
     #endif
 
-    float YearLoop = (worldDay * 24000 + worldTime + SEASON_START * seasonLength) % (seasonLength * 4);
-
+    float spring = max(0.0, (1.0 + SEASON_TRANSITION_START)       * (clamp(YearLoop - seasonLength * 3, 0, seasonLength) / seasonLength) - SEASON_TRANSITION_START);
     float summer = max(0.0, (1.0 + SEASON_TRANSITION_START)       * (clamp(YearLoop - seasonLength * 0, 0, seasonLength) / seasonLength) - SEASON_TRANSITION_START);
     float autumn = max(0.0, (1.0 + SEASON_TRANSITION_START * 2.5) * (clamp(YearLoop - seasonLength * 1, 0, seasonLength) / seasonLength) - SEASON_TRANSITION_START * 2.5); // 2.5 to make snow appear sooner
     float winter = max(0.0, (1.0 + SEASON_TRANSITION_START)       * (clamp(YearLoop - seasonLength * 2, 0, seasonLength) / seasonLength) - SEASON_TRANSITION_START);
-    float spring = max(0.0, (1.0 + SEASON_TRANSITION_START)       * (clamp(YearLoop - seasonLength * 3, 0, seasonLength) / seasonLength) - SEASON_TRANSITION_START);
 
     float summerTime = spring - summer + 1.0;
     float autumnTime = summer - autumn;

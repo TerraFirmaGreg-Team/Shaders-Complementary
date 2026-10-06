@@ -9,11 +9,11 @@
 
 #define NETHER_NOISE 0 //[0 1]
 
-//#define END_SMOKE
-
 #define EP_END_FLASH 0 //[0 1 2]
 #ifdef EP_END_FLASH
 #endif
+
+#include "/lib/shaderSettings/blackHole.glsl"
 
 //#define PALETTE_SWAP
 #define PIXELATED_SCREEN_SIZE 0 //[0 8 10 12 14 16 20 24 28 32 48 64]

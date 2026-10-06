@@ -16,6 +16,7 @@
 #include "/lib/shaderSettings/emissionMult.glsl"
 #include "/lib/shaderSettings/wavingBlocks.glsl"
 //#define NIGHT_DESATURATION
+//#define INTENSE_DEEP_DARK
 
 #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
     #include "/lib/misc/distortWorld.glsl"
@@ -46,7 +47,6 @@ in vec3 atMidBlock;
 //     flat in ivec2 pixelTexSize;
 // #endif
 
-flat in vec3 upVec, sunVec, northVec, eastVec;
 in vec3 normal;
 in vec3 vertexPos;
 
@@ -86,6 +86,12 @@ in vec4 glColorRaw;
 #endif
 
 //Common Variables//
+vec3 upVec = normalize(gbufferModelView[1].xyz);
+vec3 eastVec = normalize(gbufferModelView[0].xyz);
+vec3 northVec = normalize(gbufferModelView[2].xyz);
+
+vec3 sunVec = GetSunVector();
+
 float NdotU = dot(normal, upVec);
 float geoNdotU = NdotU;
 float NdotUmax0 = max(NdotU, 0.0);
@@ -270,7 +276,7 @@ void main() {
         #undef GENERATED_NORMALS
         #undef COATED_TEXTURES
         // Photonics raytracing
-        RayJob ray = RayJob(vec3(0), vec3(0), vec3(0), vec3(0), vec3(0), false);
+        RayJob ray = RayJob(vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), false);
         ray.origin = worldPos - world_offset - 0.001f * blockNormal;
         ray.direction = playerPos - gbufferModelViewInverse[3].xyz;
         ray_constraint = ivec3(ray.origin);
@@ -329,7 +335,7 @@ void main() {
 
     int subsurfaceMode = 0;
     bool noSmoothLighting = false, noDirectionalShading = false, noVanillaAO = false, centerShadowBias = false, noGeneratedNormals = false, doTileRandomisation = true;
-    float smoothnessG = 0.0, highlightMult = 1.0, emission = 0.0, noiseFactor = 1.0, snowFactor = 1.0, snowMinNdotU = 0.0, noPuddles = 0.0;
+    float smoothnessG = 0.0, highlightMult = 1.0, emission = 0.0, noiseFactor = 1.0, snowFactor = 1.0, snowMinNdotU = 0.0, noPuddles = 0.0, materialAO = 1.0;
     vec2 lmCoordM = lmCoord;
     #ifdef PHOTONICS_LIGHTING
         vec3 oldAlbedo = vec3(0.0);
@@ -483,13 +489,32 @@ void main() {
         oldAlbedo = color.rgb;
     #endif
 
+    vec3 rawAlbedoM = color.rgb;
+
+    // Tints the direct-light specular highlight for named labPBR metals with their F0 color
+    #ifdef BETTER_LABPBR_REFLECTIONS_INTERNAL
+        int materialMaskIntM = int(materialMask * 255.1);
+        vec3 metalHighlightTintM = (RP_MODE == 3 && materialMaskIntM >= 215 && materialMaskIntM <= 222) ? GetLabPBRMetalF0(materialMaskIntM, rawAlbedoM) : vec3(1.0);
+    #else
+        vec3 metalHighlightTintM = vec3(1.0);
+    #endif
+
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, dither,
                worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, noVanillaAO,
                centerShadowBias, subsurfaceMode, smoothnessG, highlightMult, emission, purkinjeOverwrite, isLightSource,
-               enderDragonDead);
+               enderDragonDead, metalHighlightTintM);
+
+    #ifdef BETTER_LABPBR_AO_INTERNAL
+        float lightExposureM = max(GetLuminance(shadowMult), lmCoordM.x);
+        color.rgb *= mix(materialAO, 1.0, lightExposureM);
+    #endif
 
     #ifdef SS_BLOCKLIGHT
         vec3 lightAlbedo = normalize(color.rgb) * min1(emission);
+
+        #if defined END && END_ROD_COLOR_PROFILE == 0
+            if (mat == 10500) lightAlbedo = vec3(1.0, 0.6078, 0.9); // End Rod
+        #endif
 
         #ifdef COLORED_CANDLE_LIGHT
             if (mat >= 10900 && mat <= 10922) { // Candles:Lit
@@ -555,7 +580,7 @@ void main() {
 
     #if BLOCK_REFLECT_QUALITY >= 2 && RP_MODE != 0
         /* DRAWBUFFERS:064 */
-        gl_FragData[2] = vec4(mat3(gbufferModelViewInverse) * normalM, 1.0);
+        gl_FragData[2] = vec4(mat3(gbufferModelViewInverse) * normalM, clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0);
 
         #ifdef SS_BLOCKLIGHT
             /* DRAWBUFFERS:0649 */
@@ -573,7 +598,7 @@ void main() {
         gl_FragData[2] = vec4(lightAlbedo, 0.0);
     #elif defined PHOTONICS_LIGHTING
         /* RENDERTARGETS:0,6,4,10,11,20 */
-        gl_FragData[2] = vec4(mat3(gbufferModelViewInverse) * normalM, 1.0);
+        gl_FragData[2] = vec4(mat3(gbufferModelViewInverse) * normalM, clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0);
         gl_FragData[3] = phAlbedoOut;
         gl_FragData[4] = vec4(playerPosDelta, 1.0);
         gl_FragData[5] = vec4(normalize((gbufferModelViewInverse * vec4(normal_PH, 0.0f)).xyz), 1.0);
@@ -605,7 +630,6 @@ out vec3 atMidBlock;
 //     flat out ivec2 pixelTexSize;
 // #endif
 
-flat out vec3 upVec, sunVec, northVec, eastVec;
 out vec3 normal;
 out vec3 vertexPos;
 
@@ -674,10 +698,6 @@ void main() {
     glColor = glColorRaw;
 
     normal = normalize(gl_NormalMatrix * gl_Normal);
-    upVec = normalize(gbufferModelView[1].xyz);
-    eastVec = normalize(gbufferModelView[0].xyz);
-    northVec = normalize(gbufferModelView[2].xyz);
-    sunVec = GetSunVector();
 
     #ifdef GBUFFERS_VOXELS
         blockNormal = gl_Normal;
@@ -699,10 +719,6 @@ void main() {
             if (isCross(gl_Normal) < 0.5) mat = 10005; // First detect cross models
             else if (infnorm(gl_Normal) < 0.99) mat = 10031; // Then detect extruding faces, but ONLY if it's not already detected as cross
         }
-    #endif
-
-    #if ANISOTROPIC_FILTER > 0
-        if (mc_Entity.y > 0.5 && dot(normal, upVec) < 0.999) absMidCoordPos = vec2(0.0); // Fix257062
     #endif
 
     vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
@@ -772,6 +788,9 @@ void main() {
     #endif
 
     #if ANISOTROPIC_FILTER > 0
+        vec3 upVec = normalize(gbufferModelView[1].xyz);
+        if (mc_Entity.y > 0.5 && dot(normal, upVec) < 0.999) absMidCoordPos = vec2(0.0); // Fix257062
+
         vec2 spriteRadius = abs(texCoord - mc_midTexCoord.xy);
         vec2 bottomLeft = mc_midTexCoord.xy - spriteRadius;
         vec2 topRight = mc_midTexCoord.xy + spriteRadius;

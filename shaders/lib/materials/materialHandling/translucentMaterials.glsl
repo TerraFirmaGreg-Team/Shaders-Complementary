@@ -15,34 +15,32 @@
     #endif
 
     #if IPBR_EMISSIVE_MODE != 1 && !defined VOXY_PATCH
-        emission = GetCustomEmissionForIPBR(color, emission);
+        emission = GetCustomEmissionForIPBR(color, glColor, emission);
     #endif
 #else
     #ifdef CUSTOM_PBR
         float smoothnessD, materialMaskPh;
-        GetCustomMaterials(color, normalM, lmCoordM, NdotU, shadowMult, smoothnessG, smoothnessD, highlightMult, emission, materialMaskPh, viewPos, lViewPos);
+        GetCustomMaterials(color, normalM, lmCoordM, NdotU, shadowMult, smoothnessG, smoothnessD, highlightMult, emission, materialMaskPh, materialAO, viewPos, lViewPos);
         reflectMult = smoothnessD;
     #endif
 
-    if (mat >= 32000) {
-        if (mat < 32004) { // Water
-            #ifdef SHADER_WATER
-                #include "/lib/materials/specificMaterials/translucents/water.glsl"
-            #endif
-            overlayNoiseIntensity = 0.0;
-            overlayNoiseFresnelMult = 0.0;
-            IPBRMult = 0.0;
-            overlayNoiseAlpha = 0.0;
-        } else if (mat == 30020) { // Nether Portal
-            #ifdef SPECIAL_PORTAL_EFFECTS
-                #include "/lib/materials/specificMaterials/translucents/netherPortal.glsl"
-            #endif
-            overlayNoiseIntensity = 0.0;
-        } else if (mat == 32016) { // Beacon
-            overlayNoiseAlpha = 0.8;
-            mossNoiseIntensity = 0.5;
-            sandNoiseIntensity = 0.5;
-        }
+    if (mat == 32000) { // Water
+        #ifdef SHADER_WATER
+            #include "/lib/materials/specificMaterials/translucents/water.glsl"
+        #endif
+        overlayNoiseIntensity = 0.0;
+        overlayNoiseFresnelMult = 0.0;
+        IPBRMult = 0.0;
+        overlayNoiseAlpha = 0.0;
+    } else if (mat == 30020) { // Nether Portal
+        #ifdef SPECIAL_PORTAL_EFFECTS
+            #include "/lib/materials/specificMaterials/translucents/netherPortal.glsl"
+        #endif
+        overlayNoiseIntensity = 0.0;
+    } else if (mat == 32016) { // Beacon
+        overlayNoiseAlpha = 0.8;
+        mossNoiseIntensity = 0.5;
+        sandNoiseIntensity = 0.5;
     }
 
 #endif

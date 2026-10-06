@@ -115,14 +115,13 @@ void main() {
         float dither = Bayer8(gl_FragCoord.xy);
 
         bool isCustomSky;
-        #ifdef SPACE_TRANSITION
-            color.rgb = mix(GetSky(VdotU, VdotS, dither, true, false, isCustomSky, false), vec(0.0), getAtmosphereFadeoutFactor);
-        #else
-            color.rgb = GetSky(VdotU, VdotS, dither, true, false, isCustomSky, false);
-        #endif
-
+        color.rgb = GetSky(VdotU, VdotS, dither, true, false, isCustomSky, false);
         #if defined CUSTOM_SKY_MOD_SUPPORT && MC_VERSION >= 11605
-            if (alphaColor < 1.0 && alphaColor > 0.0 && renderStage != MC_RENDER_STAGE_SKY) color.rgb = glColor.rgb * alphaColor;
+            float mixAlphaFactor = alphaColor;
+            #ifdef EUPHORIA_PATCHES_IS_CAELUM_INSTALLED
+                mixAlphaFactor = 1.0;
+            #endif
+            if (alphaColor < 1.0 && alphaColor > 0.0 && renderStage != MC_RENDER_STAGE_SKY) color.rgb = mix(color.rgb, glColor.rgb * alphaColor, mixAlphaFactor);
         #endif
 
         #ifdef ATM_COLOR_MULTS

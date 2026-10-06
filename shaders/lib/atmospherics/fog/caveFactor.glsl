@@ -6,16 +6,24 @@
     #define CAVE_FOG_I 1.00 //[0.20 0.25 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50 1.55 1.60 1.65 1.70 1.75 1.80 1.85 1.90 1.95 2.0]
 
     float GetCaveFactor() {
-        return clamp(1.0 - cameraPosition.y / oceanAltitude, 0.0, 1.0 - eyeBrightnessM);
+        float caveFactor = clamp(1.0 - cameraPosition.y / oceanAltitude, 0.0, 1.0 - eyeBrightnessM);
+        #ifdef SULFUR_CAVE_FOG
+            caveFactor = mix(caveFactor, 1.0, inSulfurCaves);
+        #endif
+        return caveFactor;
     }
 
     vec3 caveFogColorRaw = vec3(CAVE_FOG_R_NEW, CAVE_FOG_G_NEW, CAVE_FOG_B_NEW) * CAVE_FOG_I;
     #if CAVE_LIGHTING < 100
-        vec3 caveFogColor = caveFogColorRaw * 0.7;
+        vec3 caveFogColorRaw2 = caveFogColorRaw * 0.7;
     #elif CAVE_LIGHTING == 100
-        vec3 caveFogColor = caveFogColorRaw * (0.7 + 0.3 * vsBrightness); // Default
+        vec3 caveFogColorRaw2 = caveFogColorRaw * (0.7 + 0.3 * vsBrightness); // Default
     #elif CAVE_LIGHTING > 100
-        vec3 caveFogColor = caveFogColorRaw;
+        vec3 caveFogColorRaw2 = caveFogColorRaw;
+    #endif
+    #ifdef SULFUR_CAVE_FOG
+        vec3 caveFogColor = mix(caveFogColorRaw2, vec3(0.22, 0.25, 0.1), inSulfurCaves);
+    #else
+        vec3 caveFogColor = caveFogColorRaw2;
     #endif
 #endif
-

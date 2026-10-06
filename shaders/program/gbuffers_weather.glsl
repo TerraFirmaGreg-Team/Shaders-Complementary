@@ -6,6 +6,13 @@
 //Common//
 #include "/lib/common.glsl"
 #include "/lib/shaderSettings/raindropColor.glsl"
+#define MCWIND_RAIN
+#ifdef MCWIND_RAIN
+#endif
+
+#if defined MCWIND_INTERNAL && defined MCWIND_RAIN
+    #include "/mcwind/mcwind.glsl"
+#endif
 
 #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
     #include "/lib/misc/distortWorld.glsl"
@@ -162,9 +169,15 @@ void main() {
     glColor = gl_Color;
 
     #ifdef WAVING_RAIN
-        float rainWavingFactor = eyeBrightnessM2; // Prevents clipping inside interiors
-        position.xz += rainWavingFactor * (0.4 * position.y + 0.2) * vec2(sin(frameTimeCounter * 0.3) + 0.5, sin(frameTimeCounter * 0.5) * 0.5);
-        position.xz *= 1.0 - 0.08 * position.y * rainWavingFactor;
+        #if defined MCWIND_INTERNAL && defined MCWIND_RAIN
+            vec3 mcwWorldPos = position.xyz + cameraPosition.xyz;
+            float mcwTopWeight = clamp(position.y / 16.0 + 0.5, 0.0, 1.0);
+            position.xyz += mcw_rainLean(mcwWorldPos, mcwTopWeight) * eyeBrightnessM2; // eyeBrightnessM2 prevents clipping inside interiors
+        #else
+            float rainWavingFactor = eyeBrightnessM2; // Prevents clipping inside interiors
+            position.xz += rainWavingFactor * (0.4 * position.y + 0.2) * vec2(sin(frameTimeCounter * 0.3) + 0.5, sin(frameTimeCounter * 0.5) * 0.5);
+            position.xz *= 1.0 - 0.08 * position.y * rainWavingFactor;
+        #endif
     #endif
 
     gl_Position = gl_ProjectionMatrix * gbufferModelView * position;

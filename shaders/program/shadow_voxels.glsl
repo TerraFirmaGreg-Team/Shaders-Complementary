@@ -13,7 +13,7 @@ in vec3 cageNormal;
 #include "/photonics/photonics.glsl"
 
 void main() {
-    RayJob ray = RayJob(vec3(0), vec3(0), vec3(0), vec3(0), vec3(0), false);
+    RayJob ray = RayJob(vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), false);
     ray.origin = worldPos - world_offset - 0.01f * cageNormal;
     ray.direction = mat3(shadowModelViewInverse) * vec3(0.0f, 0.0f, -1.0f);
     ray_constraint = ivec3(ray.origin);

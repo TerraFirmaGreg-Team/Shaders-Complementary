@@ -183,7 +183,7 @@ void main() {
     #endif
 
     bool noSmoothLighting = false, noDirectionalShading = false, noGeneratedNormals = false;
-    float smoothnessD = 0.0, skyLightFactor = 0.0, materialMask = 0.0, enderDragonDead = 1.0;
+    float smoothnessD = 0.0, skyLightFactor = 0.0, materialMask = 0.0, enderDragonDead = 1.0, materialAO = 1.0;
     float smoothnessG = 0.0, highlightMult = 1.0, emission = 0.0, noiseFactor = 1.0;
     #ifdef PHOTONICS_LIGHTING
         vec3 oldAlbedo = vec3(0.0);
@@ -213,11 +213,11 @@ void main() {
         #include "/lib/materials/materialHandling/blockEntityIPBR.glsl"
 
         #if IPBR_EMISSIVE_MODE != 1
-            emission = GetCustomEmissionForIPBR(color, emission);
+            emission = GetCustomEmissionForIPBR(color, glColor, emission);
         #endif
     #else
         #ifdef CUSTOM_PBR
-            GetCustomMaterials(color, normalM, lmCoordM, NdotU, shadowMult, smoothnessG, smoothnessD, highlightMult, emission, materialMask, viewPos, lViewPos);
+            GetCustomMaterials(color, normalM, lmCoordM, NdotU, shadowMult, smoothnessG, smoothnessD, highlightMult, emission, materialMask, materialAO, viewPos, lViewPos);
         #endif
 
         if (blockEntityId == 5024) { // End Portal, End Gateway
@@ -276,10 +276,25 @@ void main() {
         oldAlbedo = color.rgb;
     #endif
 
+    vec3 rawAlbedoM = color.rgb;
+
+    // Tints the direct-light specular highlight for named labPBR metals with their F0 color
+    #ifdef BETTER_LABPBR_REFLECTIONS_INTERNAL
+        int materialMaskIntM = int(materialMask * 255.1);
+        vec3 metalHighlightTintM = (RP_MODE == 3 && materialMaskIntM >= 215 && materialMaskIntM <= 222) ? GetLabPBRMetalF0(materialMaskIntM, rawAlbedoM) : vec3(1.0);
+    #else
+        vec3 metalHighlightTintM = vec3(1.0);
+    #endif
+
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, 0.5,
                worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, false,
                false, 0, smoothnessG, highlightMult, emission, purkinjeOverwrite, isLightSource,
-               enderDragonDead);
+               enderDragonDead, metalHighlightTintM);
+
+    #ifdef BETTER_LABPBR_AO_INTERNAL
+        float lightExposureM = max(GetLuminance(shadowMult), lmCoordM.x);
+        color.rgb *= mix(materialAO, 1.0, lightExposureM);
+    #endif
 
     #ifdef SS_BLOCKLIGHT
         vec3 lightAlbedo = normalize(color.rgb) * min1(emission);
@@ -326,9 +341,9 @@ void main() {
     gl_FragData[1] = vec4(1.0 - translucentMult, 1.0);
     gl_FragData[2] = vec4(smoothnessD, materialMask, skyLightFactor, lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission));
 
-    #if BLOCK_REFLECT_QUALITY >= 2 && RP_MODE != 0
+    #if BLOCK_REFLECT_QUALITY >= 2 && RP_MODE >= 1 || WORLD_SPACE_REFLECTIONS > 0
         /* DRAWBUFFERS:0364 */
-        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, 1.0);
+        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0);
 
         #ifdef SS_BLOCKLIGHT
             /* DRAWBUFFERS:03649 */
@@ -346,7 +361,7 @@ void main() {
         gl_FragData[3] = vec4(lightAlbedo, 0.0);
     #elif defined PHOTONICS_LIGHTING
         /* RENDERTARGETS:0,3,6,4,10,11,20 */
-        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, 1.0);
+        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0);
         gl_FragData[4] = phAlbedoOut;
         gl_FragData[5] = vec4(playerPosDelta, 1.0);
         gl_FragData[6] = vec4(normalize((gbufferModelViewInverse * vec4(normal, 0.0f)).xyz), 1.0);

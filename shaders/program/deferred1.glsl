@@ -6,6 +6,7 @@
 //Common//
 #include "/lib/common.glsl"
 #include "/lib/shaderSettings/enderStars.glsl"
+#include "/lib/shaderSettings/enderNebula.glsl"
 #include "/lib/shaderSettings/deferred1.glsl"
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
@@ -135,7 +136,7 @@ float CalculateLinearDepth(float depth_sample, float near_plane, float far_plane
 
         #ifdef RAIN_ATMOSPHERE
             vec3 lightningPos = getLightningPos(playerPos, lightningBoltPosition.xyz, false);
-            vec2 lightningAdd = lightningFlashEffect(lightningPos, vec3(0), 550.0, 0, 0) * isLightningActive() * 0.5;
+            vec2 lightningAdd = lightningFlashEffect(lightningPos, vec3(0.0), 550.0, 0, 0) * isLightningActive() * 0.5;
             ao += lightningAdd.y;
         #endif
 
@@ -155,7 +156,7 @@ float CalculateLinearDepth(float depth_sample, float near_plane, float far_plane
         return -zw.x / zw.y;
     }
 
-    float GetLODShadows(vec3 viewPos, vec3 nViewPos, sampler2D depthtex, mat4 projection, mat4 projectionInverse, float dither) {
+    float GetLODShadows(vec3 viewPos, vec3 nViewPos, sampler2D depthtex, mat4 projection, mat4 projectionInverse, float dither, int materialMaskInt) {
         #if defined OVERWORLD || defined END
             float shadow = 1.0;
             vec3 tracePos = viewPos.xyz;
@@ -167,13 +168,14 @@ float CalculateLinearDepth(float depth_sample, float near_plane, float far_plane
                 tracePos += traceStep * (dither + 0.2);
             #endif
 
+            #ifdef END
+                tracePos.xy += 5.0 * (dither - 0.5); // Blur to match end shadows
+            #endif
+
             float traceZ = 0.0;
             float zDelta = 0.0;
 
             #ifdef VOXY
-                vec3 texture6 = texelFetch(colortex6, texelCoord, 0).rgb;
-                int materialMaskInt = int(texture6.g * 255.1);
-
                 if (materialMaskInt != 253) // Reduced Edge TAA (Leaves)
                     tracePos -= nViewPos * 1.5; // Tweak to imitate shadow bias
             #endif
@@ -245,6 +247,14 @@ float CalculateLinearDepth(float depth_sample, float near_plane, float far_plane
     #include "/lib/atmospherics/enderStars.glsl"
 #endif
 
+#if defined END && END_NEBULA > 0
+    #include "/lib/atmospherics/enderNebula.glsl"
+#endif
+
+#if defined END && BLACK_HOLE > 0
+    #include "/lib/atmospherics/blackHole.glsl"
+#endif
+
 #if defined WORLD_OUTLINE || RETRO_LOOK == 1 || RETRO_LOOK == 2
     #include "/lib/misc/worldOutline.glsl"
 #endif
@@ -269,7 +279,7 @@ float CalculateLinearDepth(float depth_sample, float near_plane, float far_plane
     #include "/lib/atmospherics/bedrockNoise.glsl"
 #endif
 
-#if defined END && EP_END_FLASH > 0 && MC_VERSION >= 12109 && defined IS_IRIS
+#if defined END && EP_END_FLASH > 0 && (MC_VERSION >= 12109 || ANGELICA_VERSION >= 20155000) && defined IS_IRIS
     #include "/lib/atmospherics/endFlash.glsl"
 #endif
 
@@ -306,7 +316,7 @@ void main() {
                 #else
                     vec3 directLight = sample_photonics_direct(texCoord);
                     vec3 handheldLight = vec3(0.0);
-                    #if HELD_LIGHTING_MODE >= 1
+                    #if HELD_LIGHTING_MODE >= 1 || PHOTONICS_HANDHELD_MODE != 0
                         handheldLight = sample_photonics_handheld(texCoord);
                     #endif
 
@@ -381,11 +391,19 @@ void main() {
     vec3 netherNoise = vec3(0.0);
     vec3 bedrockNoise = vec3(0.0);
 
-    vec3 normalM = vec3(0);
+    vec3 normalM = vec3(0.0);
     float fresnelM = 0.0;
     float linearZ0_DH;
 
     vec4 texture6 = texelFetch(colortex6, texelCoord, 0).rgba;
+    int materialMaskInt = int(texture6.g * 255.1);
+
+    float blackHoleEventHorizon = 1.0;
+    #if BLACK_HOLE > 0 && defined END
+        vec3 blackHoleDir = getBlackHoleDir();
+        vec4 blackHole = GetBlackHole(nViewPos, blackHoleDir);
+        blackHoleEventHorizon = 1.0 - blackHole.a;
+    #endif
 
     if (z0 < 1.0) {
         #ifdef DISTANT_LIGHT_BOKEH
@@ -411,20 +429,23 @@ void main() {
         #endif
 
         bool entityOrParticle = z0 < 0.56;
-        int materialMaskInt = int(texture6.g * 255.1);
         float intenseFresnel = 0.0;
+        float isHardcodedMetal = 0.0;
         float smoothnessD = texture6.r;
         vec3 reflectColor = vec3(1.0);
 
-        #include "/lib/materials/materialHandling/deferredMaterials.glsl"
 
         #ifdef PBR_REFLECTIONS
-            vec3 texture4 = texelFetch(colortex4, texelCoord, 0).rgb;
-            normalM = mat3(gbufferModelView) * texture4;
+            vec4 texture4 = texelFetch(colortex4, texelCoord, 0);
+            normalM = mat3(gbufferModelView) * texture4.rgb;
+            float rawAlbedoF0 = texture4.a * 0.5 + 0.5; // Decode the raw (pre-lighting) albedo magnitude stashed by the gbuffer pass in colortex4's alpha
             float fresnel = clamp(1.0 + dot(normalM, nViewPos), 0.0, 1.0);
         #else
             float fresnel = 0.0;
+            float rawAlbedoF0 = 1.0;
         #endif
+
+        #include "/lib/materials/materialHandling/deferredMaterials.glsl"
 
         #if defined WORLD_OUTLINE || RETRO_LOOK == 1 || RETRO_LOOK == 2
             #if !defined WORLD_OUTLINE_ON_ENTITIES && RETRO_LOOK == 0
@@ -442,13 +463,18 @@ void main() {
         #ifdef PBR_REFLECTIONS
             #if WORLD_SPACE_REFLECTIONS_INTERNAL == -1 && !defined END
                 // Way steeper fresnel falloff on SSR-only mode to hide SSR limitation and gain performance
-                float fresnelFactor = (1.0 - smoothnessD) * 0.7;
+                float fresnelFactor = (1.0 - smoothnessD) * 0.7 * (1.0 - isHardcodedMetal); // On Hardcoded metals we use the full fresnel value
                 fresnelM = max(fresnel - fresnelFactor, 0.0) / (1.0 - fresnelFactor);
             #else
-                fresnelM = fresnel * 0.7 + 0.3;
+                fresnelM = mix(fresnel * 0.7 + 0.3, fresnel, isHardcodedMetal);
             #endif
 
-            fresnelM = mix(pow2(fresnelM), fresnelM * 0.75 + 0.25, intenseFresnel);
+            #ifdef BETTER_LABPBR_REFLECTIONS_INTERNAL
+                // Actual Schlick fresnel
+                fresnelM = intenseFresnel + (1.0 - intenseFresnel) * pow5(fresnelM);
+            #else
+                fresnelM = mix(pow2(fresnelM), fresnelM * 0.75 + 0.25, intenseFresnel);
+            #endif
             fresnelM = fresnelM * sqrt1(smoothnessD) - dither * 0.01;
         #endif
 
@@ -465,14 +491,14 @@ void main() {
             #elif defined VOXY
                 float z0lod = texelFetch(vxDepthTexTrans, texelCoord, 0).r;
             #endif
-            if (z0lod < 1.0) { // Lod Chunks
+            if (z0lod < 1.0 && z0lod > 0.0) { // Lod Chunks
                 vec4 screenPosLod = vec4(texCoord, z0lod, 1.0);
                 #ifdef DISTANT_HORIZONS
                     vec4 viewPosLod = dhProjectionInverse * (screenPosLod * 2.0 - 1.0);
                     viewPosLod /= viewPosLod.w;
 
                     #if SHADOW_QUALITY > -1
-                        color.rgb *= 0.5 + 0.5 * GetLODShadows(viewPosLod.xyz, nViewPos, dhDepthTex, dhProjection, dhProjectionInverse, dither);
+                        color.rgb *= 0.5 + 0.5 * GetLODShadows(viewPosLod.xyz, nViewPos, dhDepthTex, dhProjection, dhProjectionInverse, dither, materialMaskInt);
                     #endif
                     #if SSAO_QUALI > 0 && defined DISTANT_HORIZONS_SSAO
                         linearZ0_DH = CalculateLinearDepth(z0lod, dhNearPlane, dhFarPlane);
@@ -484,15 +510,15 @@ void main() {
                     viewPosLod /= viewPosLod.w;
 
                     #if SHADOW_QUALITY > -1
-                        lodShadow = GetLODShadows(viewPosLod.xyz, nViewPos, vxDepthTexTrans, vxProj, vxProjInv, dither);
+                        lodShadow = GetLODShadows(viewPosLod.xyz, nViewPos, vxDepthTexTrans, vxProj, vxProjInv, dither, materialMaskInt);
                         lodShadow += OSIEBCA; // For being able to check if a calculation has been done;
                     #endif
 
                     #if SSAO_QUALI > 0
-                        float farLod = 16*20, nearLod = 16;
+                        float farLod = 16*20, nearLod = 4;
                         float aoWorldRange = (farLod - nearLod);
                         float ssao = GetAmbientOcclusion(vxDepthTexTrans, z0lod, GetLinearDepth(z0lod, farLod, nearLod), dither, farLod, nearLod, aoWorldRange, playerPos);
-                        color.rgb *= pow2(pow2(ssao));
+                        color.rgb *= pow3(ssao);
                     #endif
                 #endif
 
@@ -525,24 +551,30 @@ void main() {
             #endif
             #ifdef END
                 color.rgb = endSkyColor;
+
                 #ifdef END_STARS
-                    vec3 starColor = GetEnderStars(viewPos.xyz, VdotU, 1.0, 0.0);
+                    vec3 starViewPos = viewPos.xyz;
+                    #if BLACK_HOLE > 0
+                        starViewPos = GetBlackHoleLensedDirection(nViewPos, blackHoleDir);
+                    #endif
+
+                    vec3 starColor = GetEnderStars(starViewPos, VdotU, 1.0, 0.0);
 
                     #define ADD_STAR_LAYER_END1 (STAR_LAYER_END == 1 || STAR_LAYER_END == 3)
                     #define ADD_STAR_LAYER_END2 (STAR_LAYER_END == 2 || STAR_LAYER_END == 3)
 
                     #if ADD_STAR_LAYER_END1
-                        starColor = max(starColor, GetEnderStars(viewPos.xyz, VdotU, 0.66, 0.0));
+                        starColor = max(starColor, GetEnderStars(starViewPos, VdotU, 0.66, 0.0));
                     #endif
 
                     #if ADD_STAR_LAYER_END2
-                        starColor = max(starColor, GetEnderStars(viewPos.xyz, VdotU, 2.2, 0.33));
+                        starColor = max(starColor, GetEnderStars(starViewPos, VdotU, 2.2, 0.33));
                     #endif
 
                     color.rgb += starColor;
                 #endif
 
-                #if MC_VERSION >= 12109 && defined IS_IRIS && EP_END_FLASH > 0
+                #if (MC_VERSION >= 12109 || ANGELICA_VERSION >= 20155000) && defined IS_IRIS && EP_END_FLASH > 0
                     if (endFlashIntensityM > 0.0) {
                         color.rgb += DrawEndFlash(nViewPos, VdotU, dither);
                     }
@@ -553,6 +585,11 @@ void main() {
                 #ifdef ATM_COLOR_MULTS
                     color.rgb *= atmColorMult;
                 #endif
+
+                #if BLACK_HOLE > 0
+                    color.rgb *= blackHoleEventHorizon;
+                    color.rgb += blackHole.rgb;
+                #endif
             #endif
         }
     }
@@ -561,12 +598,14 @@ void main() {
         netherNoise = GetNetherNoise(viewPos.xyz, VdotU, dither);
         color.rgb += pow4(skyFade) * netherNoise;
     #endif
-    #ifdef END
-        #ifdef END_SMOKE
-            vec3 wpos = normalize((gbufferModelViewInverse * vec4(viewPos.xyz * 1000.0, 1.0)).xyz);
-            vec3 endSmoke = texture2DLod(noisetex, (wpos.xz / wpos.y) * 0.5 + frameTimeCounter * 0.004, 0.0).g * abs(VdotU) * endSkyColor * 1.5;
-            color.rgb += pow4(skyFade) * endSmoke * (1.0 - maxBlindnessDarkness);
+
+    #if defined END && END_NEBULA > 0
+        vec3 nebulaViewPos = viewPos.xyz;
+        #if BLACK_HOLE > 0
+            nebulaViewPos = GetBlackHoleLensedDirection(nViewPos, getBlackHoleDir());
         #endif
+
+        color.rgb += pow4(skyFade) * GetEnderNebula(nebulaViewPos, VdotU) * (1.0 - maxBlindnessDarkness) * blackHoleEventHorizon;
     #endif
 
     float cloudLinearDepth = 1.0;
@@ -583,7 +622,7 @@ void main() {
         }
     #endif
 
-    #ifdef SKY_EFFECT_REFLECTION
+    #ifdef SKY_EFFECT_REFLECTION_TRANSLUCENT
         waterRefColor = mix(waterRefColor, clouds.rgb, clouds.a);
     #endif
     waterRefColor = sqrt(waterRefColor) * 0.5;

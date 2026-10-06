@@ -26,7 +26,7 @@ vec4 doShockwave(vec3 playerPos, vec2 texCoord){ // Based on https://editor.p5js
     vec2 centre = playerPos.xz + 0.4;
     vec2 dir = centre - texCoord;
     float animation = pow(isShockwave, 1.0 / 1.2);
-    vec4 shockwaveColor = vec4(0);
+    vec4 shockwaveColor = vec4(0.0);
     float maxRadius = 4;
 
     // Chromatic aberration

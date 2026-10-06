@@ -1,3 +1,10 @@
+#include "/lib/shaderSettings/netherFog.glsl"
+
+#ifdef MCWIND_NETHER_FOG_INTERNAL
+    #include "/mcwind/mcwind.glsl"
+    #include "/lib/atmospherics/netherWind.glsl"
+#endif
+
 vec3 GetNetherNoise(vec3 viewPos, float VdotU, float dither) {
     float visibility = clamp01(VdotU * 1.875 - 0.225);
     visibility *= 1.0 - VdotU * 0.75 - maxBlindnessDarkness;
@@ -14,12 +21,25 @@ vec3 GetNetherNoise(vec3 viewPos, float VdotU, float dither) {
              wpos.xz /= wpos.y;
 
         vec2 cameraPositionM = cameraPosition.xz * 0.0075;
+        #ifdef MCWIND_NETHER_FOG_INTERNAL
+            vec3 mcwWind = mcw_windAtFast(cameraPosition, mcw_windPhase, MCW_NF_NO_GROUND, mcw_flowAt(cameraPosition));
+            vec2 mcwDrift = vec2(mcw_windDriftX, mcw_windDriftZ);
+            cameraPositionM -= mod((mcwDrift * NETHER_FOG_LAYER_FAST
+                                    + mcwWind.xz * (MCW_NF_HAZE_LOCAL * MCW_NF_STILL_TIME)) * 0.0075,
+                                   MCW_NF_HAZE_PERIOD);
+        #else
              cameraPositionM.x += frameTimeCounter * 0.004;
+        #endif
 
         int sampleCount = 10;
         int sampleCountP = sampleCount + 5;
         float ditherM = dither + 5.0;
-        float wind = fract(frameTimeCounter * 0.0125);
+        #ifdef MCWIND_NETHER_FOG_INTERNAL
+            float wind = fract(mcw_windPhase * (120.0 / MCW_PHASE_WRAP)
+                             + length(mcwDrift) * NETHER_FOG_LAYER_FAST * MCW_NF_HAZE_CHURN);
+        #else
+            float wind = fract(frameTimeCounter * 0.0125);
+        #endif
         for (int i = 0; i < sampleCount; i++) {
             float current = pow2((i + ditherM) / sampleCountP);
 

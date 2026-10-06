@@ -12,7 +12,11 @@
             //                             : (skyTextureLuminance > skyColorLuminance ? skyColorTexture.rgb : skyColor);
             vec3 skyColorTweaked = hasCustomSky == 238 || skyColorTexture.rgb != vec3(0.0) ? skyColorTexture.rgb : skyColor;
         #else
-            vec3 skyColorTweaked = skyColor;
+            #ifdef TFG_TWEAKED_SKY
+                vec3 skyColorTweaked = vec3(0.07, 0.427, 0.89);
+            #else
+                vec3 skyColorTweaked = skyColor;
+            #endif
         #endif
 
         vec3 skyColorSqrt = sqrt(skyColorTweaked);
@@ -47,8 +51,8 @@
         vec3 ndscWeatherM = vec3(-0.15, -0.3, -0.42) + vec3(0.0, 0.02, 0.08) * noonFactor;
 
         vec3 noonUpSkyColor     = pow(skyColorM, vec3(2.9)) * (vec3(0.85, 0.92, 0.81) + rainFactor * nuscWeatherM);
-        vec3 noonMiddleSkyColor = pow(skyColorM, vec3(1.5)) * (vec3(1.3) + rainFactor * (nmscWeatherM + nmscRainM + nmscSnowM + nmscDryM))
-                                + noonUpSkyColor * 0.65;
+        vec3 noonMiddleSkyColor = skyColorM * (vec3(1.4, 1.3, 1.3) + rainFactor * (nmscWeatherM + nmscRainM + nmscSnowM + nmscDryM))
+                                + noonUpSkyColor * 0.25;
         vec3 noonDownSkyColor   = skyColorM * (vec3(0.9) + rainFactor * (ndscWeatherM + ndscRainM + ndscSnowM + ndscDryM))
                                 + noonUpSkyColor * 0.25;
 

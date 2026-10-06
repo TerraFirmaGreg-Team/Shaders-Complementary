@@ -94,7 +94,7 @@ vec3 voronoi( in vec2 x, float rnd ) {
 vec3 waterMaskFunc(vec3 worldPos, const float water_scroll_speed, vec3 waterColor, int mat, vec3 normal) {
     const float foam_speed = 0.05;
     const float water_warp = 0.005;
-    vec3 water_color = vec3(0);
+    vec3 water_color = vec3(0.0);
     if (mat == 10049) { // Water Cauldron
         water_color = saturateColors(waterColor, 0.3) * 0.7;
     } else {

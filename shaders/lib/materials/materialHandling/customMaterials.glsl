@@ -4,7 +4,25 @@
 
 #include "/lib/materials/materialMethods/customEmission.glsl"
 
-void GetCustomMaterials(inout vec4 color, inout vec3 normalM, inout vec2 lmCoordM, inout float NdotU, inout vec3 shadowMult, inout float smoothnessG, inout float smoothnessD, inout float highlightMult, inout float emission, inout float materialMask, vec3 viewPos, float lViewPos) {
+#ifdef BETTER_LABPBR_POROSITY_INTERNAL
+    void ApplyLabPBRPorosity(inout vec4 color, inout float smoothnessG, inout float smoothnessD, inout float materialMask, float porosity) {
+        // Same as gbuffers_terrain puddleMixer
+        float skyExposure = max0(lmCoord.y * 32.0 - 31.0) * clamp((1.0 - 1.15 * lmCoord.x) * 10.0, 0.0, 1.0);
+        float wetness = skyExposure * inRainy * wetnessDynamic;
+
+        if (wetness <= 0.0 || porosity <= 0.0) return;
+
+        float puddleSmoothness = sqrt(1.0 - 0.75 * porosity);
+        float puddleDarkening = 0.5 * porosity + 0.17;
+
+        smoothnessG = mix(smoothnessG, 1.0, wetness * puddleSmoothness);
+        smoothnessD = mix(smoothnessD, 1.0, wetness * puddleSmoothness);
+        materialMask = max(materialMask, wetness * 0.02 * OSIEBCA * 214.0); // Minimum reflectivity as water f0
+        color.rgb *= 1.0 - wetness * puddleDarkening;
+    }
+#endif
+
+void GetCustomMaterials(inout vec4 color, inout vec3 normalM, inout vec2 lmCoordM, inout float NdotU, inout vec3 shadowMult, inout float smoothnessG, inout float smoothnessD, inout float highlightMult, inout float emission, inout float materialMask, inout float materialAO, vec3 viewPos, float lViewPos) {
     vec2 texCoordM = texCoord;
 
     #ifdef POM
@@ -63,6 +81,7 @@ void GetCustomMaterials(inout vec4 color, inout vec3 normalM, inout vec2 lmCoord
             vec4 normalMap = texture2D(normals, texCoordM);
         #endif
 
+        materialAO = normalMap.b;
         normalM = normalMap.xyz;
         normalM += vec3(0.5, 0.5, 0.0);
         normalM = pow(normalM, vec3(NORMAL_MAP_STRENGTH * 0.007)); // 70% strength by default
@@ -114,7 +133,11 @@ void GetCustomMaterials(inout vec4 color, inout vec3 normalM, inout vec2 lmCoord
     // Specular Map
     vec4 specularMap = texture2D(specular, texCoordM);
 
-    float smoothnessM = pow2(specularMap.r);
+    #ifdef BETTER_LABPBR_REFLECTIONS_INTERNAL
+        float smoothnessM = specularMap.r; // ImprPBRPow2 - Don't square it here, we want the raw smoothness value
+    #else
+        float smoothnessM = pow2(specularMap.r);
+    #endif
     smoothnessG = smoothnessM;
     smoothnessD = smoothnessM;
     highlightMult = 1.0 + 2.5 * specularMap.r;
@@ -141,6 +164,12 @@ void GetCustomMaterials(inout vec4 color, inout vec3 normalM, inout vec2 lmCoord
             } else {
                 materialMask = specularMap.g - OSIEBCA * 15.0;
             }
+        #endif
+
+        #ifdef BETTER_LABPBR_POROSITY_INTERNAL
+            // Blue channel: 0-64 = porosity
+            float porosity = specularMap.b <= 64.0 * OSIEBCA ? specularMap.b * (255.0 / 64.0) : 0.0;
+            ApplyLabPBRPorosity(color, smoothnessG, smoothnessD, materialMask, porosity);
         #endif
     #endif
 }

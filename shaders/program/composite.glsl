@@ -7,6 +7,7 @@
 #include "/lib/common.glsl"
 #define ROUGHNESS_MULTIPLIER 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0 8.5 9.0 9.5 10.0]
 #define ROUGHNESS_INTENSITY 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0 8.5 9.0 9.5 10.0]
+#define REFLECTION_RESPONSIVENESS 0.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -16,7 +17,7 @@ noperspective in vec2 texCoord;
 in vec3 sunVec;
 
 #ifdef END
-    in float vlFactor;
+    flat in float vlFactor;
 #endif
 
 //Pipeline Constants//
@@ -54,6 +55,23 @@ float GetLinearDepth(float depth) {
 #include "/lib/atmospherics/fog/mainFog.glsl"
 #include "/lib/colors/skyColors.glsl"
 #include "/lib/colors/lightAndAmbientColors.glsl"
+
+#if defined SKY_EFFECT_REFLECTION_OPAQUE && defined OVERWORLD
+    #if AURORA_STYLE > 0
+        #include "/lib/atmospherics/auroraBorealis.glsl"
+    #endif
+
+    #if NIGHT_NEBULAE == 1
+        #include "/lib/atmospherics/nightNebula.glsl"
+    #else
+        #include "/lib/atmospherics/stars.glsl"
+    #endif
+
+    #ifdef VL_CLOUDS_ACTIVE
+        #include "/lib/atmospherics/clouds/mainClouds.glsl"
+    #endif
+#endif
+
 #include "/lib/materials/materialMethods/reflections.glsl"
 
 #ifdef ATM_COLOR_MULTS
@@ -101,6 +119,8 @@ void main() {
         float smoothnessD = texture6.r;
         float fresnelM = texture4.a;
         float intenseFresnel = 0.0;
+        float isHardcodedMetal = 0.0;
+        float rawAlbedoF0 = 0.8;
         float ssao = 1.0;
         vec3 reflectColor = vec3(1.0);
 
@@ -113,7 +133,7 @@ void main() {
 
         float fresnel = clamp(1.0 + dot(normalM, nViewPos), 0.0, 1.0);
 
-        if (fresnelM > 0.0) {
+        if (abs(fresnelM - 0.5) < 0.5) { // 0.0 fresnel doesnt need ref calculations, and 1.0 fresnel basically means error
             #ifdef TAA
                 float noiseMult = 0.3;
             #else
@@ -121,11 +141,11 @@ void main() {
             #endif
             #ifdef PBR_REFLECTIONS
                 bool opaqueSurface = z0 == z1;
-                float minBlendFactor = 0.035 + 0.09 * pow2(pow2(pow2(smoothnessD)));
+                float minBlendFactor = (0.035 + REFLECTION_RESPONSIVENESS * 0.075) + (0.09 + REFLECTION_RESPONSIVENESS * 0.05) * pow2(pow2(pow2(smoothnessD)));
 
                 if (entityOrParticle) {
                     noiseMult *= 0.125;
-                    minBlendFactor = 0.125;
+                    minBlendFactor = 0.125 + REFLECTION_RESPONSIVENESS * 0.075;
                     if (!opaqueSurface) reflectColor = vec3(0.0);
                 }
             #endif
@@ -225,7 +245,7 @@ noperspective out vec2 texCoord;
 out vec3 sunVec;
 
 #ifdef END
-    out float vlFactor;
+    flat out float vlFactor;
 #endif
 
 //Attributes//

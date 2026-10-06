@@ -21,10 +21,8 @@
     #endif
 #endif
 
-#if DETAIL_QUALITY >= 3
-    #if BLOOM_ENABLED == 1 && MOTION_BLUR_EFFECT == 1
-        #define MOTION_BLUR_BLOOM_FOG_FIX
-    #endif
+#if BLOOM_ENABLED == 1 && MOTION_BLUR_EFFECT == 1 && !defined LOW_QUALITY_MOTION_BLUR
+    #define MOTION_BLUR_BLOOM_FOG_FIX
 #endif
 
 #endif

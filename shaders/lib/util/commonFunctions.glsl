@@ -1,25 +1,24 @@
+// Do these via macro as Apple otherwise complains
+#define SUN_ROTATION_DATA vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994))
+
+#ifdef OVERWORLD
+    float overworldAngleRaw = fract(timeAngle - 0.25);
+    float overworldAngle = (overworldAngleRaw + (cos(overworldAngleRaw * 3.14159265358979) * -0.5 + 0.5 - overworldAngleRaw) / 3.0) * 6.28318530717959;
+    #define GetSunVector() normalize((gbufferModelView * vec4(vec3(-sin(overworldAngle), cos(overworldAngle) * SUN_ROTATION_DATA) * 2000.0, 1.0)).xyz)
+#elif defined END
+    #ifdef END_FLASH_SHADOW_INTERNAL
+        #define GetSunVector() normalize(mix((gbufferModelView * vec4(0.0, 2000.0, 0.0, 1.0)).xyz, endFlashPosition, endFlashIntensityM))
+    #else
+        #define GetSunVector() normalize((gbufferModelView * vec4(vec3(0.0, SUN_ROTATION_DATA * 2000.0), 1.0)).xyz)
+    #endif
+#else
+    #define GetSunVector() vec3(0.0)
+#endif
+
 #ifdef VERTEX_SHADER
     vec2 GetLightMapCoordinates() {
         vec2 lmCoord = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
         return clamp((lmCoord - 0.03125) * 1.06667, 0.0, 1.0);
-    }
-#endif
-#if defined VERTEX_SHADER || defined VOXY_PATCH
-    vec3 GetSunVector() {
-        const vec2 sunRotationData = vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994));
-        #ifdef OVERWORLD
-            float ang = fract(timeAngle - 0.25);
-            ang = (ang + (cos(ang * 3.14159265358979) * -0.5 + 0.5 - ang) / 3.0) * 6.28318530717959;
-            return normalize((gbufferModelView * vec4(vec3(-sin(ang), cos(ang) * sunRotationData) * 2000.0, 1.0)).xyz);
-        #elif defined END
-            #ifdef END_FLASH_SHADOW_INTERNAL
-                return normalize(mix((gbufferModelView * vec4(0.0, 2000.0, 0.0, 1.0)).xyz, endFlashPosition, endFlashIntensityM));
-            #else
-                return normalize((gbufferModelView * vec4(vec3(0.0, sunRotationData * 2000.0), 1.0)).xyz);
-            #endif
-        #else
-            return vec3(0.0);
-        #endif
     }
 #endif
 
@@ -56,9 +55,9 @@ float GetHorizonFactor(float XdotU) {
     #endif
 }
 
-bool CheckForColor(vec3 albedo, vec3 check) { // Thanks to Builderb0y
+bool CheckForColor(vec3 albedo, vec3 check) { // Thanks to Builderb0y - edited a bit later
     vec3 dif = albedo - check * 0.003921568;
-    return dif == clamp(dif, vec3(-0.001), vec3(0.001));
+    return dot(dif, dif) < 0.00001;
 }
 
 bool CheckForStick(vec3 albedo) {
@@ -73,6 +72,11 @@ float GetMaxColorDif(vec3 color) {
     return max(dif.r, max(dif.g, dif.b));
 }
 
+bool isNonGreen(vec3 color) {
+    vec3 n = normalize(color + 1e-5);
+    return step(n.g, max(n.r, n.b)) == 1;
+}
+
 float Noise3D(vec3 p) {
     p.z = fract(p.z) * 128.0;
     float iz = floor(p.z);
@@ -85,7 +89,7 @@ float Noise3D(vec3 p) {
 }
 
 float GetSkyLightFactor(vec2 lmCoordM, vec3 shadowMult) {
-    #if defined OVERWORLD || defined END && MC_VERSION >= 12109
+    #if defined OVERWORLD || defined END && (MC_VERSION >= 12109 || ANGELICA_VERSION >= 20155000)
         #if WORLD_SPACE_REFLECTIONS_INTERNAL == -1
             float skyLightFactor = max(lmCoordM.y - 0.7, 0.0) * 3.33333;
                   skyLightFactor *= skyLightFactor;
@@ -94,11 +98,12 @@ float GetSkyLightFactor(vec2 lmCoordM, vec3 shadowMult) {
         #endif
 
         #if defined GBUFFERS_WATER || defined DH_WATER
-            #if SHADOW_QUALITY > -1 && WATER_REFLECT_QUALITY >= 2 && WATER_MAT_QUALITY >= 2
+            #if SHADOW_QUALITY > -1 && WATER_REFLECT_QUALITY >= 2 && !defined LOW_QUALITY_WATER_MATERIAL
                 skyLightFactor = max(skyLightFactor, dot(shadowMult, shadowMult) * 0.333333);
             #endif
         #endif
-    #elif defined END && MC_VERSION < 12109
+        skyLightFactor = clamp(skyLightFactor, 0.0, 1.0);
+    #elif defined END && (MC_VERSION < 12109 || ANGELICA_VERSION < 20155000)
         float skyLightFactor = min(1.0, dot(shadowMult, shadowMult) * 0.333333);
     #else
         float skyLightFactor = 0.0;
@@ -406,15 +411,15 @@ vec3 RgbFrom256(int r, int g, int b) {
     return vec3(float(r)/256.0 ,float(g)/256.0 ,float(b)/256.0);
 }
 
-// Inspired by Inigo Quilez
-// https://iquilezles.org/articles/palettes/
+// smooth hue By Builderb0y
+vec3 smoothHue(float h) {
+    return sqrt(normalize(pow2(cos(h * tau - vec3(0.0, 1.0, 2.0) * (tau / 3.0)) * 0.5 + 0.5)));
+}
+
 vec3 getRainbowColor(vec2 coord, float speed) {
-    const vec3 rainbowColor = vec3(0.0, pi * 0.67, pi * 1.33);
-
     float t = frameTimeCounter * speed;
-    t += sin(t) * (coord.x) + cos(t) * coord.y;
-
-    return vec3(0.5) + vec3(0.5) * sin(rainbowColor + t);
+    t += sin(t) * coord.x + cos(t) * coord.y;
+    return smoothHue(t / tau);
 }
 
 vec3 saturateColors(vec3 col, float saturationMult) {
@@ -425,6 +430,20 @@ vec3 saturateColors(vec3 col, float saturationMult) {
 
 float fuzzyOr(float a, float b) {
     return clamp01(a + b - (a * b));
+}
+
+// LabPBR hardcoded metal F0, derived from the N/K values in the LabPBR spec
+// Spec says 230-237. We subtract 15 in GetCustomMaterials to get the materialMaskInt, so we use 215-222 here.
+vec3 GetLabPBRMetalF0(int materialMaskInt, vec3 albedo) {
+    if (materialMaskInt == 215) return vec3(0.531, 0.512, 0.496); // Iron
+    if (materialMaskInt == 216) return vec3(0.944, 0.776, 0.373); // Gold
+    if (materialMaskInt == 217) return vec3(0.912, 0.914, 0.920); // Aluminum
+    if (materialMaskInt == 218) return vec3(0.556, 0.555, 0.555); // Chrome
+    if (materialMaskInt == 219) return vec3(0.926, 0.721, 0.504); // Copper
+    if (materialMaskInt == 220) return vec3(0.633, 0.626, 0.641); // Lead
+    if (materialMaskInt == 221) return vec3(0.679, 0.642, 0.589); // Platinum
+    if (materialMaskInt == 222) return vec3(0.962, 0.950, 0.922); // Silver
+    return albedo;
 }
 
 float getBloodMoon(float sunVisibility) {

@@ -37,7 +37,11 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
         color.rgb = 0.375 * glColorM;
     #endif
 #else
-    #if WATER_STYLE < 3 || PIXEL_WATER == 1
+    #if PIXEL_WATER == 1
+        color.rgb = mix(color.rgb, vec3(GetLuminance(color.rgb)), 0.88);
+        color.rgb = pow2(color.rgb) * vec3(2.3, 3.5, 3.1) * 0.9;
+        if (abs(NdotU) > 0.01) color.rgb = pow2(colorP.rgb) * glColorM;
+    #elif WATER_STYLE < 3
         color.rgb = mix(color.rgb, vec3(GetLuminance(color.rgb)), 0.88);
         color.rgb = pow2(color.rgb) * vec3(2.3, 3.5, 3.1) * 0.9;
     #else
@@ -70,27 +74,25 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
 
     float waterBumpNoise = 1.0;
 
-    #if WATER_MAT_QUALITY >= 3
+    #define WATER_SPEED_MULT_M WATER_SPEED_MULT * 0.018
+    float rawWind = frameTimeCounter * WATER_SPEED_MULT_M;
+    vec2 wind = vec2(0.0, -rawWind);
+    vec3 worldPos = playerPos + cameraPosition;
+    vec2 waterPos = worldPos.xz;
+    #if WATER_STYLE < 3 && defined GBUFFERS_WATER
+        float blockRes = absMidCoordPos.x * atlasSize.x * 2.0;
+        waterPos = floor(waterPos * blockRes) / blockRes;
+    #endif
+    waterPos = 0.032 * (waterPos + worldPos.y * 2.0);
+    #ifdef CLEAR_WATER_SPOTS
+        waterBumpNoise = 1 - clamp01((1 - smoothstep(0.0, 0.5, texture2DLod(noisetex, waterPos.x * 0.045 + waterPos * 0.042 + wind * 0.006, 0.0).g)) * 2) * 0.85;
+    #endif
+
+    #ifdef WATER_REFRACTION
         materialMask = OSIEBCA * 241.0; // Water
     #endif
 
-    #if WATER_MAT_QUALITY >= 2 || WATER_STYLE >= 2
-        #define WATER_SPEED_MULT_M WATER_SPEED_MULT * 0.018
-        float rawWind = frameTimeCounter * WATER_SPEED_MULT_M;
-        vec2 wind = vec2(0.0, -rawWind);
-        vec3 worldPos = playerPos + cameraPosition;
-        vec2 waterPos = worldPos.xz;
-        #if WATER_STYLE < 3 && defined GBUFFERS_WATER
-            float blockRes = absMidCoordPos.x * atlasSize.x * 2.0;
-            waterPos = floor(waterPos * blockRes) / blockRes;
-        #endif
-        waterPos = 0.032 * (waterPos + worldPos.y * 2.0);
-        #ifdef CLEAR_WATER_SPOTS
-            waterBumpNoise = 1 - clamp01((1 - smoothstep(0.0, 0.5, texture2DLod(noisetex, waterPos.x * 0.045 + waterPos * 0.042 + wind * 0.006, 0.0).g)) * 2) * 0.85;
-        #endif
-    #endif
-
-    #if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && WATER_MAT_QUALITY >= 2
+    #if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && !defined LOW_QUALITY_WATER_MATERIAL
         vec3 normalMap = vec3(0.0, 0.0, 1.0);
         #if WATER_STYLE >= 2
             vec2 waterPosM = waterPos;
@@ -105,7 +107,7 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
             #if WATER_STYLE >= 2
                 waterPosM *= 2.5; wind *= 2.5;
 
-                #if WATER_MAT_QUALITY >= 2 && defined GBUFFERS_WATER
+                #if !defined LOW_QUALITY_WATER_MATERIAL && defined GBUFFERS_WATER
                     vec2 parallaxMult = -0.01 * viewVector.xy / viewVector.z;
                     for (int i = 0; i < 4; i++) {
                         waterPosM += parallaxMult * texture2D(gaux4, waterPosM - wind).a;
@@ -159,7 +161,7 @@ vec3 glColorM = vec3(0.43, 0.6, 0.8);
     // ============================== End of Step 2 ============================== //
 
     // ============================== Step 3: Water Material Features ============================== //
-    #if WATER_MAT_QUALITY >= 2
+    #if !defined LOW_QUALITY_WATER_MATERIAL
         if (isEyeInWater != 1) {
             // Noise Coloring //
             float noise = texture2DLod(noisetex, (waterPos + wind) * 0.25, 0.0).g;

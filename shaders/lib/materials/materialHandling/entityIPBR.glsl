@@ -19,7 +19,15 @@ if (entityId < 50128) { // 50000 to 50128
                     if (entityId == 50008) { //
 
                     } else if (entityId == 50012) { // Iron Golem
-                        #include "/lib/materials/specificMaterials/terrain/ironBlock.glsl"
+                        if (CheckForColor(color.rgb, vec3(141, 0, 42))) { // Eye - brighter bit
+                            color.rgb = vec3(1.0, 0.3, 0.4);
+                            emission = 1.0;
+                        } else if (CheckForColor(color.rgb, vec3(30, 0, 14))) { // Eye - dimmer bit
+                            color.rgb = vec3(0.2, 0.0, 0.0);
+                            emission = 0.35;
+                        } else {
+                            #include "/lib/materials/specificMaterials/terrain/ironBlock.glsl"
+                        }
 
                         smoothnessD *= 0.4;
                     } else { // 50015 - Armor Stand
@@ -76,9 +84,12 @@ if (entityId < 50128) { // 50000 to 50128
                         emission = max0(color.b - color.g - color.r) * 10.0;
                     } else /*if (entityId == 50028)*/ { // Drowned
                         if (atlasSize.x < 900) {
-                            if (CheckForColor(color.rgb, vec3(143, 241, 215)) ||
+                            if (CheckForColor(color.rgb, vec3(143, 241, 215)) || // Adult drowned
                                 CheckForColor(color.rgb, vec3( 49, 173, 183)) ||
-                                CheckForColor(color.rgb, vec3(101, 224, 221))) emission = 2.5;
+                                CheckForColor(color.rgb, vec3(101, 224, 221)) ||
+                                CheckForColor(color.rgb, vec3(164, 255, 247)) || // Baby drowned
+                                CheckForColor(color.rgb, vec3(116, 255, 254)) ||
+                                CheckForColor(color.rgb, vec3( 56, 199, 210))) emission = 2.5;
                         }
                     }
                 }

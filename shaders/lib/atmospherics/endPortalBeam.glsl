@@ -3,7 +3,7 @@
 #endif
 
 vec2 RayAABoxIntersection(vec2 start, vec2 dir, vec2 lower, vec2 upper) {
-    dir += 0.000001 * vec2(equal(dir, vec2(0)));
+    dir += 0.000001 * vec2(equal(dir, vec2(0.0)));
     vec2 front = mix(upper, lower, 0.5 * sign(dir) + 0.5);
     vec2 back  = mix(lower, upper, 0.5 * sign(dir) + 0.5);
     vec2 front_iscts = (front - start) / dir;

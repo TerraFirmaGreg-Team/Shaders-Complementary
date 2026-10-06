@@ -19,6 +19,8 @@ mat4 gbufferPreviousProjection = vxProjPrev;
 #include "/lib/shaderSettings/shockwave.glsl"
 #include "/lib/shaderSettings/emissionMult.glsl"
 
+#define CHUNKS_FADE_IN_NO_FRAG_MOD_INJECT
+
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
 
@@ -30,10 +32,11 @@ layout(location = 1) out vec4 gbufferData6;
 #endif
 
 //Common Variables//
-vec3 sunVec = GetSunVector();
 vec3 upVec = normalize(gbufferModelView[1].xyz);
 vec3 eastVec = normalize(gbufferModelView[0].xyz);
 vec3 northVec = normalize(gbufferModelView[2].xyz);
+
+vec3 sunVec = GetSunVector();
 
 float SdotU = dot(sunVec, upVec);
 float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
@@ -69,12 +72,14 @@ mat3 tbnMatrix;
 #include "/lib/atmospherics/fog/mainFog.glsl"
 #include "/lib/materials/materialMethods/translucentTweaks.glsl"
 
+float vlFactor = 0.0;
+
 #ifdef OVERWORLD
     #include "/lib/atmospherics/sky.glsl"
 #endif
 
 #if WATER_REFLECT_QUALITY >= 0
-    #if defined SKY_EFFECT_REFLECTION && defined OVERWORLD
+    #if defined SKY_EFFECT_REFLECTION_TRANSLUCENT && defined OVERWORLD
         #if AURORA_STYLE > 0
             #include "/lib/atmospherics/auroraBorealis.glsl"
         #endif
@@ -218,7 +223,7 @@ void voxy_emitFragment(VoxyFragmentParameters parameters) {
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, dither,
                worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, false,
                false, subsurfaceMode, smoothnessG, highlightMult, emission, purkinjeOverwrite, isLightSource,
-               enderDragonDead);
+               enderDragonDead, vec3(1.0));
 
     #ifdef SS_BLOCKLIGHT
         vec3 normalizedColor = normalize(color.rgb);

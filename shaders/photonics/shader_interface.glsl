@@ -66,7 +66,7 @@ vec3 indirect_light_color = pow(mix(lightColor, vec3(GetLuminance(lightColor)), 
 vec2 get_taa_jitter() { return vec2(0.0f); }
 
 vec3 get_sky_color(ivec2 gBufferLoc, vec3 worldPos, vec3 newNormal) {
-    return vec3(0);
+    return vec3(0.0);
 }
 
 bool is_in_world() { return texelFetch(depthtex0, ph_tex_coord, 0).x <= 0.99999f; }

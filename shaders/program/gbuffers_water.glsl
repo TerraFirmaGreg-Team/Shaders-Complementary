@@ -33,7 +33,6 @@ in vec2 texCoord;
 in vec2 signMidCoordPos;
 flat in vec2 absMidCoordPos;
 
-flat in vec3 upVec, sunVec, northVec, eastVec;
 in vec3 playerPos;
 in vec3 normal;
 in vec3 viewVector;
@@ -42,12 +41,17 @@ in vec3 blockUV;
 
 in vec4 glColor;
 
-#if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && WATER_MAT_QUALITY >= 2 || defined GENERATED_NORMALS || defined CUSTOM_PBR
+#if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && !defined LOW_QUALITY_WATER_MATERIAL || defined GENERATED_NORMALS || defined CUSTOM_PBR
     flat in vec3 binormal, tangent;
 #endif
 
 #ifdef POM
     in vec4 vTexCoordAM;
+#endif
+
+#if ANISOTROPIC_FILTER > 0 && defined ANISOTROPIC_FILTER_ON_TRANSLUCENTS
+    flat in vec2 midCoord;
+    in vec4 spriteBounds;
 #endif
 
 #ifdef IRIS_FEATURE_FADE_VARIABLE
@@ -57,6 +61,12 @@ in vec4 glColor;
 //Pipeline Constants//
 
 //Common Variables//
+vec3 upVec = normalize(gbufferModelView[1].xyz);
+vec3 eastVec = normalize(gbufferModelView[0].xyz);
+vec3 northVec = normalize(gbufferModelView[2].xyz);
+
+vec3 sunVec = GetSunVector();
+
 float NdotU = dot(normal, upVec);
 float NdotUmax0 = max(NdotU, 0.0);
 float SdotU = dot(sunVec, upVec);
@@ -73,7 +83,7 @@ float shadowTime = shadowTimeVar2 * shadowTimeVar2;
     vec3 lightVec = sunVec;
 #endif
 
-#if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && WATER_MAT_QUALITY >= 2 || defined GENERATED_NORMALS || defined CUSTOM_PBR
+#if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && !defined LOW_QUALITY_WATER_MATERIAL || defined GENERATED_NORMALS || defined CUSTOM_PBR
     mat3 tbnMatrix = mat3(
         tangent.x, binormal.x, normal.x,
         tangent.y, binormal.y, normal.y,
@@ -93,9 +103,7 @@ float GetLinearDepth(float depth) {
 #include "/lib/atmospherics/fog/mainFog.glsl"
 #include "/lib/materials/materialMethods/translucentTweaks.glsl"
 
-#if defined OVERWORLD_BEAMS && defined OVERWORLD
-    float vlFactor = 0.0;
-#endif
+float vlFactor = 0.0;
 
 #ifdef OVERWORLD
     #include "/lib/atmospherics/sky.glsl"
@@ -105,13 +113,14 @@ float GetLinearDepth(float depth) {
     #include "/lib/colors/skyColors.glsl"
 #endif
 
-#if WATER_REFLECT_QUALITY >= 0 && defined SKY_EFFECT_REFLECTION && defined OVERWORLD && AURORA_STYLE > 0
+#if WATER_REFLECT_QUALITY >= 0 && defined SKY_EFFECT_REFLECTION_TRANSLUCENT && defined OVERWORLD && AURORA_STYLE > 0
     #include "/lib/atmospherics/auroraBorealis.glsl"
 #endif
 
 #if WATER_REFLECT_QUALITY >= 0
-    #if defined SKY_EFFECT_REFLECTION && defined OVERWORLD
+    #if defined SKY_EFFECT_REFLECTION_TRANSLUCENT && defined OVERWORLD
         #include "/lib/atmospherics/stars.glsl"
+
         #if NIGHT_NEBULAE == 1
             #include "/lib/atmospherics/nightNebula.glsl"
         #endif
@@ -128,7 +137,7 @@ float GetLinearDepth(float depth) {
     #include "/lib/antialiasing/jitter.glsl"
 #endif
 
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES || WATER_STYLE >= 2
+#if defined GENERATED_NORMALS || defined COATED_TEXTURES || WATER_STYLE >= 2 || ANISOTROPIC_FILTER > 0 && defined ANISOTROPIC_FILTER_ON_TRANSLUCENTS
     #include "/lib/util/miplevel.glsl"
 #endif
 
@@ -163,6 +172,10 @@ float GetLinearDepth(float depth) {
     #include "/lib/materials/materialMethods/connectedGlass.glsl"
 #endif
 
+#if ANISOTROPIC_FILTER > 0 && defined ANISOTROPIC_FILTER_ON_TRANSLUCENTS
+    #include "/lib/materials/materialMethods/anisotropicFiltering.glsl"
+#endif
+
 #ifdef SS_BLOCKLIGHT
     #include "/lib/lighting/coloredBlocklight.glsl"
 #endif
@@ -186,8 +199,13 @@ void main() {
     #if SHOCKWAVE > 0
         vec4 colorP = doShockwave(playerPos + relativeEyePosition, texCoord);
     #else
-        vec4 colorP = texture2D(tex, texCoord);
+        #if ANISOTROPIC_FILTER == 0 || !defined ANISOTROPIC_FILTER_ON_TRANSLUCENTS
+            vec4 colorP = texture2D(tex, texCoord);
+        #else
+            vec4 colorP = textureAF(tex, texCoord);
+        #endif
     #endif
+
 
     #ifdef GBUFFERS_COLORWHEEL_TRANSLUCENT
         float ao;
@@ -240,7 +258,7 @@ void main() {
     bool noSmoothLighting = false, noDirectionalShading = false, translucentMultCalculated = false, noGeneratedNormals = false;
     int subsurfaceMode = 0;
     vec2 lmCoordM = lmCoord;
-    float smoothnessG = 0.0, highlightMult = 1.0, reflectMult = 0.0, emission = 0.0;
+    float smoothnessG = 0.0, highlightMult = 1.0, reflectMult = 0.0, emission = 0.0, materialAO = 1.0;
     vec3 normalM = VdotN > 0.0 ? -normal : normal; // Inverted Iris Water Normal Workaround
     vec3 geoNormal = normalM;
     vec3 worldGeoNormal = normalize(ViewToPlayer(geoNormal * 10000.0));
@@ -254,7 +272,7 @@ void main() {
 
     #include "/lib/materials/materialHandling/translucentMaterials.glsl"
 
-    #if WATER_MAT_QUALITY >= 3 && SELECT_OUTLINE == 4
+    #if defined WATER_REFRACTION && SELECT_OUTLINE == 4
         int materialMaskInt = int(texelFetch(colortex6, texelCoord, 0).g * 255.1);
         if (materialMaskInt == 252) {
             materialMask = OSIEBCA * 252.0; // Versatile Selection Outline
@@ -311,7 +329,12 @@ void main() {
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, dither,
                worldGeoNormal, lmCoordM, noSmoothLighting, noDirectionalShading, false,
                false, subsurfaceMode, smoothnessG, highlightMult, emission, purkinjeOverwrite, isLightSource,
-               enderDragonDead);
+               enderDragonDead, vec3(1.0));
+
+    #ifdef BETTER_LABPBR_AO_INTERNAL
+        float lightExposureM = max(GetLuminance(shadowMult), lmCoordM.x);
+        color.rgb *= mix(materialAO, 1.0, lightExposureM);
+    #endif
 
     #ifdef SS_BLOCKLIGHT
         vec3 normalizedColor = normalize(color.rgb);
@@ -378,15 +401,14 @@ void main() {
         SSBLAlpha = 0.0;
     #endif
 
-    /* DRAWBUFFERS:03 */
+    /* DRAWBUFFERS:036 */
     gl_FragData[0] = color;
     gl_FragData[1] = vec4(1.0 - translucentMult.rgb, translucentMult.a);
+    gl_FragData[2] = vec4(1.0, materialMask, skyLightFactor, lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission));
 
-    #if DETAIL_QUALITY >= 3 || (WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS_INTERNAL > 0) || defined SS_BLOCKLIGHT
-        /* DRAWBUFFERS:036 */
-        gl_FragData[2] = vec4(1.0, materialMask, skyLightFactor, lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission));
-
-        #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0
+    // supposed to be " #if defined WATER_REFRACTION || (WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS_INTERNAL  > 0) " but Optifine bad
+    #if DETAIL_QUALITY >= 3 || (WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS_INTERNAL > 0) || defined SS_BLOCKLIGHT || defined BETTER_LABPBR_REFRACTIONS_INTERNAL
+        #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0 || defined BETTER_LABPBR_REFRACTIONS_INTERNAL
             #ifdef SS_BLOCKLIGHT
                 /* DRAWBUFFERS:036489 */
                 gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, sqrt(fresnelM * color.a * fogAlpha));
@@ -404,9 +426,9 @@ void main() {
             #endif
         #endif
     #elif WORLD_SPACE_REFLECTIONS_INTERNAL > 0
-        /* DRAWBUFFERS:0348 */
-        gl_FragData[2] = vec4(mat3(gbufferModelViewInverse) * normalM, sqrt(fresnelM * color.a * fogAlpha));
-        gl_FragData[3] = vec4(reflection.rgb * fresnelM * color.a * fogAlpha, reflection.a);
+        /* DRAWBUFFERS:06348 */
+        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, sqrt(fresnelM * color.a * fogAlpha));
+        gl_FragData[4] = vec4(reflection.rgb * fresnelM * color.a * fogAlpha, reflection.a);
     #endif
 }
 
@@ -428,7 +450,6 @@ out vec2 texCoord;
 out vec2 signMidCoordPos;
 flat out vec2 absMidCoordPos;
 
-flat out vec3 upVec, sunVec, northVec, eastVec;
 out vec3 playerPos;
 out vec3 normal;
 out vec3 viewVector;
@@ -437,12 +458,17 @@ out vec3 blockUV;
 
 out vec4 glColor;
 
-#if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && WATER_MAT_QUALITY >= 2 || defined GENERATED_NORMALS || defined CUSTOM_PBR
+#if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && !defined LOW_QUALITY_WATER_MATERIAL || defined GENERATED_NORMALS || defined CUSTOM_PBR
     flat out vec3 binormal, tangent;
 #endif
 
 #ifdef POM
     out vec4 vTexCoordAM;
+#endif
+
+#if ANISOTROPIC_FILTER > 0 && defined ANISOTROPIC_FILTER_ON_TRANSLUCENTS
+    flat out vec2 midCoord;
+    out vec4 spriteBounds;
 #endif
 
 #ifdef IRIS_FEATURE_FADE_VARIABLE
@@ -456,7 +482,7 @@ attribute vec4 mc_midTexCoord;
 attribute vec4 at_tangent;
 
 //Common Variables//
-#if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && WATER_MAT_QUALITY >= 2 || defined GENERATED_NORMALS || defined CUSTOM_PBR
+#if WATER_STYLE >= 2 || RAIN_PUDDLES >= 1 && WATER_STYLE == 1 && !defined LOW_QUALITY_WATER_MATERIAL || defined GENERATED_NORMALS || defined CUSTOM_PBR
 #else
     vec3 binormal;
     vec3 tangent;
@@ -491,10 +517,6 @@ void main() {
     #endif
 
     normal = normalize(gl_NormalMatrix * gl_Normal);
-    upVec = normalize(gbufferModelView[1].xyz);
-    eastVec = normalize(gbufferModelView[0].xyz);
-    northVec = normalize(gbufferModelView[2].xyz);
-    sunVec = GetSunVector();
     atMidBlock = at_midBlock.xyz;
     blockUV = 0.5 - at_midBlock.xyz / 64.0;
 
@@ -511,7 +533,11 @@ void main() {
 
     viewVector = tbnMatrix * (gl_ModelViewMatrix * gl_Vertex).xyz;
 
-    vec2 midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
+    #if ANISOTROPIC_FILTER == 0 || !defined ANISOTROPIC_FILTER_ON_TRANSLUCENTS
+        vec2 midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
+    #else
+        midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
+    #endif
     vec2 texMinMidCoord = texCoord - midCoord;
     signMidCoordPos = sign(texMinMidCoord);
     absMidCoordPos  = abs(texMinMidCoord);
@@ -545,6 +571,16 @@ void main() {
 
     #ifdef TAA
         gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
+    #endif
+
+    #if ANISOTROPIC_FILTER > 0 && defined ANISOTROPIC_FILTER_ON_TRANSLUCENTS
+        vec3 upVec = normalize(gbufferModelView[1].xyz);
+        if (mc_Entity.y > 0.5 && dot(normal, upVec) < 0.999) absMidCoordPos = vec2(0.0); // Fix257062
+
+        vec2 spriteRadius = abs(texCoord - mc_midTexCoord.xy);
+        vec2 bottomLeft = mc_midTexCoord.xy - spriteRadius;
+        vec2 topRight = mc_midTexCoord.xy + spriteRadius;
+        spriteBounds = vec4(bottomLeft, topRight);
     #endif
 
     #ifdef IRIS_FEATURE_FADE_VARIABLE

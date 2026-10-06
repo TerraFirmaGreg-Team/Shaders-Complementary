@@ -21,11 +21,11 @@
     #endif
 
     #if IPBR_EMISSIVE_MODE != 1 && !defined VOXY_PATCH
-        emission = GetCustomEmissionForIPBR(color, emission);
+        emission = GetCustomEmissionForIPBR(color, glColor, emission);
     #endif
 #else
     #ifdef CUSTOM_PBR
-        GetCustomMaterials(color, normalM, lmCoordM, NdotU, shadowMult, smoothnessG, smoothnessD, highlightMult, emission, materialMask, viewPos, lViewPos);
+        GetCustomMaterials(color, normalM, lmCoordM, NdotU, shadowMult, smoothnessG, smoothnessD, highlightMult, emission, materialMask, materialAO, viewPos, lViewPos);
     #endif
 
     if (mat == 10001) { // No directional shading
@@ -36,9 +36,9 @@
             DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, viewPos, nViewPos, lViewPos, dither);
         #endif
         sandNoiseIntensity = 0.3, mossNoiseIntensity = 0.0;
-    } else if (mat == 10007 || mat == 10009 || mat == 10011) { // Leaves
+    } else if (uint(mat - 10007) <= 5u) { // Leaves (10007 to 10012)
         #include "/lib/materials/specificMaterials/terrain/leaves.glsl"
-    } else if (mat == 10013 || mat == 10923) { // Vine
+    } else if (mat == 11009 || mat == 10923) { // Vine, Pale Hanging Moss
         subsurfaceMode = 3, centerShadowBias = true; noSmoothLighting = true, isFoliage = true;
         sandNoiseIntensity = 0.3, mossNoiseIntensity = 0.0;
     } else if (mat == 10015 || mat == 10017 || mat == 10019) { // Non-waving Foliage
@@ -77,6 +77,8 @@
         emission *= LAVA_EMISSION;
     } else if (mat > 20999 && mat < 21025){
         emission = DoAutomaticEmission(noSmoothLighting, noDirectionalShading, color.rgb, lmCoord.x, blockLightEmission, 1.0);
+    } else if (mat > 21025 && mat < 21051) {
+        emission = 3.0;
     }
 
     #ifdef SNOWY_WORLD
@@ -90,6 +92,7 @@
 
     else if (lmCoord.x > 0.99999) lmCoordM.x = 0.95;
 #endif
+
 
 if (mat == 10572) { // Dragon Egg
     overlayNoiseIntensity = 0.0;

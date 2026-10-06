@@ -56,4 +56,8 @@
 
 //#define COLOR_MULTIPLIER_COMPARISON
 
+// TerraFirmaGreg
+
+#define TFG_TWEAKED_SKY
+
 #endif

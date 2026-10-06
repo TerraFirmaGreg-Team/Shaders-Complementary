@@ -52,7 +52,7 @@ vec3 highlightColor = normalize(pow(lightColor, vec3(0.37))) * (0.3 + 1.5 * sunV
 void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 viewPos, float lViewPos, vec3 geoNormal, vec3 normalM, float dither,
                 vec3 worldGeoNormal, vec2 lightmap, bool noSmoothLighting, bool noDirectionalShading, bool noVanillaAO,
                 bool centerShadowBias, int subsurfaceMode, float smoothnessG, float highlightMult, float emission, inout float purkinjeOverwrite, bool isLightSource,
-                inout float enderDragonDead) {
+                inout float enderDragonDead, vec3 metalHighlightTint) {
     #ifdef WORLD_CURVATURE
         playerPos.y += doWorldCurvature(playerPos.xz);
     #endif
@@ -121,9 +121,9 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     #if defined LIGHT_COLOR_MULTS && !defined GBUFFERS_WATER // lightColorMult is defined early in gbuffers_water
         lightColorMult = GetLightColorMult();
     #endif
-    vec2 lightningAdd = vec2(0);
-    vec2 deathFlashAdd = vec2(0);
-    vec3 lightningPos = vec3(0);
+    vec2 lightningAdd = vec2(0.0);
+    vec2 deathFlashAdd = vec2(0.0);
+    vec3 lightningPos = vec3(0.0);
     #ifdef RAIN_ATMOSPHERE
         float lightningDistance = 550.0;
         lightningPos = getLightningPos(playerPos, lightningBoltPosition.xyz, false);
@@ -326,14 +326,16 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
                             #endif
                             {
                                 float distanceBias = pow(dot(playerPos, playerPos), 0.75);
-                                distanceBias = 0.12 + 0.0008 * distanceBias;
                                 float NdotLmax0M = NdotLmax0;
                                 #ifdef END_FLASH_SHADOW_INTERNAL
                                     NdotLmax0M = mix(NdotLmax0M, 1.0, endFlashIntensityM);
                                 #endif
-                                vec3 bias = worldGeoNormal * distanceBias * (2.0 - 0.95 * NdotLmax0M); // 0.95 fixes pink petals noon shadows
+                                vec3 bias = worldGeoNormal * (0.12 + 0.0008 * distanceBias) * (2.0 - 0.95 * NdotLmax0M); // 0.95 fixes pink petals noon shadows
 
                                 #ifdef GBUFFERS_TERRAIN
+                                    // WS752GH42G: "Water shadow outside water" fix. This calculation needs to be similar (but not the exact same) as water up-bias
+                                    bias.y += lightmapYM * (1.0 - abs(geoNdotU)) * 0.015 * max0(lViewPos - 40.0);
+
                                     if (subsurfaceMode == 2) {
                                         bias *= vec3(0.0, 0.0, -0.5);
                                         bias.z += 0.25 * signMidCoordPos.x * NdotE;
@@ -473,7 +475,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     #endif
 
     // Blocklight
-    float lightmapXM;
+    float lightmapXM = 0.0;
     #if defined LIGHTMAP_CURVES && !defined GBUFFERS_TEXTURED
         if (!noSmoothLighting || oldSubsurfaceMode > 0 && !isLightSource) {
             float lx4 = pow2(pow2(lightmap.x));
@@ -520,7 +522,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
             #else
                 vec2 dFdBlock = vec2(dFdx(oldLightmap.x), dFdy(oldLightmap.x));
             #endif
-            vec3 blockLightDir;
+            vec3 blockLightDir = vec3(0.0);
 
             if (length(dFdBlock) < 1e-6) {
                 vec3 blockCenterPos = floor(playerPos + cameraPosition + 0.001 * worldGeoNormal) - cameraPosition + 0.5; // + 0.001 fixes percision issues
@@ -625,7 +627,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
             vec3 playerPosForHeldLighting = playerPosPixelated;
         #endif
 
-        #if defined PHOTONICS_LIGHTING && PHOTONICS_MAX_LIGHTS > 0
+        #if defined PHOTONICS_LIGHTING && PHOTONICS_MAX_LIGHTS > 0 && PHOTONICS_HANDHELD_MODE != 0
             vec3 vanillaHeldLighting = GetHeldLighting(playerPosForHeldLighting, color.rgb, emission, worldGeoNormal, normalM, viewPos);
             vec3 heldLighting = vanillaHeldLighting * (1.0 - (1.0 - PHOTONICS_VANILLA_LIGHT_FALLBACK * 0.01) * phRtCoverage);
         #else
@@ -767,7 +769,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
 
     blockLighting *= XLIGHT_I;
 
-    #ifdef BLOCKLIGHT_CAUSTICS
+    #if defined BLOCKLIGHT_CAUSTICS && (defined GBUFFERS_BLOCK || defined GBUFFERS_ENTITIES || defined GBUFFERS_TERRAIN || defined GBUFFERS_HAND)
         vec3 worldPos = playerPos + cameraPosition;
         #if defined DO_PIXELATION_EFFECTS && defined PIXELATED_SHADOWS
             worldPos = playerPosPixelated + cameraPosition;
@@ -833,12 +835,20 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     // Light Highlight
     vec3 lightHighlight = vec3(0.0);
     #ifdef LIGHT_HIGHLIGHT
-        float specularHighlight = GGX(normalM, nViewPos, lightVec, NdotLmax0, smoothnessG);
+        #ifdef BETTER_LABPBR_REFLECTIONS_INTERNAL
+            float maxMetalHighlightTint = maxOf(metalHighlightTint);
+            bool isHardCodedMetal = maxMetalHighlightTint < 0.999;
+            float highlightF0 = isHardCodedMetal ? maxMetalHighlightTint : 0.05;
+            highlightMult = isHardCodedMetal ? 1.0 : highlightMult;
+        #else
+            float highlightF0 = 0.05;
+        #endif
+        float specularHighlight = GGX(normalM, nViewPos, lightVec, NdotLmax0, smoothnessG, highlightF0);
 
         specularHighlight *= highlightMult;
 
         lightHighlight = isEyeInWater != 1 ? shadowMult : pow(shadowMult, vec3(0.25)) * 0.35;
-        lightHighlight *= (subsurfaceHighlight * subsurfaceColor + specularHighlight) * highlightColor;
+        lightHighlight *= (subsurfaceHighlight * subsurfaceColor + specularHighlight * metalHighlightTint) * highlightColor;
 
         #ifdef LIGHT_COLOR_MULTS
             lightHighlight *= lightColorMult;

@@ -29,4 +29,12 @@
 
 //#define WAVING_SUGAR_CANE
 
+#define MCWIND_FOLIAGE
+#define MCWIND_LEAVES
+#define MCWIND_VINES
+#define MCWIND_FIRE
+#define MCWIND_STALKS
+#define MCWIND_LILY_PAD
+#define MCWIND_PENDANTS
+
 #endif

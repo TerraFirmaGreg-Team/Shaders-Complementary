@@ -39,10 +39,12 @@
     }
 
     vec4 GetComplexLightVolume(vec3 pos, sampler3D ff_sampler) {
-        vec4 lightVolume;
+        vec4 lightVolume = vec4(0.0);
 
-        #if defined COMPOSITE || defined COMPOSITE1 || defined DEFERRED1
-            #undef ACT_CORNER_LEAK_FIX
+        #ifndef ACT_CORNER_LEAK_FIX_FOR_WSR
+            #if defined COMPOSITE || defined COMPOSITE1 || defined DEFERRED1
+                #undef ACT_CORNER_LEAK_FIX
+            #endif
         #endif
 
         #ifndef ACT_CORNER_LEAK_FIX
@@ -97,7 +99,7 @@
     }
 
     vec4 GetLightVolume(vec3 pos) {
-        vec4 lightVolume;
+        vec4 lightVolume = vec4(0.0);
 
         if (int(framemod2) == 0) {
             lightVolume = GetComplexLightVolume(pos, floodfill_sampler_copy);
@@ -364,24 +366,55 @@
                 } else {
                     if (mat < 31000) {
                         if (mat < 30012) {
-                            if (mat < 21014) {
-                                if (mat == 10980) return  81; // Potted Open Eyeblossom
-                                if (abs(mat - 10986) <= 2) return 84; // Copper Torch, Copper Lantern
-                                if (mat == 21000) return  97; // White Modded Blocks - Also used For Black / Gray
-                                if (mat == 21002) return  43; // Brown Modded Blocks
-                                if (mat == 21004) return  70; // Red Modded Blocks
-                                if (mat == 21006) return  71; // Orange Modded Blocks
-                                if (mat == 21008) return  72; // Yellow Modded Blocks
-                                if (mat == 21010) return  73; // Lime Modded Blocks
-                                if (mat == 21012) return  74; // Green Modded Blocks
+                            if (mat < 21026) {
+                                if (mat < 21012) {
+                                    if (mat < 21002) {
+                                        if (mat == 10980) return 81; // Potted Open Eyeblossom
+                                        if (abs(mat - 10986) <= 2) return 84; // Copper Torch, Copper Lantern
+                                        if (mat == 21000) return 97; // White Modded Blocks
+                                    } else {
+                                        if (mat == 21002) return 43; // Brown Modded Blocks
+                                        if (mat == 21004) return 70; // Red Modded Blocks
+                                        if (mat == 21006) return 71; // Orange Modded Blocks
+                                        if (mat == 21008) return 72; // Yellow Modded Blocks
+                                        if (mat == 21010) return 73; // Lime Modded Blocks
+                                    }
+                                } else {
+                                    if (mat < 21018) {
+                                        if (mat == 21012) return 74; // Green Modded Blocks
+                                        if (mat == 21014) return 75; // Cyan Modded Blocks
+                                        if (mat == 21016) return 76; // Light Blue Modded Blocks
+                                    } else {
+                                        if (mat == 21018) return 77; // Blue Modded Blocks
+                                        if (mat == 21020) return 78; // Purple Modded Blocks
+                                        if (mat == 21022) return 79; // Magenta Modded Blocks
+                                        if (mat == 21024) return 80; // Pink Modded Blocks
+                                        if (mat == 30008) return 254; // Tinted Glass
+                                    }
+                                }
                             } else {
-                                if (mat == 21014) return  75; // Cyan Modded Blocks
-                                if (mat == 21016) return  76; // Light Blue Modded Blocks
-                                if (mat == 21018) return  77; // Blue Modded Blocks
-                                if (mat == 21020) return  78; // Purple Modded Blocks
-                                if (mat == 21022) return  79; // Magenta Modded Blocks
-                                if (mat == 21024) return  80; // Pink Modded Blocks
-                                if (mat == 30008) return 254; // Tinted Glass
+                                if (mat < 21038) {
+                                    if (mat < 21032) {
+                                        if (mat == 21026) return 97; // White Emissive Blocks
+                                        if (mat == 21028) return 43; // Brown Emissive Blocks
+                                        if (mat == 21030) return 70; // Red Emissive Blocks
+                                    } else {
+                                        if (mat == 21032) return 71; // Orange Emissive Blocks
+                                        if (mat == 21034) return 72; // Yellow Emissive Blocks
+                                        if (mat == 21036) return 73; // Lime Emissive Blocks
+                                    }
+                                } else {
+                                    if (mat < 21044) {
+                                        if (mat == 21038) return 74; // Green Emissive Blocks
+                                        if (mat == 21040) return 75; // Cyan Emissive Blocks
+                                        if (mat == 21042) return 76; // Light Blue Emissive Blocks
+                                    } else {
+                                        if (mat == 21044) return 77; // Blue Emissive Blocks
+                                        if (mat == 21046) return 78; // Purple Emissive Blocks
+                                        if (mat == 21048) return 79; // Magenta Emissive Blocks
+                                        if (mat == 21050) return 80; // Pink Emissive Blocks
+                                    }
+                                }
                             }
                         } else {
                             if (mat == 30012) return 213; // Slime Block
@@ -410,6 +443,7 @@
             if (mat == 32000 // Water
                 || mat < 30000 && mat % 2 == 1 // Non-solid terrain
                 || mat < 10000 // Block entities or unknown blocks that we treat as non-solid
+                || uint(mat - 10007) <= 5u // Leaves from 10007 to 10012
             ) return;
 
             vec3 modelPos = gl_Vertex.xyz + at_midBlock.xyz / 64.0;

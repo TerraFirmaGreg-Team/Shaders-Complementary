@@ -76,6 +76,8 @@ void main() {
     vec4 colorP = color;
     color *= glColor;
 
+    if (color.a < 0.01) discard;
+
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
     vec3 viewPos = ScreenToView(screenPos);
     float lViewPos = length(viewPos);
@@ -272,7 +274,7 @@ void main() {
     DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, dither,
                worldGeoNormal, lmCoordM, noSmoothLighting, false, true,
                false, 0, 0.0, 1.0, emission, purkinjeOverwrite, isLightSource,
-               enderDragonDead);
+               enderDragonDead, vec3(1.0));
 
     #if MC_VERSION >= 11500
         vec3 nViewPos = normalize(viewPos);
@@ -302,7 +304,15 @@ void main() {
     gl_FragData[1] = vec4(0.0, materialMask, 0.0, lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission));
     gl_FragData[2] = vec4(1.0 - translucentMult, 1.0);
 
-    #ifdef SS_BLOCKLIGHT
+    #if WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS > 0
+        /* DRAWBUFFERS:0634 */
+        gl_FragData[3] = vec4(0.0, 1.0, 0.0, 1.0);
+
+        #ifdef SS_BLOCKLIGHT
+            /* DRAWBUFFERS:06349 */
+            gl_FragData[4] = vec4(0.0, 0.0, 0.0, SSBLMask);
+        #endif
+    #elif defined SS_BLOCKLIGHT
         /* DRAWBUFFERS:0639 */
         gl_FragData[3] = vec4(0.0, 0.0, 0.0, SSBLMask);
     #endif

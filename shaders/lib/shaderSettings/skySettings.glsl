@@ -1,0 +1,11 @@
+
+// TERRAFIRMAGREG
+
+#ifndef SKY_SETTINGS_FILE
+#define SKY_SETTINGS_FILE
+
+    #define TFG_SKY_STYLE
+
+
+
+#endif

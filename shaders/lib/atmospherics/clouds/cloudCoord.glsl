@@ -21,7 +21,7 @@
 
     vec3 ModifyTracePos(vec3 tracePos, int cloudAltitude) {
         #if CLOUD_SPEED_MULT == 100
-            float wind = syncedTime;
+            float wind = syncedTimeDynamic;
         #else
             #define CLOUD_SPEED_MULT_M CLOUD_SPEED_MULT * 0.01
             float wind = frameTimeCounter * CLOUD_SPEED_MULT_M;

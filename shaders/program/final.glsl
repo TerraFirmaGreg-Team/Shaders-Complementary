@@ -76,6 +76,69 @@ vec2 border(vec2 texCoord) {
     return texCoord * 0.5 + 0.5;
 }
 
+#if PANINI_PROJECTION > 0
+// Panini Projection Shader
+// Adapted from: https://modrinth.com/shader/panini-projection
+// Original Author: xiananjyzy
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. Obtain a copy at http://mozilla.org.
+//
+// Modifications made by SpacEagle17 in 2026.
+bool paniniProjection(inout vec2 texCoord) {
+    const float dist = PANINI_PROJECTION * 0.1;
+    const float distPlus1 = dist + 1.0;
+
+    float aspect = viewWidth / viewHeight;
+
+    float cosLonEdge = 1.0 / sqrt(1.0 + aspect * aspect);
+    float scaleEdge = distPlus1 / (dist + cosLonEdge);
+    float zoom = 1.0 / (scaleEdge * cosLonEdge);
+
+    vec2 ndc = (texCoord * 2.0 - 1.0) / zoom;
+    ndc.x *= aspect;
+
+    float xSq = ndc.x * ndc.x;
+    float k = xSq / (distPlus1 * distPlus1);
+    float discriminant = 1.0 + k * (1.0 - dist * dist);
+
+    float cosLon = (-k * dist + sqrt(max(0.0, discriminant))) / (k + 1.0);
+    float scaleFactor = distPlus1 / (dist + cosLon);
+    float divisor = scaleFactor * cosLon;
+
+    if (divisor <= 0.0) return false;
+
+    vec2 projected = ndc / (divisor * vec2(aspect, 1.0));
+    texCoord = projected * 0.5 + 0.5;
+
+    if (any(lessThan(texCoord, vec2(0.0))) || any(greaterThan(texCoord, vec2(1.0)))) return false;
+
+    return true;
+}
+
+#endif
+
+vec3 sampleFinalTexture(sampler2D tex, vec2 uv) {
+    #if PANINI_PROJECTION > 0
+        // Panini remapping minifies the source non-uniformly; bias LOD and recover some local contrast.
+        const float lodBias = -0.55;
+        vec2 texel = 1.0 / vec2(viewWidth, viewHeight);
+
+        vec3 center = texture2DLod(tex, uv, lodBias).rgb;
+        vec3 ring =
+            texture2DLod(tex, uv + vec2( texel.x, 0.0), lodBias).rgb +
+            texture2DLod(tex, uv + vec2(-texel.x, 0.0), lodBias).rgb +
+            texture2DLod(tex, uv + vec2(0.0,  texel.y), lodBias).rgb +
+            texture2DLod(tex, uv + vec2(0.0, -texel.y), lodBias).rgb;
+
+        float sharpenAmount = 0.11 + 0.012 * PANINI_PROJECTION;
+        vec3 sharpened = center + (4.0 * center - ring) * sharpenAmount;
+        return clamp(sharpened, 0.0, 1.0);
+    #else
+        return texture2D(tex, uv).rgb;
+    #endif
+}
+
 vec3 scanline(vec2 texCoord, vec3 color, float frequency, float intensity, float speed, float amount, vec3 scanlineRGB, bool monochrome, bool flipDirection) {
     if (flipDirection) {
         texCoord = texCoord.yx;
@@ -307,10 +370,16 @@ void main() {
         texCoordM += getNetherHeatDistortion(texCoordM, z0, texture6.a);
     #endif
 
-    #if PIXELATED_SCREEN_SIZE > 0
-        #define textureFinal(tex) createPixelation(tex, texCoordM, PIXELATED_SCREEN_SMOOTHNESS, cellSize);
+    #if PANINI_PROJECTION > 0
+        bool paniniValid = paniniProjection(texCoordM);
     #else
-        #define textureFinal(tex) texture2D(tex, texCoordM).rgb
+        bool paniniValid = true;
+    #endif
+
+    #if PIXELATED_SCREEN_SIZE > 0
+        #define textureFinal(tex) (paniniValid ? createPixelation(tex, texCoordM, PIXELATED_SCREEN_SMOOTHNESS, cellSize) : vec3(0.0))
+    #else
+        #define textureFinal(tex) (paniniValid ? sampleFinalTexture(tex, texCoordM) : vec3(0.0))
     #endif
 
     #if LONG_EXPOSURE > 0
@@ -423,7 +492,7 @@ void main() {
 
     #ifdef ENTITIES_ARE_LIGHT
         vec4 texture10 = texture2D(colortex10, texCoordM);
-        color = texture10.a * mix(vec3(1), texture10.rgb, texture6.a);
+        color = texture10.a * mix(vec3(1.0), texture10.rgb, texture6.a);
         DoWorldOutline(color, z0, vec3(1.0), 0.0, 1.0);
     #endif
 

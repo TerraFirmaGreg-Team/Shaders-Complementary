@@ -14,7 +14,9 @@ vec3 GetShadowPos(vec3 playerPos) {
         vec3 shadowcol = vec3(0.0);
         if (shadow0 < 1.0) {
             float shadow1 = shadow2D(shadowtex1, vec3(shadowPos.st, shadowPos.z)).x;
-            if (shadow1 > 0.9999) {
+
+            if (shadow1 * 0.9999 > shadow0)
+            {
                 shadowcol = texture2D(shadowcolor0, shadowPos.st).rgb * shadow1;
 
                 shadowcol *= colorMult;

@@ -83,7 +83,7 @@ void main() {
         DoLighting(color, shadowMult, playerPos, viewPos, lViewPos, geoNormal, normalM, 0.5,
                    worldGeoNormal, lmCoord, false, false, false,
                    false, 0, 0.0, 0.0, 0.0, purkinjeOverwrite, false,
-                   enderDragonDead);
+                   enderDragonDead, vec3(1.0));
     #endif
 
     if (abs(color.a - 0.4) + dot(color.rgb, color.rgb) < 0.01) {
@@ -125,6 +125,16 @@ void main() {
     /* DRAWBUFFERS:06 */
     gl_FragData[0] = color;
     gl_FragData[1] = vec4(0.0, materialMask, 0.0, lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission));
+
+    #if WORLD_SPACE_REFLECTIONS > 0
+        /* DRAWBUFFERS:064 */
+        gl_FragData[2] = vec4(0.0, 1.0, 0.0, 1.0);
+
+        #ifdef SS_BLOCKLIGHT
+            /* DRAWBUFFERS:0649 */
+            gl_FragData[3] = vec4(0.0, 0.0, 0.0, 0.0);
+        #endif
+    #endif
 
     #ifdef SS_BLOCKLIGHT
         /* DRAWBUFFERS:069 */

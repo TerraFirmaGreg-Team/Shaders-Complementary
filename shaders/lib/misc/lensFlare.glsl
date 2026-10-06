@@ -1,28 +1,51 @@
 float fovmult = gbufferProjection[1][1] / 1.37373871;
 
-vec2 getLensFlarePolygonOffset(float angle, int sides, float radius) {
+float PolygonLensShape(vec2 aspectCoord, int sides) {
     float rotationRadians = LENS_FLARE_SHAPE_ROTATION * (pi / 180.0);
-    angle += rotationRadians;
-
     float segmentAngle = 2.0 * pi / float(sides);
-    float r = cos(pi / float(sides)) / cos(mod(angle, segmentAngle) - pi / float(sides));
-    r *= radius;
+    float startAngle = pi / float(sides) - rotationRadians;
 
-    return vec2(sin(angle), cos(angle)) * r;
+    // Doing it outside the loop to save some performance
+    float cosSeg = cos(segmentAngle), sinSeg = sin(segmentAngle);
+    vec2 normal = vec2(cos(startAngle), sin(startAngle));
+
+    float sum = 0.0;
+    for (int i = 0; i < sides; i++) {
+        float d = max0(dot(aspectCoord, normal));
+        sum += pow2(pow2(d * d));
+        normal = vec2(normal.x * cosSeg - normal.y * sinSeg, normal.x * sinSeg + normal.y * cosSeg);
+    }
+    return 3.0 * sqrt(sqrt(sum));
+}
+
+float SquareLensShape(vec2 aspectCoord) {
+    float rotationRadians = (LENS_FLARE_SHAPE_ROTATION - 45.0) * (pi / 180.0);
+    float sinR = sin(rotationRadians), cosR = cos(rotationRadians);
+    vec2 rotatedCoord = vec2(
+        aspectCoord.x * cosR - aspectCoord.y * sinR,
+        aspectCoord.x * sinR + aspectCoord.y * cosR
+    );
+
+    vec2 coordM = pow2(pow2(rotatedCoord * rotatedCoord));
+    return 3.0 * sqrt(sqrt(coordM.x + coordM.y));
 }
 
 float BaseLens(vec2 lightPos, float size, float dist, float hardness) {
     vec2 lensCoord = texCoord + (lightPos * dist - 0.5);
+    vec2 aspectCoord = lensCoord * vec2(aspectRatio, 1.0);
 
-    #if LENS_FLARE_SHAPE >= 3
-        float radius = length(lensCoord * vec2(aspectRatio, 1.0));
-        float angle = atan(lensCoord.y, lensCoord.x * aspectRatio);
-        float polyRadius = length(getLensFlarePolygonOffset(angle, LENS_FLARE_SHAPE, 1.0));
-        float adjustedRadius = radius / polyRadius;
-        float lens = clamp(1.0 - adjustedRadius / (size * fovmult), 0.0, 1.0 / hardness) * hardness;
+    #if LENS_FLARE_SHAPE == 0
+        // No custom shape chosen, fall back to Complementary's mode-based circle/square
+        #if LENSFLARE_MODE == 1 || LENSFLARE_MODE == 2
+            float shape = length(aspectCoord);
+        #else
+            float shape = SquareLensShape(aspectCoord); // Separate to safe performance, less loop iterations
+        #endif
     #else
-        float lens = clamp(1.0 - length(lensCoord * vec2(aspectRatio, 1.0)) / (size * fovmult), 0.0, 1.0 / hardness) * hardness;
+        float shape = PolygonLensShape(aspectCoord, LENS_FLARE_SHAPE);
     #endif
+
+    float lens = clamp(1.0 - shape / (size * fovmult * LENS_FLARE_RADIUS), 0.0, 1.0 / hardness) * hardness;
 
     lens *= lens; lens *= lens;
     return lens;
@@ -67,7 +90,7 @@ float AnamorphicLensFlare(vec2 lightPos, float size, float intensity) {
 }
 
 void DoLensFlare(inout vec3 color, vec3 viewPos, float dither) {
-    #if LENSFLARE_MODE == 1
+    #if LENSFLARE_MODE == 1 || LENSFLARE_MODE == 3
         if (sunVec.z > 0.0) return;
     #endif
 
@@ -145,7 +168,7 @@ void DoLensFlare(inout vec3 color, vec3 viewPos, float dither) {
         float secondaryFlare = AnamorphicLensFlare(lightPos, 0.22, 1.35);
         anamorphicColor += vec3(0.8667, 0.2196, 0.5961) * secondaryFlare * max0(anamorphicIntensity - 0.24);
 
-        #if LENSFLARE_MODE == 2
+        #if LENSFLARE_MODE == 2 || LENSFLARE_MODE == 4
             if (sunVec.z > 0.0) {
                 anamorphicColor = anamorphicColor * 0.35 + GetLuminance(anamorphicColor) * vec3(0.3, 0.4, 0.6);
                 #if BLOOD_MOON > 0
@@ -158,7 +181,7 @@ void DoLensFlare(inout vec3 color, vec3 viewPos, float dither) {
         flare += anamorphicColor * flareFactor;
     #endif
 
-    #if LENSFLARE_MODE == 2
+    #if LENSFLARE_MODE == 2 || LENSFLARE_MODE == 4
         if (sunVec.z > 0.0) {
             flare = flare * 0.2 + GetLuminance(flare) * vec3(0.3, 0.4, 0.6);
             flare *= clamp01(1.0 - (SdotU + 0.1) * 5.0);

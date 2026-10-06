@@ -2,63 +2,64 @@
 
 vec3 beamCol = normalize(ColorBeam) * 3.0 * (2.5 - 1.0 * vlFactor) * OVERWORLD_BEAMS_INTENSITY;
 
-vec2 wind = vec2(syncedTime * 0.0056);
+vec2 wind = vec2(frameTimeCounter * 0.0019);
 
 float BeamNoise(vec2 planeCoord, vec2 wind) {
-    float noise = texture2DLod(noisetex, planeCoord * 0.275   - wind * 0.0625, 0.0).b;
-          noise+= texture2DLod(noisetex, planeCoord * 0.34375 + wind * 0.0575, 0.0).b * 10.0;
+    float noise = texture2DLod(noisetex, planeCoord * 0.175   - wind, 0.0).b * 0.5;
+          noise+= texture2DLod(noisetex, planeCoord * 0.04375 + wind * 0.5, 0.0).b * 2.0;
+          noise+= texture2DLod(noisetex, planeCoord * 0.27    - wind, 0.0).b * 0.5;
 
-    return noise;
+    return noise / 3.0;
 }
 
-vec4 DrawOverworldBeams(float VdotU, vec3 playerPos, vec3 viewPos) {
+vec4 DrawOverworldBeams(vec3 playerPos, vec3 nViewPos, float scale) {
     float visibility = 1.0 - sunVisibility - maxBlindnessDarkness;
     #if OVERWORLD_BEAMS_CONDITION == 0
         visibility -= moonPhase;
     #endif
     if (visibility > 0.0) {
-        vec3 result = vec3(0.0);
+        float beamPowAfterAltitude = 1.35;
+        float lPlayerPosXZ = length(playerPos.xz);
 
-        int sampleCount = 8;
-
-        float VdotUM = 1.0 - VdotU * VdotU;
-        float VdotUM2 = VdotUM + smoothstep1(pow2(pow2(1.0 - abs(VdotU)))) * 0.2;
-
-        vec4 beams = vec4(0.0);
-        float gradientMix = 1.0;
+        vec3 localBeamCol = beamCol;
 
         #ifdef AURORA_INFLUENCE
-            beamCol = getAuroraAmbientColor(beamCol, viewPos, 1.0, AURORA_CLOUD_INFLUENCE_INTENSITY, 0.85) * OVERWORLD_BEAMS_INTENSITY;
+            localBeamCol = getAuroraAmbientColor(localBeamCol, nViewPos, 1.0, AURORA_CLOUD_INFLUENCE_INTENSITY, 0.85) * OVERWORLD_BEAMS_INTENSITY;
         #endif
 
-        for(int i = 0; i < sampleCount; i++) {
-            vec2 planeCoord = (playerPos.xz + cameraPosition.xz) * (1.0 + i * 6.0 / sampleCount) * 0.0014;
+        vec2 planeCoordRaw = playerPos.xz + cameraPosition.xz;
+        vec2 planeCoord = planeCoordRaw * 0.0014 * scale;
 
-            float noise = BeamNoise(planeCoord, wind);
-                noise = max(0.92 - 1.0 / abs(noise - (2.5 + VdotUM * 2.0)), 0.0) * 2.5;
+        float noise = BeamNoise(planeCoord, wind);
+        float fireNoise = texture2DLod(noisetex, abs(planeCoord * 0.1) - wind, 0.0).b;
 
-            if (noise > 0.0) {
-                noise *= 0.55;
-                float fireNoise = texture2DLod(noisetex, abs(planeCoord * 0.2) - wind, 0.0).b;
-                noise *= 0.5 * fireNoise + 0.75;
-                noise = noise * noise * 3.0 / sampleCount;
-                noise *= mix(1.0, sqrt3(VdotUM2), 0.25);
+        float uncenteredDistance = 1.3 * (250.0 + 0.5 * lPlayerPosXZ);
+        float altitude = playerPos.y + cameraPosition.y;
+        float signedAltitude = altitude - oceanAltitude;
+        float altitudeDis = abs(signedAltitude);
+        float altitudeFactor = 0.5 * smoothstep(uncenteredDistance, 0.0, altitudeDis)
+                             + 0.5 * smoothstep(4.0 * uncenteredDistance, 0.0, altitudeDis);
 
-                vec3 beamColor = beamCol;
-                beamColor *= gradientMix / sampleCount;
+        noise = pow2(noise) * 0.7 + 0.3 * fireNoise;
+        noise *= pow(altitudeFactor, 3.0);
+        noise = pow(noise, beamPowAfterAltitude);
 
-                noise *= exp2(-6.0 * i / float(sampleCount));
-                beams += vec4(noise * beamColor, noise);
-            }
-            gradientMix += 1.0;
-        }
-        beams.rgb *= beams.a * beams.a * beams.a * 5000.0;
+        vec3 beams = noise * localBeamCol * (1.0 + smoothstep(0.0, 128.0, lPlayerPosXZ));
+
+        if(any(isnan(beams))) beams = vec3(0.0);
+
+        float nearPlayerFactor = 1.0 - smoothstep(0.0, 256.0, lPlayerPosXZ);
+        float beamAlpha = clamp01(noise * mix(1.0, 3.67, nearPlayerFactor));
+
+        beams.rgb *= pow3(beamAlpha) * 10.0;
         beams.rgb *= sqrt(beams.rgb);
-        result = sqrt(beams.rgb);
+        beams.rgb = sqrt(beams.rgb);
 
-        if(any(isnan(result.rgb))) result.rgb = vec3(0.0);
+        #if defined VOXY || defined DISTANT_HORIZONS
+            beams.rgb *= 4.5;
+        #endif
 
-        return vec4(result * visibility / sampleCount, beams.a);
+        return vec4(beams, beamAlpha * visibility);
     }
-    return vec4(1.0);
+    return vec4(0.0);
 }

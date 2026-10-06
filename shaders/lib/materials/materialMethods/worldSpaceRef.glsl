@@ -162,6 +162,11 @@ vec4 getShadedReflection(ivec3 voxelPos, vec3 oldPlayerPos, vec3 playerPos, vec3
             }
         }
         shadow *= dot(shadow, vec3(0.33333));
+
+        #ifdef END_FLASH_SHADOW_INTERNAL
+            vec3 endFlashShadowColor = END_FLASH_SHADOW * 0.12 * 0.82 + endOrangeCol * 0.18;
+            shadow = mix(vec3(1.0), endFlashShadowColor * shadow + 1.0, endFlashIntensityM);
+        #endif
     #else
         vec3 shadow = vec3(1.0);
     #endif
@@ -186,7 +191,7 @@ vec4 getShadedReflection(ivec3 voxelPos, vec3 oldPlayerPos, vec3 playerPos, vec3
     vec3 minLighting = 0.8 * sqrt(GetMinimumLighting(faceData.lightmap.y, playerPos));
 
     #if HELD_LIGHTING_MODE >= 1
-        vec3 heldLighting = GetHeldLighting(playerPos, color.rgb, emission, geoNormal, normalM, vec3(0));
+        vec3 heldLighting = GetHeldLighting(playerPos, color.rgb, emission, geoNormal, normalM, vec3(0.0));
         specialLighting = sqrt(pow2(specialLighting) + sqrt(heldLighting));
     #endif
 
@@ -234,7 +239,7 @@ vec4 voxelRayTrace(vec3 playerPos, vec3 voxelPos, vec3 rayDir, float RVdotU, flo
     while (CheckInsideLodVoxelVolume(voxelPosRT1)) {
         if (texelFetch(wsr_lod_sampler, ivec3(voxelPosRT1), 0).r > 0u) {
             float dist0 = 0.0;
-            vec3 voxelPosRT0 = playerToSceneVoxel(playerPos + 4.0 * dist1 * rayDir);
+            vec3 voxelPosRT0 = playerToSceneVoxel(playerPos + (4.0 * dist1 - 0.001) * rayDir); // consistency59SMG32: 0.001 offset to fix rare wsr glitches
             vec3 nextDist0 = (stepDir * 0.5 + 0.5 - fract(voxelPosRT0)) / rayDir;
 
             vec3 lodVoxelMin = floor(voxelPosRT1) * 4.0;
@@ -248,7 +253,7 @@ vec4 voxelRayTrace(vec3 playerPos, vec3 voxelPos, vec3 rayDir, float RVdotU, flo
                     traceLength = 4.0 * dist1 + dist0;
 
                     vec3 normal = -stepAxis * stepDir;
-                    vec3 intersection = playerPos + traceLength * rayDir;
+                    vec3 intersection = playerPos + (traceLength - 0.001) * rayDir; // consistency59SMG32: 0.001 offset to fix rare wsr glitches
 
                     vec4 reflection = getShadedReflection(ivec3(voxelPosRT0), playerPos, intersection, rayDir, normal, mat, dither);
                     if (reflection.a > -0.5) {
@@ -285,25 +290,31 @@ vec4 voxelRayTrace(vec3 playerPos, vec3 voxelPos, vec3 rayDir, float RVdotU, flo
     return vec4(0.0);
 }
 
-vec4 getWSR(vec3 playerPos, vec3 normalMR, vec3 nViewPosR, float RVdotU, float RVdotS, float z0, float dither, out float wsrTraceLength) {
-    vec3 normalOffset = normalize(mat3(gbufferModelViewInverse) * normalMR);
+vec4 getWSR(vec3 playerPos, vec3 normalMR, vec3 nViewPosR, float RVdotU, float RVdotS, float z0, float dither, out float wsrTraceLength, bool isTranslucent) {
+    vec3 worldNormal = normalize(mat3(gbufferModelViewInverse) * normalMR);
+    float normalOffsetDist = 0.04; // Fixes artifacts. 0.03 is enough but use slightly higher to make sure
 
-    // Fix self-reflection and also align non-full blocks' trace start position to the grid
-    float normalOffsetDist = 1.0 - fract(dot(playerPos + cameraPositionBestFract - normalOffset * 0.1, normalOffset));
-    normalOffsetDist += 0.04; // Fixes remaining artifacts. 0.03 is enough but use slightly higher to make sure
-    playerPos += normalOffsetDist * normalOffset;
+    if (!isTranslucent && z0 > 0.56) {
+        // Fix self-reflection and also align non-full blocks' trace start position to the grid
+        vec3 absWorldNormal = abs(worldNormal);
+        vec3 worldNormalM = vec3(equal(absWorldNormal, vec3(maxOf(abs(worldNormal))))) * sign(worldNormal);
 
-    vec3 voxelPos = playerToSceneVoxel(playerPos);
+        float normalOffsetDist = 1.0 - fract(dot(playerPos + cameraPositionBestFract - worldNormal * 0.1, worldNormalM));
+    }
+
+    playerPos += normalOffsetDist * worldNormal;
+
     vec3 rayDir = mat3(gbufferModelViewInverse) * nViewPosR;
+    vec3 voxelPos = playerToSceneVoxel(playerPos);
 
     if (CheckInsideSceneVoxelVolume(voxelPos)) {
         vec4 wsrResult = voxelRayTrace(playerPos, voxelPos, rayDir, RVdotU, RVdotS, dither, wsrTraceLength);
 
         #if WORLD_SPACE_PLAYER_REF == 1
             if (!bool(is_invisible) && z0 > 0.56) {
-                vec3 albedo;
-                vec3 normal;
-                float emission;
+                vec3 albedo = vec3(0.0);
+                vec3 normal = vec3(0.0);
+                float emission = 0.0;
 
                 #ifdef SPACEAGLE17
                 if (isSneaking < 0.5 || !(heldItemId == 45014 || heldItemId2 == 45014))
@@ -326,8 +337,8 @@ vec4 getWSR(vec3 playerPos, vec3 normalMR, vec3 nViewPosR, float RVdotU, float R
                     vec3 specialLighting = pow(GetLuminance(lightVolume.rgb), 0.25) * DoLuminanceCorrection(pow(lightVolume.rgb, vec3(0.25)));
 
                     #if HELD_LIGHTING_MODE >= 1
-                        float tempEmission;
-                        vec3 heldLighting = GetHeldLighting(playerPos, vec3(999999.0), tempEmission, vec3(0), vec3(0), vec3(0));
+                        float tempEmission = 0.0;
+                        vec3 heldLighting = GetHeldLighting(playerPos, vec3(999999.0), tempEmission, vec3(0.0), vec3(0.0), vec3(0.0));
                         specialLighting = sqrt(pow2(specialLighting) + sqrt(heldLighting));
                     #endif
 
