@@ -190,12 +190,34 @@ void main() {
                     float horizonFactor = GetHorizonFactor(-SdotU);
                     sunMoonMixer = max0(sunMoonMixer - 0.25) * 1.33333 * horizonFactor;
 
+                    vec3 moonDir = -sunVec;
+
+                    // sky basis
+                    vec3 upDir = abs(moonDir.y) > 0.99 ? vec3(1.0, 0.0, 0.0) : vec3(0.0, 1.0, 0.0);
+                    vec3 moonRight = normalize(cross(upDir, moonDir));
+                    vec3 moonUp = cross(moonDir, moonRight);
+
+                    float xOffset = dot(nViewPos, moonRight); // every pixel's offset of moon's center
+                    float yOffset = dot(nViewPos, moonUp);
+
+                    float scale = sqrt(1.0 - sunSizeFactor1 * sunSizeFactor1);
+                    vec2 customMoonUV = vec2(xOffset, yOffset) / scale;
+                         customMoonUV = customMoonUV * 0.5 + 0.5;
+
+                    vec4 customMoon = vec4(0.0); // for some reason I cant put this in the else block after the check, so I'll leave it here
+
+                    if (customMoonUV.x >= 0.0 && customMoonUV.x <= 1.0 && customMoonUV.y >= 0.0 && customMoonUV.y <= 1.0) {
+                        customMoon = texture(MoonTex, customMoonUV);
+                    }
+
                     starCoord = GetStarCoordUpperHemisphere(viewPos.xyz, 1.0) * 0.5 + 0.617;
                     float moonNoise = texture2DLod(noisetex, starCoord, 0.0).g
                                     + texture2DLod(noisetex, starCoord * 2.5, 0.0).g * 0.7
                                     + texture2DLod(noisetex, starCoord * 5.0, 0.0).g * 0.5;
                     moonNoise = max0(moonNoise - 0.75) * 1.7;
-                    vec3 moonColor = vec3(0.38, 0.4, 0.5);
+                    
+                    vec3 moonColor = vec3(0.25) * customMoon.rgb; 
+                    
                     #if BLOOD_MOON > 0
                         moonColor = mix(moonColor, vec3(0.4588, 0.149, 0.149) * 1.5, getBloodMoon(sunVisibility));
                     #endif
@@ -225,7 +247,9 @@ void main() {
                         sunMoonMixer *= 1.0 - 0.5 * GetCaveFactor();
                     #endif
 
-                    color.rgb = mix(color.rgb, moonColor, sunMoonMixer);
+                    float finalMixer = sunMoonMixer * customMoon.a;
+
+                    color.rgb = mix(color.rgb, moonColor, finalMixer);
                 }
             }
         #endif

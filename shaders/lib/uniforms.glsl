@@ -291,3 +291,5 @@ uniform float tfcAverageTemperature;
 uniform float tfcWorldSize;
 uniform int tfcYearDays; 
 uniform int tfcCurrentDay;
+
+uniform sampler2D MoonTex;
