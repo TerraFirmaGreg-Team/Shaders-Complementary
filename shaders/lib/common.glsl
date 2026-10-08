@@ -299,6 +299,8 @@
     #define SEASON_START 3 //[0 1 2 3]
     #define LEAVES_ON_GROUND
 
+    #define TFG_REALISTIC_MOON_TOGGLE
+
     #if defined LEAVES_ON_GROUND && COLORED_LIGHTING_INTERNAL > 0 && SEASONS > 0
         #define ACT_GROUND_LEAVES_FIX
     #endif

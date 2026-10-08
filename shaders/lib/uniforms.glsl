@@ -291,5 +291,6 @@ uniform float tfcAverageTemperature;
 uniform float tfcWorldSize;
 uniform int tfcYearDays; 
 uniform int tfcCurrentDay;
-
-uniform sampler2D MoonTex;
+#ifdef TFG_REALISTIC_MOON_TOGGLE
+    uniform sampler2D MoonTex;
+#endif
