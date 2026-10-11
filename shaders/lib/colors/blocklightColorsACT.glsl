@@ -251,13 +251,13 @@ vec4 GetSpecialBlocklightColor(int mat) {
 			} else {
 				if (mat < 92) {
 					if (mat < 89) {
-						if (mat == 86) return vec4(0.0);
-						if (mat == 87) return vec4(0.0);
-						if (mat == 88) return vec4(0.0);
+						if (mat == 86) return vec4(vec3(1.0, 0.4, 0.1), COILS_EMIT_STRENGTH); // Cupronickel coil
+						if (mat == 87) return vec4(vec3(1.0, 0.8, 0.1), COILS_EMIT_STRENGTH); // Kantal coil
+						if (mat == 88) return vec4(vec3(1.0, 0.1, 0.1), COILS_EMIT_STRENGTH); // Nichrome and rtm coils
 					} else {
-						if (mat == 89) return vec4(0.0);
-						if (mat == 90) return vec4(0.0);
-						if (mat == 91) return vec4(0.0);
+						if (mat == 89) return vec4(vec3(1.0, 1.0, 1.0), COILS_EMIT_STRENGTH); // White Modded Light Sources (High emit level)
+						if (mat == 90) return vec4(vec3(0.1, 0.15, 1.0), COILS_EMIT_STRENGTH); // Blue Modded Light Sources (High emit level)
+						if (mat == 91) return vec4(1.0, 0.4, 0.1, 0.4 * max(sin(abs(frameTimeCounter)), 0.4)); // Orange Modded Light Sources
 					}
 				} else {
 					if (mat < 95) {

@@ -2231,26 +2231,30 @@ if (mat < 11024) {
                                             color.rgb *= mix(vec3(1.0), colorFire * 2.0, uniformValue * gradient);
                                         }
                                     #endif
-                                }
-                                else /*if (mat < 10568)*/ { // Soul Lantern
-                                    noSmoothLighting = true;
-                                    lmCoordM.x = min(lmCoordM.x, 0.77); // consistency748523
+                                } else {
+                                    if (mat < 10566) { // Soul Lantern
+                                        noSmoothLighting = true;
+                                        lmCoordM.x = min(lmCoordM.x, 0.77); // consistency748523
 
-                                    #include "/lib/materials/specificMaterials/terrain/lanternMetal.glsl"
+                                        #include "/lib/materials/specificMaterials/terrain/lanternMetal.glsl"
 
-                                    emission = 1.45 * max0(color.g - color.r * 2.0);
-                                    emission += 1.17 * min(pow2(pow2(0.55 * dot(color.rgb, color.rgb))), 3.5);
+                                        emission = 1.45 * max0(color.g - color.r * 2.0);
+                                        emission += 1.17 * min(pow2(pow2(0.55 * dot(color.rgb, color.rgb))), 3.5);
 
-                                    #ifdef DISTANT_LIGHT_BOKEH
-                                        DoDistantLightBokehMaterial(color, vec4(0.5, 1.0, 1.0, 1.0), emission, 3.0, lViewPos);
-                                    #endif
+                                        #ifdef DISTANT_LIGHT_BOKEH
+                                            DoDistantLightBokehMaterial(color, vec4(0.5, 1.0, 1.0, 1.0), emission, 3.0, lViewPos);
+                                        #endif
 
-                                    #ifdef SNOWY_WORLD
-                                        snowFactor = 0.0;
-                                    #endif
+                                        #ifdef SNOWY_WORLD
+                                            snowFactor = 0.0;
+                                        #endif
 
-                                    overlayNoiseIntensity = 0.3;
-                                }
+                                        overlayNoiseIntensity = 0.3;
+                                    } else {
+                                        noDirectionalShading = true;
+                                        emission = 2.0;
+                                           } 
+                                    }
                             } else {
                                 if (mat < 10572) { // Turtle Egg, Sniffer Egg
                                     smoothnessG = (color.r + color.g) * 0.35;
@@ -3688,6 +3692,17 @@ if (mat < 11024) {
         }
         else if (mat > 21025 && mat < 21051) {
             emission = 3.0;
+        }
+        else if (mat > 21058 && mat < 21080) {
+            if (mat < 21070) { // Gregtech Coils
+                #ifndef COILS_SAME_EMISSION_STRENGTH
+                    emission = (1.3 + (mat - 21060) * 0.2) * COILS_LIGHT_EMISSION_STRENGTH;
+                #else
+                    emission = 1.3 * COILS_LIGHT_EMISSION_STRENGTH;
+                #endif
+            } else { // Gregtech fireboxes
+                if (color.r > 0.75 && color.b > 0.75) { emission = 1.0; }
+            }
         }
     }
 }

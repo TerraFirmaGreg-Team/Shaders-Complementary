@@ -76,4 +76,14 @@
 #ifdef GLOWING_ORE_MODDED
 #endif
 
+// TerraFirmaGreg settings
+
+#define COILS_EMIT_LIGHT_TOGGLE
+#define COILS_SAME_EMISSION_STRENGTH
+#define COILS_LIGHT_EMISSION_STRENGTH 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+#define COILS_EMIT_STRENGTH 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+
+#ifdef COILS_EMIT_LIGHT_TOGGLE
+#endif
+
 #endif

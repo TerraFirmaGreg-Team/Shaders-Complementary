@@ -413,6 +413,9 @@
                                         if (mat == 21046) return 78; // Purple Emissive Blocks
                                         if (mat == 21048) return 79; // Magenta Emissive Blocks
                                         if (mat == 21050) return 80; // Pink Emissive Blocks
+                                        #if defined DO_IPBR_LIGHTS && defined COILS_EMIT_LIGHT_TOGGLE
+                                        if (mat > 21058) return (mat - 20888) / 2; // GregTech coils
+                                        #endif
                                     }
                                 }
                             }
