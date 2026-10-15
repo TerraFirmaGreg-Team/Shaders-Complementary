@@ -57,16 +57,16 @@ option.info13=Wsparcie dla modów w Euphoria Patches
 option.info13.comment=Euphoria Patches ma na celu lepszą obsługę zmodyfikowanych bloków niż zwykłe Complementary poprzez domyślną obsługę zmodyfikowanych bloków (sprawdź block.properties). Wykrywanie źródeł światła i automatyczne dawanie im emisji. Wykrywanie modelów roślin i automatyczne zastosowanie SSS (rozpraszanie podpowierzchniowe).
 
 option.info14=Dołącz do społeczności
-option.info14.comment=Euphoria Patches, a także zwykłe Complementary używają funkcji eksluzywnych dla Iris, które nie będą działać na OptiFine. Aby uzyskać najlepsze wrażenia z rozgrywki, zaleca się korzystanie z Iris. Korzystając z Forge, zalecany jest mod "Oculus", który zdaje się obsługiwać większość funkcji Iris.
+option.info14.comment=Dołącz na serwer Discord Euphoria Patches po pomoc, społeczność i aktualności. §d§l§neuphoriapatches.com/discord
 
 option.info15=Euphoria Patches - podziękowania
 option.info15.comment=Pełna lista znajduje się w "credits.txt" w folderze shadera. isuewo dawny co-deweloper Euphoria Patches. EminGT: Główny deweloper shaderów Complementary. Capt Tatsu, gri573, FoZy STYLE, JoKerTech, SixthSurge, WoMspace (aka Sasha), Septonious, fayer3, Xonk, Memokii, dragoncat, TheNukeLore, dbrighthd, Surisen (Ruri), Acer (Alex), Folox_, Helgust.
 
 option.info16=§d§nJak wesprzeć Euphoria Patches
-option.info16.comment=Możesz wspierać Euphoria Patches, interesując się nowymi aktualizacjami i dzieląc się nimi z innymi, ale możesz też bezpośrednio wesprzeć SpacEagle17 na Patreonie lub Ko-Fi i uzyskać dostęp do wersji Beta. §d§d§l§neuphoriapatches.com/support
+option.info16.comment=Możesz wspierać Euphoria Patches, interesując się nowymi aktualizacjami i dzieląc się nimi z innymi, ale możesz też bezpośrednio wesprzeć SpacEagle17 na Patreonie lub Ko-Fi i uzyskać dostęp do wersji Beta. §d§l§neuphoriapatches.com/support
 
 option.info17=Wersje Beta: Patreon SpacEagle17
-option.info17.comment=Możesz wesprzeć SpacEagle17 na Patreonie lub Ko-Fi i uzyskać dostęp do ekskluzywnych wersji Beta. §d§d§l§neuphoriapatches.com/support
+option.info17.comment=Możesz wesprzeć SpacEagle17 na Patreonie lub Ko-Fi i uzyskać dostęp do ekskluzywnych wersji Beta. §d§l§neuphoriapatches.com/support
 
 option.info18=Dla Complementary r5.8.1
 option.info18.comment=Dziękujemy za wybranie Euphoria Patches :)
@@ -98,20 +98,20 @@ screen.ATMOSPHERE_SETTINGS=Atmosfera
 screen.ATMOSPHERE_SETTINGS.comment=Ustawienia które wpływają na atmosferę.
 
 screen.ATM_COLOR_SETTINGS=Mnożniki koloru atmosfery
-screen.ATM_COLOR_SETTINGS.comment=Pozwala kontrolować kolory atmosfery, widocznę min. w kolorze nieba i mgły.
+screen.ATM_COLOR_SETTINGS.comment=Pozwala kontrolować kolory atmosfery, widoczne min. w kolorze nieba i mgły.
 
 screen.MORNING_ATM_MULTS=Zachód/Wschód słońca
 screen.NOON_ATM_MULTS=Południe
 screen.NIGHT_ATM_MULTS=Noc
-screen.RAIN_ATM_MULTS=Pogoda Deszczowa/Śnieżna
+screen.RAIN_ATM_MULTS=Deszczowa pogoda
 screen.NETHER_ATM_MULTS=Wymiar Netheru
 screen.END_ATM_MULTS=Wymiar Endu
 
 screen.CLOUD_SETTINGS=Chmury
 screen.CLOUD_SETTINGS.comment=Ustawienia związane z chmurami.
 
-screen.CLOUD_COLOR_SETTINGS=Kolory Chmur
-screen.CLOUD_COLOR_SETTINGS.comment=Ustawienia które zmieniają kolory chmur.
+screen.CLOUD_COLOR_SETTINGS=Kolory chmur
+screen.CLOUD_COLOR_SETTINGS.comment=Ustawienia, które zmieniają kolory chmur.
 
 screen.CLOUD_UNBOUND_SETTINGS=Ustawienia Chmur w stylu Unbound
 screen.CLOUD_REIMAGINED_SETTINGS=Ustawienia Chmur w stylu Reimagined
@@ -126,15 +126,15 @@ screen.NETHER_SETTINGS=Wymiar Netheru
 screen.NETHER_SETTINGS.comment=Ustawienia związane z Netherem.
 
 screen.END_SETTINGS=Wymiar Endu
-screen.END_SETTINGS.comment=Ustawienia dotyczące wymiaru Endu.
+screen.END_SETTINGS.comment=Ustawienia związane z Endem.
 
 screen.WEATHER_SETTINGS=Deszcz / Pogoda
 screen.WEATHER_SETTINGS.comment=Ustawienia związane z warunkami pogodowymi.
 
-screen.CAMERA_SETTINGS=Ustawienia Kamery
+screen.CAMERA_SETTINGS=Kamera
 screen.CAMERA_SETTINGS.comment=Ustawienia związane z obrazem/widokiem.
 
-screen.TONEMAP_SETTINGS=Balans Kolorów
+screen.TONEMAP_SETTINGS=Balans kolorów
 screen.TONEMAP_SETTINGS.comment=Ustawienia określające balans kolorów obrazu.
 
 screen.COLORGRADING_SETTINGS=Gradacja Kolorów
@@ -266,7 +266,7 @@ value.shadowDistance.512.0=§4§l32 Chunki
 value.shadowDistance.768.0=§4§k-§r§4§l§n§o48 Chunków§r§4§k-
 value.shadowDistance.1024.0=§4§k-§r§4§l§n§o64 Chunki§r§4§k-
 
-option.ENTITY_SHADOW=Cienie Mobów
+option.ENTITY_SHADOW=Cienie bytów
 option.ENTITY_SHADOW.comment=Kontroluje możliwość rzucania cieni przez moby, niektóre bloki i inne byty. „Zwykłe Moby” obejmują takie zwierzęta i potwory, natomiast opcja „Pełne” obejmuje również pewne blokoi, takie jak skrzynie. §c[-]§r Cienie mobów wpływają na wydajność znacznie bardziej niż oczekiwano, w niektórych przypadkach kosztując ponad 50% klatek na sekundę.
 value.ENTITY_SHADOW.-1=§aWYŁ.
 value.ENTITY_SHADOW.1=§cZwykłe Moby
@@ -304,7 +304,7 @@ value.ANISOTROPIC_FILTER.8=§ex8
 value.ANISOTROPIC_FILTER.16=§4§lx16
 
 option.COLORED_LIGHTING=Zaawansowane Kolorowe Oświetlenie (ACT) §e[*]§r
-option.COLORED_LIGHTING.comment=Funkcja z Complementary. Wykorzystuje wokselizację i techologie floodfill, aby dać źródłom światła odpowieni kolor, a także dodaje kilka nowych źródeł świateła. §e[*]§r Ta funkcja działa tylko na Iris i obsługiwanych komputerach. §e[*]§r Aby ta funkcja działała, "Cienie w Czasie Rzeczywistym" muszą być właczone. §a[+]§r To ustawienie włącza również kilka innych funkcji, które można indywidualnie włączyć/wyłączyć w menu "Inne" -> "Funkcje ACT". §c[-]§r Wysokie wartości tego ustawienia mają znacznie większy wpływ na wydajność niż można się spodziewać, każda większa wartość może kosztować ponad dwukrotnie więcej niż wydajność poprzedniego poziomu. §c[-]§r Kolorowe oświetlenie może powodować pewne problemy z przeciekami koloru światła w przypadku bloków niepełnych lub dodanych przed mody.
+option.COLORED_LIGHTING.comment=Funkcja z Complementary. Wykorzystuje wokselizację i technologie floodfill, aby dać źródłom światła odpowieni kolor, a także dodaje kilka nowych źródeł świateła. §e[*]§r Ta funkcja działa tylko na Iris i obsługiwanych komputerach. §e[*]§r Aby ta funkcja działała, "Cienie w Czasie Rzeczywistym" muszą być właczone. §a[+]§r To ustawienie włącza również kilka innych funkcji, które można indywidualnie włączyć/wyłączyć w menu "Inne" -> "Funkcje ACT". §c[-]§r Wysokie wartości tego ustawienia mają znacznie większy wpływ na wydajność niż można się spodziewać, każda większa wartość może kosztować ponad dwukrotnie więcej niż wydajność poprzedniego poziomu. §c[-]§r Kolorowe oświetlenie może powodować pewne problemy z przeciekami koloru światła w przypadku bloków niepełnych lub dodanych przed mody.
 value.COLORED_LIGHTING.0=§aWYŁ.
 value.COLORED_LIGHTING.128=§c4 Chunki
 value.COLORED_LIGHTING.192=§c6 Chunków
@@ -366,8 +366,8 @@ value.LIGHTSHAFT_BEHAVIOUR.3=Extremalny §c[-]
 option.LIGHTSHAFT_SMOKE=§eDym w Snopach Światła§r
 option.LIGHTSHAFT_SMOKE.comment=Dodaje wolumetryczny dym do snopów świetła. §c[-]§r Ten efekt może mieć poważny wpływ na wydajność.
 
-option.SPECIAL_PALE_GARDEN_LIGHTSHAFTS=Specjalne Snopy Świała w Bladym Ogrodzie
-option.SPECIAL_PALE_GARDEN_LIGHTSHAFTS.comment=Sprawia, że snopy światła wyglądają wyjątkowo w biomie „Blady Ogród”.
+option.SPECIAL_PALE_GARDEN_LIGHTSHAFTS=Specjalne snopy światła w bladym ogrodzie
+option.SPECIAL_PALE_GARDEN_LIGHTSHAFTS.comment=Sprawia, że snopy światła wyglądają wyjątkowo dobrze w biomie „Blady ogród”.
 
 option.LIGHTSHAFT_DAY_I=Mnożnik Snopów Światła w trakcie Dnia
 option.LIGHTSHAFT_NIGHT_I=Mnożnik Snopów Światła w trakcie Nocy
@@ -521,10 +521,10 @@ value.WATER_CAUSTIC_STYLE_DEFINE.-1=Zsynchronizowana ze Stylem Wody
 value.WATER_CAUSTIC_STYLE_DEFINE.1=Reimagined
 value.WATER_CAUSTIC_STYLE_DEFINE.3=Unbound
 
-option.WATER_REFRACTION_INTENSITY=Natężęnie Refrakcji Wody §e[*]§r
+option.WATER_REFRACTION_INTENSITY=Natężenie Refrakcji Wody §e[*]§r
 option.WATER_REFRACTION_INTENSITY.comment=Dostosowuje intensywność refrakcji wody i podwodnych zniekształceń. §e[*]§r To ustawienie działa w pełni tylko wtedy, gdy Jakość Detali jest ustawiona na "Wysoką", w przeciwnym razie wpłynie tylko na subtelne podwodne zniekształcenia.
 
-option.WATER_FOAM_I=Natężęnie Piany Wodnej
+option.WATER_FOAM_I=Natężenie Piany Wodnej
 option.WATER_FOAM_I.comment=Określa nieprzezroczystość piany widocznej na krawędziach wody. §e[*]§r To ustawienie działa tylko wtedy, gdy Jakość Detali jest ustawiona na średnią lub wyższą.
 
 option.WATER_ALPHA_MULT=Współczynnik Nieprzezroczystości Wody
@@ -656,8 +656,8 @@ option.NIGHT_NEBULAE.comment=Dodaje gwiezdne mgławice do nocnego nieba. Mgławi
 value.NIGHT_NEBULAE.-1=WYŁ.
 value.NIGHT_NEBULAE.1=§eWŁ.
 
-option.NIGHT_NEBULA_I=Jasność Nocnych Mgławic
-option.NIGHT_NEBULA_I.comment=Dostosowuje jasność Nocnych Mgławic.
+option.NIGHT_NEBULA_I=Jasność nocnych mgławic
+option.NIGHT_NEBULA_I.comment=Dostosowuje jasność nocnych mgławic.
 
 option.RAIN_STYLE=Styl Deszczy
 option.RAIN_STYLE.comment=Określa styl deszczowej pogody.
@@ -701,7 +701,7 @@ option.BLOOM_ENABLED.comment=Umożliwia rozmycie blasku jasnych obiektów i wilg
 value.BLOOM_ENABLED.-1=WYŁ.
 value.BLOOM_ENABLED.1=§eWŁ.
 
-option.BLOOM_STRENGTH=Natężęnie Blasku
+option.BLOOM_STRENGTH=Natężenie Blasku
 option.BLOOM_STRENGTH.comment=Określa intensywność poświaty na jasnych obiektach oraz wpływ wilgoci na blask światła. §c[-]§r Zbyt duże wartości spowodują, że obraz będzie bardziej rozmyty i jaśniejszy niż zamierzano, szczególnie w wilgotnych warunkach.
 value.BLOOM_STRENGTH.0.027=15%
 value.BLOOM_STRENGTH.0.036=20%
@@ -748,7 +748,7 @@ value.LENSFLARE_MODE.0=WYŁ
 value.LENSFLARE_MODE.1=§cTylko Słońce
 value.LENSFLARE_MODE.2=§cSłońce & Księżyc
 
-option.LENSFLARE_I=Natężęnie Odblasków Obiektywu
+option.LENSFLARE_I=Natężenie Odblasków Obiektywu
 option.LENSFLARE_I.comment=Dostosowuje siłę efektu odblasku obiektywu.
 
 option.TAA_MODE=§eFiltr Temporalny (TAA)§r
@@ -913,7 +913,7 @@ option.GENERATED_NORMALS.comment=Dodaje automatycznie generowane nierówności d
 option.COATED_TEXTURES=Tekstury Powlekane (CT)
 option.COATED_TEXTURES.comment=Pokrywa tekstury w automatycznie generowanym "kurzu". §e[*]§r Opcja Wsparcie Tekstur musi być ustawiona na Zintegrowane PBR+. §e[*]§r Może wyglądać dziwnie z niektórymi paczkami zasobów lub modami, które zawierają tekstury o niestandardowej rozdzielczości.
 
-option.ENTITY_GN_AND_CT=Zezwalaj na GN i CT na mobach
+option.ENTITY_GN_AND_CT=Zezwalaj na GN i CT na bytach
 option.ENTITY_GN_AND_CT.comment=Decyduje, czy generowane normalne i powlekane tekstury mogą pojawiać się na mobach. §e[*]§r Ta opcja nie działa, jeśli główne opcje GN lub CT są wyłączone.
 
 option.GENERATED_NORMAL_MULT=Siła Generowanych Normalnych
@@ -973,7 +973,7 @@ option.GLOWING_ARMOR_TRIM.comment=Sprawia, że wykończenia zbroi są świecą s
 option.NORMAL_MAP_STRENGTH=Siła Mapy Normalnej
 option.NORMAL_MAP_STRENGTH.comment=Dostosowuje siłę wyboistych szczegółów na powierzchniach. §e[*]§r Opcja Wsparcie Tekstur musi być ustawiona na labPBR/seuspbr i musi być używany kompatybilny pakiet zasobów.
 
-option.CUSTOM_EMISSION_INTENSITY=Natężęnie Emisji
+option.CUSTOM_EMISSION_INTENSITY=Natężenie Emisji
 option.CUSTOM_EMISSION_INTENSITY.comment=Dostosowuje intensywność emisji tekstur. §e[*]§r Opcja Wsparcie Tekstur musi być ustawiona na labPBR/seuspbr i musi być używany kompatybilny pakiet zasobów.
 
 option.POM=§eMapowanie Okluzji Paralaksy (POM)§r
@@ -1129,13 +1129,13 @@ option.MOON_PHASE_INF_ATMOSPHERE.comment=Umożliwia aby różne fazy księżyca 
 option.MOON_PHASE_INF_REFLECTION=Wpływ Fazy Księżyca (Odblask)
 option.MOON_PHASE_INF_REFLECTION.comment=Umożliwia aby różne fazy księżyca mogły zmienić jasność odblasku księżyca.
 
-option.MOON_PHASE_FULL=Natężęnie Księżyca w Pełni
+option.MOON_PHASE_FULL=Natężenie Księżyca w Pełni
 option.MOON_PHASE_FULL.comment=Dostosowuje wpływ fazy księżyca podczas pełni (najjaśniejsza faza).
 
-option.MOON_PHASE_PARTIAL=Natężęnie Księżyca w Kwadrach
+option.MOON_PHASE_PARTIAL=Natężenie Księżyca w Kwadrach
 option.MOON_PHASE_PARTIAL.comment=Dostosowuje wpływ fazy księżyca podczas wszystkich faz księżyca między pełnią a nowiem. Są to fazy, którą najczęściej można zobaczyć w nocy w Minecraft.
 
-option.MOON_PHASE_DARK=Natężęnie Księżyca w Nowiu
+option.MOON_PHASE_DARK=Natężenie Księżyca w Nowiu
 option.MOON_PHASE_DARK.comment=Dostosowuje wpływ fazy księżyca podczas nowiu (najciemniejsza faza).
 
 option.CONNECTED_GLASS_EFFECT=Połączone Szkło
@@ -1156,7 +1156,7 @@ option.COLORED_LIGHT_SATURATION.comment=Pozwala dostosować nasycenie kolorów Z
 option.COLORED_LIGHT_FOG=§eWolumetryczna Mgła Świetlna§r
 option.COLORED_LIGHT_FOG.comment=Dodaje wolumetryczną mgłę do sceny, najbardziej widoczną w nocy lub pod ziemią. §e[*]§r Ta funkcja działa tylko wtedy, gdy Zaawansowane Kolorowe Oświetlenie (ACT) jest włączone w ustawieniach jakości i twój komputer/shader loader obsługuje tę funkcję. §c[-]§r Ten efekt może poważnie wpłynąć na wydajność.
 
-option.COLORED_LIGHT_FOG_I=Natężęnie Mgły Świetlnej
+option.COLORED_LIGHT_FOG_I=Natężenie Mgły Świetlnej
 option.COLORED_LIGHT_FOG_I.comment=Określa jasność wolumetrycznej mgły świetlnej.
 
 option.LIGHT_COLOR_MULTS=§eMnożniki Kolorów Oświetlenia
@@ -1217,7 +1217,7 @@ option.ATM_END_I=Mnożnik Natężenia Atmosfery
 option.XLIGHT_R=Mnożnik Czerwieni Źródeł Światła
 option.XLIGHT_G=Mnożnik Zieleni Źródeł Światła
 option.XLIGHT_B=Mnożnik Niebieskości Źródeł Światła
-option.XLIGHT_I=Natężęnie Źródeł Światła
+option.XLIGHT_I=Natężenie Źródeł Światła
 
 option.XLIGHT_CURVE=Kontrast Źródeł Światła
 option.XLIGHT_CURVE.comment=Reguluje spadek intensywności światła w miarę oddalania się od źródła światła.
@@ -1272,8 +1272,8 @@ screen.RAIN_SETTINGS=Ustawienia Deszczu
 screen.NIGHT_DESATURATION_SETTINGS=Widzenie Zmierzchowe
 screen.MOON_PHASED_DESATURATION_SETTINGS=Wpływ Fazy Księżyca (Widzenie Zmierzchowe)
 screen.MOON_PHASED_DESATURATION_SETTINGS.comment=Dostosowuje stopień desaturacji kolorów na podstawie bieżącej fazy księżyca.
-screen.NIGHT_NEBULA_SETTINGS=Nocne Mgławice
-screen.NIGHT_NEBULA_COLOR_SETTINGS=Ustawienia Koloru
+screen.NIGHT_NEBULA_SETTINGS=Nocne mgławice
+screen.NIGHT_NEBULA_COLOR_SETTINGS=Ustawienia kolorów
 screen.NEBULA_STAR_SETTINGS=Ustawienia Gwiazd
 
 screen.WORLD=Świat
@@ -1319,7 +1319,7 @@ screen.SAND_NOISE_SETTINGS=Ustawienia Piaszczystej Powłoki
 screen.MATERIALS=Materiały
 screen.MATERIALS.comment=Ustawienia związane z materiałami.
 screen.EMISSIVE_MATERIALS=Emisyjne Materiały
-screen.EMISSIVE_FLOWERS_SETTINGS=Emisyjne Kwiaty
+screen.EMISSIVE_FLOWERS_SETTINGS=Świecące kwiaty
 screen.WATER=Woda
 screen.WATER.comment=Ustawienia związane z wodą.
 screen.IPBR_REDSTONE=Zintegrowane PBR Redstone
@@ -1375,10 +1375,10 @@ screen.WORLD_CURVATURE_SETTINGS.comment=Ustawienia związane z krzywizną świat
 screen.RANDOM_BLOCKLIGHT_SETTINGS=Źródła Światła
 screen.RANDOM_BLOCKLIGHT_SETTINGS.comment=Losowe ustawienia związane ze źródłami światła.
 
-screen.POPULAR_SETTINGS=§dPopularne Ustawienia
+screen.POPULAR_SETTINGS=§dPopularne ustawienia
 screen.POPULAR_SETTINGS.comment=screen.POPULAR_SETTINGS.comment=Oto niektóre z najpopularniejszych ustawień w Euphoria Patches. Poza Zaawansowanym Kolorowym Oświetleniem (niezbędnym dla wielu efektów) wszystkie opcje tutaj są dostępne wyłączne dla Euphoria Patches i nie można ich znaleźć w oryginalnym pakiecie Complementary.
-screen.POPULAR_SETTINGS_2=2 Strona
-screen.POPULAR_SETTINGS_3=3 Strona
+screen.POPULAR_SETTINGS_2=2 strona
+screen.POPULAR_SETTINGS_3=3 strona
 screen.EP_VERSION=Euphoria Patches §d1.9.3
 screen.EP_VERSION.comment=§bMożesz wspierać SpacEagle17 na Patreon lub Ko-Fi, co wiąże się z wczesnym dostępem do wersji w deweloperskich. §r§d§l§neuphoriapatches.com/support
 
@@ -1441,11 +1441,11 @@ option.AURORA_DRAW_DISTANCE.comment=Kontroluje jak daleko od gracza zorza polarn
 option.AURORA_INFLUENCE=Wpływ Zórz Polarnych
 option.AURORA_INFLUENCE.comment=Sprawia, że kolor zorzy wpływa na chmury i teren.
 
-option.AURORA_CLOUD_INFLUENCE_INTENSITY=Natężęnie Wpływu na Chmury
+option.AURORA_CLOUD_INFLUENCE_INTENSITY=Natężenie Wpływu na Chmury
 option.AURORA_CLOUD_INFLUENCE_INTENSITY.comment=Zmienia intensywność wpływu koloru zorzy polarnej na chmury.
 value.AURORA_CLOUD_INFLUENCE_INTENSITY.0.00=WYŁ.
 
-option.AURORA_TERRAIN_INFLUENCE_INTENSITY=Natężęnie Wpływu na Teren
+option.AURORA_TERRAIN_INFLUENCE_INTENSITY=Natężenie Wpływu na Teren
 option.AURORA_TERRAIN_INFLUENCE_INTENSITY.comment=Zmienia intensywność wpływu koloru zorzy polarnej na teren.
 value.AURORA_TERRAIN_INFLUENCE_INTENSITY.0.00=WYŁ.
 
@@ -1568,7 +1568,7 @@ option.PIXELATED_UNBOUND_CLOUDS.comment=Nadaje chmurom Unbound pikselowy wygląd
 value.PIXELATED_UNBOUND_CLOUDS.0=WYŁ.
 
 option.DOUBLE_UNBOUND_CLOUDS=Podwójne Chmury Unbound
-option.DOUBLE_UNBOUND_CLOUDS.comment=Włącza drugą warstwe chmur Unbound. §c[-]§r To ustawienie może mieć wpływ na wydajność.
+option.DOUBLE_UNBOUND_CLOUDS.comment=Włącza drugą warstwę chmur Unbound. §c[-]§r To ustawienie może mieć wpływ na wydajność.
 option.CLOUD_UNBOUND_LAYER2_ALTITUDE=Pułap Chmur Drugiej Warstwy
 option.CLOUD_UNBOUND_LAYER2_ALTITUDE.comment=Określa pułap, na którym znajduje się druga warstwa chmur.
 option.CLOUD_UNBOUND_LAYER2_HEIGHT=Grubość Chmur Drugiej Warstwy
@@ -1677,7 +1677,7 @@ value.END_CRYSTAL_VORTEX.1=Wir
 value.END_CRYSTAL_VORTEX.2=Wiązki Lecznicze
 value.END_CRYSTAL_VORTEX.3=Oba
 option.DRAGON_DEATH_EFFECT=Efekt Śmierci Smoka Endu
-option.DRAGON_DEATH_EFFECT.comment=Ustawienie, które zastępuje domyslną animacje śmerci smoka efektem wolumetrycznym. §4[***]§r Włącza §cCienie Mobów§r. §e[*]§r Ta funkcja działa tylko wtedy, gdy Zaawansowane Kolorowe Oświetlenie (ACT) jest włączone w Ustawieniach Jakości i twój komputer/shader loader je obsługuje. §e[*]§r Działa tylko na Iris. §e[*]§r nie działa na MacOS.
+option.DRAGON_DEATH_EFFECT.comment=Ustawienie, które zastępuje domyślną animacje śmierci smoka efektem wolumetrycznym. §4[***]§r Włącza §cCienie Mobów§r. §e[*]§r Ta funkcja działa tylko wtedy, gdy Zaawansowane Kolorowe Oświetlenie (ACT) jest włączone w Ustawieniach Jakości i twój komputer/shader loader je obsługuje. §e[*]§r Działa tylko na Iris. §e[*]§r nie działa na MacOS.
 value.DRAGON_DEATH_EFFECT.0=WYŁ.
 value.DRAGON_DEATH_EFFECT.1=Efekt Wolumetryczny
 value.DRAGON_DEATH_EFFECT.2=Efekt Wolumetryczny + Oryginalna Animacja
@@ -1694,7 +1694,7 @@ option.E_DRAGON_BEAM_G_NEW.comment=Kolor Zorzy Ender podczas gdy Smok Endu żyje
 option.E_DRAGON_BEAM_B_NEW=Smocze Zorza Ender - Niebieskość
 option.E_DRAGON_BEAM_B_NEW.comment=Kolor Zorzy Ender podczas gdy Smok Endu żyje - Niebieskość.
 option.E_DRAGON_BEAM_I=Smocze Zorza Ender - Natężenie
-option.E_DRAGON_BEAM_I.comment=Kolor Zorzy Ender podczas gdy Smok Endu żyje - Natężęnie.
+option.E_DRAGON_BEAM_I.comment=Kolor Zorzy Ender podczas gdy Smok Endu żyje - Natężenie.
 option.END_BEAM_SCALE=Skala
 option.END_BEAM_SCALE.comment=Zmienia skalę zorzy Endu. Wyższe wartości powodują jej zwężenie, niższe – poszerzenie.
 option.END_BEAM_DISTANCE_MULTIPLIER=Zasięg
@@ -1746,6 +1746,7 @@ value.END_TWINKLING_STARS.17=1.7
 value.END_TWINKLING_STARS.18=1.8
 value.END_TWINKLING_STARS.19=1.9
 value.END_TWINKLING_STARS.20=2.0
+option.END_STAR_HEMISPHERE=Półkula gwiazd Endu
 option.END_STAR_HEMISPHERE.comment=Ustawienie określające wyświetlanie gwiazd wyłącznie na górnej lub dolnej półkuli nieba w Endzie.
 value.END_STAR_HEMISPHERE.0=Obie Półkule
 value.END_STAR_HEMISPHERE.1=Tylko Górna Półkula
@@ -1844,14 +1845,14 @@ option.DIRECTIONAL_LIGHTMAP_NORMALS_HANDHELD_STRENGTH=Intensywność od Trzymane
 option.CAVE_FOG_R_NEW=Mgła w Jask. - Czerwień
 option.CAVE_FOG_G_NEW=Mgła w Jask. - Zieleń
 option.CAVE_FOG_B_NEW=Mgła w Jask. - Niebieskość
-option.CAVE_FOG_I=Mgła w Jask. - Natężęnie
+option.CAVE_FOG_I=Mgła w Jask. - Natężenie
 option.CAVE_FOG_DENSITY=Mgła w Jask. - Gęstość
 
 option.ATMOSPHERIC_FOG=Mgła Atmosferyczna
 option.ATMOSPHERIC_FOG_R_NEW= Mgła Atmosferyczna - Czerwień
 option.ATMOSPHERIC_FOG_G_NEW= Mgła Atmosferyczna - Zieleń
 option.ATMOSPHERIC_FOG_B_NEW= Mgła Atmosferyczna - Niebieskość
-option.ATMOSPHERIC_FOG_I= Mgła Atmosferyczna - Natężęnie
+option.ATMOSPHERIC_FOG_I= Mgła Atmosferyczna - Natężenie
 option.ATMOSPHERIC_FOG_DENSITY=Mgła Atmosferyczna - Gęstość
 option.RADIOACTIVE_ATMOSPHERIC_FOG=Radioaktywna Mgła Atmosferyczna
 option.RADIOACTIVE_ATMOSPHERIC_FOG.comment=Bardzo szkodzi na zdrowie... Szczególnie zauważalna w nocy.
@@ -1968,10 +1969,10 @@ option.WAVIER_LAVA.comment=Sprawia, że falowanie lawy jest bardziej ekstremalne
 option.LAVA_EMISSION=Emisja Lawy
 
 option.LAVA_NOISE_INTENSITY=Natężenie Szumu Lawy
-option.LAVA_NOISE_INTENSITY.comment=Kontrolume krycie szumu generowanego przez preset lawy.
+option.LAVA_NOISE_INTENSITY.comment=Kontroluje krycie szumu generowanego przez preset lawy.
 
 option.LAVA_NOISE_AMOUNT=Ilość Szumu Lawy
-option.LAVA_NOISE_AMOUNT.comment=Kontrolume ilość szumu generowanego przez preset lawy.
+option.LAVA_NOISE_AMOUNT.comment=Kontroluje ilość szumu generowanego przez preset lawy.
 
 option.LAVA_EDGE_EFFECT=Efekt Krawędzi Lawy
 option.LAVA_EDGE_EFFECT.comment=Dodaje krawędź do lawy, gdy jest w kontakcie z innymi blokami. §e[*]§r Zaawansowane Kolorowe Oświetlenie (ACT) musi być włączone aby ta funkcja działała.
@@ -1991,7 +1992,7 @@ value.END_ROD_COLOR_PROFILE.3=Tęczowy - Tylko na Powierzchni
 option.END_ROD_R=Słupek Endu - Czerwień
 option.END_ROD_G=Słupek Endu - Zieleń
 option.END_ROD_B=Słupek Endu - Niebieskość
-option.END_ROD_I=Słupek Endu - Natężęnie
+option.END_ROD_I=Słupek Endu - Natężenie
 option.RAINBOW_END_ROD_COORD_OFFSET=Odchylenie Kolorów Tęczy
 value.RAINBOW_END_ROD_COORD_OFFSET.0=Brak
 value.RAINBOW_END_ROD_COORD_OFFSET.3=Minimalne
@@ -2019,7 +2020,7 @@ value.LETTERBOXING.0=WYŁ.
 value.LETTERBOXING.1=WŁ.
 value.LETTERBOXING.2=WŁ. - Podczas Kucania
 
-option.ASPECT_RATIO=Współczynnik Perspektywy
+option.ASPECT_RATIO=Proporcje obrazu
 option.ASPECT_RATIO.comment=Zmienia stosunek szerokości do wysokości przyciętego obrazu.
 
 option.EXCLUDE_ENTITIES=Wyklucz Moby
@@ -2068,7 +2069,7 @@ value.tonemap_left.agxTonemap=AgX
 value.tonemap_left.doSimpleTonemap=Prosty
 
 option.tonemap_right=Mapa Tonów - Prawa
-option.tonemap_right.comment=Zmienia która mapa tonów jest w użyciu po prawej stronie ektranu.
+option.tonemap_right.comment=Zmienia która mapa tonów jest w użyciu po prawej stronie ekranu.
 value.tonemap_right.DoCompTonemap=Domyślna Complementary
 value.tonemap_right.DoBSLTonemap=BSL/Complementary
 value.tonemap_right.ACESTonemap=ACES
@@ -2205,7 +2206,7 @@ option.FLOWER_SIZE=Rozdzielczość Kwiatów
 option.FLOWER_AMOUNT=Ilość Kwiatów
 value.FLOWER_AMOUNT.0=WYŁ.
 option.SPRING_GREEN_INTENSITY=Intensywność Wiosny
-option.EMISSIVE_SPRING_FLOWERS=Świecące Kwiaty na Wiosne
+option.EMISSIVE_SPRING_FLOWERS=Świecące kwiaty wiosną
 option.EMISSIVE_SPRING_FLOWERS.comment=Opcja wyłączenia emisji ze wiosennych kwiatów w przypadku korzystania z opcji Świecące Kwiaty dostępnej na stronie ustawień materiałów Euphoria.
 option.DISABLE_SPRING_IN_DRY_BIOMES=Wyłącz w Suchych Biomach
 
@@ -2279,7 +2280,7 @@ value.RETRO_LOOK.2=Zarysy - Podczas Noktowizji
 option.RETRO_LOOK_R= Wygląd Retro - Czerwień
 option.RETRO_LOOK_G= Wygląd Retro - Zieleń
 option.RETRO_LOOK_B= Wygląd Retro - Niebieskość
-option.RETRO_LOOK_I= Wygląd Retro - Natężęnie
+option.RETRO_LOOK_I= Wygląd Retro - Natężenie
 
 option.CURVE_DISPLAY=Zagięty Ekran
 option.CURVE_DISPLAY.comment=Symuluje zakrzywienie wyświetlacz.
@@ -2295,7 +2296,7 @@ option.STATIC_SPEED=Szybkość Szumu Telewizyjnego
 
 option.HORIZONTAL_NOISE=Szum Poziomy
 value.HORIZONTAL_NOISE.0=WYŁ.
-option.HORIZONTAL_NOISE_INTENSITY=Natężęnie Szumu Poziomego
+option.HORIZONTAL_NOISE_INTENSITY=Natężenie Szumu Poziomego
 option.HORIZONTAL_NOISE_SPEED=Szybkość Szumu Poziomego
 
 option.VERTICAL_SCREEN_DISPLACEMENT=Pionowa Dyslokacjia Ekranu
@@ -2372,13 +2373,13 @@ value.SPEED_LINES.1=WŁ. - Wysoka Prędkość
 value.SPEED_LINES.2=WŁ. - Wysoka Prędkość Podczas Sprintu
 value.SPEED_LINES.3=WŁ.
 option.SPEED_LINES_TRANSPARENCY=Przezroczystość Lin Prędkości
-option.SPEED_LINES_SPEED=Natężęnie Lin Prędkości
+option.SPEED_LINES_SPEED=Natężenie Lin Prędkości
 option.SPEED_LINE_THICKNESS=Grubość Lin Prędkości
 
 option.CAMERA_NOISE_OVERLAY=Szumy Kamery
 value.CAMERA_NOISE_OVERLAY.0=WŁ.
 value.CAMERA_NOISE_OVERLAY.1=Szum 1
-option.CAMERA_NOISE_OVERLAY_INTENSITY=Natężęnie Szumu
+option.CAMERA_NOISE_OVERLAY_INTENSITY=Natężenie Szumu
 
 option.LONG_EXPOSURE=Długa Ekspozycja
 option.LONG_EXPOSURE.comment=Wyłącz interfejs użytkownika, naciskając F1 i nie ruszaj się. Tryb Kumulacji został specjalnie stworzony, aby poprawić wygląd gwiazd i inych jasnych obiektów, podczas gdy obiekty w trybie Wagi Czasowej blakną z czasem.
@@ -2427,7 +2428,7 @@ option.MOSS_IN_CAVES=Warunek
 value.MOSS_IN_CAVES.0=Tylko w Bujnych Jaskiniach
 value.MOSS_IN_CAVES.1=Wszędzie
 value.MOSS_IN_CAVES.2=WYŁ.
-option.MOSS_SIDE_INTENSITY=Natężęnie Mchu na Ścianach
+option.MOSS_SIDE_INTENSITY=Natężenie Mchu na Ścianach
 option.MOSS_NOISE_DISTANCE=Zasięg Powłoki Mchu
 
 option.SAND_NOISE=Piaszczysta Powłoka
@@ -2436,13 +2437,13 @@ value.SAND_CONDITION.0=Tylko w Piaszczystych Biomach
 value.SAND_CONDITION.1=Wszystkie Ciepłe Biomy
 value.SAND_CONDITION.2=Wszędzie
 option.SAND_SIZE=Rozmiar Pikseli
-option.SAND_NOISE_INTENSITY=Natężęnie Piasku
-option.SAND_NOISE_REMOVE_INTENSITY=Natężęnie Usuwania Piasku
+option.SAND_NOISE_INTENSITY=Natężenie Piasku
+option.SAND_NOISE_REMOVE_INTENSITY=Natężenie Usuwania Piasku
 option.SAND_TRANSPARENCY=Przezroczystość Piasku
 option.SAND_IN_CAVES=Piasek w Jaskiniach
 value.SAND_IN_CAVES.true=Wł.
 value.SAND_IN_CAVES.false=WYŁ.
-option.SAND_SIDE_INTENSITY=Natężęnie Piasku na Ścianach
+option.SAND_SIDE_INTENSITY=Natężenie Piasku na Ścianach
 option.SAND_NOISE_DISTANCE=Zasięg Piaszczystej Powłoki
 
 option.MAIN_GRID_INTERVAL=Siatka Aparatu
@@ -2454,15 +2455,15 @@ value.GRID_CONDITION.0=Brak
 value.GRID_CONDITION.1=Podczas Kucania
 value.GRID_CONDITION.2=Trzumaj Lunete
 
-option.EMISSIVE_FLOWERS=Świecące Kwiaty
+option.EMISSIVE_FLOWERS=Świecące kwiaty
 value.EMISSIVE_FLOWERS.0=WYŁ.
 value.EMISSIVE_FLOWERS.1=WŁ.
-value.EMISSIVE_FLOWERS.2=WŁ - Podczas Deszczu
+value.EMISSIVE_FLOWERS.2=WŁ. - Podczas deszczu
 
-option.EMISSIVE_FLOWERS_TYPE=Rodzaj Świecących Kwiatów
+option.EMISSIVE_FLOWERS_TYPE=Rodzaj świecących kwiatów
 value.EMISSIVE_FLOWERS_TYPE.0=Wszystkie
-value.EMISSIVE_FLOWERS_TYPE.1=Zimne Kolory
-value.EMISSIVE_FLOWERS_TYPE.2=Ciepłe Kolory
+value.EMISSIVE_FLOWERS_TYPE.1=Zimne kolory
+value.EMISSIVE_FLOWERS_TYPE.2=Ciepłe kolory
 
 option.EMISSIVE_FLOWERS_STRENGTH=Jasność
 
@@ -2472,7 +2473,7 @@ value.DISTANCE_MIN_LIGHT.0=WYŁ.
 
 option.EMISSIVE_DRAGON_EGG=Świecące smocze jajo
 
-option.VANILLA_ENTITY_SHADOWS=Cienie Mobów Vanilla
+option.VANILLA_ENTITY_SHADOWS=Cienie bytów (Vanilla)
 option.VANILLA_ENTITY_SHADOWS.comment=Włącza wbudowane cienie pod mobami, gdy "Cienie w Czasie Rzeczywistym" są wyłączone.
 
 option.FROGLIGHT_SATURATION=Nasycenie Żabich Lamp
@@ -2529,6 +2530,7 @@ option.DAYLIGHT_STARS=Gwiazdy w Dzień
 option.DAYLIGHT_STARS.comment=Włącza gwiazdy podczas dnia.
 
 option.FROZEN_TIME=Zatrzymany Czas
+option.FROZEN_TIME_COMMENT=Zamraża czas animacji shaderów. Efekty oparte na animacji klatkowej zostaną zatrzymane, co ułatwia robienie porządnych zrzutów do porównania.
 
 option.DARKER_DEPTH_OCEANS=Ciemniejsze Głebokie Oceany
 option.DARKER_DEPTH_OCEANS.comment=Ilość światła zmniejsza się wraz z głebokością
@@ -2546,7 +2548,7 @@ option.BEACON_BEAM_EMISSION.comment=Zmień janość wiązki magicznej latarni
 
 option.PINKER_CHERRY_LEAVES=Różowsze Drzewa Wiśniowe
 
-option.LIGHTMAP_CURVES=Krzywe Mapy Światła
+option.LIGHTMAP_CURVES=Krzywe mapy światła
 option.LIGHTMAP_CURVES.comment=Zmień krzywe mapy światła.
 option.UPPER_LIGHTMAP_CURVE=Górna Krzywa Mapy Światła
 option.UPPER_LIGHTMAP_CURVE.comment=Zmień intensywność górnej krzywej mapy światła.
@@ -2738,30 +2740,30 @@ value.END_SUN_ANGLE.-60=-60
 
 option.PIXELATED_NEBULA=Pikselowane Mgławice
 value.PIXELATED_NEBULA.0=WYŁ.
-option.NEBULA_ZOOM_LEVEL=Poziom Powiększenia
-option.NEBULA_ZOOM_LEVEL.comment=Zmiania powiększenie mgławic na niebie.
+option.NEBULA_ZOOM_LEVEL=Poziom powiększenia
+option.NEBULA_ZOOM_LEVEL.comment=Zmienia powiększenie mgławic na niebie.
 option.NEBULA_AMOUNT=Ilość
-option.NEBULA_AMOUNT.comment=Zmiania stopnień pokrycia nieba przez mgławice.
+option.NEBULA_AMOUNT.comment=Zmienia stopnień pokrycia nieba przez mgławice.
 option.NEBULA_PATTERN_WARP=Wir
-option.NEBULA_PATTERN_WARP.comment=Zmiania stopnień zniekształcenia mgławic.
+option.NEBULA_PATTERN_WARP.comment=Zmienia stopnień zniekształcenia mgławic.
 value.NEBULA_PATTERN_WARP.0=WYŁ.
-option.NEBULA_HORIZON_STRENGTH=Widoczność Horyzontu
+option.NEBULA_HORIZON_STRENGTH=Widoczność horyzontu
 option.NEBULA_HORIZON_STRENGTH.comment=Zmiania stopień widoczności mgławic na horyzoncie.
 value.NEBULA_HORIZON_STRENGTH.10=Domyślna
 
-option.NEBULA_R_1=Mgławica 1 – Czerwona
-option.NEBULA_G_1=Mgławica 1 – Zielona
-option.NEBULA_B_1=Mgławica 1 – Niebieska
-option.NEBULA_R_2=Mgławica 2 – Czerwona
-option.NEBULA_G_2=Mgławica 2 – Zielona
-option.NEBULA_B_2=Mgławica 2 – Niebieska
-option.NEBULA_R_3=Mgławica 3 – Czerwona
-option.NEBULA_G_3=Mgławica 3 – Zielona
-option.NEBULA_B_3=Mgławica 3 – Niebieska
+option.NEBULA_R_1=Mgławica 1 – Czerwony
+option.NEBULA_G_1=Mgławica 1 – Zielony
+option.NEBULA_B_1=Mgławica 1 – Niebieski
+option.NEBULA_R_2=Mgławica 2 – Czerwony
+option.NEBULA_G_2=Mgławica 2 – Zielony
+option.NEBULA_B_2=Mgławica 2 – Niebieski
+option.NEBULA_R_3=Mgławica 3 – Czerwony
+option.NEBULA_G_3=Mgławica 3 – Zielony
+option.NEBULA_B_3=Mgławica 3 – Niebieski
 
 option.NEBULA_SATURATION=Nasycenie
 
-option.NEBULA_ONLY_STARS=Tylko Gwiazdy
+option.NEBULA_ONLY_STARS=Tylko gwiazdy
 option.NEBULA_ONLY_STARS.comment=Usuwa kolorową część mgławic i pokazuje tylko zawarte w nich gwiazdy.
 
 option.NEBULA_STAR_BRIGHTNESS=Jasność Gwiazd w Mgławicach
@@ -2776,11 +2778,11 @@ option.NEBULA_STAR_AMOUNT.comment=Zmienia liczbę gwiazd w mgławicach.
 option.NEBULA_MOON_CONDITION=Mgławice Warunkowane Fazą Księżyca
 option.NEBULA_MOON_CONDITION.comment=Określa kryterium widoczności nocnych mgławic wedłóg obecnej fazy księżyca.
 value.NEBULA_MOON_CONDITION.0=Zawsze
-value.NEBULA_MOON_CONDITION.1=Księżyc w Nowiu
-value.NEBULA_MOON_CONDITION.2=Księżyc w Pełni
-value.NEBULA_MOON_CONDITION.3=Księżyc w Kwadrach
+value.NEBULA_MOON_CONDITION.1=Księżyc w nowiu
+value.NEBULA_MOON_CONDITION.2=Księżyc w pełni
+value.NEBULA_MOON_CONDITION.3=Księżyc w kwadrach
 value.NEBULA_MOON_CONDITION.4=Losowo
-value.NEBULA_MOON_CONDITION.5=Zawsze z Wyjątkiem Nowiu
+value.NEBULA_MOON_CONDITION.5=Zawsze poza nowiem
 
 option.END_CENTER_LIGHTING=Światło Centrum Endu
 option.END_CENTER_LIGHTING.comment=Zmienia właściwości światła emitowanego przez główną wyspę Endu. §e[*]§r Ta funkcja działa tylko w Minecraft 1.9+.
@@ -2860,6 +2862,7 @@ option.PHOTONICS_PIXELATED_SHADOWS.comment=Włącza lub wyłącza pikselowanie c
 
 option.PHOTONICS_ALPHA_MODE=Tryb Przezroczystości
 option.PHOTONICS_ALPHA_MODE.comment=Ustawia sposób, w jaki Photonics obsługuje przezroczyste bloki. n\nBrak - Przezroczyste bloki są traktowane jako nieprzezroczyste\nBlok - Przezroczystość jest stosowana dla każdego bloku (§aMinimalny wpływ na wydajność)§r\nVoxel - Przezroczystość jest stosowana dla każdego woksela (§cDUŻY WPŁYW NA WYDAJNOŚĆ)§r
+value.PHOTONICS_ALPHA_MODE.NONE=Brak
 value.PHOTONICS_ALPHA_MODE.BLOCK=Blok
 value.PHOTONICS_ALPHA_MODE.VOXEL=Voxel
 
@@ -2875,17 +2878,21 @@ option.PHOTONICS_MAX_LIGHTS.comment=Maksymalna liczba świateł, które mogą zo
 value.PHOTONICS_MAX_LIGHTS.0=WYŁ.
 
 option.PHOTONICS_MAX_SAMPLES=Maksymalna Liczba Próbek
-option.PHOTONICS_MAX_SAMPLES.comment=Liczba pobliskich źródeł światła, które mogą oświetlać obiekt\n\n§DUŻY WPŁYW NA WYDAJNOŚĆ
+option.PHOTONICS_MAX_SAMPLES.comment=Liczba pobliskich źródeł światła, które mogą oświetlać obiekt\n\n§cDUŻY WPŁYW NA WYDAJNOŚĆ
 
 option.PHOTONICS_RESTIR_INITIAL_SAMPLES=Wstępne Próbkowanie ReSTIR
 option.PHOTONICS_RESTIR_INITIAL_SAMPLES.comment=Ile źródeł światła ReSTIR powinno być początkowo uwzględnione \n\n§6Średni wpływ na wydajność
 
 option.PHOTONICS_RESTIR_SOFT_SHADOWS=Miękkie Cienie ReSTIR
+option.PHOTONICS_RESTIR_SOFT_SHADOWS.comment=Czy ReSTIR ma używać miękkich cieni \n\n§aNiewielki wpływ na wydajność
 
 option.PHOTONICS_RESTIR_SPATIAL_REUSE_SAMPLES=Próbki Ponownego Wykorzystania Przestrzennego ReSTIR
+option.PHOTONICS_RESTIR_SPATIAL_REUSE_SAMPLES.comment=Ile próbek ReSTIR używa do ponownego wykorzystania przestrzennego \n\n§6Średni wpływ na wydajność
 
 option.PHOTONICS_RESTIR_SPATIAL_REUSE_RADIUS=ReSTIR Promień Ponownego Wykorzystania Przestrzennego
 
+option.PHOTONICS_RESTIR_ACCUMULATION_FRAMES=ReSTIR: klatki akumulacji
+option.PHOTONICS_RESTIR_ACCUMULATION_FRAMES.comment=Maksymalna liczba klatek, które ReSTIR używa do akumulacji. Niższe wartości sprawiają, że oświetlenie reaguje szybciej, kosztem większego szumu.\n\nBrak wpływu na wydajność
 
 option.PHOTONICS_RESTIR_DENOISER_PASSES=Iloraz Odszumiania
 option.PHOTONICS_RESTIR_DENOISER_PASSES.comment=Liczba przejść modułu usuwania szumów stosowanego w ReSTIR\n\n§cDUŻY WPŁYW NA WYDAJNOŚĆ
