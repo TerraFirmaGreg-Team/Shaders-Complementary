@@ -1483,6 +1483,9 @@ value.CLOUD_ROUNDNESS.0.125=平衡
 value.CLOUD_ROUNDNESS.0.2=圆润
 option.CLOUD_ROUNDNESS.comment=调节云层的圆润程度.  §e[*]§r 更低的圆润程度会导致云层出现更多的噪点伪影.
 
+option.REIMAGINED_CLOUDS_OUTLINE=云朵描边
+option.REIMAGINED_CLOUDS_OUTLINE.comment=为 Reimagined 云朵增加描边
+value.REIMAGINED_CLOUDS_OUTLINE.0=关
 
 option.CLOUD_SHADOW_ROUNDNESS=云影圆润度
 value.CLOUD_SHADOW_ROUNDNESS.0.15=超方正
@@ -2043,6 +2046,7 @@ value.tonemap.filmic=Filmic
 value.tonemap.GTTonemap=Gran Turismo
 value.tonemap.uchimura=Uchimura
 value.tonemap.agxTonemap=AgX
+value.tonemap.doSimpleTonemap=简单
 
 option.TONEMAP_COMPARISON=色调比对模式
 option.TONEMAP_COMPARISON.comment=用来对比不同色调映射效果的设置.
@@ -2062,6 +2066,7 @@ value.tonemap_left.filmic=Filmic
 value.tonemap_left.GTTonemap=Gran Turismo
 value.tonemap_left.uchimura=Uchimura
 value.tonemap_left.agxTonemap=AgX
+value.tonemap_left.doSimpleTonemap=简单
 
 option.tonemap_right=右半屏幕色调映射方式
 option.tonemap_right.comment=改变右半屏幕使用的色调映射方式.
@@ -2078,6 +2083,7 @@ value.tonemap_right.filmic=Filmic
 value.tonemap_right.GTTonemap=Gran Turismo
 value.tonemap_right.uchimura=Uchimura
 value.tonemap_right.agxTonemap=AgX
+value.tonemap_right.doSimpleTonemap=简单
 
 option.ACES_EXPOSURE=曝光
 option.ACES_EXPOSURE.comment=调节图像的整体亮度.
