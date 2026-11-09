@@ -252,7 +252,7 @@ vec4 GetSpecialBlocklightColor(int mat) {
 				if (mat < 92) {
 					if (mat < 89) {
 						if (mat == 86) return vec4(vec3(1.0, 0.4, 0.1), COILS_EMIT_STRENGTH); // Cupronickel coil
-						if (mat == 87) return vec4(vec3(1.0, 0.8, 0.1), COILS_EMIT_STRENGTH); // Kantal coil
+						if (mat == 87) return vec4(vec3(1.0, 0.6, 0.1), COILS_EMIT_STRENGTH); // Kantal coil
 						if (mat == 88) return vec4(vec3(1.0, 0.1, 0.1), COILS_EMIT_STRENGTH); // Nichrome and rtm coils
 					} else {
 						if (mat == 89) return vec4(vec3(1.0, 1.0, 1.0), COILS_EMIT_STRENGTH); // White Modded Light Sources (High emit level)
