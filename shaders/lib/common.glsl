@@ -1040,6 +1040,8 @@
 
     #include "/lib/materials/seasonsTime.glsl"
 
+    #include "/lib/shaderSettings/profiles.glsl"
+
     const float OSIEBCA = 1.0 / 255.0; // One Step In Eight Bit Color Attachment
     /* materialMask steps
     0 to 240 - PBR Dependant:

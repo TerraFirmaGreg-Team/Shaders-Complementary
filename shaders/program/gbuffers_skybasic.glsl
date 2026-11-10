@@ -190,17 +190,19 @@ void main() {
                     float horizonFactor = GetHorizonFactor(-SdotU);
                     sunMoonMixer = max0(sunMoonMixer - 0.25) * 1.33333 * horizonFactor;
 
-                    #ifdef TFG_REALISTIC_MOON_TOGGLE // realistic moon
+                    #ifdef TFG_REALISTIC_MOON_TOGGLE
                         vec3 moonVec = -sunVec;
 
                         vec3 moonRight = normalize(cross(upVec, moonVec));
                         vec3 moonUp = cross(moonVec, moonRight);
 
-                        float xOffset = dot(nViewPos, moonRight); // every pixel's offset of moon's center
+                        float xOffset = dot(nViewPos, moonRight);
                         float yOffset = dot(nViewPos, moonUp);
 
-                        float scale = sqrt(1.0 - pow2(sunSizeFactor1));
-                        vec2 customMoonUV = vec2(xOffset, yOffset) / scale;
+                        const float scale = sqrt(1.0 - pow2(sunSizeFactor1)); // 10.11.26, maybe can cause issues
+                        const float optimScale = 1.0 / scale;
+
+                        vec2 customMoonUV = vec2(xOffset, yOffset) * optimScale;
                              customMoonUV = customMoonUV * 0.5 + 0.5;
 
                         vec4 customMoon = vec4(1.0);

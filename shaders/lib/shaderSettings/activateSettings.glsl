@@ -128,3 +128,5 @@
 #endif
 #ifdef MCWIND_USER
 #endif
+#ifdef TRUE_DARKNESS
+#endif
