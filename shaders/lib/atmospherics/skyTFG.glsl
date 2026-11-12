@@ -1,4 +1,3 @@
-    #include "/lib/util/colorConversion.glsl"
     vec3 GetSky(float VdotU, float VdotS, float dither, bool doGlare, bool doGround, out bool isCustomSky, bool skipCustomSky) {
         
     vec3 daySky       = vec3(0.175, 0.28, 0.623);

@@ -12,11 +12,7 @@
             //                             : (skyTextureLuminance > skyColorLuminance ? skyColorTexture.rgb : skyColor);
             vec3 skyColorTweaked = hasCustomSky == 238 || skyColorTexture.rgb != vec3(0.0) ? skyColorTexture.rgb : skyColor;
         #else
-            #ifdef TFG_TWEAKED_SKY
-                vec3 skyColorTweaked = vec3(0.07, 0.427, 0.89);
-            #else
-                vec3 skyColorTweaked = skyColor;
-            #endif
+            vec3 skyColorTweaked = skyColor;
         #endif
 
         vec3 skyColorSqrt = sqrt(skyColorTweaked);

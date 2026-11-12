@@ -199,8 +199,12 @@ void main() {
                         float xOffset = dot(nViewPos, moonRight);
                         float yOffset = dot(nViewPos, moonUp);
 
-                        const float scale = sqrt(1.0 - pow2(sunSizeFactor1)); // 10.11.26, maybe can cause issues
-                        const float optimScale = 1.0 / scale;
+                        #ifdef MC_GL_VENDOR_NVIDIA
+                            const float scale = sqrt(1.0 - pow2(sunSizeFactor1));
+                            const float optimScale = 1.0 / scale;
+                        #else
+                            float optimScale = 14.1509827; // fixes crash on non nvidia gpu's
+                        #endif
 
                         vec2 customMoonUV = vec2(xOffset, yOffset) * optimScale;
                              customMoonUV = customMoonUV * 0.5 + 0.5;
