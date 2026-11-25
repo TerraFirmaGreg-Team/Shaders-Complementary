@@ -33,7 +33,7 @@
         IPBRMult = 0.0;
         overlayNoiseAlpha = 0.0;
     } else if (mat == 30020) { // Nether Portal
-        #ifdef SPECIAL_PORTAL_EFFECTS
+        #if SPECIAL_PORTAL_EFFECT >= 2
             #include "/lib/materials/specificMaterials/translucents/netherPortal.glsl"
         #endif
         overlayNoiseIntensity = 0.0;

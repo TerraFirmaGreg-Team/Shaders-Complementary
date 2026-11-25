@@ -1,5 +1,9 @@
 #include "/lib/shaderSettings/entityMaterials.glsl"
-if (entityId < 50128) { // 50000 to 50128
+if (entityId >= 50300) { // 50300 and above, outside of the tree below
+    if (entityId <= 50312) { // 50300 to 50312 - Emissive Colored Entities, same colors as block 21000 to 21024
+        emission = DoAutomaticEmission(noSmoothLighting, noDirectionalShading, color.rgb, 1.0, 15, 1.0);
+    }
+} else if (entityId < 50128) { // 50000 to 50128
     if (entityId < 50064) { // 50000 to 50064
         if (entityId < 50032) { // 50000 to 50032
             if (entityId < 50016) { // 50000 to 50016
@@ -16,7 +20,7 @@ if (entityId < 50128) { // 50000 to 50128
                         #include "/lib/materials/specificMaterials/others/lightningBolt.glsl"
                     }
                 } else { // 50008 to 50016
-                    if (entityId == 50008) { //
+                    if (entityId == 50008) { // Enderman
 
                     } else if (entityId == 50012) { // Iron Golem
                         if (CheckForColor(color.rgb, vec3(141, 0, 42))) { // Eye - brighter bit
@@ -30,8 +34,9 @@ if (entityId < 50128) { // 50000 to 50128
                         }
 
                         smoothnessD *= 0.4;
-                    } else { // 50015 - Armor Stand
-                        // Do nothing for now
+                    } else { // 50013 - Horse
+                             // 50015 - Armor Stand
+                             // Do nothing for now
                     }
                 }
             } else { // 50016 to 50032
@@ -54,12 +59,10 @@ if (entityId < 50128) { // 50000 to 50128
                             #if IRIS_VERSION >= 10800
                                 if (entityId == 50017) {
                                     selfCheck = true;
-                                    entitySSBLMask = 0.0;
                                 }
                             #else
                                 if (length(playerPos) < 4.0) {
                                     selfCheck = true;
-                                    entitySSBLMask = 0.0;
                                 }
                             #endif
                         }
@@ -82,6 +85,9 @@ if (entityId < 50128) { // 50000 to 50128
                 } else { // 50024 to 50032
                     if (entityId == 50024) { // Creeper
                         emission = max0(color.b - color.g - color.r) * 10.0;
+                        #ifdef COLORED_DYNAMIC_LIGHTING
+                            emission *= 1.5;
+                        #endif
                     } else /*if (entityId == 50028)*/ { // Drowned
                         if (atlasSize.x < 900) {
                             if (CheckForColor(color.rgb, vec3(143, 241, 215)) || // Adult drowned
@@ -195,7 +201,7 @@ if (entityId < 50128) { // 50000 to 50128
                             color.rgb = changeColorFunction(color.rgb, 3.0, colorEndBreath, 1.0);
                         #endif
                         emission = 1.3;
-                    } else if (entityId == 50089) { // fireball, small fireball, dragon fireball
+                    } else if (entityId == 50089) { // fireball, small fireball
                         #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
                             color.rgb = changeColorFunction(color.rgb, 4.0, colorSoul, inSoulValley);
                         #endif
@@ -298,30 +304,27 @@ if (entityId < 50128) { // 50000 to 50128
                         lmCoordM.y = eyeBrightnessM;
                     }
                 } else { // 50136 to 50144
-                    if (entityId < 50140) { // 50136 to 50140
-                        // 50136
-                        // 50137
-                        // 50138
-                        // 50139
-                    } else { // 50140 to 50144
-                        // 50140
-                        // 50141
-                        // 50142
-                        // 50143
+                    if (entityId < 50140) { // Cushion
+                        materialMask = 1.0; // clear color - we want taa on cushions to clear jittering
+                    } else { // Spectral Arrow
+                        #ifdef COLORED_DYNAMIC_LIGHTING
+                            emission = 1.0;
+                        #endif
                     }
                 }
             } else { // 50144 to 50160
                 if (entityId < 50152) { // 50144 to 50152
-                    if (entityId < 50148) { // 50144 to 50148
-                        // 50144
-                        // 50145
-                        // 50146
-                        // 50147
-                    } else { // 50148 to 50152
-                        // 50148
-                        // 50149
-                        // 50150
-                        // 50151
+                    if (entityId < 50148) { // Eye of Ender
+                    } else { // Dragon Fireball
+                        emission = min(0.75, max0(color.r + color.b - color.g));
+                        color.g *= 1.0 - emission;
+                        emission *= 5.0;
+                        #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
+                            color.rgb = changeColorFunction(color.rgb, 4.0, colorSoul, inSoulValley);
+                        #endif
+                        #ifdef PURPLE_END_FIRE_INTERNAL
+                            color.rgb = changeColorFunction(color.rgb, 4.0, colorEndBreath, 1.0);
+                        #endif
                     }
                 } else { // 50152 to 50160
                     if (entityId < 50156) { // 50152 to 50156

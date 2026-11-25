@@ -22,7 +22,7 @@ float GetBloomFog(float lViewPos) {
         if (isEyeInWater != 1) {
             bloomFogMult = (rainFactor2 * rainBloomAdd + nightBloomAdd * (1.0 - sunFactor)) * eyeBrightnessM;
             #ifdef CAVE_FOG
-                bloomFogMult += GetCaveFactor() * caveBloomAdd;
+                bloomFogMult += GetCaveFactor() * caveBloomAdd * (1.0 - GetModdedBiomeFogTakeover());
             #endif
         } else {
             bloomFogMult = waterBloomAdd;

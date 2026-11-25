@@ -81,6 +81,10 @@
     #define PLAYER_REFLECTION_3D_LAYERS_ERROR
 #endif
 
+#if !defined IS_ANGELICA && MC_VERSION == 10710
+    #define OPTIFINE_1_7_10_ERROR
+#endif
+
 vec3 textColor = vec3(0.0);
 float animation = min(starter * 0.3, 0.1) * 10.0;
 
@@ -92,6 +96,8 @@ float timeRemainingUntilDismissing = max(0.0, animationDismissingTime - frameTim
 
 #ifdef MULTIPLE_LOD_MODS_ERROR
         #include "/lib/textRendering/error_multiple_lod_mods.glsl"
+#elif defined OPTIFINE_1_7_10_ERROR
+    #include "/lib/textRendering/error_optifine_10710.glsl"
 #elif defined OLD_VERSION_SSBL_ERROR
     #include "/lib/textRendering/old_version_ssbl_error.glsl"
 #elif defined OPTIFINE_AF_ERROR

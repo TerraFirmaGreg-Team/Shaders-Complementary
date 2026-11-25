@@ -48,6 +48,7 @@ float InterleavedGradientNoiseForClouds() {
 
 vec4 GetClouds(inout float cloudLinearDepth, float skyFade, vec3 cameraPosOffset, vec3 playerPos, vec3 viewPos,
                float lViewPos, float VdotS, float VdotU, float dither, vec3 auroraBorealis, vec3 nightNebula, vec3 sunVec) {
+    if (areCloudsDisabled) return vec4(0.0);
     vec4 clouds = vec4(0.0);
 
     vec3 nPlayerPos = normalize(playerPos);
@@ -104,14 +105,7 @@ vec4 GetClouds(inout float cloudLinearDepth, float skyFade, vec3 cameraPosOffset
         cameraPos2 += cameraPosOffset;
     #endif
 
-    #ifdef CLOUDS_REIMAGINED
-        float thresholdF = 4000.0;
-    #else
-        float thresholdF = 4000.0;
-    #endif
-
-    //float thresholdMix = pow2(clamp01(VdotU * 15.0));
-    //thresholdF = mix(far, thresholdF, thresholdMix * 0.5 + 0.5);
+    float thresholdF = 4000.0;
     thresholdF *= CLOUD_RENDER_DISTANCE;
 
     #if RAINBOW_CLOUD != 0

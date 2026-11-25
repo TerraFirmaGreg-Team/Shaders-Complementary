@@ -34,7 +34,7 @@ vec3 fireSpecialLightColorCompBase = vec3(2.25, 0.83, 0.27) * 3.7;
 	vec3 torchBlockSpecialLightColor = fireSpecialLightColor;
 	vec3 lanternBlockSpecialLightColor = fireSpecialLightColor;
 	vec4 lavaSpecialLightColor = vec4(vec3(3.25, 0.9, 0.2) * 3.9, LAVA_ACT_ALPHA);
-	vec4 brewingStandSpecialLightColor = vec4(vec3(2.5, 1.2, 0.4) * 0.1, 0.1);
+	vec4 brewingStandSpecialLightColor = vec4(vec3(2.5, 1.2, 0.4) * 0.1, 0.05);
 #endif
 #if defined NETHER && defined BIOME_COLORED_NETHER_PORTALS
 	vec3 netherPortalSpecialLightColor = normalize(netherColor) * 2.0;
@@ -83,11 +83,11 @@ vec4 GetSpecialBlocklightColor(int mat) {
 			if (mat < 14) {
 				if (mat < 8) {
 					if (mat < 5) {
-						if (mat == 2) return vec4(torchBlockSpecialLightColor, 0.0); // Torch
+						if (mat == 2) return vec4(torchBlockSpecialLightColor * 0.9, 0.0); // Torch
 						if (mat == 3) return vec4(endRodSpacialColor * 4.0, 0.0); // End Rod - This is the base for all lights. Total value 12. vec3(1.0, 1.0, 1.0) * 4.0
 						if (mat == 4) return vec4(vec3(0.7, 1.5, 2.0) * 3.0, 0.0); // Beacon
 					} else {
-						if (mat == 5) return vec4(fireSpecialLightColorGradient, 0.0); // Fire
+						if (mat == 5) return vec4(fireSpecialLightColorGradient, 0.0); // Fire, Entity Flame, Blaze
 						if (mat == 6) return vec4(vec3(0.7, 1.5, 1.5) * 1.7, 0.0); // Sea Pickle:Waterlogged
 						if (mat == 7) return vec4(pow(vec3(1.1, 0.85, 0.35), vec3(FROGLIGHT_SATURATION * 0.5 + 0.5)) * 5.0, 0.0); // Ochre Froglight
 					}
@@ -120,7 +120,7 @@ vec4 GetSpecialBlocklightColor(int mat) {
 						if (mat == 22) return vec4(fireSpecialLightColor * 0.7, 0.0); // Smoker:Lit
 					} else {
 						if (mat == 23) return vec4(fireSpecialLightColor * 0.7, 0.0); // Blast Furnace:Lit
-						if (mat == 24) return vec4(fireSpecialLightColor * 0.25 * candleColorMult, candleExtraLight); // Standard Candles:Lit
+						if (mat == 24) return vec4(fireSpecialLightColor * 0.25 * candleColorMult, candleExtraLight); // Standard Candles:Lit, Magma Cube
 						if (mat == 25) return vec4(netherPortalSpecialLightColor * 2.0, 0.4); // Nether Portal
 					}
 				}
@@ -139,15 +139,17 @@ vec4 GetSpecialBlocklightColor(int mat) {
 					}
 				} else {
 					if (mat < 35) {
-						if (mat == 32) return vec4(redstoneSpecialLightColor * 0.3, 0.1 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Redstone Ores:Unlit
+						#ifdef GLOWING_ORE_REDSTONE
+							if (mat == 32) return vec4(redstoneSpecialLightColor * 0.3, 0.1 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Redstone Ores:Unlit
+						#endif
 						if (mat == 33) return vec4(enchantingTableSpecialLightColor, 0.05); // Enchanting Table
 						#if GLOWING_LICHEN > 0
-							if (mat == 34) return vec4(vec3(0.8, 1.1, 1.1), 0.05); // Glow Lichen with IntegratedPBR
+							if (mat == 34) return vec4(vec3(0.8, 1.1, 1.1), 0.1); // Glow Lichen with IntegratedPBR
 						#else
 							if (mat == 34) return vec4(vec3(0.4, 0.55, 0.55), 0.0); // Glow Lichen vanilla
 						#endif
 					} else {
-						if (mat == 35) return vec4(redstoneSpecialLightColor * 0.25, 0.0); // Redstone Torch
+						if (mat == 35) return vec4(redstoneSpecialLightColor * 0.4, 0.0); // Redstone Torch
 						if (mat == 36) return vec4(vec3(0.325, 0.15, 0.425) * 2.0, 0.05); // Amethyst Cluster, Amethyst Buds, Calibrated Sculk Sensor
 						if (mat == 37) return vec4(lavaSpecialLightColor.rgb * 0.1, 0.1); // Magma Block
 					}
@@ -161,19 +163,37 @@ vec4 GetSpecialBlocklightColor(int mat) {
 						if (mat == 39) return vec4(vec3(2.0, 1.0, 1.5) * 0.25, 0.1); // Chorus Flower
 						if (mat == 40) return brewingStandSpecialLightColor; // Brewing Stand
 					} else {
-						if (mat == 41) return vec4(redstoneSpecialLightColor * 0.4, 0.15); // Redstone Block
-						if (mat == 42) return vec4(vec3(0.75, 0.75, 3.0) * 0.277, 0.15); // Lapis Block
-						if (mat == 43) return vec4(vec3(1.7, 0.9, 0.4) * 0.45, 0.05 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Iron Ores
+						#ifdef EMISSIVE_REDSTONE_BLOCK
+							if (mat == 41) return vec4(redstoneSpecialLightColor * 0.4, 0.15); // Redstone Block
+						#endif
+						#ifdef EMISSIVE_LAPIS_BLOCK
+							if (mat == 42) return vec4(vec3(0.75, 0.75, 3.0) * 0.277, 0.15); // Lapis Block
+						#endif
+						#ifdef GLOWING_ORE_IRON
+							if (mat == 43) return vec4(vec3(1.7, 0.9, 0.4) * 0.45, 0.05 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Iron Ores
+						#endif
 					}
 				} else {
 					if (mat < 47) {
-						if (mat == 44) return vec4(vec3(1.7, 1.1, 0.2) * 0.45, 0.1 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Gold Ores
-						if (mat == 45) return vec4(vec3(1.7, 0.8, 0.4) * 0.45, 0.05 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Copper Ores
-						if (mat == 46) return vec4(vec3(0.75, 0.75, 3.0) * 0.2, 0.1 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Lapis Ores
+						#ifdef GLOWING_ORE_GOLD
+							if (mat == 44) return vec4(vec3(1.7, 1.1, 0.2) * 0.45, 0.1 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Gold Ores
+						#endif
+						#ifdef GLOWING_ORE_COPPER
+							if (mat == 45) return vec4(vec3(1.7, 0.8, 0.4) * 0.45, 0.05 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Copper Ores
+						#endif
+						#ifdef GLOWING_ORE_LAPIS
+							if (mat == 46) return vec4(vec3(0.75, 0.75, 3.0) * 0.2, 0.1 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Lapis Ores
+						#endif
 					} else {
-						if (mat == 47) return vec4(vec3(0.5, 3.5, 0.5) * 0.3, 0.1 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Emerald Ores
-						if (mat == 48) return vec4(vec3(0.5, 2.0, 2.0) * 0.4, 0.15 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Diamond Ores
-						if (mat == 49) return vec4(vec3(1.5, 1.5, 1.5) * 0.3, 0.05 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Nether Quartz Ore
+						#ifdef GLOWING_ORE_EMERALD
+							if (mat == 47) return vec4(vec3(0.5, 3.5, 0.5) * 0.3, 0.1 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Emerald Ores
+						#endif
+						#ifdef GLOWING_ORE_DIAMOND
+							if (mat == 48) return vec4(vec3(0.5, 2.0, 2.0) * 0.4, 0.15 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Diamond Ores
+						#endif
+						#ifdef GLOWING_ORE_NETHERQUARTZ
+							if (mat == 49) return vec4(vec3(1.5, 1.5, 1.5) * 0.3, 0.05 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Nether Quartz Ore
+						#endif
 					}
 				}
 			}
@@ -183,11 +203,17 @@ vec4 GetSpecialBlocklightColor(int mat) {
 			if (mat < 62) {
 				if (mat < 56) {
 					if (mat < 53) {
-						if (mat == 50) return vec4(vec3(1.7, 1.1, 0.2) * 0.45, 0.05 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Nether Gold Ore
-						if (mat == 51) return vec4(vec3(1.7, 1.1, 0.2) * 0.45, 0.05); // Gilded Blackstone
-						if (mat == 52) return vec4(vec3(1.8, 0.8, 0.4) * 0.6, 0.15); // Ancient Debris
+						#ifdef GLOWING_ORE_NETHERGOLD
+							if (mat == 50) return vec4(vec3(1.7, 1.1, 0.2) * 0.45, 0.05 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Nether Gold Ore
+						#endif
+						#ifdef GLOWING_ORE_GILDEDBLACKSTONE
+							if (mat == 51) return vec4(vec3(1.7, 1.1, 0.2) * 0.45, 0.05 * ACT_ORE_INTENSITY); // Gilded Blackstone
+						#endif
+						#ifdef GLOWING_ORE_ANCIENTDEBRIS
+							if (mat == 52) return vec4(vec3(1.8, 0.8, 0.4) * 0.6, 0.15); // Ancient Debris
+						#endif
 					} else {
-						if (mat == 53) return vec4(vec3(1.4, 0.2, 1.4) * 0.3, 0.05); // Spawner
+						if (mat == 53) return vec4(vec3(1.4, 0.2, 1.4) * 0.3, 0.15); // Spawner, End Crystal Item
 						if (mat == 54) return vec4(vec3(3.1, 1.1, 0.3) * 1.0, 0.1); // Trial Spawner:NotOminous:Active, Vault:NotOminous:Active
 						if (mat == 55) return vec4(vec3(1.7, 0.9, 0.4) * 4.0, 0.0); // Copper Bulb:BrighterOnes:Lit
 					}
@@ -198,24 +224,24 @@ vec4 GetSpecialBlocklightColor(int mat) {
 						if (mat == 58) return vec4(vec3(0.0, 1.4, 1.4) * 4.0, 0.15); // End Portal Frame:Active
 					} else {
 						if (mat == 59) return vec4(0.0); // Bedrock
-						if (mat == 60) return vec4(vec3(3.1, 1.1, 0.3) * 0.125, 0.0125); // Command Block
-						if (mat == 61) return vec4(vec3(3.0, 0.9, 0.2) * 0.125, 0.0125); // Warped Fungus, Crimson Fungus
+						if (mat == 60) return vec4(vec3(3.1, 1.1, 0.3) * 0.08, 0.1); // Command Block
+						if (mat == 61) return vec4(vec3(3.0, 0.9, 0.2) * 0.08, 0.0125); // Warped Fungus, Crimson Fungus
 					}
 				}
 			} else {
 				if (mat < 68) {
 					if (mat < 65) {
-						if (mat == 62) return vec4(vec3(3.5, 0.6, 0.4) * 0.3, 0.05); // Crimson Stem, Crimson Hyphae
-						if (mat == 63) return vec4(vec3(0.3, 1.9, 1.5) * 0.3, 0.05); // Warped Stem, Warped Hyphae
-						if (mat == 64) return vec4(vec3(1.0, 1.0, 1.0) * 0.45, 0.1); // Structure Block, Jigsaw Block, Test Block, Test Instance Block
+						if (mat == 62) return vec4(vec3(3.5, 0.6, 0.4) * 0.3, 0.1); // Crimson Stem, Crimson Hyphae
+						if (mat == 63) return vec4(vec3(0.3, 1.9, 1.5) * 0.3, 0.1); // Warped Stem, Warped Hyphae
+						if (mat == 64) return vec4(vec3(1.0, 1.0, 1.0) * 0.45, 0.15); // Structure Block, Jigsaw Block, Test Block, Test Instance Block, Vex, Allay
 					} else {
-						if (mat == 65) return vec4(vec3(3.0, 0.9, 0.2) * 0.125, 0.0125); // Weeping Vines Plant
+						if (mat == 65) return vec4(vec3(3.0, 0.9, 0.2) * 0.08, 0.0125); // Weeping Vines Plant
 						if (mat == 66) return vec4(redstoneSpecialLightColor * 0.05, 0.002); // Redstone Wire:Lit, Comparator:Unlit:Subtract
-						if (mat == 67) return vec4(redstoneSpecialLightColor * 0.125, 0.0125); // Repeater:Lit, Comparator:Lit
+						if (mat == 67) return vec4(redstoneSpecialLightColor * 0.08, 0.0125); // Repeater:Lit, Comparator:Lit
 					}
 				} else {
 					if (mat < 71) {
-						if (mat == 68) return vec4(vec3(0.75), 0.0); // Vault:Inactive
+						if (mat == 68) return vec4(vec3(0.25), 0.001); // Vault:Inactive, Stray, Bogged, Parched, Zombie Nautilus
 						if (mat == 69) return vec4(vec3(1.3, 1.6, 1.6) * 1.0, 0.1); // Trial Spawner:Ominous:Active, Vault:Ominous:Active
 						if (mat == 70) return vec4(vec3(1.0, 0.1, 0.1) * candleColorMult, candleExtraLight); // Red Candles:Lit
 					} else {
@@ -240,34 +266,66 @@ vec4 GetSpecialBlocklightColor(int mat) {
 				} else {
 					if (mat < 83) {
 						if (mat == 80) return vec4(vec3(1.0, 0.4, 1.0) * candleColorMult, candleExtraLight); // Pink Candles:Lit
-						if (mat == 81) return vec4(vec3(2.8, 1.1, 0.2) * 0.125, 0.0125); // Open Eyeblossom
+						if (mat == 81) return vec4(vec3(2.8, 1.1, 0.2) * 0.08, 0.0125); // Open Eyeblossom, Copper Golem
 						if (mat == 82) return vec4(vec3(2.8, 1.1, 0.2) * 0.3, 0.05); // Creaking Heart: Active
 					} else {
 						if (mat == 83) return vec4(vec3(1.6, 1.6, 0.7) * 0.3, 0.05); // Firefly Bush
-						if (mat == 84) return vec4(vec3(0.85, 1.3, 1.0) * 3.9, 0.0); // Copper Torch, Copper Lantern
-						if (mat == 85) return vec4(0.0);
+						if (mat == 84) return vec4(vec3(0.7, 1.35, 0.8) * 3.9, 0.0); // Copper Torch, Copper Lantern
+						if (mat == 85) return vec4(vec3(1.0, 1.5, 1.5) * 1.0, 0.2); // Trident, Drowned, Glow Squid
 					}
 				}
 			} else {
 				if (mat < 92) {
 					if (mat < 89) {
-						if (mat == 86) return vec4(vec3(1.0, 0.4, 0.1), COILS_EMIT_STRENGTH); // Cupronickel coil
-						if (mat == 87) return vec4(vec3(1.0, 0.6, 0.1), COILS_EMIT_STRENGTH); // Kantal coil
-						if (mat == 88) return vec4(vec3(1.0, 0.1, 0.1), COILS_EMIT_STRENGTH); // Nichrome and rtm coils
+						if (mat == 86) return vec4(vec3(1.5, 1.5, 0.7) * 0.5, 0.175); // Experience Orb, Bottle o' Enchanting
+						#if defined END && COLORED_LIGHTING_INTERNAL > 200 && MC_VERSION >= 12106
+							if (mat == 87) return vec4(vec3(1.0, 0.3, 0.8) * (heavyFog ? 50.0 : 5.0), 0.0); // End Crystal that can get bright and foggy
+						#else
+							if (mat == 87) return vec4(vec3(1.0, 0.3, 0.8) * 5.0, 0.0); // End Crystal regular
+						#endif
+						if (mat == 88) return vec4(vec3(2.8, 1.1, 0.2) * 0.08, 0.001); // Creaking
 					} else {
-						if (mat == 89) return vec4(vec3(1.0, 1.0, 1.0), COILS_EMIT_STRENGTH); // White Modded Light Sources (High emit level)
-						if (mat == 90) return vec4(vec3(0.1, 0.15, 1.0), COILS_EMIT_STRENGTH); // Blue Modded Light Sources (High emit level)
-						if (mat == 91) return vec4(1.0, 0.4, 0.1, 0.4 * max(sin(abs(frameTimeCounter)), 0.4)); // Orange Modded Light Sources
+						if (mat == 89) return vec4(vec3(2.0, 0.5, 1.5) * 0.4, 0.0); // Enderman
+						if (mat == 90) return vec4(vec3(0.0, 1.4, 1.4) * 0.5, 0.001); // Eye of Ender
+						if (mat == 91) return vec4(vec3(0.45, 1.75, 3.0) * 0.7, 0.0); // Charged Creeper
 					}
 				} else {
 					if (mat < 95) {
-						if (mat == 92) return vec4(0.0);
-						if (mat == 93) return vec4(0.0);
-						if (mat == 94) return vec4(0.0);
+						if (mat == 92) return vec4(vec3(0.5, 1.4, 1.4) * 0.4, 0.001); // Glow Ink Sac
+						if (mat == 93) return vec4(fireSpecialLightColor * 0.005, 0.2); // Blaze Rod, Blaze Powder
+						if (mat == 94) return vec4(vec3(1.7, 0.9, 0.4) * 0.02, 0.2); // Glowstone Dust
 					} else {
-						if (mat == 95) return vec4(0.0);
-						if (mat == 96) return vec4(0.0);
-						if (mat == 97) return vec4(vec3(1.0, 1.0, 1.0) * 4.0, candleExtraLight); // Modded White Light Source
+						if (mat < 190) {
+							if (mat == 95) return vec4(vec3(1.0, 1.25, 1.5) * 0.017, 0.2); // Prismarine Crystals
+							if (mat == 96) return vec4(vec3(1.0, 1.0, 1.0) * 0.02, 0.2); // Nether Star
+							if (mat == 97) return vec4(vec3(0.15, 0.28, 0.425) * 2.0, 0.1); // Ice Crystal
+						} else {
+							if (mat < 290) {
+								// Euphoria-only IDs, kept at 190+ so they never clash with the IDs Complementary adds
+								if (mat == 195) return vec4(vec3(1.7, 0.9, 0.4) * 0.45, 0.05); // Modded Brown Light Source
+								if (mat == 196) return vec4(vec3(1.0, 1.0, 1.0) * 4.0, candleExtraLight); // Modded White Light Source
+								if (mat == 190) return vec4(vec3(2.5, 1.2, 0.4) * 0.1, 0.05); // Spectral Arrow, Torchflower, same as the Brewing Stand but without the Soul Sand Valley and purple fire colors
+								#ifdef GLOWING_EMERALD_BLOCK
+									if (mat == 191) return vec4(vec3(0.5, 3.5, 0.5) * 0.3, 0.1); // Emerald Block
+								#endif
+								#ifdef GLOWING_RAW_BLOCKS
+									if (mat == 192) return vec4(vec3(1.7, 0.9, 0.4) * 0.45, 0.05 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Raw Iron Block
+									if (mat == 193) return vec4(vec3(1.7, 1.1, 0.2) * 0.45, 0.1 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Raw Gold Block
+									if (mat == 194) return vec4(vec3(1.7, 0.8, 0.4) * 0.45, 0.05 * ACT_ORE_INTENSITY) * GLOWING_ORE_MULT; // Raw Copper Block
+								#endif
+							} else {
+								if (mat < 293) {
+								// TFG only IDs, 290+ so they never clash with the IDs Complementary and Euphoria adds and blah blah blah...
+									if (mat == 290) return vec4(vec3(1.0, 0.4, 0.1), COILS_EMIT_STRENGTH); // Cupronickel coil
+									if (mat == 291) return vec4(vec3(1.0, 0.6, 0.1), COILS_EMIT_STRENGTH); // Kantal coil
+									if (mat == 292) return vec4(vec3(1.0, 0.1, 0.1), COILS_EMIT_STRENGTH); // Nichrome and rtm coils
+								} else {
+									if (mat == 293) return vec4(vec3(1.0, 1.0, 1.0), COILS_EMIT_STRENGTH); // White Modded Light Sources (High emit level)
+									if (mat == 294) return vec4(vec3(0.1, 0.15, 1.0), COILS_EMIT_STRENGTH); // Blue Modded Light Sources (High emit level)
+									if (mat == 295) return vec4(1.0, 0.4, 0.1, 0.4 * max(sin(abs(frameTimeCounter)), 0.4)); // Orange Modded Light Source
+								}
+							}
+						}
 					}
 				}
 			}

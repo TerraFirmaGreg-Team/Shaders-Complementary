@@ -33,7 +33,7 @@
 
 #if WORLD_BLUR > 0 || TILT_SHIFT != 0 || TILT_SHIFT2 != 0
     float SdotU = dot(sunVec, upVec);
-    float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
+    float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
 
     float DoFSneaking = isSneaking * float(heldItemId == 45014 || heldItemId2 == 45014);
     bool isDoFGUI = hideGUI == 0 && (heldItemId == 45014 || heldItemId2 == 45014); // while holding a spyglass

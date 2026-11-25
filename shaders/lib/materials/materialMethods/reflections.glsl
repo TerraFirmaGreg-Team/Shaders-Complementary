@@ -77,8 +77,10 @@ vec4 GetReflection(inout vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerP
     float RVdotS = dot(nViewPosR, sunVec);
     vec3 worldRefDir    = 0.5 * far * (mat3(gbufferModelViewInverse) * nViewPosR);
 
-    #if defined GBUFFERS_WATER && WATER_STYLE >= 2
-        normalMR = normalize(mix(geoNormal, normalM, 0.8));
+    #if defined GBUFFERS_WATER && (WATER_STYLE >= 2 || defined CUSTOM_PBR)
+        // Fix reflection vectors pointing inside water
+        float reverseFactor = pow(max0(dot(nViewPosR, geoNormal)), 0.25);
+        normalMR = normalize(mix(geoNormal, normalM, reverseFactor));
     #endif
     // ============================== End of Step 1 ============================== //
 
@@ -99,7 +101,7 @@ vec4 GetReflection(inout vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerP
         #if defined COMPOSITE || WATER_REFLECT_QUALITY >= 2
             // Ray Marching
             vec3 start = viewPos + normalMR * (lViewPos * 0.025 * (1.0 - fresnel) + 0.05);
-            #if defined GBUFFERS_WATER && WATER_STYLE >= 2
+            #if defined GBUFFERS_WATER && (WATER_STYLE >= 2 || defined CUSTOM_PBR)
                 vec3 vector = normalize(reflect(nViewPos, normalMR)); // Not using nViewPosR because normalMR changed
             #else
                 vec3 vector = nViewPosR;
@@ -229,7 +231,8 @@ vec4 GetReflection(inout vec3 normalM, vec3 viewPos, vec3 nViewPos, vec3 playerP
                         if (z0 <= 0.56) lod *= 2.22; // Using more lod to compensate for less roughness noise on held items
                         lod = max(lod - 1.0, 0.0);
 
-                        reflection.rgb = texture2DLod(colortex0, refPos.xy, lod).rgb;
+                        reflection.rgb = texture2DLod(colortex5, refPos.xy, lod).rgb;
+                        reflection.rgb = pow2(reflection.rgb * 2.0);
                         reflectionColor = reflection.rgb;
 
                     #endif

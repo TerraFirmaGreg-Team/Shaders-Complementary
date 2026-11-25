@@ -6,7 +6,9 @@
 //Common//
 #include "/lib/common.glsl"
 #include "/lib/shaderSettings/wavingBlocks.glsl"
+#include "/lib/shaderSettings/volumetricLight.glsl"
 #define SHADOW_SATURATION 1.0 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
+//#define DISCARD_FOLIAGE_SHADOW
 
 #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
     #include "/lib/misc/distortWorld.glsl"
@@ -36,7 +38,7 @@ vec3 upVec = normalize(gbufferModelView[1].xyz);
 vec3 sunVec = GetSunVector();
 
 float SdotU = dot(sunVec, upVec);
-float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
 
 //Common Functions//
 void DoNaturalShadowCalculation(inout vec4 color1, inout vec4 color2) {
@@ -57,6 +59,10 @@ void DoNaturalShadowCalculation(inout vec4 color1, inout vec4 color2) {
 
 //Program//
 void main() {
+    #ifdef DISCARD_FOLIAGE_SHADOW
+        if (mat == 10003 || mat == 10005 || mat == 10015 || mat == 10017 || mat == 10019 || mat == 10021 || mat == 10023 || mat == 10029 || mat == 10031 || mat == 10039) discard; // Foliage
+    #endif
+
     vec4 color1 = texture2DLod(tex, texCoord, 0); // Shadow Color
     #ifdef SHADOW_COLORWHEEL
         vec2 lmCoord; // needed as otherwise undeclared in the function below
@@ -183,6 +189,11 @@ void main() {
                         color2.rgb = vec3(0.08, 0.12, 0.195);
                     #endif
                     color2.rgb *= waterNoise * (1.0 + sunVisibility - rainFactor);
+
+                    #if LIGHTSHAFT_WATER_I != 100
+                        if (isEyeInWater == 0)
+                            color2.rgb *= LIGHTSHAFT_WATER_I * 0.01;
+                    #endif
                     ////
 
                     #ifdef UNDERWATERCOLOR_CHANGED
@@ -228,6 +239,11 @@ void main() {
         if (entityId == 50200) discard; // remove end crystal healing beam
     #endif
 
+    #if LIGHTSHAFT_WATER_I != 100
+        if (isEyeInWater == 1)
+            color2.rgb *= LIGHTSHAFT_WATER_I * 0.01;
+    #endif
+
     /* DRAWBUFFERS:0 */
     gl_FragData[0] = vec4(saturateColors(color1.rgb, SHADOW_SATURATION), color1.a); // Shadow Color
 
@@ -271,7 +287,7 @@ attribute vec4 at_midBlock;
 vec2 lmCoord;
 
 #if COLORED_LIGHTING_INTERNAL > 0
-    writeonly uniform uimage3D voxel_img;
+    layout(r32ui) uniform uimage3D voxel_img;
 
     #ifdef PUDDLE_VOXELIZATION
         writeonly uniform uimage2D puddle_img;
@@ -284,6 +300,10 @@ vec2 lmCoord;
 
     #ifdef ACT_GROUND_LEAVES_FIX
         writeonly uniform uimage3D leaves_img;
+    #endif
+
+    #ifdef SKY_HEIGHT_INTERNAL
+        layout(r32ui) uniform uimage2D skyheight_img;
     #endif
 #endif
 
@@ -308,6 +328,9 @@ vec2 lmCoord;
     #endif
     #ifdef ACT_GROUND_LEAVES_FIX
         #include "/lib/voxelization/leavesVoxelization.glsl"
+    #endif
+    #ifdef SKY_HEIGHT_INTERNAL
+        #include "/lib/voxelization/skyHeightVoxelization.glsl"
     #endif
 #endif
 
@@ -360,10 +383,8 @@ void main() {
                 vec2 midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
                 vec2 texMinMidCoord = texCoord - midCoord;
             #endif
-            if (texMinMidCoord.y < 0.0) {
-                vec3 normal = gl_NormalMatrix * gl_Normal;
-                position.xyz += normal * 0.35;
-            }
+            vec3 normal = gl_NormalMatrix * gl_Normal;
+            position.xyz += normal * sign(texMinMidCoord.y) * 0.2 * noonFactor * (1.0 + 0.01 * length(position.xyz));
         }
     #endif
 
@@ -375,13 +396,70 @@ void main() {
 
     #if COLORED_LIGHTING_INTERNAL > 0
         if (gl_VertexID % 4 == 0) {
-            UpdateVoxelMap(mat);
-            #ifdef PUDDLE_VOXELIZATION
-                UpdatePuddleVoxelMap(mat);
+            #ifndef SHADOW_COLORWHEEL
+                bool solidTerrain = any(equal(ivec3(renderStage), ivec3(
+                    MC_RENDER_STAGE_TERRAIN_SOLID,
+                    MC_RENDER_STAGE_TERRAIN_CUTOUT,
+                    MC_RENDER_STAGE_TERRAIN_CUTOUT_MIPPED
+                )));
+            #else
+                bool solidTerrain = true;
             #endif
-            #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0
-                vec3 normal = mat3(shadowModelViewInverse) * gl_NormalMatrix * gl_Normal;
-                UpdateSceneVoxelMap(mat, normal, position.xyz);
+
+            if (solidTerrain) {
+                UpdateVoxelMap(mat);
+
+                #ifdef SKY_HEIGHT_INTERNAL
+                    UpdateSkyHeightMap(mat, normal);
+                #endif
+
+                #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0 && !defined SHADOW_COLORWHEEL
+                    UpdateSceneVoxelMap(mat, normal, position.xyz);
+                #endif
+            } else if (renderStage == MC_RENDER_STAGE_TERRAIN_TRANSLUCENT) {
+                UpdateVoxelMap(mat);
+
+                #ifdef PUDDLE_VOXELIZATION
+                    UpdatePuddleVoxelMap(mat);
+                #endif
+            }
+
+            #ifdef COLORED_DYNAMIC_LIGHTING
+                else if (currentRenderedItemId >= 10000) {
+                    // Thanks to Chistaphee for discovering that we can make dropped items emit colored light via currentRenderedItemId
+                    // Then all thanks to SpacEagle17 for making it work without a dynamic light mod
+
+                    int lightId = 0;
+                    if (uint(currentRenderedItemId - 44001) < 999u /* same as 44000 < currentRenderedItemId < 45000 */) {
+                        lightId = currentRenderedItemId - 44000; // item.properties light IDs
+                    } else if (currentRenderedItemId < 40000) {
+                        lightId = GetVoxelIDs(currentRenderedItemId); // items which are not in item.properties and come from block.properties (needed for glowing ores)
+                    }
+
+                    if (uint(lightId - 2) < 198u /* same as 1 < lightId < 200*/) { // skip none / solid / tint IDs
+                        // We skip the item in player's hand as the existing held lighting function looks smoother
+                        vec3 eyeRelPos = position.xyz + relativeEyePosition;
+                        bool isHeldItem = length(eyeRelPos.xz) < 1.2 && eyeRelPos.y > -1.35 && eyeRelPos.y < 0.5;
+
+                        if (!isHeldItem) {
+                            vec3 voxelPos = SceneToVoxel(position.xyz);
+                            if (CheckInsideVoxelVolume(voxelPos) && !SituationalOreLightOff(lightId)) {
+                                imageAtomicMax(voxel_img, ivec3(voxelPos), uint(lightId) + ITEM_LIGHT_VOXEL_OFFSET);
+                            }
+                        }
+                    }
+                } else if (entityId >= 50000) {
+                    int lightId = 0;
+
+                    #include "/lib/materials/materialHandling/shadowEntityLightMaterials.glsl"
+
+                    if (lightId != 0) {
+                        vec3 voxelPos = SceneToVoxel(position.xyz);
+                        if (CheckInsideVoxelVolume(voxelPos)) {
+                            imageAtomicMax(voxel_img, ivec3(voxelPos), uint(lightId) + ENTITY_LIGHT_VOXEL_OFFSET);
+                        }
+                    }
+                }
             #endif
         }
 

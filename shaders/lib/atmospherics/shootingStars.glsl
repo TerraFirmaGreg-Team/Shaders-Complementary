@@ -29,10 +29,20 @@ float ShootingStar(vec2 uv, vec2 startPos, vec2 direction) {
     vec2 id = floor(uv * 0.5);
     float h = hash12(id);
 
-    float newMoonVisibility = 1.0 - abs(moonPhase - 4) / 4.0;
-    float moonPhaseFactor = mix(0.8, 1.5, newMoonVisibility);
+    #ifdef DIMENSION_SPACE
+        #ifdef DIMENSION_SPACE_ATMOSPHERE
+            const float shootingStarsChance = 0.75; // Meteors burn up in a thin atmosphere, so more of them
+        #else
+            const float shootingStarsChance = 0.2;
+        #endif
+        float moonPhaseFactor = 1.0;
+    #else
+        const float shootingStarsChance = SHOOTING_STARS_CHANCE;
+        float newMoonVisibility = 1.0 - abs(moonPhase - 4) / 4.0;
+        float moonPhaseFactor = mix(0.8, 1.5, newMoonVisibility);
+    #endif
 
-    if (h >= pow1_5(SHOOTING_STARS_CHANCE * 0.065) * moonPhaseFactor) return 0.0;
+    if (h >= pow1_5(shootingStarsChance * 0.065) * moonPhaseFactor) return 0.0;
 
     vec2 gv = fract(uv * 0.5) * 2.0 - 1.0;
     float line = DrawLine(gv, startPos, startPos + direction * 0.9);
@@ -48,7 +58,7 @@ float ShootingStar(vec2 uv, vec2 startPos, vec2 direction) {
 
 vec3 GetShootingStars(vec2 starCoord, float VdotU, float VdotS) {
     float starsAroundSun = 1.0;
-    #ifdef CELESTIAL_BOTH_HEMISPHERES
+    #ifdef CELESTIAL_BOTH_HEMISPHERES_INTERNAL
         float starBelowHorizonBrightness = 1.0;
         float horizonFactor = exp(-pow(VdotU / 0.1, 2.0));
         #ifdef SUN_MOON_HORIZON
@@ -62,9 +72,7 @@ vec3 GetShootingStars(vec2 starCoord, float VdotU, float VdotS) {
 
     float visibility = max0(1.0 - 1.0 / (1.0 + abs(VdotS) * 1000.0) * starsAroundSun) * starBelowHorizonBrightness - horizonFactor * 0.5;
 
-    #ifndef DAYLIGHT_STARS
-        visibility *= pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility);
-    #endif
+    visibility *= GetStarDayFactor();
 
     #ifdef CLEAR_SKY_WHEN_RAINING
         visibility *= min1(invRainFactorDynamic + 0.4);

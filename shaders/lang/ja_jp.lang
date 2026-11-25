@@ -5,7 +5,7 @@ Contribute=公式翻訳への貢献はこちらから: https://www.euphoriapatc
 option.LANG_FILE_HEADER=コミュニティによる翻訳ファイル - 翻訳が古い可能性があります。. SpacEagle17は翻訳の精度を保証できません。.
 option.TRANSLATORS=日本語訳: MUKSC
 
-shaderDescription=§cComplementary Shaders r5.9§r + §dEuphoria Patches 1.10.0§r\n多くの追加機能や設定を追加する、SpacEagle17によるComplementary Shadersのアドオンです。. \n開発版: §dwww.euphoriapatches.com/support§r
+shaderDescription=§cComplementary Shaders r5.10§r + §dEuphoria Patches 1.11.2§r\n多くの追加機能や設定を追加する、SpacEagle17によるComplementary Shadersのアドオンです。. \n開発版: §dwww.euphoriapatches.com/support§r
 
 #Profiles
 profile.POTATO=品質: §a最低
@@ -97,12 +97,12 @@ option.info17=ベータ版: SpacEagle17のPatreon
 value.info17.0=
 option.info17.comment=PatreonやKo-FiでSpacEagle17をサポートして限定開発バージョンにアクセスできます。. §d§l§neuphoriapatches.com/support
 
-option.info18=Complementary r5.9用
+option.info18=Complementary r5.10用
 value.info18.0=
 option.info18.comment=Euphoria Patchesをご利用いただきありがとうございます :)
 
 option.info19=§a新しいアップデート
-value.info19.0=§cX.Y.Z §r->§a X.Y.Z
+value.info19.0=§cX.Y.Z §r->§a X.Y.Z
 option.info19.comment=EuphoriaPatcher Modの新しいバージョンが利用可能です。. Modrinthからダウンロードしてください: https://euphoriapatches.com/download
 
 option.info20=
@@ -407,6 +407,7 @@ option.LIGHTSHAFT_NOON_I=光芒 昼間の倍率
 option.LIGHTSHAFT_SUNSET_I=光芒 日の出/日の入りの倍率
 option.LIGHTSHAFT_NIGHT_I=光芒 夜間の倍率
 option.LIGHTSHAFT_RAIN_I=光芒 雨天時の倍率
+option.LIGHTSHAFT_WATER_I=光芒 水中の倍率
 
 option.LIGHTSHAFT_SUNSET_SATURATION=光芒 日の出/日の入りの色
 option.LIGHTSHAFT_SUNSET_SATURATION.comment=日の出と日の入りの時間帯で、光芒に追加される彩度の量を調整します。. 高い値では赤みがかったオレンジに、低い値ではより黄色に近づきます。.
@@ -556,6 +557,12 @@ value.WATER_CAUSTIC_STYLE_DEFINE.-1=水と同じ
 value.WATER_CAUSTIC_STYLE_DEFINE.1=Reimagined
 value.WATER_CAUSTIC_STYLE_DEFINE.3=Unbound
 
+option.WATER_REFRACTION_DEFINE=水の屈折
+option.WATER_REFRACTION_DEFINE.comment=水とネザーポータルに屈折効果を追加します。.
+value.WATER_REFRACTION_DEFINE.-1=§a細部の品質依存
+value.WATER_REFRACTION_DEFINE.0=§aOFF
+value.WATER_REFRACTION_DEFINE.1=§cON
+
 option.WATER_REFRACTION_INTENSITY=水の屈折強度 §e[*]§r
 option.WATER_REFRACTION_INTENSITY.comment=水の屈折と水中での歪みの強度を調整します。. §e[*]§r この設定は「細部の品質」が「高」に設定されている場合にのみ完全に機能し、それ以外の場合は水中の微妙な歪みにのみ影響します。.
 
@@ -698,6 +705,9 @@ option.PIXELATED_BLOCKLIGHT.comment=光源ブロックのライティングを�
 option.PIXELATED_AO=ピクセル化されたエッジシャドウ
 option.PIXELATED_AO.comment=バニラのアンビエントオクルージョンをピクセル化します。.
 
+option.PIXELATED_CLOUD_SHADOWS=ピクセル化された雲の影 §e[*]§r
+option.PIXELATED_CLOUD_SHADOWS.comment=雲の影を通常のピクセル影よりも強くピクセル化させます。. §e[*]§r 他のピクセル化設定と異なり、これは「ピクセル化のスケール」設定に影響されません。. §e[*]§r この機能を有効にするには「雲の影」設定が有効になっている必要があります。.
+
 option.PIXEL_SCALE=ピクセル化のスケール
 option.PIXEL_SCALE.comment=テクスチャ解像度に基づいてスケーリングを行います。.
 value.PIXEL_SCALE.-2=0.25x
@@ -815,7 +825,7 @@ option.MOTION_BLURRING_STRENGTH.comment=モーションブラーの強さを調�
 
 option.WORLD_BLUR=§eワールドブラー§r
 option.WORLD_BLUR.comment=ワールド全体のぼかしを有効にします。. 距離ブラー: カメラからの距離に応じて霧のようにぼかしが適用されます\n被写界深度: カメラの焦点に応じてぼかしが発生します\n§c[-]§r この効果はパフォーマンスに大きな影響を与える可能性があります。.
-value.WORLD_BLUR.0=§aOFF
+value.WORLD_BLUR.-1=§aOFF
 value.WORLD_BLUR.1=§c距離ブラー
 value.WORLD_BLUR.2=§c被写界深度
 
@@ -864,7 +874,7 @@ option.IPBR_COMPAT_MODE_DEFINE.comment=IPBR+の機能の計算方式を調整し
 option.IPBR_PARTICLE_FEATURES=IPBR+ パーティクル機能
 option.IPBR_PARTICLE_FEATURES.comment=輝く溶岩パーティクルや、より色鮮やかな水パーティクルなど、いくつかのパーティクル機能を有効にします。.
 
-option.FANCY_GLASS=より良いガラス
+option.FANCY_GLASS=より良いガラス §c[-]§r
 option.FANCY_GLASS.comment=通常のガラスに半透明の層を追加することで改善します。. §c[-]§r 古いIrisバージョンでは機能しません。. §e[*]§r 「RPサポート」設定をIntegrated PBR+に設定する必要があります。.
 
 option.GREEN_SCREEN_LIME=グリーンスクリーン用黄緑色ブロック
@@ -1079,7 +1089,7 @@ value.WAVING_I.175=175 §c[-]
 value.WAVING_I.200=200 §c[-]
 
 option.WAVING_FOLIAGE=揺れる草
-option.WAVING_FOLIAGE.comment=草や類似の葉に動きを追加し、風をシミュレートします。.
+option.WAVING_FOLIAGE.comment=草や葉などの植物を揺らし、風をシミュレートします。.
 
 option.WAVING_LEAVES=揺れる葉
 option.WAVING_LEAVES.comment=葉に動きを追加し、風をシミュレートします。.
@@ -1093,11 +1103,21 @@ option.WAVING_LILY_PAD.comment=スイレンの葉やカエルの卵に動きを�
 option.WAVING_WATER_VERTEX=揺れる水位
 option.WAVING_WATER_VERTEX.comment=水の位置に動きを追加し、風をシミュレートします。. §e[*]§r この設定は「水の波の強さ」設定には関連しません。.
 
+option.WATER_NOISE_COLORING=揺れる水位 明るさ
+option.WATER_NOISE_COLORING.comment=海に微妙な色のバリエーションを加え、より波打っているように見せます。. §e[*]§r 「細部の品質依存」とは、設定を変更しない限りパフォーマンス設定の「細部の品質」によって自動的に決定されることを意味します。.
+value.WATER_NOISE_COLORING.-1=§a細部の品質依存
+value.WATER_NOISE_COLORING.0=§aOFF
+value.WATER_NOISE_COLORING.1=§cON
+
 option.WAVING_RAIN=揺れる雨/雪のテクスチャ
 option.WAVING_RAIN.comment=降ってくる雨や雪のテクスチャに動きを追加し、よりダイナミックに見せます。.
 
-option.SPECIAL_PORTAL_EFFECTS=特殊なポータルエフェクト
-option.SPECIAL_PORTAL_EFFECTS.comment=ネザーポータル、エンドポータル、エンドゲートウェイに特別なアニメーションと発光効果を追加します。.
+option.SPECIAL_PORTAL_EFFECT=特殊なポータルエフェクト
+option.SPECIAL_PORTAL_EFFECT.comment=ネザーポータル、エンドポータル、エンドゲートウェイに特別なアニメーションと発光効果を追加します。.
+value.SPECIAL_PORTAL_EFFECT.0=OFF
+value.SPECIAL_PORTAL_EFFECT.1=エンドポータル
+value.SPECIAL_PORTAL_EFFECT.2=ネザーポータル
+value.SPECIAL_PORTAL_EFFECT.3=完全
 
 option.REFLECTION_RES=§e反射の解像度§r
 option.REFLECTION_RES.comment=ブロックのPBR反射、およびワールドスペース反射 (有効になっている場合) の解像度を変更し、パフォーマンスを増加させます。. §c[-]§r 「完全」の解像度の反射は、一部のシーンでパフォーマンスに予想以上の影響を与える可能性があります。. §e[*]§r この機能はOptifine上では動作しません。.
@@ -1194,6 +1214,9 @@ option.COLORED_LIGHT_FOG.comment=夜間や地下で顕著に見られるブロ�
 
 option.COLORED_LIGHT_FOG_I=光の霧の強度
 option.COLORED_LIGHT_FOG_I.comment=色付きの光の霧の明るさを調整します。.
+
+option.COLORED_DYNAMIC_LIGHTING=§色付き動的照明 [*]§r
+option.COLORED_DYNAMIC_LIGHTING.comment=地面に落ちた松明のアイテムなどの動的な光源が色付きの光を放つようにします。. §e[*]§r この機能は「パフォーマンス設定」で「高度な色トレーシング」と「エンティティの影」 (通常のエンティティ) が有効になっている場合にのみ動作します。. §c[-]§r この効果はパフォーマンスに影響を与える可能性があります。.
 
 option.LIGHT_COLOR_MULTS=§eライティングの色倍率
 option.LIGHT_COLOR_MULTS.comment=あらゆる物体の表面に映るライティングの色をカスタマイズできるようにします。.
@@ -1376,6 +1399,8 @@ screen.END_ROD_SETTINGS=エンドロッド
 screen.END_ROD_SETTINGS.comment=エンドロッドに関する設定です。.
 screen.FOLIAGE_SETTINGS=植物
 screen.FOLIAGE_SETTINGS.comment=植物に関する設定です。.
+screen.SSS_SETTINGS=サブサーフェス・スキャッタリング (SSS)
+screen.SSS_SETTINGS.comment=サブサーフェス・スキャッタリング (葉、植物、その他の半透明なマテリアルから透き通る光) に関する設定です。.
 screen.PORTAL_SETTINGS=ポータルの設定
 screen.PORTAL_SETTINGS.comment=ポータルに関する設定です。.
 screen.MISC_SETTINGS=その他
@@ -1420,6 +1445,8 @@ screen.FUN=お遊び
 screen.FUN.comment=楽しくいこう。.
 screen.WORLD_CURVATURE_SETTINGS=湾曲した世界
 screen.WORLD_CURVATURE_SETTINGS.comment=湾曲した世界に関する設定です。.
+screen.SHOCKWAVE_SETTINGS=ショックウェーブ設定
+screen.SHOCKWAVE_SETTINGS.comment=ショックウェーブに関する設定です。.
 screen.RANDOM_BLOCKLIGHT_SETTINGS=ランダムブロック光源
 screen.RANDOM_BLOCKLIGHT_SETTINGS.comment=ランダムブロック光源に関する設定です。.
 
@@ -1427,7 +1454,7 @@ screen.POPULAR_SETTINGS=§d人気の設定
 screen.POPULAR_SETTINGS.comment=これらはEuphoria Patchesの最も人気な設定の一部です。. 多数のエフェクトに必要となる「高度な色トレーシング」を除き、ここにあるすべての設定はEuphoria Patches限定で、オリジナルのComplementaryシェーダーには存在しません。.
 screen.POPULAR_SETTINGS_2=ページ 2
 screen.POPULAR_SETTINGS_3=ページ 3
-screen.EP_VERSION=Euphoria Patches §d1.10.0
+screen.EP_VERSION=Euphoria Patches §d1.11.2
 screen.EP_VERSION.comment=§bSpacEagle17をPatreonやKo-Fiでサポートし、新しい開発バージョンを入手できます。. §r§d§l§neuphoriapatches.com/support
 
 screen.MODDED_SETTINGS=Modサポート設定
@@ -1600,8 +1627,14 @@ option.CLOUD_LIGHT_MULTIPLIER.comment=昼間に雲の光が当たる面の輝度
 option.CLOUD_NIGHT_LIGHT_MULTIPLIER=雲の光倍率 - 夜間
 option.CLOUD_NIGHT_LIGHT_MULTIPLIER.comment=夜間に雲の光が当たる面の輝度を増加させます。.
 
+option.CLOUD_SUNSET_LIGHT_MULTIPLIER=雲の光倍率 - 日の出/日の入り
+option.CLOUD_SUNSET_LIGHT_MULTIPLIER.comment=日の出と日の入りの時間帯に雲の光が当たる面の輝度を増加させます。.
+
 option.CLOUD_AMBIENT_MULTIPLIER=雲の環境光倍率
 option.CLOUD_AMBIENT_MULTIPLIER.comment=雲の環境光が当たる面の輝度を増加させます。.
+
+option.CLOUD_SUNSET_AMBIENT_MULTIPLIER=雲の環境光倍率 - 日の出/日の入り
+option.CLOUD_SUNSET_AMBIENT_MULTIPLIER.comment=日の出と日の入りの時間帯に雲の環境光が当たる面の輝度を増加させます。.
 
 option.CLOUD_NIGHT_AMBIENT_MULTIPLIER=雲の環境光倍率 - 夜間
 option.CLOUD_NIGHT_AMBIENT_MULTIPLIER.comment=夜間に雲の環境光が当たる面の輝度を増加させます。.
@@ -2044,9 +2077,6 @@ option.SILHOUETTE_BRIGHTNESS=シルエットの明るさ
 option.RAIN_ATMOSPHERE=豪華な雷雨
 option.RAIN_ATMOSPHERE.comment=雷が落ちた際の雷雨の表現を大幅に向上させます。. §e[*]§r Iris上でより良く動作します。.
 
-option.BLUE_SCREEN=ブルースクリーン
-option.BLUE_SCREEN.comment=「青色のコンクリート」「青色の羊毛」「青色のカーペット」を動画編集用のブルースクリーンに変えます。. ヒント1: 「ブルーム」設定を無効にすると分離が改善されます\nヒント2: 照明用に青色のカーペットの下に光源を置いてください\nヒント3: アンチエイリアシング (FXAA) を無効にし、パフォーマンス設定で「細部の品質」を「超低」に設定すると、フィルタリングがすべて無効化されピクセルパーフェクトな分離が可能です
-
 option.MIRROR_DIMENSION=ミラー・ディメンション
 option.MIRROR_DIMENSION.comment=魔術を習得したあなたは、ミラー・ディメンションに足を踏み入れるだけの勇気を持っている。.
 
@@ -2058,7 +2088,7 @@ option.END_CURVATURE_SIZE=ジ・エンドの湾曲度
 option.LAVA_VARIATION=溶岩 プリセット
 option.LAVA_VARIATION.comment=近場で話題のアツいプリセット！今すぐ選ぼう！
 value.LAVA_VARIATION.0=Complementary
-value.LAVA_VARIATION.1=アダプティブノイズ (推奨)
+value.LAVA_VARIATION.1=アダプティブ (推奨)
 value.LAVA_VARIATION.2=ほてる熱さ
 value.LAVA_VARIATION.3=とろけるチーズ
 value.LAVA_VARIATION.4=暗黒の島々
@@ -2334,18 +2364,19 @@ option.NETHER_NOISE.comment=ネザーの天井の上の空をより興味深く�
 value.NETHER_NOISE.0=OFF
 value.NETHER_NOISE.1=ON
 
-option.MCBL_MAIN_DEFINE=Euphoria色付き照明
-option.MCBL_MAIN_DEFINE.comment=多色対応色付きブロック光源 (SSBL) を有効にします。. 「ACT + スクリーンスペース」に設定すると、スクリーンスペースのシステムの上から「高度な色トレーシング」が適用されます。. 「ACT + SSBL + 動的光源サポート」はMod環境で間違った結果になることがあるため、バニラに動的光源Modを入れた環境でのみ使用してください。. §e[*]§r 1.16.5以降、またはAngelica上でのみ動作します。.
+option.MCBL_MAIN_DEFINE=スクリーンスペース色付き照明
+option.MCBL_MAIN_DEFINE.comment=Euphoria Patches専用のスクリーンスペース色付き照明を有効にします。. 「ON + ACT」に設定することで「高度な色トレーシング」と同時にスクリーンスペースのシステムを使用することができます。. これはACTとは違い、OptiFineとMac上でも動作します。. §e[*]§r 1.16.5以降、またはAngelica上でのみ動作します。.
 value.MCBL_MAIN_DEFINE.0=OFF
-value.MCBL_MAIN_DEFINE.1=スクリーンスペース
-value.MCBL_MAIN_DEFINE.2=ACT + スクリーンスペース
-value.MCBL_MAIN_DEFINE.3=ACT + SSBL + 動的光源サポート
+value.MCBL_MAIN_DEFINE.1=ON
+value.MCBL_MAIN_DEFINE.2=ON + ACT
 
 option.MCBL_INFLUENCE=多色対応色付きブロック光源の影響
 option.MCBL_INFLUENCE.comment=多色対応色付きブロック光源が、デフォルトのブロック光源の色にどれだけ影響を与えるかを制御します。.
 
 option.SSS_SNOW_ICE=雪と氷のSSS
 option.SSS_SNOW_ICE.comment=雪や氷ブロックにSSS (サブサーフェス・スキャッタリング) を追加します。.
+option.SSS_HONEYCOMB=ハニカムブロックのSSS
+option.SSS_HONEYCOMB.comment=ハニカムブロックにサブサーフェス・スキャッタリングを追加します。.
 
 option.BEDROCK_NOISE=岩盤ノイズ
 option.BEDROCK_NOISE.comment=ネザーやオーバーワールドで岩盤の下にノイズ効果を追加します。.
@@ -2603,6 +2634,12 @@ option.SSS_STRENGTH=サブサーフェス・スキャッタリング
 value.SSS_STRENGTH.0=OFF
 value.SSS_STRENGTH.1=ON
 
+option.SKYLIGHT_SSS=自然光のSSS
+option.SKYLIGHT_SSS.comment=葉、植物、その他の半透明なマテリアルが、それらを通過する自然光によって光るようにします。. 真下から見るときに最も顕著です。. これは「LabPBRの改善」で「サブサーフェス・スキャッタリングサポート」が有効な場合に常にオンになります。. §e[*]§r この設定は「サブサーフェス・スキャッタリング (SSS)」が有効、かつオーバーワールド内でのみ機能します。.
+
+option.BLOCKLIGHT_SSS=ブロック光のSSS
+option.BLOCKLIGHT_SSS.comment=葉、植物、その他の半透明なマテリアルが、それらを通過する光源ブロックからの光によって光るようにします。. これは「LabPBRの改善」で「サブサーフェス・スキャッタリングサポート」が有効な場合に常にオンになります。. §e[*]§r この設定は「サブサーフェス・スキャッタリング (SSS)」と「色付き照明」が有効な場合のみ機能します。.
+
 option.PIXEL_WATER=自動生成ピクセル水
 option.PIXEL_WATER.comment=自動生成されたピクセル化された水のテクスチャ。.
 value.PIXEL_WATER.0=OFF
@@ -2632,11 +2669,15 @@ value.SUN_MOON_IPBR.1=太陽のみ
 value.SUN_MOON_IPBR.2=月のみ
 value.SUN_MOON_IPBR.3=太陽と月
 
-option.DAYLIGHT_STARS=昼間の星
-option.DAYLIGHT_STARS.comment=昼間に星を表示します。.
+option.DAYLIGHT_STARS_AMOUNT=昼間の星
+option.DAYLIGHT_STARS_AMOUNT.comment=日中にどのくらい星が見えるかです。. 0%では非表示になり、100%では最大の明るさで表示します。.
+suffix.DAYLIGHT_STARS_AMOUNT=%
 
 option.FROZEN_TIME=時間停止
 option.FROZEN_TIME.comment=フレーム数に依存したシェーダーのアニメーション効果を停止させます。. 比較用のスクリーンショット撮影に最適です。.
+
+option.USE_SYNCED_TIME=時刻を同期する
+option.USE_SYNCED_TIME.comment=雲、星雲などの機能がゲームティックを使用してプレイヤー間で同期されます。.
 
 option.DARKER_DEPTH_OCEANS=深く暗い海
 option.DARKER_DEPTH_OCEANS.comment=海の深さに応じて光が減少します。.
@@ -2654,6 +2695,9 @@ option.BEACON_BEAM_EMISSION.comment=ビーコンビームの発光強度を変�
 
 option.PINKER_CHERRY_LEAVES=よりピンクな桜の葉
 
+option.DISCARD_FOLIAGE_SHADOW=植物の影を削除
+option.DISCARD_FOLIAGE_SHADOW.comment=草、花、苗木、作物などの植物が影を落とさないようにします。. §c[-]§r この効果はパフォーマンスを向上させるものではなく、あくまで視覚的な変更です。. むしろ、厳密に言えばごく僅かにパフォーマンスが低下します。.
+
 option.LIGHTMAP_CURVES=ライトマップカーブ
 option.LIGHTMAP_CURVES.comment=ワールドのライトマップカーブを変更します。.
 option.UPPER_LIGHTMAP_CURVE=上部ライトマップカーブ
@@ -2669,7 +2713,10 @@ option.SHOCKWAVE=ショックウェーブ
 value.SHOCKWAVE.0=OFF
 value.SHOCKWAVE.1=円形
 value.SHOCKWAVE.2=四角形
-option.SHOCKWAVE.comment=スニークして何が起こるか確かめましょう！
+option.SHOCKWAVE.comment=メイスを使用して何が起こるか確かめましょう！
+
+option.SHOCKWAVE_CROUCHING=スニーク時
+option.SHOCKWAVE_CROUCHING.comment=スニーク時にもショックウェーブを有効化します。. 1.21以前にはメイスが存在しないため、自動で有効になります。.
 
 option.STAR_LAYER_OW=星の層
 option.STAR_LAYER_OW.comment=現在の星に追加の大きい星と小さい星を追加します。.
@@ -2844,8 +2891,14 @@ suffix.BETTER_LABPBR_REFRACTIONS=%
 option.BETTER_LABPBR_POROSITY=ポロシティサポート
 option.BETTER_LABPBR_POROSITY.comment=雨にさらされたLabPBRマテリアルをポロシティ/気孔率に基づいて暗くし、反射のある濡れた光沢を与えます。.
 
+option.BETTER_LABPBR_POM_PUDDLES=POMの水溜まり
+option.BETTER_LABPBR_POM_PUDDLES.comment=雨がPOMのあるブロックの隙間を満たすようにします。. §e[*]§r この設定は「RPサポート」がLabPBRに設定されている、かつ「視差オクルージョンマッピング (POM)」が有効な場合にのみ動作します。.
+
 option.BETTER_LABPBR_AO=マテリアルAOサポート
 option.BETTER_LABPBR_AO.comment=LabPBRのノーマルテクスチャに含まれる、マテリアルのアンビエントオクルージョン (AO) に基づいて直接証明を暗くします。. §e[*]§r この設定は「RPサポート」がLabPBRに設定されている場合にのみ動作します。.
+
+option.BETTER_LABPBR_SSS=サブサーフェス・スキャッタリング (SSS)
+option.BETTER_LABPBR_SSS.comment=LabPBRの鏡面反射マップに含まれるサブサーフェス・スキャッタリングの値に基づいて、マテリアルが背後から照らされるようにします。. ブロック、半透明のブロック、「エンティティの影」が有効な場合はエンティティ、さらに「完全」に設定されている場合はブロックエンティティ上で動作します。. §e[*]§r この設定は「RPサポート」がLabPBRに設定されている、かつ「動的な影」が「低」以上に設定されている場合にのみ動作します。.
 
 option.SHADOW_SATURATION=影の彩度
 option.SHADOW_SATURATION.comment=影と光芒の彩度を変更します。. §e[*]§r この設定は「動的な影」が低以上に設定されている場合にのみ機能します。.
@@ -3138,7 +3191,7 @@ option.PANINI_PROJECTION.comment=高い視野角を使用している場合に�
 value.PANINI_PROJECTION.0=OFF
 
 option.BLACK_HOLE=ブラックホール
-option.BLACK_HOLE.comment=エンドのスカイボックスにブラックホールを追加します。. 位置は「ブラックホールの位置」設定によって制御されます。.
+option.BLACK_HOLE.comment=エンドのスカイボックスにブラックホールを追加します。. このスライダーはブラックホールの明るさを変更します。. 位置は「ブラックホールの位置」設定によって制御されます。.
 value.BLACK_HOLE.0=OFF
 
 option.BLACK_HOLE_SHAPE=ブラックホールの形状
@@ -3192,3 +3245,13 @@ option.BLACK_HOLE_LATITUDE_BIAS.comment=ブラックホールの緯度方向の�
 option.BLACK_HOLE_STREAK=水平の軌跡
 option.BLACK_HOLE_STREAK.comment=ブラックホールに水平方向の降着円盤の軌跡を追加します。.
 value.BLACK_HOLE_STREAK.0=OFF
+
+option.REFLECTIVE_HORSES=煌めく馬
+option.REFLECTIVE_HORSES.comment=子供はみんなキラキラの馬が大好き！\nキラキラしてない馬は悲しい馬だよ。.
+
+option.MODDED_FOG_SUPPORT=Modの霧のサポート
+option.MODDED_FOG_SUPPORT.comment=Modで追加される霧へのサポートを追加します。. Modが独自の霧を追加しない場合は何も起こりません。.
+
+option.ENTITY_SHADOW_DISTANCE=§4§lエンティティの影の描画距離
+option.ENTITY_SHADOW_DISTANCE.comment=オーバーワールドとジ・エンドでのエンティティの影の描写距離の倍率です。. §c[-]§r デフォルトよりも高い値に設定すると、パフォーマンス (FPS) に比較的大きな影響を与えます。.
+value.ENTITY_SHADOW_DISTANCE.0.125=デフォルト (0.125)

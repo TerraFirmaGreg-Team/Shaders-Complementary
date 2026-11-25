@@ -9,6 +9,9 @@
 #include "/lib/shaderSettings/entities.glsl"
 #include "/lib/shaderSettings/emissionMult.glsl"
 //#define NIGHT_DESATURATION
+//#define REFLECTIVE_HORSES
+#ifdef REFLECTIVE_HORSES
+#endif
 
 #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE
     #include "/lib/misc/distortWorld.glsl"
@@ -47,14 +50,13 @@ in vec4 glColor;
 float NdotU = dot(normal, upVec);
 float NdotUmax0 = max(NdotU, 0.0);
 float SdotU = dot(sunVec, upVec);
-float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
-float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
+float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
 float sunVisibility2 = sunVisibility * sunVisibility;
 float shadowTimeVar1 = abs(sunVisibility - 0.5) * 2.0;
 float shadowTimeVar2 = shadowTimeVar1 * shadowTimeVar1;
 float shadowTime = shadowTimeVar2 * shadowTimeVar2;
 float skyLightCheck = 0.0;
-float entitySSBLMask = 1.0;
 
 #ifdef OVERWORLD
     vec3 lightVec = sunVec * ((timeAngle < 0.5325 || timeAngle > 0.9675) ? 1.0 : -1.0);
@@ -231,7 +233,7 @@ void main() {
                 #include "/lib/materials/materialHandling/entityIPBR.glsl"
             #endif
 
-            if (materialMask != OSIEBCA * 254.0) materialMask += OSIEBCA * 100.0; // Entity Reflection Handling
+            if (materialMask < OSIEBCA * 254.0) materialMask += OSIEBCA * 100.0; // Entity Reflection Handling
 
             #ifdef GENERATED_NORMALS
                 if (!noGeneratedNormals) GenerateNormals(normalM, colorP);
@@ -251,16 +253,12 @@ void main() {
 
             if (entityId == 50004) { // Lightning Bolt
                 #include "/lib/materials/specificMaterials/others/lightningBolt.glsl"
-            } else if (entityId == 50008) { // Item Frame, Glow Item Frame
+            } else if (entityId == 50128 || entityId == 50132)  { // Item Frame, Glow Item Frame
                 noSmoothLighting = true;
-            } else if (entityId == 50016 || entityId == 50017) { // Player
-                #if IRIS_VERSION >= 10800
-                    if (entityId == 50017) entitySSBLMask = 0.0;
-                #else
-                    if (length(playerPos) < 4.0) entitySSBLMask = 0.0;
-                #endif
             } else if (entityId == 50076) { // Boats
                 playerPos.y += 0.38; // consistentBOAT2176
+            } else if (entityId == 50136) { // Cushion
+                materialMask = 1.0; // clear color - we want taa on cushions to clear jittering
             }
             #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
                 if (entityId == 50020) { // blaze
@@ -280,6 +278,12 @@ void main() {
         }
 
         color.rgb = mix(color.rgb, entityColor.rgb, entityColor.a);
+        #ifdef IRIS_INLINE_GLINT
+        if (mc_hasGlint()) {
+            vec3 glint = mc_sampleGlint();
+            color.rgb += glint * glint; // this is the specific blending glint uses
+        }
+        #endif
 
         normalM = gl_FrontFacing ? normalM : -normalM; // Inverted Normal Workaround
         vec3 geoNormal = normalM;
@@ -325,11 +329,12 @@ void main() {
         emissionOld = emission;
     }
 
-    vec3 translucentMult = mix(vec3(0.666), color.rgb * (1.0 - pow2(pow2(color.a))), color.a);
     float skyLightFactor = GetSkyLightFactor(lmCoordM, shadowMult);
 
-    #ifdef ENTITIES_ARE_LIGHT
-        entitySSBLMask = 1.0;
+    #if !defined IRIS_FEATURE_ENTITY_TRANSLUCENT || defined GBUFFERS_ENTITIES_TRANSLUCENT
+        vec3 translucentMult = mix(vec3(0.666), color.rgb * (1.0 - pow2(pow2(color.a))), color.a);
+    #else
+        vec3 translucentMult = vec3(1.0);
     #endif
 
     #ifdef COLOR_CODED_PROGRAMS
@@ -345,12 +350,21 @@ void main() {
             dither = fract(dither + goldenRatio * mod(float(frameCounter), 3600.0));
         #endif
 
+        #ifdef ATM_COLOR_MULTS
+            atmColorMult = GetAtmColorMult();
+            sqrtAtmColorMult = sqrt(atmColorMult);
+        #endif
+
         float skyFade = 0.0;
         float prevAlpha = color.a;
         color.a = 1.0;
         DoFog(color, skyFade, lViewPos, playerPos, VdotU, VdotS, dither, false, 0.0);
         float fogAlpha = color.a;
         color.a = prevAlpha * (1.0 - skyFade);
+
+        #if DETAIL_QUALITY > 0
+            float entityLinearDepth = sqrt(lViewPos / far);
+        #endif
     #endif
 
     #ifdef IRIS_FEATURE_FADE_VARIABLE
@@ -368,35 +382,78 @@ void main() {
         #endif
     #endif
 
+    float reflectNormalAlpha = 1.0; // Translucent ones need to be 1.0 otherwise we get reflective horses
+    #ifndef GBUFFERS_ENTITIES_TRANSLUCENT
+        reflectNormalAlpha = clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0;
+    #elif defined REFLECTIVE_HORSES
+        if (entityId == 50013) { // Your horse is now happy.
+            reflectNormalAlpha = clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0;
+        }
+    #endif
+
     /* DRAWBUFFERS:036 */
     gl_FragData[0] = color;
     gl_FragData[1] = vec4(1.0 - translucentMult, 1.0);
-    gl_FragData[2] = vec4(smoothnessD, materialMask, skyLightFactor, lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emissionOld));
+    gl_FragData[2] = vec4(smoothnessD, materialMask, skyLightFactor, lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emissionOld) + maxOf(entityColor));
 
-    #if BLOCK_REFLECT_QUALITY >= 2 && RP_MODE >= 1 || WORLD_SPACE_REFLECTIONS > 0
-        /* DRAWBUFFERS:0364 */
-        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0);
+    #define REFLECTIONS_ACTIVE (BLOCK_REFLECT_QUALITY >= 2 && RP_MODE >= 1 || WORLD_SPACE_REFLECTIONS > 0)
 
-        #ifdef SS_BLOCKLIGHT
-            /* DRAWBUFFERS:03649 */
-            gl_FragData[4] = vec4(lightAlbedo, entitySSBLMask);
+    #define WRITE_PHOTONICS(i0, i1, i2) \
+        gl_FragData[i0] = phAlbedoOut; /* SS_BLOCKLIGHT is undefined with Photonics */ \
+        gl_FragData[i1] = vec4(playerPosDelta, 1.0); \
+        gl_FragData[i2] = vec4(normalize((gbufferModelViewInverse * vec4(normal, 0.0f)).xyz), 1.0);
+
+    #if defined GBUFFERS_ENTITIES_TRANSLUCENT && DETAIL_QUALITY > 0
+        #if REFLECTIONS_ACTIVE
+            /* RENDERTARGETS: 0,3,6,4,13 */
+            gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, 1.0);
+            gl_FragData[4] = vec4(0.0, 1.0, 1.0, entityLinearDepth);
+
+            #ifdef SS_BLOCKLIGHT
+                /* RENDERTARGETS: 0,3,6,4,13,9 */
+                gl_FragData[5] = vec4(lightAlbedo, 1.0);
+            #endif
+
+            #ifdef PHOTONICS_LIGHTING
+                /* RENDERTARGETS:0,3,6,4,13,10,11,20 */
+                WRITE_PHOTONICS(5, 6, 7)
+            #endif
+        #else
+            /* RENDERTARGETS: 0,3,6,13 */
+            gl_FragData[3] = vec4(0.0, 1.0, 1.0, entityLinearDepth);
+
+            #ifdef SS_BLOCKLIGHT
+                /* RENDERTARGETS: 0,3,6,13,9 */
+                gl_FragData[4] = vec4(lightAlbedo, 1.0);
+            #endif
+
+            #ifdef PHOTONICS_LIGHTING
+                /* RENDERTARGETS:0,3,6,13,10,11,20 */
+                WRITE_PHOTONICS(4, 5, 6)
+            #endif
         #endif
+    #else
+        #if REFLECTIONS_ACTIVE
+            /* DRAWBUFFERS:0364 */
+            gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, reflectNormalAlpha);
 
-        #ifdef PHOTONICS_LIGHTING
+            #ifdef SS_BLOCKLIGHT
+                /* DRAWBUFFERS:03649 */
+                gl_FragData[4] = vec4(lightAlbedo, 1.0);
+            #endif
+
+            #ifdef PHOTONICS_LIGHTING
+                /* RENDERTARGETS:0,3,6,4,10,11,20 */
+                WRITE_PHOTONICS(4, 5, 6)
+            #endif
+        #elif defined SS_BLOCKLIGHT
+            /* DRAWBUFFERS:0369 */
+            gl_FragData[3] = vec4(lightAlbedo, 1.0);
+        #elif defined PHOTONICS_LIGHTING
             /* RENDERTARGETS:0,3,6,4,10,11,20 */
-            gl_FragData[4] = phAlbedoOut; // SS_BLOCKLIGHT is undefined with Photonics
-            gl_FragData[5] = vec4(playerPosDelta, 1.0);
-            gl_FragData[6] = vec4(normalize((gbufferModelViewInverse * vec4(normal, 0.0f)).xyz), 1.0);
+            gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, reflectNormalAlpha);
+            WRITE_PHOTONICS(4, 5, 6)
         #endif
-    #elif defined SS_BLOCKLIGHT
-        /* DRAWBUFFERS:0369 */
-        gl_FragData[3] = vec4(lightAlbedo, entitySSBLMask);
-    #elif defined PHOTONICS_LIGHTING
-        /* RENDERTARGETS:0,3,6,4,10,11,20 */
-        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0);
-        gl_FragData[4] = phAlbedoOut;
-        gl_FragData[5] = vec4(playerPosDelta, 1.0);
-        gl_FragData[6] = vec4(normalize((gbufferModelViewInverse * vec4(normal, 0.0f)).xyz), 1.0);
     #endif
 }
 
@@ -445,6 +502,9 @@ attribute vec4 at_midBlock;
 //Common Functions//
 
 //Includes//
+#ifdef TAA
+    #include "/lib/antialiasing/jitter.glsl"
+#endif
 
 #ifdef WAVE_EVERYTHING
     #include "/lib/materials/materialMethods/wavingBlocks.glsl"
@@ -513,7 +573,7 @@ void main() {
     #endif
 
     #ifdef FLICKERING_FIX
-        if (entityId == 50008 || entityId == 50012) { // Item Frame, Glow Item Frame
+        if (entityId == 50128 || entityId == 50132)  { // Item Frame, Glow Item Frame
             if (dot(normal, upVec) > 0.99) {
                 vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
                 vec3 comPos = fract(position.xyz + cameraPosition);
@@ -526,7 +586,15 @@ void main() {
                 normal = upVec * 2.0;
             }
         } else if (entityId == 50084) { // Slime, Chicken
-            gl_Position.z -= 0.00015;
+            gl_Position.z -= 0.0001
+            #ifdef TAA
+                + 0.00005 * pow2(TAA_JITTER)
+            #endif
+            ;
+        } else if (entityId == 50136) { // Cushion
+            #ifdef TAA
+                gl_Position.xy = TAAJitter(gl_Position.xy, gl_Position.w);
+            #endif
         }
 
         #if SHADOW_QUALITY == -1

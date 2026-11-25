@@ -31,36 +31,40 @@
 
 #include "/lib/atmospherics/auroraBorealisVisibility.glsl"
 
-vec3 auroraUpA[] = vec3[](
-    vec3(112.0, 36.0, 192.0),   // [1] [2] Complementary
-    vec3(112.0, 80.0, 255.0),   // [3] Legacy Complementary (v4)
-    vec3(168.0, 36.0, 88.0),    // [4] permafrost
-    vec3(255.0, 68.0, 124.0),   // [5] Blossoming Lights (Pink)
-    vec3(72.0, 96.0, 192.0),    // [6] Nebula
-    vec3(24.0, 255.0, 140.0),   // [7] Celestial Dance
-    vec3(255.0, 220.0, 255.0),  // [8] Green Flash
-    vec3(64.0, 255.0, 255.0),   // [9] Ethereal Lights
-    vec3(0.0, 20.0, 60.0),      // [10] Glacial Blessing
-    vec3(132.0, 0.0, 200.0),    // [11] Mythical Lights
-    vec3(120.0, 212.0, 56.0),   // [12] watermelon
-    vec3(0.0, 255.0, 255.0),    // [13] blood bath
-    vec3(255.0, 80.0, 112.0)    // [14] Ghost
-);
-vec3 auroraDownA[] = vec3[](
-    vec3(96.0, 255.0, 192.0),   // [1] [2] Complementary
-    vec3(80.0, 255.0, 180.0),   // [3] Legacy Complementary (v4)
-    vec3(60.0, 184.0, 152.0),   // [4] permafrost
-    vec3(160.0, 96.0, 255.0),   // [5] Blossoming Lights (Pink)
-    vec3(172.0, 44.0, 88.0),    // [6] Nebula
-    vec3(108.0, 72.0, 255.0),   // [7] Celestial Dance
-    vec3(68.0, 255.0, 72.0),    // [8] Green Flash
-    vec3(128.0, 64.0, 128.0),   // [9] Ethereal Lights
-    vec3(0.0, 24.0, 36.0),      // [10] Glacial Blessing
-    vec3(56.0, 168.0, 255.0),   // [11] Mythical Lights
-    vec3(176.0, 88.0, 72.0),    // [12] watermelon
-    vec3(180.0, 0.0, 0.0),      // [13] blood bath
-    vec3(80.0, 255.0, 180.0)    // [14] Ghost
-);
+#define AURORA_PRESET_COUNT 13
+
+// Preset colors in OKLab (up, down), index = AURORA_COLOR_PRESET - 2. A switch instead of an array because runtime-indexed arrays are slow on some GPUs
+void getAuroraPreset(int i, out vec3 upLab, out vec3 downLab) {
+    switch (i) {
+        default:
+        case 0: // Complementary (no fixed menu entry, only reached by the cycling modes)
+            upLab = vec3(0.6497967, 0.1175833, -0.1405206); downLab = vec3(0.9349612, -0.0950451, 0.0149488); break;
+        case 1: // menu 3: Legacy Complementary (v4)
+            upLab = vec3(0.7429475, 0.0589431, -0.1345453); downLab = vec3(0.9270518, -0.1078380, 0.0205064); break;
+        case 2: // menu 4: permafrost
+            upLab = vec3(0.6623245, 0.1453414, -0.0242697); downLab = vec3(0.8364559, -0.0889930, 0.0009189); break;
+        case 3: // menu 5: Blossoming Lights (Pink)
+            upLab = vec3(0.7785600, 0.1450534, -0.0091299); downLab = vec3(0.7930697, 0.0759838, -0.1074156); break;
+        case 4: // menu 6: Nebula
+            upLab = vec3(0.7291135, -0.0004477, -0.0904140); downLab = vec3(0.6805046, 0.1319328, -0.0148986); break;
+        case 5: // menu 7: Celestial Dance
+            upLab = vec3(0.8984496, -0.1569938, 0.0407037); downLab = vec3(0.7279037, 0.0649723, -0.1434207); break;
+        case 6: // menu 8: Green Flash
+            upLab = vec3(0.9692288, 0.0224571, -0.0152707); downLab = vec3(0.9067356, -0.1471677, 0.1047061); break;
+        case 7: // menu 9: Ethereal Lights
+            upLab = vec3(0.9312894, -0.1032881, -0.0285845); downLab = vec3(0.6966908, 0.0768975, -0.0508778); break;
+        case 8: // menu 10: Glacial Blessing
+            upLab = vec3(0.4174097, -0.0423702, -0.1030738); downLab = vec3(0.4202158, -0.0591433, -0.0475605); break;
+        case 9: // menu 11: Mythical Lights
+            upLab = vec3(0.5892816, 0.2134036, -0.1889643); downLab = vec3(0.8329326, -0.0617447, -0.0799043); break;
+        case 10: // menu 12: watermelon
+            upLab = vec3(0.8803987, -0.0949160, 0.1111269); downLab = vec3(0.7527072, 0.0600452, 0.0403405); break;
+        case 11: // menu 13: blood bath
+            upLab = vec3(0.9053992, -0.1494439, -0.0393982); downLab = vec3(0.5591215, 0.2002145, 0.1120516); break;
+        case 12: // menu 14: Ghost
+            upLab = vec3(0.7928624, 0.1255772, 0.0103766); downLab = vec3(0.9270518, -0.1078380, 0.0205064); break;
+    }
+}
 
 vec2 warpAuroraCoords(vec2 coord, float warpAmount) {
     float angle = texture2D(noisetex, coord * 0.5).r * 6.28318 * warpAmount;
@@ -76,37 +80,37 @@ void GetAuroraColor(in vec2 wpos, out vec3 auroraUp, out vec3 auroraDown) {
     #elif AURORA_COLOR_PRESET == 0
         auroraUp = vec3(AURORA_UP_R, AURORA_UP_G, AURORA_UP_B);
         auroraDown = vec3(AURORA_DOWN_R, AURORA_DOWN_G, AURORA_DOWN_B);
-    #elif AURORA_COLOR_PRESET == -1
-        float randomValue = hash11(float(worldDay));
-        randomValue = pow(randomValue, 0.7); // Bias towards higher values (more transitions)
-        float transitionsPerNight = min(randomValue * 2.0, 1.75);
-        float idx, frac = modf(nightFactor * transitionsPerNight, idx);
-
-        int dayOffset = worldDay % auroraUpA.length();
-
-        int colorsCount = auroraUpA.length();
-        int i0 = (int(idx) + dayOffset) % colorsCount;
-        int i1 = (i0 + 1) % colorsCount;
-
-        // Interpolate in OKLab color space for perceptually uniform transitions
-        vec3 oklabUp0 = rgb2oklab(auroraUpA[i0] / 255.0);
-        vec3 oklabUp1 = rgb2oklab(auroraUpA[i1] / 255.0);
-        vec3 oklabDown0 = rgb2oklab(auroraDownA[i0] / 255.0);
-        vec3 oklabDown1 = rgb2oklab(auroraDownA[i1] / 255.0);
-
-        auroraUp = oklab2rgb(mix(oklabUp0, oklabUp1, frac)) * 255.0;
-        auroraDown = oklab2rgb(mix(oklabDown0, oklabDown1, frac)) * 255.0;
     #else
-        #if AURORA_COLOR_PRESET == 1
-            int p = worldDay % auroraUpA.length();
-        #elif AURORA_COLOR_PRESET == 2
-            int p = worldDay % (auroraUpA.length() * 8) / 8;
-        #else
-            const int p = AURORA_COLOR_PRESET - 2;
-        #endif
+        #if AURORA_COLOR_PRESET == -1
+            float randomValue = hash11(float(worldDay));
+            randomValue = pow(randomValue, 0.7); // Bias towards higher values (more transitions)
+            float transitionsPerNight = min(randomValue * 2.0, 1.75);
+            float idx, frac = modf(nightFactor * transitionsPerNight, idx);
 
-        auroraUp = auroraUpA[p];
-        auroraDown = auroraDownA[p];
+            int dayOffset = worldDay % AURORA_PRESET_COUNT;
+            int i0 = (int(idx) + dayOffset) % AURORA_PRESET_COUNT;
+            int i1 = (i0 + 1) % AURORA_PRESET_COUNT;
+
+            // Interpolate in OKLab color space for perceptually uniform transitions
+            vec3 upLab0, downLab0, upLab1, downLab1;
+            getAuroraPreset(i0, upLab0, downLab0);
+            getAuroraPreset(i1, upLab1, downLab1);
+            auroraUp = oklab2rgb(mix(upLab0, upLab1, frac)) * 255.0;
+            auroraDown = oklab2rgb(mix(downLab0, downLab1, frac)) * 255.0;
+        #else
+            #if AURORA_COLOR_PRESET == 1
+                int p = worldDay % AURORA_PRESET_COUNT;
+            #elif AURORA_COLOR_PRESET == 2
+                int p = worldDay % (AURORA_PRESET_COUNT * 8) / 8;
+            #else
+                const int p = AURORA_COLOR_PRESET - 2;
+            #endif
+
+            vec3 upLab, downLab;
+            getAuroraPreset(p, upLab, downLab);
+            auroraUp = oklab2rgb(upLab) * 255.0;
+            auroraDown = oklab2rgb(downLab) * 255.0;
+        #endif
     #endif
     auroraUp = max(auroraUp, vec3(0.001));
     auroraDown = max(auroraDown, vec3(0.001));

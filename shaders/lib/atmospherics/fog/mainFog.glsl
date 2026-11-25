@@ -12,7 +12,21 @@
     #elif defined NETHER || defined END
         #include "/lib/colors/skyColors.glsl"
     #endif
+#endif
 
+#if defined MODDED_FOG_SUPPORT && defined OVERWORLD && !defined VOXY_PATCH
+    #include "/lib/atmospherics/fog/caveFactor.glsl"
+
+    // Vanilla's linear fog toward vanilla's fog colour, faded in by GetModdedFogStrength.
+    void DoModdedFog(inout vec4 color, float lViewPos) {
+        float strength = GetModdedFogStrength();
+        if (strength < 0.00001) return;
+        float fog = clamp((lViewPos - gl_Fog.start) / max(gl_Fog.end - gl_Fog.start, 0.01), 0.0, 1.0);
+        color = mix(color, vec4(fogColor, 0.0), fog * strength);
+    }
+#endif
+
+#ifdef BORDER_FOG
     void DoBorderFog(inout vec4 color, inout float skyFade, float lPos, float VdotU, float VdotS, float dither) {
         #ifdef OVERWORLD
             float fog = lPos / renderDistance;
@@ -46,6 +60,9 @@
             #ifdef OVERWORLD
                 bool isCustomSky;
                 vec3 fogColorM = GetSky(VdotU, VdotS, dither, true, false, isCustomSky, false);
+                #if defined MODDED_FOG_SUPPORT && !defined VOXY_PATCH
+                    fogColorM = mix(fogColorM, fogColor, GetModdedFogStrength());
+                #endif
                 #define BORDER_FOG_DENSITY BORDER_FOG_DENSITY_OVERWORLD
             #elif defined NETHER
                 vec3 fogColorM = netherColor;
@@ -78,7 +95,7 @@
     #include "/lib/atmospherics/fog/caveFactor.glsl"
 
     void DoCaveFog(inout vec4 color, float lViewPos) {
-        float fog = GetCaveFactor() * (0.9 - 0.9 * exp(- lViewPos * 0.015 * CAVE_FOG_DENSITY));
+        float fog = GetCaveFactor() * (0.9 - 0.9 * exp(-lViewPos * 0.015 * mix(CAVE_FOG_DENSITY, 0.01, GetModdedBiomeFogTakeover())));
 
         color = mix(color, vec4(caveFogColor, 0.0), fog);
     }
@@ -145,6 +162,9 @@
         float altitudeFactorRaw = GetAtmFogAltitudeFactor(playerPos.y + cameraPosition.y);
         float altitudeFactor = altitudeFactorRaw * 0.9 + 0.1;
         float atmFogMultVar = ATMOSPHERIC_FOG_DENSITY * ATM_FOG_MULT;
+        #ifdef DIMENSION_SPACE_ATMOSPHERE
+            atmFogMultVar *= 0.5; // Thin air
+        #endif
 
         #if defined DISTANT_HORIZONS || defined VOXY
             altitudeFactor = mix(altitudeFactor, 1.0, pow2(pow2(fog)));
@@ -189,11 +209,17 @@
 
         fog *= altitudeFactor;
 
-        if (fog > 0.01 + 0.0025 * dither) {
+        if (fog > 0.005 + 0.0025 * dither) {
             fog = clamp(fog, 0.0, 1.0);
 
             #ifdef OVERWORLD
                 vec3 fogColorM = GetAtmFogColor(altitudeFactorRaw, VdotS);
+                #ifdef DIMENSION_SPACE_ATMOSPHERE
+                    fogColorM = mix(fogColorM, fogColor, 0.5); // The planet's own fog color
+                #endif
+                #ifdef DIMENSION_NO_CLOUDS
+                    fogColorM = max(skyColor, fogColor); // Same flat color as the sky
+                #endif
             #else
                 vec3 fogColorM = endSkyColor * 1.5;
             #endif
@@ -285,4 +311,8 @@ void DoFog(inout vec4 color, inout float skyFade, float lViewPos, vec3 playerPos
 
     if (blindness > 0.00001) DoBlindnessFog(color, lViewPos);
     if (darknessFactor > 0.00001) DoDarknessFog(color, lViewPos);
+
+    #if defined MODDED_FOG_SUPPORT && defined OVERWORLD && !defined VOXY_PATCH
+        DoModdedFog(color, lViewPos);
+    #endif
 }

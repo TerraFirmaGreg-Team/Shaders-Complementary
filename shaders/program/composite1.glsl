@@ -5,6 +5,7 @@
 //Common//
 #include "/lib/common.glsl"
 #include "/lib/shaderSettings/composite1.glsl"
+#include "/lib/shaderSettings/reflectionRoughness.glsl"
 #include "/lib/shaderSettings/endBeams.glsl"
 #include "/lib/shaderSettings/overworldBeams.glsl"
 #include "/lib/shaderSettings/longExposure.glsl"
@@ -51,8 +52,8 @@ flat in vec3 upVec, sunVec;
 
 //Common Variables//
 float SdotU = dot(sunVec, upVec);
-float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
-float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
+float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
 float sunVisibility2 = sunVisibility * sunVisibility;
 
 vec2 view = vec2(viewWidth, viewHeight);
@@ -270,6 +271,15 @@ void main() {
         lViewPos1 = min(lViewPos1, length(viewPos1Lod.xyz));
     #endif
 
+    #if defined LIGHTSHAFTS_ACTIVE || defined COLORED_LIGHT_FOG || defined NETHER_STORM
+        #if DETAIL_QUALITY > 0
+            float entityLinearDepth = texture2D(colortex13, texCoord).a;
+            float entityLinearDepthM = entityLinearDepth == 0.0 ? 1000000.0 : pow2(entityLinearDepth) * far;
+        #else
+            float entityLinearDepthM = 1000000.0;
+        #endif
+    #endif
+
     #if defined LIGHTSHAFTS_ACTIVE || RAINBOWS > 0 && defined OVERWORLD
         float VdotL = dot(nViewPos, lightVec);
         float VdotU = dot(nViewPos, upVec);
@@ -295,7 +305,8 @@ void main() {
     #ifdef LIGHTSHAFTS_ACTIVE
         vlFactorM = vlFactor;
 
-        volumetricEffect = GetVolumetricLight(vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU, z0, z1, z1lod, dither);
+        volumetricEffect = GetVolumetricLight(vlFactorM, translucentMult, lViewPos, lViewPos1, nViewPos, VdotL, VdotU,
+                                              z0, z1, z1lod, dither, entityLinearDepthM);
     #endif
 
     float lightFogLength = 0.0;
@@ -306,7 +317,7 @@ void main() {
     #endif
 
     #ifdef NETHER_STORM
-        volumetricEffect = GetNetherStorm(color, translucentMult, nPlayerPos, playerPos, lViewPos, lViewPos1, dither);
+        volumetricEffect = GetNetherStorm(color, translucentMult, nPlayerPos, playerPos, lViewPos, lViewPos1, dither, entityLinearDepthM);
     #endif
 
     #ifdef ATM_COLOR_MULTS
@@ -328,7 +339,7 @@ void main() {
 
     #ifdef COLORED_LIGHT_FOG
         float caveFactorColoredFog = GetCaveFactor() * (1.0 - clamp01(isEyeInWater));
-        vec3 lightFog = GetColoredLightFog(nPlayerPos, translucentMult, lViewPos, lViewPos1, dither, vlFactorM, caveFactorColoredFog);
+        vec3 lightFog = GetColoredLightFog(nPlayerPos, translucentMult, lViewPos, lViewPos1, dither, entityLinearDepthM, vlFactorM, caveFactorColoredFog);
         float lightFogMult = COLORED_LIGHT_FOG_I;
         #ifdef NIGHT_DESATURATION_REMOVE_NEAR_LIGHTS
             lightFogLength += length(lightFog);
@@ -363,7 +374,7 @@ void main() {
 
             float heldLight = max(heldBlockLightValue, heldBlockLightValue2);
             if (heldLight > 0){
-                if (heldItemId == 45032 || heldItemId2 == 45032) heldLight = 15; // Lava Bucket
+                if (heldItemId == 44013 || heldItemId2 == 44013) heldLight = 15; // Lava Bucket
                 heldLight = clamp(heldLight, 0.0, 15.0);
                 heldLight = sqrt2(heldLight / 15.0) * -1.0 + 1.0; // Normalize and invert
                 heldLight = mix(heldLight, 1.0, clamp01((lViewPos) * 35.0 / far)); // Only do it around the player
@@ -439,7 +450,7 @@ void main() {
                     rainColor += glitterFactor * (vec3(0.752) * 5.0 - rainColor);
                 #endif
 
-                rainColor += lightFog * (1.0 + 4.0 * rainData.g) + color.rgb * rainData.g * 0.25;
+                rainColor += lightFog * (1.0 + 8.0 * rainData.g) + color.rgb * rainData.g * 0.25;
 
                 color = mix(color, rainColor, rainMix);
             }
@@ -453,7 +464,7 @@ void main() {
             volumetricEffect.rgb = max(vec3(0.0), volumetricEffect.rgb - dither * 0.005);
         #endif
         // We add volumetric effect AFTER the "pow color by 2.2" line to get nicer blending
-        color += 0.0;
+        color += volumetricEffect.rgb;
     #endif
 
     #ifdef BLOOM_FOG_COMPOSITE1
@@ -473,7 +484,8 @@ void main() {
 
     #if LIGHTSHAFT_QUALI_DEFINE > 0 && LIGHTSHAFT_BEHAVIOUR == 1 && SHADOW_QUALITY >= 1 && defined OVERWORLD || defined END || END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0 || defined END_PORTAL_BEAM_INTERNAL || defined COLORED_LIGHT_FOG
         vec4 texture5 = vec4(0.0);
-        #if LENSFLARE_MODE > 0 || defined ENTITY_TAA_NOISY_CLOUD_FIX || END_CRYSTAL_VORTEX_INTERNAL > 0 || DRAGON_DEATH_EFFECT_INTERNAL > 0 || defined END_PORTAL_BEAM_INTERNAL || defined COLORED_LIGHT_FOG
+        // Keeps colortex5's per-pixel alpha (cloud depth) only for passes after composite1 that read it.
+        #if LENSFLARE_MODE > 0 || defined ENTITY_TAA_NOISY_CLOUD_FIX
             texture5 = texelFetch(colortex5, texelCoord, 0);
             if (viewWidth + viewHeight - gl_FragCoord.x - gl_FragCoord.y > 1.5)
                 vlFactorM = texture5.a;
@@ -522,6 +534,8 @@ void main() {
                 vlFactor = 0.0;
             #elif LIGHTSHAFT_BEHAVIOUR == 3
                 vlFactor = 1.0;
+            #else
+                vlFactor = 0.0;
             #endif
         #endif
     #endif

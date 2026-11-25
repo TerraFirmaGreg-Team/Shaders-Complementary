@@ -2,6 +2,10 @@
 #define STARS_SETTINGS_FILE
 
 #define NIGHT_STAR_AMOUNT 2 //[0 1 2 3 4]
+#ifdef DIMENSION_CAVE_VOID
+    #undef NIGHT_STAR_AMOUNT
+    #define NIGHT_STAR_AMOUNT 0
+#endif
 
 
 // Euphoria Patches Settings
@@ -10,9 +14,17 @@
 #define STAR_BRIGHTNESS 13 //[3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33]
 #define TWINKLING_STARS 0 //[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20]
 #define STAR_SIZE 1.0 //[0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
-//#define DAYLIGHT_STARS
+#define DAYLIGHT_STARS_AMOUNT 0 //[0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100]
+#ifdef DIMENSION_SPACE_AIRLESS
+    #undef DAYLIGHT_STARS_AMOUNT
+    #define DAYLIGHT_STARS_AMOUNT 100
+#endif
 
 #define STAR_LAYER_OW 0 //[0 1 2 3]
+#ifdef DIMENSION_SPACE
+    #undef STAR_LAYER_OW
+    #define STAR_LAYER_OW 3
+#endif
 #define STAR_ROUNDNESS_OW 0 //[-10 -9 -8 -7 -6 -5 -4 -3 -2 -1 0 1 2 3 4 5 6 7 8 9 10]
 #define STAR_SOFTNESS_OW 0.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
@@ -31,7 +43,17 @@
 #define STAR_COLOR_VARIATION_OW 0.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //#define SHOOTING_STARS
-
-const float starBrightness = STAR_BRIGHTNESS > 3.0 ? ((STAR_BRIGHTNESS - 3.0) * 0.1) : STAR_BRIGHTNESS;
+#ifdef SHOOTING_STARS
+    #ifndef DIMENSION_CAVE_VOID
+        #define SHOOTING_STARS_INTERNAL
+    #endif
+#elif defined DIMENSION_SPACE
+    #define SHOOTING_STARS_INTERNAL
+#endif
+#ifdef DIMENSION_SPACE_AIRLESS
+    #define starBrightness (STAR_BRIGHTNESS > 3.0 ? ((STAR_BRIGHTNESS - 3.0) * 0.1) * 1.5 : STAR_BRIGHTNESS * 1.5)
+#else
+    #define starBrightness (STAR_BRIGHTNESS > 3.0 ? ((STAR_BRIGHTNESS - 3.0) * 0.1) : float(STAR_BRIGHTNESS))
+#endif
 
 #endif

@@ -45,8 +45,8 @@ in vec4 glColor;
 float NdotU = dot(normal, vec3(0.0, 1.0, 0.0)); // NdotU is different here to improve held map visibility
 float NdotUmax0 = max(NdotU, 0.0);
 float SdotU = dot(sunVec, upVec);
-float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
-float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
+float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
 float sunVisibility2 = sunVisibility * sunVisibility;
 float shadowTimeVar1 = abs(sunVisibility - 0.5) * 2.0;
 float shadowTimeVar2 = shadowTimeVar1 * shadowTimeVar1;
@@ -179,6 +179,13 @@ void main() {
             #endif
         #endif
 
+        #ifdef IRIS_INLINE_GLINT
+        if (mc_hasGlint()) {
+            vec3 glint = mc_sampleGlint();
+            color.rgb += glint * glint; // this is the specific blending glint uses
+        }
+        #endif
+
         // Support for modded light sources and blockID set by the user
         #ifdef IS_IRIS
             if (currentRenderedItemId == 0) {
@@ -228,11 +235,15 @@ void main() {
         #endif
 
         #ifdef SS_BLOCKLIGHT
-            lightAlbedo = normalize(color.rgb) * min1(emission) * float(heldBlockLightValue > 0 || heldBlockLightValue2 > 0 || heldItemId == 45032 || heldItemId2 == 45032);
+            lightAlbedo = normalize(color.rgb) * min1(emission) * float(heldBlockLightValue > 0 || heldBlockLightValue2 > 0 || heldItemId == 44013 || heldItemId2 == 44013);
         #endif
 
         #ifdef IPBR
             color.rgb += maRecolor;
+        #endif
+
+        #ifdef HAND_TRANSPARENCY_FIX
+            color.a = min1(color.a * 1.02); // Fixes some resource packs making stuff very slightly transparent
         #endif
 
         #ifdef PHOTONICS_LIGHTING
@@ -255,11 +266,6 @@ void main() {
     vec3 translucentMult = mix(vec3(0.666), color.rgb * (1.0 - pow2(pow2(color.a))), color.a);
     float skyLightFactor = GetSkyLightFactor(lmCoordM, shadowMult);
 
-    float handSSBLMask = 0.0;
-    #ifdef ENTITIES_ARE_LIGHT
-        handSSBLMask = 0.2 + isSneaking * 0.5;
-    #endif
-
     #ifdef COLOR_CODED_PROGRAMS
         ColorCodeProgram(color, -1);
     #endif
@@ -272,7 +278,9 @@ void main() {
     float albedoData = 1.0;
     #if defined IS_IRIS || defined IS_ANGELICA || MC_VERSION >= 11600
         purkinjeData = lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission);
-        albedoData = clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0;
+        #ifndef GBUFFERS_HAND_TRANSLUCENT
+            albedoData = clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0;
+        #endif
     #endif
 
     /* DRAWBUFFERS:036 */
@@ -286,7 +294,7 @@ void main() {
 
         #ifdef SS_BLOCKLIGHT
             /* DRAWBUFFERS:03649 */
-            gl_FragData[4] = vec4(lightAlbedo, handSSBLMask);
+            gl_FragData[4] = vec4(lightAlbedo, 1.0);
         #endif
 
         #ifdef PHOTONICS_LIGHTING
@@ -298,7 +306,7 @@ void main() {
 
     #elif defined SS_BLOCKLIGHT
         /* DRAWBUFFERS:0369 */
-        gl_FragData[3] = vec4(lightAlbedo, handSSBLMask);
+        gl_FragData[3] = vec4(lightAlbedo, 1.0);
     #elif defined PHOTONICS_LIGHTING
         /* RENDERTARGETS:0,3,6,4,10,11,20 */
         gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, albedoData);

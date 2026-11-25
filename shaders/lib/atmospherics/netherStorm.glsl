@@ -1,6 +1,9 @@
 #include "/lib/shaderSettings/netherFog.glsl"
 
 #ifdef MCWIND_NETHER_FOG_INTERNAL
+    #define MCW_MOTION_OFF
+    #define MCW_WEATHER_OFF
+    #define MCW_IMPULSE_OFF
     #include "/mcwind/mcwind.glsl"
     #include "/lib/atmospherics/netherWind.glsl"
 
@@ -9,7 +12,7 @@
     #define NETHER_STORM_WIND_OCTAVE (-2.0)
 #endif
 
-vec4 GetNetherStorm(vec3 color, vec3 translucentMult, vec3 nPlayerPos, vec3 playerPos, float lViewPos, float lViewPos1, float dither) {
+vec4 GetNetherStorm(vec3 color, vec3 translucentMult, vec3 nPlayerPos, vec3 playerPos, float lViewPos, float lViewPos1, float dither, float entityLinearDepthM) {
     if (isEyeInWater != 0) return vec4(0.0);
     vec4 netherStorm = vec4(1.0, 1.0, 1.0, 0.0);
 
@@ -122,6 +125,9 @@ vec4 GetNetherStorm(vec3 color, vec3 translucentMult, vec3 nPlayerPos, vec3 play
         #endif
 
         if (lTracePos > lViewPos) {
+            #if DETAIL_QUALITY > 0
+                if (lTracePos > entityLinearDepthM) break; // fixes entities looking transparent behind glass
+            #endif
             netherStorm.rgb *= translucentMultM;
             netherStorm.a *= translucentMultM2;
         }

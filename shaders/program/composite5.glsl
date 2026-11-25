@@ -6,7 +6,6 @@
 //Common//
 #include "/lib/common.glsl"
 #include "/lib/shaderSettings/composite5.glsl"
-#include "/lib/shaderSettings/blueScreen.glsl"
 #include "/lib/shaderSettings/bloom.glsl"
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
@@ -28,8 +27,8 @@ vec2 view = vec2(viewWidth, viewHeight);
 
 #if defined BLOOM_FOG || (LENSFLARE_MODE > 0 || defined AURORA_INFLUENCE) && defined OVERWORLD
     float SdotU = dot(sunVec, upVec);
-    float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
-    float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
+    float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
+    float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
 #endif
 
 //Common Functions//
@@ -57,9 +56,14 @@ void DoBSLColorSaturation(inout vec3 color) {
     vec3 GetBloomTile(float lod, vec2 coord, vec2 offset) {
         float scale = exp2(lod);
         vec2 bloomCoord = coord / scale + offset;
-        bloomCoord = clamp(bloomCoord, offset, 1.0 / scale + offset);
+        bloomCoord = clamp(bloomCoord, offset, 1.0 / scale + offset) / rescale;
 
-        vec3 bloom = texture2D(colortex3, bloomCoord / rescale).rgb;
+        #ifndef BLOOM_SMOOTHING
+            vec3 bloom = texture2D(colortex3, bloomCoord).rgb;
+        #else
+            vec3 bloom = texture2D(colortex14, bloomCoord).rgb;
+        #endif
+
         bloom *= bloom;
         bloom *= bloom;
         return bloom * 128.0;
@@ -72,9 +76,8 @@ void DoBSLColorSaturation(inout vec3 color) {
         vec3 blur4 = GetBloomTile(5.0, coord, vec2(0.2075   , 0.26  ));
         vec3 blur5 = GetBloomTile(6.0, coord, vec2(0.135    , 0.3325));
         vec3 blur6 = GetBloomTile(7.0, coord, vec2(0.160625 , 0.3325));
-        vec3 blur7 = GetBloomTile(8.0, coord, vec2(0.1784375, 0.3325));
 
-        vec3 blur = (blur1 + blur2 + blur3 + blur4 + blur5 + blur6 + blur7) * 0.14;
+        vec3 blur = (blur1 + blur2 + blur3 + blur4 + blur5 + blur6) * 0.155;
 
         float bloomStrength = BLOOM_STRENGTH + 0.2 * darknessFactor;
 
@@ -201,7 +204,7 @@ vec3 purkinjeShift(vec3 rgb, vec4 texture6, vec3 playerPos, float lViewPos, floa
     float heldLight = 1.0;
     #ifdef NIGHT_DESATURATION_REMOVE_LIGHTS_IN_HAND
         heldLight = max(heldBlockLightValue, heldBlockLightValue2);
-        if (heldItemId == 45032 || heldItemId2 == 45032) heldLight = 15; // Lava Bucket
+        if (heldItemId == 44013 || heldItemId2 == 44013) heldLight = 15; // Lava Bucket
         if (heldLight > 0){
             heldLight = clamp(heldLight, 0.0, 15.0);
             heldLight = sqrt2(heldLight / 15.0) * -1.0 + 1.0; // Normalize and invert
@@ -339,7 +342,7 @@ void main() {
     #endif
     color = clamp01(color);
 
-    #if defined GREEN_SCREEN_LIME || defined BLUE_SCREEN || SELECT_OUTLINE == 4 || defined NIGHT_DESATURATION
+    #if defined GREEN_SCREEN_LIME || SELECT_OUTLINE == 4 || defined NIGHT_DESATURATION
         vec4 texture6 = texelFetch(colortex6, texelCoord, 0);
         int materialMaskInt = int(texture6.g * 255.1);
     #endif
@@ -348,12 +351,6 @@ void main() {
     #ifdef GREEN_SCREEN_LIME
         if (materialMaskInt == 240) { // Green Screen Lime Blocks
             color = vec3(0.0, 1.0, 0.0);
-            purkinjeOverwrite = 0.0;
-        }
-    #endif
-    #ifdef BLUE_SCREEN
-        if (materialMaskInt == 239) { // Blue Screen Blue Blocks
-            color = vec3(0.0, 0.0, 1.0);
             purkinjeOverwrite = 0.0;
         }
     #endif

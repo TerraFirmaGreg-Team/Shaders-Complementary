@@ -3,7 +3,7 @@
 option.LANG_FILE_HEADER=커뮤니티 제공 번역파일입니다 - 최신이 아닐 수도 있음. SpacEagle17이 정확도를 보장하진 않습니다.
 option.TRANSLATORS=번역제작자 : _StrawberrySushi
 
-shaderDescription=§cComplementary Shaders r5.9§r + §dEuphoria Patches 1.10.0§r\nSpacEagle17 이 제작한 Complementary 에드온, 여러 특수한 기능과 설정을 제공합니다. \n개발자 빌드: §dwww.euphoriapatches.com/support§r
+shaderDescription=§cComplementary Shaders r5.10§r + §dEuphoria Patches 1.11.2§r\nSpacEagle17 이 제작한 Complementary 에드온, 여러 특수한 기능과 설정을 제공합니다. \n개발자 빌드: §dwww.euphoriapatches.com/support§r
 
 #Profiles
 profile.POTATO=품질: §a최저
@@ -83,7 +83,7 @@ option.info17=베타 버전: SpacEagle17 Patreon
 value.info17.0=
 option.info17.comment=SpacEagle17을 Patreon 또는 Ko-Fi에서 후원하면 새로운 독점 개발 버전을 받을 수 있습니다. §r§d§l§neuphoriapatches.com/support
 
-option.info18=For Complementary r5.9
+option.info18=For Complementary r5.10
 value.info18.0=
 option.info18.comment=Euphoria Patches를 설치해주셔서 감사합니다 :)
 
@@ -540,6 +540,8 @@ value.WATER_CAUSTIC_STYLE_DEFINE.-1=물과 동일하게
 value.WATER_CAUSTIC_STYLE_DEFINE.1=Reimagined
 value.WATER_CAUSTIC_STYLE_DEFINE.3=Unbound
 
+value.WATER_REFRACTION_DEFINE.0=§a끄기
+
 option.WATER_REFRACTION_INTENSITY=물 굴절 강도 §e[*]§r
 option.WATER_REFRACTION_INTENSITY.comment=물 굴절과 수중 왜곡의 강도를 조정합니다. §e[*]§r 이 설정은 “Detail Quality”가 “High”로 설정된 경우에만 완전히 적용되며, 그렇지 않으면 미세한 수중 왜곡에만 영향을 줍니다.
 
@@ -749,7 +751,7 @@ option.MOTION_BLURRING_STRENGTH.comment=모션 블러의 강도를 조정합니�
 
 option.WORLD_BLUR=§e월드 블러§r
 option.WORLD_BLUR.comment=월드 블러를 활성화합니다.
-value.WORLD_BLUR.0=§a끄기
+value.WORLD_BLUR.-1=§a끄기
 value.WORLD_BLUR.1=§c거리별 블러
 value.WORLD_BLUR.2=§c피사계 심도
 
@@ -798,7 +800,6 @@ option.IPBR_COMPAT_MODE_DEFINE.comment=IPBR+의 일부 기능이 계산되는 �
 option.IPBR_PARTICLE_FEATURES=IPBR+ 파티클 효과
 option.IPBR_PARTICLE_FEATURES.comment=파티클 관련 여러 기능을 활성화합니다. 여기에는 발광하는 용암 파티클이나 더 정확한 색상의 물 파티클 등이 포함됩니다.
 
-option.FANCY_GLASS=향상된 유리
 option.FANCY_GLASS.comment=일반 유리를 개선하여 반투명 레이어를 추가합니다. §c[-]§r 오래된 Iris 버전에서는 작동하지 않습니다. §e[*]§r RP Support 옵션이 Integrated PBR+로 설정되어 있어야 합니다.
 
 option.GREEN_SCREEN_LIME=라임 블록 크로마키
@@ -1014,11 +1015,14 @@ option.WAVING_LILY_PAD.comment=수련잎과 개구리 알에 움직임을 추가
 option.WAVING_WATER_VERTEX=Waving Water Height (수면 흔들림 높이)
 option.WAVING_WATER_VERTEX.comment=물의 위치에 움직임을 추가하여 바람을 시뮬레이션합니다. §e[*]§r 이 옵션은 "Water Wave Strength" 설정과 관련이 없습니다.
 
+value.WATER_NOISE_COLORING.0=§a끄기
+
 option.WAVING_RAIN=Waving Rain/Snow Texture (비/눈 텍스처 흔들림)
 option.WAVING_RAIN.comment=내리는 비와 눈 텍스처에 움직임을 추가하여 더 역동적으로 보이게 합니다.
 
-option.SPECIAL_PORTAL_EFFECTS=Special Portal Effects (포탈 특수 효과)
-option.SPECIAL_PORTAL_EFFECTS.comment=네더 포탈, 엔드 포탈, 엔드 게이트웨이에 특수 애니메이션과 발광 효과를 추가합니다.
+option.SPECIAL_PORTAL_EFFECT=Special Portal Effects (포탈 특수 효과)
+option.SPECIAL_PORTAL_EFFECT.comment=네더 포탈, 엔드 포탈, 엔드 게이트웨이에 특수 애니메이션과 발광 효과를 추가합니다.
+value.SPECIAL_PORTAL_EFFECT.0=켜기
 
 option.REFLECTION_RES=§eReflection Resolution§r (반사 해상도)
 option.REFLECTION_RES.comment=성능 향상을 위해 블록의 PBR 반사 해상도와 월드 공간 반사 설정이 활성화된 경우 해당 반사의 해상도를 변경합니다. §c[-]§r "Full" 해상도 반사는 일부 상황에서 예상보다 훨씬 큰 성능 영향을 줄 수 있습니다. §e[*]§r 이 기능은 Optifine에서는 작동하지 않습니다.
@@ -1211,6 +1215,7 @@ screen.DIRECTIONAL_LIGHTMAP_NORMALS_SETTINGS=라이트맵 텍스처
 screen.LAVA_SETTINGS=용암
 screen.END_ROD_SETTINGS=엔드 막대기
 screen.FOLIAGE_SETTINGS=나뭇잎
+screen.SSS_SETTINGS=Subsurface Scattering (표면 밑 산광)
 screen.PORTAL_SETTINGS=포탈 설정
 screen.MISC_SETTINGS=기타
 screen.MISC_SETTINGS.comment=나머지 설정들
@@ -1607,9 +1612,6 @@ option.SILHOUETTE_BRIGHTNESS=Silhouette Brightness (실루엣 밝기)
 option.RAIN_ATMOSPHERE=Epic Thunderstorm (강력한 폭풍)
 option.RAIN_ATMOSPHERE.comment=번개가 칠 때 폭풍우 효과를 크게 개선합니다. §e[*]§r Iris에서 더 잘 작동합니다.
 
-option.BLUE_SCREEN=Blue Screen (블루 크로마키)
-option.BLUE_SCREEN.comment=“Blue Concrete”, “Blue Wool”, “Blue Carpet”를 영상 편집용 블루 스크린으로 변환합니다.
-
 option.MIRROR_DIMENSION=Mirror Dimension (거울 차원)
 option.MIRROR_DIMENSION.comment=당신은 마법의 기술을 익혔고, 거울 차원에 들어갈 만큼 용감해졌습니다.
 
@@ -1620,7 +1622,6 @@ option.END_CURVATURE_SIZE=End Curvature Size (엔드 곡률 크기)
 
 option.LAVA_VARIATION=Lava Preset (용암 프리셋)
 option.LAVA_VARIATION.comment=프리셋을 골라보세요!
-value.LAVA_VARIATION.1=Adaptive Noise (추천)
 
 option.LAVA_TEMPERATURE=Lava Temperature (용암 온도)
 option.LAVA_TEMPERATURE.comment=용암 온도를 바꿔서, 더 붉은색 또는 흰색으로 만듭니다.
@@ -1818,8 +1819,6 @@ option.NETHER_NOISE.comment=네더 천장 위에서 보이는 하늘을 더 흥�
 value.NETHER_NOISE.0=끄기
 value.NETHER_NOISE.1=켜기
 
-option.MCBL_MAIN_DEFINE=Euphoria Colored Lighting (유포리아 색상 조명)
-option.MCBL_MAIN_DEFINE.comment=멀티 컬러 블록 조명을 활성화합니다. ACT + Screen-Space로 설정하면 Advanced Colored Tracing과 함께 스크린 스페이스 시스템을 사용할 수 있습니다. ACT + SSBL + Dynamic Lighting Support 조합은 모드 환경에서 잘못된 결과를 낼 수 있으므로, 동적 조명 모드가 적용된 바닐라 환경에서만 사용하는 것이 좋습니다. §e[*]§r 1.16.5 이상 또는 Angelica에서만 작동합니다.
 value.MCBL_MAIN_DEFINE.0=끄기
 
 option.MCBL_INFLUENCE=블록라이트 멀티색상 영향
@@ -2073,8 +2072,7 @@ value.SUN_MOON_IPBR.1=태양만 적용
 value.SUN_MOON_IPBR.2=달만 적용
 value.SUN_MOON_IPBR.3=해와달 적용
 
-option.DAYLIGHT_STARS=낮시간 별 보임
-option.DAYLIGHT_STARS.comment=해가 떠있을때도 별이 보입니다.
+option.DAYLIGHT_STARS_AMOUNT=낮시간 별 보임
 
 option.FROZEN_TIME=시간정지
 
@@ -2105,7 +2103,6 @@ option.SHOCKWAVE=Shockwave (충격파)
 value.SHOCKWAVE.0=끄기
 value.SHOCKWAVE.1=원
 value.SHOCKWAVE.2=정사각형
-option.SHOCKWAVE.comment=웅크려서 확인하세요!
 
 option.STAR_LAYER_OW=Star Layer (별 레이어)
 option.STAR_LAYER_OW.comment=기존 별에 추가로 더 큰 별이나 더 작은 별 레이어를 생성합니다.
@@ -2241,6 +2238,8 @@ value.BLURRED_REFLECTIONS_I.10=Default (기본)
 value.REFLECTION_RESPONSIVENESS.0.0=Default (기본)
 
 value.BETTER_LABPBR_REFRACTIONS.0=켜기
+
+option.BETTER_LABPBR_SSS=Subsurface Scattering (표면 밑 산광)
 
 option.SHADOW_SATURATION=Shadow Saturation (그림자 채도)
 option.SHADOW_SATURATION.comment=그림자와 빛 기둥의 채도를 조정합니다. §e[*]§r 이 설정은 “Real-Time Shadows”가 Low 이상으로 설정되어 있을 때만 작동합니다.
@@ -2481,3 +2480,4 @@ value.BLACK_HOLE_SHAPE.1=정사각형
 value.BLACK_HOLE_PIXELATION.0=끄기
 
 value.BLACK_HOLE_STREAK.0=켜기
+

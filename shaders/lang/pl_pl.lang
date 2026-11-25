@@ -80,7 +80,7 @@ option.info17=Wersje Beta: Patreon SpacEagle17
 value.info17.0=
 option.info17.comment=Możesz wesprzeć SpacEagle17 na Patreonie lub Ko-Fi i uzyskać dostęp do ekskluzywnych wersji Beta. §d§d§l§neuphoriapatches.com/support
 
-option.info18=Dla Complementary r5.9
+option.info18=Dla Complementary r5.10
 value.info18.0=
 option.info18.comment=Dziękujemy za wybranie Euphoria Patches :)
 
@@ -533,6 +533,8 @@ value.WATER_CAUSTIC_STYLE_DEFINE.-1=Zsynchronizowana ze Stylem Wody
 value.WATER_CAUSTIC_STYLE_DEFINE.1=Reimagined
 value.WATER_CAUSTIC_STYLE_DEFINE.3=Unbound
 
+value.WATER_REFRACTION_DEFINE.0=WYŁ.
+
 option.WATER_REFRACTION_INTENSITY=Natężęnie Refrakcji Wody §e[*]§r
 option.WATER_REFRACTION_INTENSITY.comment=Dostosowuje intensywność refrakcji wody i podwodnych zniekształceń. §e[*]§r To ustawienie działa w pełni tylko wtedy, gdy Jakość Detali jest ustawiona na "Wysoką", w przeciwnym razie wpłynie tylko na subtelne podwodne zniekształcenia.
 
@@ -784,7 +786,7 @@ option.MOTION_BLURRING_STRENGTH.comment=Dostosowuje intensywność rozmycia ruch
 
 option.WORLD_BLUR=§e Efekt Rozmycia§r
 option.WORLD_BLUR.comment=Włącza efekty rozmycia. Odległość: Rozmycie jest stosowane jak mgła, w zależności od odległości od kamery. Głębia Ostrości: Rozmycie jest stosowane w zależności od punktu ostrości kamery. §c[-]§r Ten efekt może poważnie wpłynąć na wydajność.
-value.WORLD_BLUR.0=§aWYŁ.
+value.WORLD_BLUR.-1=WYŁ.
 value.WORLD_BLUR.1=§cOdległość
 value.WORLD_BLUR.2=§cGłębia Ostrości
 
@@ -831,7 +833,6 @@ option.IPBR_COMPAT_MODE_DEFINE.comment=Zmienia sposób obliczania niektórych fu
 option.IPBR_PARTICLE_FEATURES=Ustawienia ZintegrowanegoPBR+ Cząsteczek
 option.IPBR_PARTICLE_FEATURES.comment=Włącza kilka funkcji dla cząsteczek, w tym świecące cząsteczki lawy i ładniejsze cząsteczki wody.
 
-option.FANCY_GLASS=Ulepszone Szkło
 option.FANCY_GLASS.comment=Ulepsza zwykłe szkło, dodając do niego półprzezroczystą warstwę. §c[-]§r Nie działa na starszych wersjach Iris (przed wersją 1.8). §e[*]§r Opcja Wsparcie Tekstur musi być ustawiona na Zintegrowane PBR+.
 
 option.GREEN_SCREEN_LIME=Zielony ekran
@@ -1044,11 +1045,14 @@ option.WAVING_LILY_PAD.comment=Dodaje falowanie do płatków lilii i żabiego sk
 option.WAVING_WATER_VERTEX=Wysokośc Fali Wodnych
 option.WAVING_WATER_VERTEX.comment=Dodaje ruch do powierzchni wody w celu symulacji wiatru. §e[*]§r Ta opcja nie jest powiązana z ustawieniem "Siła Fal Wody".
 
+value.WATER_NOISE_COLORING.0=WYŁ.
+
 option.WAVING_RAIN=Falująca Cząsteczki Pogodowe
 option.WAVING_RAIN.comment=Dodaje ruch do tekstur padającego deszczu i śniegu, aby wyglądały bardziej dynamicznie.
 
-option.SPECIAL_PORTAL_EFFECTS=Specjalne Efekty Portali
-option.SPECIAL_PORTAL_EFFECTS.comment=Dodaje specjalne animacje i emisje do portali Netheru, portali endu i bram endu.
+option.SPECIAL_PORTAL_EFFECT=Specjalne Efekty Portali
+option.SPECIAL_PORTAL_EFFECT.comment=Dodaje specjalne animacje i emisje do portali Netheru, portali endu i bram endu.
+value.SPECIAL_PORTAL_EFFECT.0=WŁ.
 
 option.REFLECTION_RES=§eRozdzielczość Odbić§r
 option.REFLECTION_RES.comment=Zmienia rozdzielczość odbić na blokach (oraz odbić w przestrzeni świata, jeśli masz włączone to ustawienie) w celu uzyskania lepszej wydajności. §c[-]§r Odbicia w „pełnej” rozdzielczości mogą w niektórych sytuacjach wpływać na wydajność znacznie bardziej niż można by się spodziewać. §e[*]§r Ta funkcja nie działa w Optifine.
@@ -1315,6 +1319,7 @@ screen.END_ROD_SETTINGS=Słupek Endu
 screen.END_ROD_SETTINGS.comment=Ustawienia związane ze Słupkiem Endu
 screen.FOLIAGE_SETTINGS=Rośliny
 screen.FOLIAGE_SETTINGS.comment=Ustawienia związane ze roślinami.
+screen.SSS_SETTINGS=Rozpraszanie Podpowierzchniowe (SSS)
 screen.PORTAL_SETTINGS=Portale
 screen.PORTAL_SETTINGS.comment=Ustawienia związane z portalami.
 screen.MISC_SETTINGS=Ogólne
@@ -1363,7 +1368,7 @@ screen.POPULAR_SETTINGS=§dPopularne Ustawienia
 screen.POPULAR_SETTINGS.comment=screen.POPULAR_SETTINGS.comment=Oto niektóre z najpopularniejszych ustawień w Euphoria Patches. Poza Zaawansowanym Kolorowym Oświetleniem (niezbędnym dla wielu efektów) wszystkie opcje tutaj są dostępne wyłączne dla Euphoria Patches i nie można ich znaleźć w oryginalnym pakiecie Complementary.
 screen.POPULAR_SETTINGS_2=2 Strona
 screen.POPULAR_SETTINGS_3=3 Strona
-screen.EP_VERSION=Euphoria Patches §d1.10.0
+screen.EP_VERSION=Euphoria Patches §d1.11.2
 screen.EP_VERSION.comment=§bMożesz wspierać SpacEagle17 na Patreon lub Ko-Fi, co wiąże się z wczesnym dostępem do wersji w deweloperskich. §r§d§l§neuphoriapatches.com/support
 
 screen.MODDED_SETTINGS=Ustawienia Modów
@@ -1928,9 +1933,6 @@ option.SILHOUETTE_BRIGHTNESS=Jasność Sylwetki
 option.RAIN_ATMOSPHERE=Epickie Burze
 option.RAIN_ATMOSPHERE.comment=Znacząco poprawia burze z piorunami. §e[*]§r Działa znacznie lepiej z Iris
 
-option.BLUE_SCREEN=Niebieski Ekran
-option.BLUE_SCREEN.comment=Przekształca "Niebieski Beton", "Niebieską Wełnę" i "Niebieski Dywan" w niebieskie ekrany do edycji wideo. Wskazówka 1: Wyłącz opcję "Blask", aby poprawić separację. Wskazówka 2: Umieść światła pod niebieskimi dywanami, aby je oświetlić. Wskazówka 3: Możesz wyłączyć antyaliasing (FXAA) i ustawić jakość detali na "ziemniak" w ustawieniach jakości, aby wyłączyć filtrowanie obrazu i uzyskać idealną separację pikseli.
-
 option.MIRROR_DIMENSION=Wymiar Lustrzany
 option.MIRROR_DIMENSION.comment=Nauczyłeś się czarnej magii i odważyłeś się, wkroczyć do wymiaru lustrzanego.
 
@@ -1942,7 +1944,6 @@ option.END_CURVATURE_SIZE=Stopień Krzywizny Świata - End
 option.LAVA_VARIATION=Preset Lawy
 option.LAVA_VARIATION.comment=Gorące ustawienia wstępne w twojej okolicy. Wybierz teraz!
 value.LAVA_VARIATION.0=Complementary
-value.LAVA_VARIATION.1=Adapcyjna (Zalecane)
 value.LAVA_VARIATION.2=Rumieniąca się
 value.LAVA_VARIATION.3=Stopiony Ser
 value.LAVA_VARIATION.4=Ciemne Wyspy
@@ -2214,12 +2215,7 @@ option.NETHER_NOISE.comment=Sprawia, że niebo Netheru jest bardziej interesują
 value.NETHER_NOISE.0=WYŁ.
 value.NETHER_NOISE.1=WŁ.
 
-option.MCBL_MAIN_DEFINE=Kolorowe Oświetlenie Euphoria
-option.MCBL_MAIN_DEFINE.comment=Włączą wielokolorowe źródła światła. Ustaw na ACT + Przestrzeń Ekranu, aby używać systemu przestrzeni ekranu wraz z Zaawansowanym Kolorowym Oświetleniem (ACT). ACT + Przestrzeń Ekranu + Obsługa Dynamicznego Oświetlenia może zostać popsute przez pewne modyfikacje. §e[*]§r Działą tylko na Iris 1.16.5 lub wyżej, albo z modem "Angelica" .
 value.MCBL_MAIN_DEFINE.0=WYŁ.
-value.MCBL_MAIN_DEFINE.1=W Przestrzeni Ekranu
-value.MCBL_MAIN_DEFINE.2=ACT + Przestrzeń Ekranu
-value.MCBL_MAIN_DEFINE.3=ACT + Przestrzeń Ekranu + Obsługa Dynamicznego Oświetlenia
 
 option.MCBL_INFLUENCE=Wpływ Wielokolorowych Źródeł Światła
 option.MCBL_INFLUENCE.comment=Kontroluje, w jakim stopniu wielokolorowe źródła światła wpłyną na domyślny kolor źródeł światła.
@@ -2500,8 +2496,7 @@ value.SUN_MOON_IPBR.1=Tylko Słońce
 value.SUN_MOON_IPBR.2=Tylko Księżyc
 value.SUN_MOON_IPBR.3=Słońce i Księżyc
 
-option.DAYLIGHT_STARS=Gwiazdy w Dzień
-option.DAYLIGHT_STARS.comment=Włącza gwiazdy podczas dnia.
+option.DAYLIGHT_STARS_AMOUNT=Gwiazdy w Dzień
 
 option.FROZEN_TIME=Zatrzymany Czas
 
@@ -2536,7 +2531,6 @@ option.SHOCKWAVE=Fala Uderzeniowa
 value.SHOCKWAVE.0=WYŁ.
 value.SHOCKWAVE.1=Okrągła
 value.SHOCKWAVE.2=Kwadratowa
-option.SHOCKWAVE.comment=Kucnij i zobacz.
 
 option.STAR_LAYER_OW=Warstwy Gwiazd
 option.STAR_LAYER_OW.comment=Dodaje dodatkowe gwiazdy do nocnego nieba, większe lub mniejsze.
@@ -2696,6 +2690,9 @@ value.BLURRED_REFLECTIONS_I.10=Styl Domyślny
 value.REFLECTION_RESPONSIVENESS.0.0=Styl Domyślny
 
 value.BETTER_LABPBR_REFRACTIONS.0=WŁ.
+suffix.BETTER_LABPBR_REFRACTIONS=%
+
+option.BETTER_LABPBR_SSS=Rozpraszanie Podpowierzchniowe (SSS)
 
 option.SHADOW_SATURATION=Nasycenie Cieni
 option.SHADOW_SATURATION.comment=Zmień nasycenie cieni i snopów światła. §e[*]§r Cienie w Czasie Rzeczywistym muszą być ustawione na jakość "Niskią" lub wyższą.
@@ -2941,3 +2938,4 @@ value.BLACK_HOLE_SHAPE.1=Kwadratowa
 value.BLACK_HOLE_PIXELATION.0=WYŁ.
 
 value.BLACK_HOLE_STREAK.0=WŁ.
+

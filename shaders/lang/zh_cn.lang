@@ -5,7 +5,7 @@ Contribute=在此为官方贡献翻译：https://www.euphoriapatches.com/lang -�
 option.LANG_FILE_HEADER=本文档为社区贡献翻译 - 此文档翻译可能会过时。. SpacEagle17 不能保证翻译的准确性。.
 option.TRANSLATORS=本文档由 Surisen (Ruri) 及 Justinpro0715 翻译
 
-shaderDescription=§cComplementary Shaders r5.9§r + §dEuphoria Patches 1.10.0§r\nSpacEagle17 开发的附加包，为其添加了更多独特的可选功能和设置。. \n开发版本：§dwww.euphoriapatches.com/support§r
+shaderDescription=§cComplementary Shaders r5.10§r + §dEuphoria Patches 1.11.2§r\nSpacEagle17 开发的附加包，为其添加了更多独特的可选功能和设置。. \n开发版本：§dwww.euphoriapatches.com/support§r
 
 #Profiles
 profile.POTATO=性能需求: §a极低
@@ -97,12 +97,12 @@ option.info17=测试版本: 从SpacEagle17的Patreon获取
 value.info17.0=
 option.info17.comment=可以直接通过 Patreon 和 Ko-Fi 对 SpacEagle17 进行支持的同时获得光影的独占开发版本。. §d§l§neuphoriapatches.com/support
 
-option.info18=对应 Complementary r5.9 版本
+option.info18=对应 Complementary r5.10 版本
 value.info18.0=
 option.info18.comment=感谢您安装 Euphoria Patches :)
 
 option.info19=§a有可用的更新
-value.info19.0=§cX.Y.Z §r->§a X.Y.Z
+value.info19.0=§cX.Y.Z §r->§a X.Y.Z
 option.info19.comment=EuphoriaPatcher 模组有新的版本。. 从 Modrinth 下载: https://euphoriapatches.com/download。.
 
 option.info20=
@@ -556,6 +556,10 @@ value.WATER_CAUSTIC_STYLE_DEFINE.-1=与水体风格一致
 value.WATER_CAUSTIC_STYLE_DEFINE.1=Reimagined
 value.WATER_CAUSTIC_STYLE_DEFINE.3=Unbound
 
+value.WATER_REFRACTION_DEFINE.-1=§a跟随细节质量设定
+value.WATER_REFRACTION_DEFINE.0=§a关
+value.WATER_REFRACTION_DEFINE.1=§c打开
+
 option.WATER_REFRACTION_INTENSITY=水体折射强度 §e[*]§r
 option.WATER_REFRACTION_INTENSITY.comment=调节水体折射和水下失真变形的强度。. §e[*]§r 本选项仅在 细节质量 设置为 高 或者以上时生效。.
 
@@ -815,7 +819,7 @@ option.MOTION_BLURRING_STRENGTH.comment=调节运动模糊的强度。.
 
 option.WORLD_BLUR=§e视界模糊类型§r
 option.WORLD_BLUR.comment=启用视界模糊。. 距离模糊: 模糊的作用方式类似于雾气, 由距离镜头的距离决定。. 景深: 模糊的作用区域由镜头对的焦点决定。. §c[-]§r 本选项的效果会严重影响性能。.
-value.WORLD_BLUR.0=§a关
+value.WORLD_BLUR.-1=§a关
 value.WORLD_BLUR.1=§c距离模糊
 value.WORLD_BLUR.2=§c景深
 
@@ -864,7 +868,7 @@ option.IPBR_COMPAT_MODE_DEFINE.comment=更改部分集成PBR+功能的计算方�
 option.IPBR_PARTICLE_FEATURES=集成PBR+粒子功能
 option.IPBR_PARTICLE_FEATURES.comment=启用粒子的多个集成PBR+功能, 包括岩浆的发光粒子和有更好颜色的水粒子等。.
 
-option.FANCY_GLASS=更好的玻璃
+option.FANCY_GLASS=改进玻璃效果 §c[-]§r
 option.FANCY_GLASS.comment=通过在普通玻璃上增加一个半透明层来增加质感。. §c[-]§r 在较旧版本的 Iris 上不生效。. §e[*]§r 资源包支持选项需设置为集成PBR+。.
 
 option.GREEN_SCREEN_LIME=绿幕 - 黄绿色方块
@@ -1093,11 +1097,21 @@ option.WAVING_LILY_PAD.comment=给睡莲和青蛙卵添加摇晃的效果模拟�
 option.WAVING_WATER_VERTEX=水面高度摇晃
 option.WAVING_WATER_VERTEX.comment=给水面添加摇晃运动模拟风的吹拂。. §e[*]§r 本设置与 水波强度 选项无关。.
 
+option.WATER_NOISE_COLORING=水面高度摇晃
+option.WATER_NOISE_COLORING.comment=在海洋上添加轻微的颜色差异，使其看起来变得波动。. §e[*]§r "通过DQ设置" 表示此设置是在性能设置中由"详细质量"决定的，除非您更改它。.
+value.WATER_NOISE_COLORING.-1=§a跟随细节质量设定
+value.WATER_NOISE_COLORING.0=§a关
+value.WATER_NOISE_COLORING.1=§c打开
+
 option.WAVING_RAIN=雨雪纹理摇晃
 option.WAVING_RAIN.comment=为下落的雨水和雪花粒子纹理添加运动效果使其看起来更加动态。.
 
-option.SPECIAL_PORTAL_EFFECTS=传送门特殊效果
-option.SPECIAL_PORTAL_EFFECTS.comment=为下界传送门, 末地传送门, 末地折跃门添加的特殊动画和发光效果。.
+option.SPECIAL_PORTAL_EFFECT=传送门特殊效果
+option.SPECIAL_PORTAL_EFFECT.comment=为下界传送门, 末地传送门, 末地折跃门添加的特殊动画和发光效果。.
+value.SPECIAL_PORTAL_EFFECT.0=关
+value.SPECIAL_PORTAL_EFFECT.1=末地传送门
+value.SPECIAL_PORTAL_EFFECT.2=下界传送门
+value.SPECIAL_PORTAL_EFFECT.3=完整
 
 option.REFLECTION_RES=§e反射分辨率 [Iris]§r
 option.REFLECTION_RES.comment=使得方块上基于物理的的反射 (及世界空间反射[若已启用]) 以半分辨率来渲染, 以此获得更好的性能表现。. §c[-]§r "全" 分辨率 反射在某些特殊场景下对性能的影响可能比预期的要大得多。. §e[*]§r 本功能在 OptiFine 上无效。.
@@ -1376,6 +1390,7 @@ screen.END_ROD_SETTINGS=末地烛
 screen.END_ROD_SETTINGS.comment=与末地烛相关的设置。.
 screen.FOLIAGE_SETTINGS=植被
 screen.FOLIAGE_SETTINGS.comment=与植被相关的设置。.
+screen.SSS_SETTINGS=次表面散射
 screen.PORTAL_SETTINGS=传送门
 screen.PORTAL_SETTINGS.comment=与传送门相关的设置。.
 screen.MISC_SETTINGS=杂项
@@ -1420,6 +1435,8 @@ screen.FUN=趣设
 screen.FUN.comment=让我们来做点有意思的功能!
 screen.WORLD_CURVATURE_SETTINGS=世界曲率
 screen.WORLD_CURVATURE_SETTINGS.comment=与世界曲率相关的设置。.
+screen.SHOCKWAVE_SETTINGS=Shockwave 设置
+screen.SHOCKWAVE_SETTINGS.comment=与Shockwaves相关的设置。.
 screen.RANDOM_BLOCKLIGHT_SETTINGS=随机彩色方块光
 screen.RANDOM_BLOCKLIGHT_SETTINGS.comment=与随机彩色方块光相关的设置。.
 
@@ -1427,7 +1444,7 @@ screen.POPULAR_SETTINGS=§d流行§b设置
 screen.POPULAR_SETTINGS.comment=Euphoria Patches 中最受欢迎的一些设置。. 除开 高级颜色追踪 选项外(因为它是许多其他效选项的前置需求), 所有在此栏目中的选项都是 Euphoria Patches 独家选项。.
 screen.POPULAR_SETTINGS_2=第二页
 screen.POPULAR_SETTINGS_3=第三页
-screen.EP_VERSION=Euphoria Patches §d1.10.0
+screen.EP_VERSION=Euphoria Patches §d1.11.2
 screen.EP_VERSION.comment=§b可以通过 Patreon 和 Ko-Fi 对 SpacEagle17 进行支持来获得最新开发版本的光影文件。. §r§d§l§neuphoriapatches.com/support
 
 screen.MODDED_SETTINGS=模组支持
@@ -2044,9 +2061,6 @@ option.SILHOUETTE_BRIGHTNESS=剪影亮度
 option.RAIN_ATMOSPHERE=史诗雷雨氛围
 option.RAIN_ATMOSPHERE.comment=当闪电降下时显著提高雷雨天的氛围。. §e[*]§r 在 Iris 上效果最佳。.
 
-option.BLUE_SCREEN=蓝幕
-option.BLUE_SCREEN.comment=改变蓝色混凝土和蓝色羊毛的渲染方式, 使其变为蓝幕以便于视频剪辑。. Tip 1: 关闭 泛光 选项来提高分离程度。. Tip 2:在蓝色地毯下放置光源来获得照明效果。. Tip 3: 关闭 抗锯齿 (FXAA) 然后设置位于 性能设置 中的 细节质量 选项值为极低来禁用所有降噪(抗锯齿)设置来获得完美像素分离效果。.
-
 option.MIRROR_DIMENSION=翻转维度
 option.MIRROR_DIMENSION.comment=你已经理解了魔法的艺术, 并且有足够的勇气进入翻转维度。.
 
@@ -2058,7 +2072,7 @@ option.END_CURVATURE_SIZE=末地 世界曲率规模
 option.LAVA_VARIATION=岩浆预设
 option.LAVA_VARIATION.comment=让你所在区域的岩浆更躁动的预设。. 来选择吧!
 value.LAVA_VARIATION.0=Complementary
-value.LAVA_VARIATION.1=自适应噪声 (推荐)
+value.LAVA_VARIATION.1=自适应(推荐)
 value.LAVA_VARIATION.2=温红热流
 value.LAVA_VARIATION.3=熔岩芝士
 value.LAVA_VARIATION.4=暗黑群岛
@@ -2334,12 +2348,11 @@ option.NETHER_NOISE.comment=让下界上层的天空顶部看起来更有趣一�
 value.NETHER_NOISE.0=关
 value.NETHER_NOISE.1=开
 
-option.MCBL_MAIN_DEFINE=Euphoria 彩色照明
-option.MCBL_MAIN_DEFINE.comment=启用多重颜色方块光。. 把本选项设置为 高级颜色追踪 + 屏幕空间 来使得屏幕空间彩色照明系统与 高级颜色追踪 一同生效。. 高级颜色追踪 + 屏幕空间 + 动态光源支持 会在多模组环境产生不正确的画面 - 应仅在 原版 + 动态光源 模组情况下启用本选项。. §e[*]§r本选项仅在 MC 1.16.5 及以上的版本或者在使用 Angelica 模组的特定版本情况下生效。.
+option.MCBL_MAIN_DEFINE=屏幕色彩光线
+option.MCBL_MAIN_DEFINE.comment=启用 Euphoria 补丁专用屏幕色彩照明。. 设置为 + ACT 与高级色彩追踪一起使用屏幕空间系统。. 这也适用于OptiFine和Mac ，不像ACT。. §e[*]§r只能在1.16.5及以上或在Angelica上工作。.
 value.MCBL_MAIN_DEFINE.0=关
-value.MCBL_MAIN_DEFINE.1=屏幕空间
-value.MCBL_MAIN_DEFINE.2=高级颜色追踪 + 屏幕空间
-value.MCBL_MAIN_DEFINE.3=高级颜色追踪 + 屏幕空间 + 动态光源支持
+value.MCBL_MAIN_DEFINE.1=开
+value.MCBL_MAIN_DEFINE.2=在 + ACT
 
 option.MCBL_INFLUENCE=彩色照明影响程度
 option.MCBL_INFLUENCE.comment=调节彩色照明颜色对默认方块光颜色的影响程度。.
@@ -2632,8 +2645,7 @@ value.SUN_MOON_IPBR.1=仅太阳
 value.SUN_MOON_IPBR.2=仅月亮
 value.SUN_MOON_IPBR.3=日月
 
-option.DAYLIGHT_STARS=白日繁星
-option.DAYLIGHT_STARS.comment=使星空在白天可见。.
+option.DAYLIGHT_STARS_AMOUNT=白日繁星
 
 option.FROZEN_TIME=冻结时间
 option.FROZEN_TIME.comment=冻结着色器动画时间, 依赖于基于帧的相关着色器效果会被冻结, 便于截图对比效果。.
@@ -2654,6 +2666,9 @@ option.BEACON_BEAM_EMISSION.comment=调节信标光束的发光强度。.
 
 option.PINKER_CHERRY_LEAVES=更加粉红的樱花树叶
 
+option.DISCARD_FOLIAGE_SHADOW=移除植被阴影
+option.DISCARD_FOLIAGE_SHADOW.comment=防止草、花、树苗、农作物及类似植物投射阴影。. §c[-]§r 启用此选项效果不会提升性能，仅为视觉变化，从技术层面上还会略微降低性能。.
+
 option.LIGHTMAP_CURVES=光图曲线
 option.LIGHTMAP_CURVES.comment=调节在世界中渲染的光照贴图亮度曲线。.
 option.UPPER_LIGHTMAP_CURVE=光图曲线 - 上部
@@ -2669,7 +2684,10 @@ option.SHOCKWAVE=冲击波
 value.SHOCKWAVE.0=关
 value.SHOCKWAVE.1=圆形
 value.SHOCKWAVE.2=方形
-option.SHOCKWAVE.comment=蹲一下!
+option.SHOCKWAVE.comment=使用面包并寻找！
+
+option.SHOCKWAVE_CROUCHING=蹲伏
+option.SHOCKWAVE_CROUCHING.comment=在抓取时也激活震动。. 在 1.21 之前自动启用，因为摩西还不存在。.
 
 option.STAR_LAYER_OW=错落星层 - 主世界
 option.STAR_LAYER_OW.comment=为当前的星空额外添加不同远近, 不同大小的星层。.
@@ -2846,6 +2864,8 @@ option.BETTER_LABPBR_POROSITY.comment=使暴露在雨中的方块表面遵循 L
 
 option.BETTER_LABPBR_AO=纹理 AO 支持
 option.BETTER_LABPBR_AO.comment=基于烘培到 LabPBR 法线纹理中的材质环境光遮蔽信息使方块的直接照明变暗。. §e[*]§r 本选项仅在 "资源包支持" 选项的值设置为 LabPBR 时生效。.
+
+option.BETTER_LABPBR_SSS=次表面散射
 
 option.SHADOW_SATURATION=阴影饱和度
 option.SHADOW_SATURATION.comment=调节阴影和光轴的饱和度。. §e[*]§r 本选项仅在 "实时阴影" 选项设置为 低 或者更高的值时生效。.
@@ -3093,9 +3113,36 @@ option.DH_BLENDING=Distant Horizons 混合
 option.DH_BLENDING.comment=平滑混合 Distant Horizons Lod 块和普通区块。. §e[*]§r 本选项仅在安装 Distant Horizons 模组时生效。.
 
 option.MCWIND_USER=启用 WindLink
+option.MCWIND_USER.comment=WindLink 模组支持的主开关。. 允许着色器响应 WindLink 模组提供的风向和风力。. §e[*]§r 此选项仅在安装了 WindLink 时生效 https://modrinth.com/project/windlink。. §e[*]§r 禁用后将回退到光影包自身的内置摇晃效果。.
 
+option.MCWIND_FOLIAGE=WindLink 草类
+option.MCWIND_FOLIAGE.comment=使草和其他植被根据 WindLink 模组提供的风向和风力摇摆。. §e[*]§r 此选项仅在安装了 WindLink 时生效。.
+
+option.MCWIND_LEAVES=WindLink 树叶
+option.MCWIND_LEAVES.comment=使树叶根据 WindLink 模组提供的风向和风力摇摆。. §e[*]§r 此选项仅在安装了 WindLink 时生效。.
+
+option.MCWIND_VINES=WindLink 藤蔓
+option.MCWIND_VINES.comment=使藤蔓根据 WindLink 模组提供的风向和风力摇摆摆动。. §e[*]§r 此选项仅在安装了 WindLink 时生效。.
+
+option.MCWIND_FIRE=WindLink 火焰
+option.MCWIND_FIRE.comment=使火焰和点燃的营火根据 WindLink 模组提供的风向和风力倾斜和闪烁。. §e[*]§r 此选项仅在安装了 WindLink 时生效。.
+
+option.MCWIND_STALKS=WindLink 二高植物
+option.MCWIND_STALKS.comment=使甘蔗和竹子根据 WindLink 模组提供的风向和风力从地面弯曲。. §e[*]§r 此选项仅在安装了 WindLink 时生效。.
+
+option.MCWIND_RAIN=WindLink 雨/雪
+option.MCWIND_RAIN.comment=使落下的雨和雪根据 WindLink 模组提供的风向和风力倾斜，而不是使用光影包自身的雨雪摇晃效果。. §e[*]§r 此选项仅在安装了 WindLink 时生效。.
+
+option.MCWIND_LILY_PAD=WindLink 睡莲
+option.MCWIND_LILY_PAD.comment=使睡莲根据 WindLink 模组提供的风力上下浮动。. §e[*]§r 此选项仅在安装了 WindLink 时生效。.
+
+option.MCWIND_PENDANTS=WindLink 灯笼与锁链
+option.MCWIND_PENDANTS.comment=使灯笼和锁链根据 WindLink 模组提供的风向和风力像钟摆一样摆动。. §e[*]§r 此选项仅在安装了 WindLink 时生效。.
+
+option.MCWIND_NETHER_FOG=WindLink 下界雾气
 value.MCWIND_NETHER_FOG.0=关
 value.MCWIND_NETHER_FOG.1=开
+option.MCWIND_NETHER_FOG.comment=由 WindLink 的风场驱动下界风暴和烟雾，而不是固定螺旋上升。. §e[*]§r 此选项仅在安装了 WindLink 时生效。.
 
 option.PIXELATED_SHADOWS_MODE=像素化阴影模式
 option.PIXELATED_SHADOWS_MODE.comment=选择像素化阴影的渲染模式。. 默认为自动, 更适合绝大多数情况, 手动模式应当在自动模式错误判断当前资源包的纹理分辨率时的情况下启用。. §e[*]§r 本选项仅在启用 像素化阴影 选项时生效。.
@@ -3111,7 +3158,7 @@ option.PANINI_PROJECTION.comment=启用帕尼尼投影, 一种会减少屏幕�
 value.PANINI_PROJECTION.0=关
 
 option.BLACK_HOLE=黑洞
-option.BLACK_HOLE.comment=在末地的天空盒中增加黑洞。. 黑洞位置受 黑洞位置设定 影响
+option.BLACK_HOLE.comment=在末地的天空盒中添加一个黑洞。. 此选项滑块可以调节黑洞的亮度。. 其位置由黑洞位置设定控制。.
 value.BLACK_HOLE.0=关
 
 option.BLACK_HOLE_SHAPE=黑洞形状
@@ -3165,3 +3212,10 @@ option.BLACK_HOLE_LATITUDE_BIAS.comment=改变黑洞纬度的偏差，使其随�
 option.BLACK_HOLE_STREAK=水平条纹
 option.BLACK_HOLE_STREAK.comment=为黑洞添加一道水平吸积盘条纹。.
 value.BLACK_HOLE_STREAK.0=关
+
+option.REFLECTIVE_HORSES=闪耀的马
+option.REFLECTIVE_HORSES.comment=每个孩子都喜欢闪亮的马！。. 一匹不闪亮的马是悲伤的马。.
+
+option.MODDED_FOG_SUPPORT=模组雾气支持
+option.MODDED_FOG_SUPPORT.comment=为模组雾气添加支持，若模组未添加自定义雾气的情况下不会有任何变化。.
+

@@ -30,7 +30,7 @@ void modify_light(inout Light light, vec3 world_pos) {
         if (mat < 10452) {
             if (mat < 10396) {
                 if (mat < 10072) { // No fire-related block
-                    if (mat == 10068 || mat == 10070) { // Lava
+                    if (BLOCK_LAVA_DEFINE) { // Lava
                         color = lavaColor;
                         intensity = light.intensity;
                         #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL

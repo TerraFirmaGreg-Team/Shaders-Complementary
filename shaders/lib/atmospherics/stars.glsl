@@ -3,7 +3,13 @@
 #include "/lib/colors/skyColors.glsl"
 #include "/lib/shaderSettings/stars.glsl"
 
-#ifdef CELESTIAL_BOTH_HEMISPHERES
+#ifdef DIMENSION_SPACE_AIRLESS
+    #define STAR_ROTATION_TIME 0.0
+#else
+    #define STAR_ROTATION_TIME syncedTime
+#endif
+
+#ifdef CELESTIAL_BOTH_HEMISPHERES_INTERNAL
 vec2 GetStarCoordBothHemispheres(vec3 viewPos, float sphereness) {
     vec3 wpos = normalize((gbufferModelViewInverse * vec4(viewPos * 1000.0, 1.0)).xyz);
     float ySign = sign(wpos.y);
@@ -13,9 +19,9 @@ vec2 GetStarCoordBothHemispheres(vec3 viewPos, float sphereness) {
     vec3 starCoord = adjustedWpos / (adjustedWpos.y + length(adjustedWpos.xz) * sphereness);
 
     if (ySign >= 0.0) {
-        starCoord.x += 0.006 * syncedTime;  // Top hemisphere (original direction)
+        starCoord.x += 0.006 * STAR_ROTATION_TIME;  // Top hemisphere (original direction)
     } else {
-        starCoord.x = starCoord.x - 0.006 * syncedTime + 0.37;  // Bottom hemisphere with offset
+        starCoord.x = starCoord.x - 0.006 * STAR_ROTATION_TIME + 0.37;  // Bottom hemisphere with offset
         starCoord.z += 0.21;
     }
 
@@ -26,29 +32,41 @@ vec2 GetStarCoordBothHemispheres(vec3 viewPos, float sphereness) {
 vec2 GetStarCoordUpperHemisphere(vec3 viewPos, float sphereness) {
     vec3 wpos = normalize((gbufferModelViewInverse * vec4(viewPos * 1000.0, 1.0)).xyz);
     vec3 starCoord = wpos / (wpos.y + length(wpos.xz) * sphereness);
-    starCoord.x += 0.006 * syncedTime;
+    starCoord.x += 0.006 * STAR_ROTATION_TIME;
 
     return starCoord.xz;
 }
 
 vec2 GetStarCoord(vec3 viewPos, float sphereness) {
-    #ifdef CELESTIAL_BOTH_HEMISPHERES
+    #ifdef CELESTIAL_BOTH_HEMISPHERES_INTERNAL
         return GetStarCoordBothHemispheres(viewPos, sphereness);
     #else
         return GetStarCoordUpperHemisphere(viewPos, sphereness);
     #endif
 }
 
-vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float starAmount) {
+float GetStarDayFactor() {
+    float starDayFactor = pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility);
+    #ifdef DIMENSION_SPACE_ATMOSPHERE
+        starDayFactor = max(starDayFactor, 0.35); // Stars are a bit visible during the day
+    #endif
+    return mix(starDayFactor, 1.0, DAYLIGHT_STARS_AMOUNT * 0.01);
+}
+
+vec3 GetStars(vec2 starCoord,float VdotU, float VdotS, float sizeMult, float starAmount) {
     #if NIGHT_STAR_AMOUNT == 0 || (defined EUPHORIA_PATCHES_IS_SPYGLASS_ASTRONOMY_INSTALLED && defined GBUFFERS_SKYBASIC)
         return vec3(0.0, 0.0, 0.0);
     #endif
     float starsAroundSun = 1.0;
-    #ifdef CELESTIAL_BOTH_HEMISPHERES
+    #ifdef CELESTIAL_BOTH_HEMISPHERES_INTERNAL
         float starBelowHorizonBrightness = 1.0;
         float horizonFactor = exp(-pow(VdotU / 0.1, 2.0));
         #ifdef SUN_MOON_HORIZON
             starsAroundSun = max0(sign(VdotU));
+        #endif
+        #ifdef DIMENSION_SPACE_AIRLESS
+            starsAroundSun = 0.0;
+            horizonFactor = 0.0;
         #endif
     #else
         if (VdotU < 0.0) return vec3(0.0);
@@ -84,9 +102,7 @@ vec3 GetStars(vec2 starCoord, float VdotU, float VdotS, float sizeMult, float st
     star *= star;
 
     star *= max0(1.0 - pow(abs(VdotS) * 1.002, 100.0) * starsAroundSun) * starBelowHorizonBrightness - horizonFactor * 0.5;
-    #ifndef DAYLIGHT_STARS
-        star *= pow2(pow2(invNoonFactor2)) * (1.0 - 0.5 * sunVisibility);
-    #endif
+    star *= GetStarDayFactor();
 
     #ifdef CLEAR_SKY_WHEN_RAINING
         star *= min1(invRainFactorDynamic + 0.4);

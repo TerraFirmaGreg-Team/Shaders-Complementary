@@ -89,6 +89,7 @@
         "rainStrength",
         "eyeBrightness",
         "eyeBrightnessM",
+        "eyeBrightnessM2",
         "maxBlindnessDarkness",
         "near",
         "frameTimeCounter",
@@ -98,11 +99,19 @@
         "worldAgeSmooth",
 
         #ifdef EUPHORIA_PATCHES_UNIFORMS
-        "euphoriaPatchesIsDayAdvancing",
+        "euphoriaPatchesFrozenTimeOffset",
         "euphoriaPatchesCurrentDayMillis",
         "euphoriaPatchesCurrentSeasonTick",
         "euphoriaPatchesSeasonDuration",
         "euphoriaPatchesTotalSeasonDuration",
+        #endif
+
+        #ifdef EUPHORIA_PATCHES_IS_CURRENT_BIOME_MODDED_UNIFORM
+        isCurrentBiomeModded,
+        #endif
+
+        #ifdef EUPHORIA_PATCHES_CLOUD_ALPHA_UNIFORM
+        euphoriaPatchesCloudAlpha,
         #endif
 
         #if MC_VERSION >= 12109 || ANGELICA_VERSION >= 20155000
@@ -133,6 +142,13 @@
         #if MC_VERSION >= 260200
         "inSulfurCaves",
         #endif
+        #if MC_VERSION >= 260400
+        "inIceCaves",
+        #endif
+
+        #if MC_VERSION >= 260300
+        "inDappledForest",
+        #endif
 
         "inSand",
         "inRedSand",
@@ -151,6 +167,7 @@
         "tex": "sampler2D",
         "gaux2": "sampler2D",
         "gaux4": "sampler2D",
+        "lightmap": "sampler2D",
         "colortex10": "sampler2D",
         "colortex18": "sampler2D",
         "colortex19": "sampler2D",
@@ -163,6 +180,6 @@
         "shadowcolor0": "sampler2D",
         "colortex6" : "sampler2D",
         "colortex13" : "sampler2D",
-        "colortex14" : "sampler2D"
+        "colortex15" : "sampler2D"
     }
 }

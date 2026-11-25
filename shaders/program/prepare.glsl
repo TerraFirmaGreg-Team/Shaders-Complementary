@@ -83,7 +83,7 @@ void main() {
                         imageLoad(endcrystal_img, ivec2(index, 4)).r
                     );
                     if (newData.w > 0) {
-                        vec3 pos = vec3(newData.xyz) / newData.w;
+                        vec3 pos = vec3(newData.xyz) / newData.w - cameraPositionBestFract; // Stops that stupid crystal flicker which happens sometimes
                         int temporalIndex = -1;
                         for (int k = 0; k < 20; k++) {
                             ivec4 temporalData = ivec4(

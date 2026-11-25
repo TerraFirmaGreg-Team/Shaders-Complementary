@@ -11,7 +11,8 @@ vec4 DistortShadow(vec4 shadowpos, float distortFactor) {
     return shadowpos;
 }
 
-vec4 GetVolumetricLight(inout float vlFactor, vec3 translucentMult, float lViewPos0, float lViewPos1, vec3 nViewPos, float VdotL, float VdotU, float z0, float z1, float z1lod, float dither) {
+vec4 GetVolumetricLight(inout float vlFactor, vec3 translucentMult, float lViewPos0, float lViewPos1, vec3 nViewPos, float VdotL, float VdotU,
+                        float z0, float z1, float z1lod, float dither, float entityLinearDepthM) {
 // ============================== Step 1: Prepare Factors ============================== //
     float vlMult = 1.0 - maxBlindnessDarkness;
 
@@ -63,7 +64,12 @@ vec4 GetVolumetricLight(inout float vlFactor, vec3 translucentMult, float lViewP
         float rainyNight = (1.0 - sunVisibility) * rainFactor;
         float VdotLM = max((VdotL + 1.0) / 2.0, 0.0);
         float VdotUmax0 = max(VdotU, 0.0);
-        float VdotUM = mix(pow2(1.0 - VdotUmax0), 1.0, 0.5 * vlSceneIntensity);
+        #if !defined VOXY && !defined DISTANT_HORIZONS
+            float skyShaftFactor = 0.5 * vlSceneIntensity;
+        #else
+            float skyShaftFactor = 0.125 * vlSceneIntensity;
+        #endif
+        float VdotUM = mix(pow2(1.0 - VdotUmax0), 1.0, skyShaftFactor);
               VdotUM = smoothstep1(VdotUM);
               VdotUM = pow(VdotUM, min(lViewPos1 / far, 1.0) * (3.0 - 2.0 * vlSceneIntensity));
 
@@ -131,7 +137,7 @@ vec4 GetVolumetricLight(inout float vlFactor, vec3 translucentMult, float lViewP
             maxDistance = renderDistance * 0.5; // Covers lod chunks
 
             fogCurve = 0.7;
-            fogCurveIntense *= 1.0 - 0.5 * rainFactor;
+            fogCurveIntense *= 0.5;
         #endif
 
         maxDistance = max(maxDistance, 128.0);
@@ -199,6 +205,8 @@ vec4 GetVolumetricLight(inout float vlFactor, vec3 translucentMult, float lViewP
 
     float activeThreshold = min(qualityThreshold, maxDistance);
     int totalSamples = (rayEnd <= qualityThreshold) ? nearSamples : (nearSamples + farSamples);
+
+    float lastWeight = smoothstep1(pow(lastDistance / maxDistance, fogCurve));
 // ============================== End of Step 2 ============================== //
 
 // ============================== Step 3: Execute Volumetric Tracing ============================== //
@@ -210,7 +218,7 @@ vec4 GetVolumetricLight(inout float vlFactor, vec3 translucentMult, float lViewP
         if (i <= nearSamples) { // Actual light shaft sampling near-field section
             float t = (float(i) + dither) / float(nearSamples);
             nextDistance = pow(t, sampleDistribution) * activeThreshold;
-            scenePos = rayDirection * nextDistance;
+            scenePos = gbufferModelViewInverse[3].xyz + rayDirection * nextDistance;
 
             if (nextDistance >= rayEnd) break;
 
@@ -288,14 +296,19 @@ vec4 GetVolumetricLight(inout float vlFactor, vec3 translucentMult, float lViewP
         #endif
 
         // For fog density to not move regardless of how we distribute the samples
-        float currentWeight = smoothstep1(pow(lastDistance / maxDistance, fogCurve));
+        float currentWeight = lastWeight;
         float nextWeight    = smoothstep1(pow(nextDistance / maxDistance, fogCurve));
         float sliceWeight   = nextWeight - currentWeight;
 
         vec4 stepResult = vec4(localDensity * sliceWeight, sliceWeight);
 
         // Result Coloring
-        if (nextDistance > lViewPos0) stepResult.rgb *= translucentMult;
+        if (nextDistance > lViewPos0) {
+            #if DETAIL_QUALITY > 0
+                if (nextDistance > entityLinearDepthM) break; // fixes entities looking transparent behind glass
+            #endif
+            stepResult.rgb *= translucentMult;
+        }
         #ifdef END
             vec3 beamPos = scenePos;
             stepResult.rgb *= DrawEnderBeams(vlFactor, beamPos, nViewPos, beamScale);
@@ -309,6 +322,7 @@ vec4 GetVolumetricLight(inout float vlFactor, vec3 translucentMult, float lViewP
         volumetricLight += stepResult;
 
         lastDistance = nextDistance;
+        lastWeight = nextWeight;
     }
 // ============================== End of Step 3 ============================== //
 
@@ -376,9 +390,9 @@ vec4 GetVolumetricLight(inout float vlFactor, vec3 translucentMult, float lViewP
 // ============================== Step 5: Final Tweaks ============================== //
     #ifdef OVERWORLD
         vlColor = pow(vlColor, vec3(0.5 + (0.5 + LIGHTSHAFT_SUNSET_SATURATION * sunVisibility) * invNoonFactor * invRainFactor + 0.3 * rainFactor));
-        vlColor *= 1.0 - (0.3 + 0.3 * noonFactor) * rainFactor - 0.5 * rainyNight + sunVisibility * pow2(invNoonFactor) * invRainFactor;
+        vlColor *= 1.0 - (0.3 + 0.3 * noonFactor) * rainFactor - 0.5 * rainyNight + sunVisibility * invNoonFactor2 * invRainFactor;
 
-        #if LIGHTSHAFT_NOON_I != 100 || LIGHTSHAFT_SUNSET_I != 100 || LIGHTSHAFT_NIGHT_I != 100 || LIGHTSHAFT_RAIN_I != 100
+        #if LIGHTSHAFT_NOON_I != 100 || LIGHTSHAFT_SUNSET_I != 100 || LIGHTSHAFT_NIGHT_I != 100 || LIGHTSHAFT_RAIN_I != 100 || LIGHTSHAFT_WATER_I != 100
             #define LIGHTSHAFT_NOON_IM LIGHTSHAFT_NOON_I * 0.01
             #define LIGHTSHAFT_SUNSET_IM LIGHTSHAFT_SUNSET_I * 0.01
             #define LIGHTSHAFT_NIGHT_IM LIGHTSHAFT_NIGHT_I * 0.01
@@ -388,6 +402,11 @@ vec4 GetVolumetricLight(inout float vlFactor, vec3 translucentMult, float lViewP
                 vlMult *= mix(LIGHTSHAFT_NIGHT_IM, mix(LIGHTSHAFT_SUNSET_IM, LIGHTSHAFT_NOON_IM, pow3(noonFactor)), sunVisibility);
                 vlMult *= mix(1.0, LIGHTSHAFT_RAIN_IM, rainFactor);
             }
+            #if LIGHTSHAFT_WATER_I != 100
+                else if (lViewPos0 != lViewPos1) {
+                    vlMult *= sqrt(LIGHTSHAFT_WATER_I * 0.01);
+                }
+            #endif
         #endif
 
         volumetricLight.rgb *= vlColor;
@@ -395,8 +414,13 @@ vec4 GetVolumetricLight(inout float vlFactor, vec3 translucentMult, float lViewP
 
     #endif
 
-    #ifdef SULFUR_CAVE_FOG
-        volumetricLight.rgb = mix(volumetricLight.rgb, vec3(GetLuminance(volumetricLight.rgb)) * vec3(1.0, 1.0, 0.5), inSulfurCaves);
+    #if defined SULFUR_CAVE_FOG || defined ICE_CAVE_FOG
+        vec3 volumetricLightM = vec3(GetLuminance(volumetricLight.rgb));
+        volumetricLightM *= vec3(
+            1.0 - 0.6 * inIceCaves,
+            1.0 - 0.2 * inIceCaves,
+            1.0 - 0.5 * inSulfurCaves + 0.4 * inIceCaves);
+        volumetricLight.rgb = mix(volumetricLight.rgb, volumetricLightM, inIceCaves + inSulfurCaves);
     #endif
 
     volumetricLight.rgb *= vlMult;

@@ -21,17 +21,17 @@ float doWorldCurvature(vec2 position) { // code from Complementary v4
     #ifdef NETHER
         float curvature = dot(position, position) / NETHER_CURVATURE_SIZE;
         #if NETHER_CURVATURE_SIZE == 0
-            curvature *= 0.0;
+            curvature = 0.0;
         #endif
     #elif defined END
         float curvature = dot(position, position) / END_CURVATURE_SIZE;
         #if END_CURVATURE_SIZE == 0
-            curvature *= 0.0;
+            curvature = 0.0;
         #endif
     #else
         float curvature = dot(position, position) / OVERWORLD_CURVATURE_SIZE;
         #if OVERWORLD_CURVATURE_SIZE == 0
-            curvature *= 0.0;
+            curvature = 0.0;
         #endif
     #endif
     return curvature;

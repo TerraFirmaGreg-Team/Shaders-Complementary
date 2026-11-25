@@ -30,8 +30,8 @@ flat in vec4 glColor;
 float NdotU = dot(normal, upVec);
 float NdotUmax0 = max(NdotU, 0.0);
 float SdotU = dot(sunVec, upVec);
-float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
-float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
+float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
 float sunVisibility2 = sunVisibility * sunVisibility;
 float shadowTimeVar1 = abs(sunVisibility - 0.5) * 2.0;
 float shadowTimeVar2 = shadowTimeVar1 * shadowTimeVar1;
@@ -104,6 +104,7 @@ void main() {
     vec3 normalM = normal, geoNormal = normal, shadowMult = vec3(1.0);
     vec3 worldGeoNormal = normalize(ViewToPlayer(geoNormal * 10000.0));
     float purkinjeOverwrite = 0.0;
+    vec3 hsvColor = rgb2hsv(color.rgb);
     #if defined IPBR && defined IPBR_PARTICLE_FEATURES
         // We don't want to detect particles from the block atlas
         #if MC_VERSION >= 12000
@@ -139,8 +140,16 @@ void main() {
                 color.a *= snowTexOpacity;
                 color.rgb = sqrt2(color.rgb) * (blocklightCol * 2.0 * lmCoord.x + lmCoord.y * (0.7 + 0.35 * sunFactor) + ambientColor * 0.2);
                 color.rgb *= vec3(WEATHER_TEX_R, WEATHER_TEX_G, WEATHER_TEX_B);
+            } else if (abs(glColor.b - 0.9961) < 0.002 && abs(glColor.g - (glColor.r + 1.0) * 0.5) < 0.004 && glColor.r > 0.9) { // WindLink Particle Snow
+                #ifdef NO_RAIN_ABOVE_CLOUDS
+                    if (cameraPosition.y > maximumCloudsHeight) discard;
+                #endif
+                if (color.a < 0.1 || isEyeInWater == 3) discard;
+                color.a *= snowTexOpacity;
+                color.rgb = sqrt2(color.rgb) * (blocklightCol * 2.0 * lmCoord.x + lmCoord.y * (0.7 + 0.35 * sunFactor) + ambientColor * 0.2);
+                color.rgb *= vec3(WEATHER_TEX_R, WEATHER_TEX_G, WEATHER_TEX_B);
             #endif
-            } else if (color.r == 1.0 && color.b < 0.778 && color.g < 0.97) { // Fire Particle
+            } else if (color.r == 1.0 && color.b < 0.778 && color.g < 0.94 && hsvColor.g > 0.87) { // Fire Particle
                 #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
                     color.rgb = changeColorFunction(color.rgb, 3.0, colorSoul, inSoulValley);
                 #endif
@@ -201,6 +210,14 @@ void main() {
                     color.rgb = sqrt2(color.rgb) * (blocklightCol * 2.0 * lmCoord.x + ambientColor * lmCoord.y * (0.7 + 0.35 * sunFactor));
                     color.rgb *= vec3(WEATHER_TEX_R, WEATHER_TEX_G, WEATHER_TEX_B);
                 } else if (color.rgb == vec3(1.0) && color.a < 0.765 && color.a > 0.605) { // physics mod snow (default snow opacity only)
+                    #ifdef NO_RAIN_ABOVE_CLOUDS
+                        if (cameraPosition.y > maximumCloudsHeight) discard;
+                    #endif
+                    if (color.a < 0.1 || isEyeInWater == 3) discard;
+                    color.a *= snowTexOpacity;
+                    color.rgb = sqrt2(color.rgb) * (blocklightCol * 2.0 * lmCoord.x + lmCoord.y * (0.7 + 0.35 * sunFactor) + ambientColor * 0.2);
+                    color.rgb *= vec3(WEATHER_TEX_R, WEATHER_TEX_G, WEATHER_TEX_B);
+                } else if (abs(glColor.b - 0.9961) < 0.002 && abs(glColor.g - (glColor.r + 1.0) * 0.5) < 0.004 && glColor.r > 0.9) { // WindLink Particle Snow
                     #ifdef NO_RAIN_ABOVE_CLOUDS
                         if (cameraPosition.y > maximumCloudsHeight) discard;
                     #endif
@@ -290,11 +307,6 @@ void main() {
 
     vec3 translucentMult = mix(vec3(0.666), color.rgb * (1.0 - pow2(pow2(color.a))), color.a);
 
-    float SSBLMask = 0.0;
-    #ifdef ENTITIES_ARE_LIGHT
-        SSBLMask = 1.0;
-    #endif
-
     #ifdef COLOR_CODED_PROGRAMS
         ColorCodeProgram(color, -1);
     #endif
@@ -310,11 +322,11 @@ void main() {
 
         #ifdef SS_BLOCKLIGHT
             /* DRAWBUFFERS:06349 */
-            gl_FragData[4] = vec4(0.0, 0.0, 0.0, SSBLMask);
+            gl_FragData[4] = vec4(0.0);
         #endif
     #elif defined SS_BLOCKLIGHT
         /* DRAWBUFFERS:0639 */
-        gl_FragData[3] = vec4(0.0, 0.0, 0.0, SSBLMask);
+        gl_FragData[3] = vec4(0.0);
     #endif
 }
 
@@ -347,6 +359,101 @@ flat out vec4 glColor;
     #include "/lib/materials/materialMethods/wavingBlocks.glsl"
 #endif
 
+#ifdef MCWIND_INTERNAL
+    uniform int  mcw_floaterN;
+    uniform vec4 mcw_floaterA[16];
+
+    #include "/lib/shaderSettings/wavingBlocks.glsl"
+    #include "/lib/shaderSettings/water.glsl"
+
+    #define MCW_GAUX4_DC 0.1494
+    #define MCW_FLOAT_PROUD 0.03
+
+    float McwMeshHeight(vec2 xz, float skyLight) {
+        float h = 0.0;
+
+        #ifdef WAVING_WATER_VERTEX
+            float waterWaveTime = frameTimeCounter * 6.0 * WAVING_SPEED;
+            vec2 wp = xz * 14.0;
+            float wave  = sin(waterWaveTime * 0.7 - wp.y * 0.14 + wp.x * 0.07);
+                  wave += sin(waterWaveTime * 0.5 - wp.y * 0.10 + wp.x * 0.05);
+            #if defined NO_WAVING_INDOORS && !defined WAVE_EVERYTHING
+                wave *= clamp(skyLight - 0.87, 0.0, 0.1);
+            #else
+                wave *= 0.1;
+            #endif
+            h += wave * 0.125 - 0.05;
+        #endif
+
+        return h;
+    }
+
+    float McwWaveHeight(vec2 xz, float surfaceY, float skyLight) {
+        float h = McwMeshHeight(xz, skyLight);
+
+        #if WATER_STYLE >= 2
+            vec2 waterPos = 0.032 * (xz + surfaceY * 2.0);
+            vec2 wind = vec2(0.0, -frameTimeCounter * (WATER_SPEED_MULT * 0.018));
+
+            float bumpNoise = 1.0;
+            #ifdef CLEAR_WATER_SPOTS
+                bumpNoise = 1.0 - clamp((1.0 - smoothstep(0.0, 0.5, texture2DLod(noisetex,
+                        waterPos.x * 0.045 + waterPos * 0.042 + wind * 0.006, 0.0).g)) * 2.0,
+                        0.0, 1.0) * 0.85;
+            #endif
+
+            vec2 waterPosM = waterPos * (WATER_SIZE_MULT * 0.01) * 2.5;
+            wind *= 2.5;
+
+            float hMed   = texture2DLod(gaux4, waterPosM + wind, 0.0).a - 0.5;
+            float hSmall = texture2DLod(gaux4, waterPosM * 4.0 - 2.0 * wind, 0.0).a - 0.5;
+            float hBig   = texture2DLod(gaux4, waterPosM * 0.25 - 0.5 * wind, 0.0).a - 0.5;
+                  hBig  += texture2DLod(gaux4, waterPosM * 0.05 - 0.05 * wind, 0.0).a - 0.5;
+            float hSum = hMed * WATER_BUMP_MED + hSmall * WATER_BUMP_SMALL + hBig * WATER_BUMP_BIG;
+
+            hSum += (0.5 - MCW_GAUX4_DC)
+                  * (WATER_BUMP_MED + WATER_BUMP_SMALL + 2.0 * WATER_BUMP_BIG);
+
+            h += hSum * 0.08 * (WATER_BUMPINESS * 0.8) * bumpNoise * (0.25 + 0.75 * skyLight);
+        #endif
+
+        return h;
+    }
+
+    float GetMCWindFloaterLift(vec3 worldPos, float skyLight) {
+        if (mcw_floaterN <= 0) return 0.0;
+        float best = 0.36;
+        vec2 centre = vec2(0.0);
+        float surfaceY = 0.0;
+        float since = -1.0;
+        for (int i = 0; i < 16; i++) {
+            if (i >= mcw_floaterN) break;
+            vec4 fa = mcw_floaterA[i];
+            vec2 d = worldPos.xz - fa.rg;
+            float d2 = dot(d, d);
+            if (d2 < best && abs(worldPos.y - fa.b) < 0.6) {
+                best = d2;
+                centre = fa.rg;
+                surfaceY = fa.b;
+                since = fa.a;
+            }
+        }
+        if (since < 0.0) return 0.0;
+
+        float h0 = McwMeshHeight(centre, skyLight);
+
+        float tap = 0.25;
+        float hxp = McwWaveHeight(centre + vec2(tap, 0.0), surfaceY, skyLight);
+        float hxn = McwWaveHeight(centre - vec2(tap, 0.0), surfaceY, skyLight);
+        float hzp = McwWaveHeight(centre + vec2(0.0, tap), surfaceY, skyLight);
+        float hzn = McwWaveHeight(centre - vec2(0.0, tap), surfaceY, skyLight);
+        vec2 slope = clamp(vec2(hxp - hxn, hzp - hzn) / (2.0 * tap), -0.6, 0.6);
+
+        return clamp(h0, -0.35, 0.35) + MCW_FLOAT_PROUD
+             + clamp(dot(worldPos.xz - centre, slope), -0.25, 0.25);
+    }
+#endif
+
 //Program//
 void main() {
     vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
@@ -377,6 +484,14 @@ void main() {
             DoWaveEverything(position.xyz);
         #endif
         gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
+    #endif
+
+    #ifdef MCWIND_INTERNAL
+        float mcwFloaterLift = GetMCWindFloaterLift(position.xyz + cameraPosition, lmCoord.y);
+        if (mcwFloaterLift != 0.0) {
+            position.y += mcwFloaterLift;
+            gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
+        }
     #endif
 
     #ifdef FLICKERING_FIX

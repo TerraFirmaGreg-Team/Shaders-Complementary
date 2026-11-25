@@ -78,7 +78,7 @@ vec2 warpCoords(vec2 coord, float warpAmount) {
 vec3 GetNightNebula(vec3 viewPos, float VdotU, float VdotS) {
     float VdotUFactor = max0(VdotU);
     float starsAroundSun = 1.0;
-    #ifdef CELESTIAL_BOTH_HEMISPHERES
+    #ifdef CELESTIAL_BOTH_HEMISPHERES_INTERNAL
         VdotUFactor = VdotU;
         #ifdef SUN_MOON_HORIZON
             starsAroundSun = max0(sign(VdotU));
@@ -91,7 +91,11 @@ vec3 GetNightNebula(vec3 viewPos, float VdotU, float VdotS) {
         VdotUFactor = pow(VdotUFactor, horizonPower);
     #endif
 
-    float nebulaFactor = pow2(VdotUFactor * min1(nightFactor * 2.0));
+    #ifdef DIMENSION_SPACE_AIRLESS
+        float nebulaFactor = pow2(VdotUFactor); // Visible in the daytime too
+    #else
+        float nebulaFactor = pow2(VdotUFactor * min1(nightFactor * 2.0));
+    #endif
 
     #if NEBULA_HORIZON_STRENGTH < 10
         float brightnessCompensation = 1.0 - (1.0 - horizonPower) * 0.5 * max0(originalVdotUFactor);

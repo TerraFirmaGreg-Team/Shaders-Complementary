@@ -1,7 +1,11 @@
 #shaders/lang/pt_BR.lang
 
+Contribute=Contribua com as traduções oficiais aqui: https://www.euphoriapatches.com/lang — Não mude esta (URL)
+
 option.LANG_FILE_HEADER=Traduções feitas pela comunidade, A tradução pode estar desatualizada. O SpacEagle17 não pode garantir sua precisão.
 option.TRANSLATORS=Traduzido por: Lucas Henrick
+
+shaderDescription=§cComplementary Shaders r5.10§r + §dEuphoria Patches 1.11.2§r\nComplementary add-on de SpacEagle17 \nAdicionando mais recursos únicos, e recursos opcionais exclusivos.\nVersões Desenvolvedor: §dwww.euphoriapatches.com/support§r
 
 #Profiles
 profile.POTATO=Desempenho: §a Resolução de calculadora
@@ -31,9 +35,11 @@ option.info1.comment=- O desempenho é um tema complexo no Minecraft porque é a
 
 option.info2=Quais são as melhores configurações?
 value.info2.0=
+option.info2.comment=As melhores configurações são subjetiva, mas ao usar a configuração padrão "Profile" será o ideal para maioria das pessoas. As configurações padrão foram ajustadas ao longo de anos com base nas avaliações e no feedback da comunidade, sempre com muita atenção ao equilíbrio entre visual e desempenho, mas você pode se sentir a vontade para fazer seus próprio ajustes e se divirta fazendo isso!!
 
 option.info3=O que é "Profile" ou "Visual Style"
 value.info3.0=
+option.info3.comment=A configuração "Profile" altera as configurações encontradas no menu "Configurações de Desempenho", sem afetar nenhuma configuração baseada em preferências. "Visual Style" altera os valores "Set by Style" que existem em muitas configurações baseadas em preferências, mas isso não impacta o desempenho de forma significativa.
 
 option.info4=O que é RP Support
 value.info4.0=
@@ -82,7 +88,7 @@ option.info17=Versões Beta: SpacEagle17 Patreon
 value.info17.0=
 option.info17.comment=Você pode apoiar o SpacEagle17 no Patreon ou Ko-Fi, e tenha o acesso exclusivo de versões em desenvolvimento. Acesse: §d§l§neuphoriapatches.com/support
 
-option.info18=For Complementary r5.9
+option.info18=For Complementary r5.10
 value.info18.0=
 option.info18.comment=Obrigado por instalar o   §5Euphoria Patches§r :)
 
@@ -539,6 +545,8 @@ value.WATER_CAUSTIC_STYLE_DEFINE.-1=Igual à Água
 value.WATER_CAUSTIC_STYLE_DEFINE.1=Reimaginado
 value.WATER_CAUSTIC_STYLE_DEFINE.3=Sem Limites
 
+value.WATER_REFRACTION_DEFINE.0=DESLIGADO
+
 option.WATER_REFRACTION_INTENSITY=Intensidade da Refração da Água §e[*]§r
 option.WATER_REFRACTION_INTENSITY.comment=Ajuda a ajustar a intensidade da refração da água e distorção subaquática. §e[*]§r Esta configuração só funciona totalmente quando a Qualidade dos Detalhes está em "Alta", caso contrário, afeta apenas a distorção sutil subaquática.
 
@@ -792,7 +800,7 @@ option.MOTION_BLURRING_STRENGTH.comment=Ajuda a ajustar a intensidade do desfoqu
 
 option.WORLD_BLUR=§eDesfoque do Mundo
 option.WORLD_BLUR.comment=Ativa o desfoque do mundo. Desfoque de Distância: O desfoque é aplicado como neblina, dependendo da distância da câmera. Profundidade de Campo: O desfoque depende do ponto de foco da câmera. §c[-]§r Este efeito pode impactar bastante o desempenho.
-value.WORLD_BLUR.0=DESLIGADO
+value.WORLD_BLUR.-1=DESLIGADO
 value.WORLD_BLUR.1=§cDesfoque de Distância
 value.WORLD_BLUR.2=§cProfundidade de Campo
 
@@ -841,7 +849,6 @@ option.IPBR_COMPAT_MODE_DEFINE.comment=Altera como alguns recursos do IPBR+ são
 option.IPBR_PARTICLE_FEATURES=Recursos de Partículas IPBR+
 option.IPBR_PARTICLE_FEATURES.comment=Ativa vários recursos para partículas, incluindo partículas de lava brilhantes e partículas de água com cores melhores.
 
-option.FANCY_GLASS=Vidro Aprimorado
 option.FANCY_GLASS.comment=Melhora o vidro comum adicionando uma camada translúcida. §c[-]§r Não funciona em versões antigas do Iris. §e[*]§r A opção de Suporte a RP deve estar em Integrated PBR+.
 
 option.GREEN_SCREEN_LIME=Blocos de Chroma Key Verde Limão
@@ -1057,11 +1064,14 @@ option.WAVING_LILY_PAD.comment=Faz as vitórias-régias e os ovos de sapo se mov
 option.WAVING_WATER_VERTEX=Altura da Água Ondulante
 option.WAVING_WATER_VERTEX.comment=Adiciona movimento à posição da água para simular vento. §e[*]§r Não está relacionado à "Força da Onda da Água".
 
+value.WATER_NOISE_COLORING.0=DESLIGADO
+
 option.WAVING_RAIN=Textura de Chuva/Neve Ondulante
 option.WAVING_RAIN.comment=Adiciona movimento às texturas de chuva e neve para deixá-las mais dinâmicas.
 
-option.SPECIAL_PORTAL_EFFECTS=Efeitos Especiais de Portal
-option.SPECIAL_PORTAL_EFFECTS.comment=Adiciona animações e emissão especiais aos portais do Nether, End e Portais de Entrada.
+option.SPECIAL_PORTAL_EFFECT=Efeitos Especiais de Portal
+option.SPECIAL_PORTAL_EFFECT.comment=Adiciona animações e emissão especiais aos portais do Nether, End e Portais de Entrada.
+value.SPECIAL_PORTAL_EFFECT.0=Desligado
 
 option.REFLECTION_RES=§e Resolução dos Reflexos§r
 option.REFLECTION_RES.comment=Altera a resolução das reflexões PBR nos blocos (e as reflexões em espaço de mundo, se você tiver essa configuração ativada) para ganhar desempenho. §c[-]§r Reflexões em resolução "Completa" podem impactar o desempenho muito mais do que o esperado em algumas situações. §e[*]§r Este recurso não funciona no Optifine.
@@ -1386,7 +1396,7 @@ screen.POPULAR_SETTINGS=§dConfigurações Populares
 screen.POPULAR_SETTINGS.comment=Estas são algumas das configurações mais populares no Euphoria Patches. Exceto o Advanced Colored Tracing (que é necessário para muitos efeitos), todas as opções aqui são exclusivas do Euphoria Patches e não podem ser encontradas no Shaderpack Complementary Original.
 screen.POPULAR_SETTINGS_2=Página 2
 screen.POPULAR_SETTINGS_3=Página 3
-screen.EP_VERSION=Euphoria Patches §d1.10.0
+screen.EP_VERSION=Euphoria Patches §d1.11.2
 screen.EP_VERSION.comment=§bVocê pode apoiar o SpacEagle17 no Patreon ou Ko-Fi e receber novas versões beta exclusivas.
 
 screen.MODDED_SETTINGS=Configurações de Mods
@@ -1961,9 +1971,6 @@ option.SILHOUETTE_BRIGHTNESS=Brilho da Silhueta
 option.RAIN_ATMOSPHERE=Tempestade Épica
 option.RAIN_ATMOSPHERE.comment=Melhora significativamente as tempestades quando um raio cai. §e[*]§r Funciona muito melhor com Iris
 
-option.BLUE_SCREEN=Tela Azul
-option.BLUE_SCREEN.comment=Transforma "Concreto Azul", "Lã Azul" e "Carpete Azul" em telas azuis para edição de vídeo. Dica 1: Desative a opção "Brilho Suave" para melhorar a separação. Dica 2: Coloque luzes sob os carpetes azuis para iluminação. Dica 3: Você pode desativar o Anti-Aliasing (FXAA) e definir a Qualidade de Detalhe como Batata nas Configurações de Desempenho para desativar todos os filtros e obter separação perfeita de pixels.
-
 option.MIRROR_DIMENSION=Dimensão do Espelho
 option.MIRROR_DIMENSION.comment=Você aprendeu a arte da magia e é corajoso o suficiente para entrar na dimensão do espelho.
 
@@ -1975,7 +1982,6 @@ option.END_CURVATURE_SIZE=Tamanho da Curvatura do End
 option.LAVA_VARIATION=Predefinição da Lava
 option.LAVA_VARIATION.comment=Predefinições quentes na sua área. Escolha agora!
 value.LAVA_VARIATION.0=Complementary
-value.LAVA_VARIATION.1=Adaptive Noise (Recomendado)
 value.LAVA_VARIATION.4=Dark Island
 
 option.LAVA_TEMPERATURE=Temperatura da Lava
@@ -2243,10 +2249,7 @@ option.NETHER_NOISE.comment=Deixa o céu do Nether acima do teto mais interessan
 value.NETHER_NOISE.0=DESLIGADO
 value.NETHER_NOISE.1=LIGADO
 
-option.MCBL_MAIN_DEFINE=Iluminação Colorida Euphoria
-option.MCBL_MAIN_DEFINE.comment=Ativa a iluminação multicolorida de blocos. Use "ACT + Screen-Space" para combinar o sistema em screen-space com o Advanced Colored Tracing. A combinação ACT + SSBL + Dynamic Lighting Support pode gerar resultados incorretos em ambientes com mods — recomendado usar apenas no vanilla com um mod de iluminação dinâmica. §e[*]§r Funciona apenas na versão 1.16.5 ou superior, ou no Angelica.
 value.MCBL_MAIN_DEFINE.0=DESLIGADO
-value.MCBL_MAIN_DEFINE.3=ACT + SSBL + Suporte a Iluminação Dinâmica
 
 option.MCBL_INFLUENCE=Influência da Luz de Bloco Multicolorida
 option.MCBL_INFLUENCE.comment=Controla o quanto a luz de bloco multicolorida afeta a cor padrão da luz de bloco.
@@ -2515,8 +2518,7 @@ value.SUN_MOON_IPBR.1=Apenas Sol
 value.SUN_MOON_IPBR.2=Apenas Lua
 value.SUN_MOON_IPBR.3=Sol e Lua
 
-option.DAYLIGHT_STARS=Estrelas Durante o Dia
-option.DAYLIGHT_STARS.comment=Ativa estrelas durante o dia
+option.DAYLIGHT_STARS_AMOUNT=Estrelas Durante o Dia
 
 option.FROZEN_TIME=Tempo Congelado
 option.FROZEN_TIME.comment=Congela o tempo das animações do shader. Efeitos do shader que dependem de animações baseadas em quadros (frames) ficarão congelados, permitindo capturas de tela ideais para comparação.
@@ -2552,7 +2554,6 @@ option.SHOCKWAVE=Onda de Choque
 value.SHOCKWAVE.0=DESLIGADO
 value.SHOCKWAVE.1=Círculo
 value.SHOCKWAVE.2=Quadrado
-option.SHOCKWAVE.comment=Agache e descubra!
 
 option.STAR_LAYER_OW=Camada de Estrelas
 option.STAR_LAYER_OW.comment=Adiciona estrelas adicionais às atuais, maiores ou menores
@@ -2627,7 +2628,7 @@ option.HIDE_VANILLA_STARS=Ocultar Estrelas Padrão
 option.HIDE_VANILLA_STARS.comment=Oculta as estrelas padrão do céu.
 
 option.SITUATIONAL_GLOWING_TRIMS=Detalhes Brilhantes Situacionais
-option.SITUATIONAL_GLOWING_TRIMS.comment=Detalhes só irão brilhar em cavernas e à noite. §e[*]§r Detalhes Brilhantes devem estar ativados para isso funcionar.
+option.SITUATIONAL_GLOWING_TRIMS.comment=Detalhes só vão brilhar em cavernas e à noite. §e[*]§r Detalhes Brilhantes devem estar ativados para isso funcionar.
 
 option.DO_IPBR_LIGHTS=ACT Luzes IPBR
 option.DO_IPBR_LIGHTS.comment=Esta opção faz com que fontes não luminosas do jogo emitam luz se forem emissivas via shader. (Recomendado: Ligado)
@@ -2711,6 +2712,7 @@ value.BLURRED_REFLECTIONS_I.10=PADRÃO
 value.REFLECTION_RESPONSIVENESS.0.0=PADRÃO
 
 value.BETTER_LABPBR_REFRACTIONS.0=Desligado
+suffix.BETTER_LABPBR_REFRACTIONS=%
 
 option.SHADOW_SATURATION=Saturação das Sombras
 option.SHADOW_SATURATION.comment=Altere a saturação das sombras e dos feixes de luz. §e[*]§r Esta configuração só funciona se "Sombras em Tempo-Real" estiver em Baixo ou superior.
@@ -2880,7 +2882,7 @@ option.PHOTONICS_RESTIR_DENOISER_PASSES.comment=Número de passes que o denoiser
 value.PHOTONICS_RESTIR_DENOISER_PASSES.0=Desligado
 
 option.PHOTONICS_RESTIR_FLICKER_FIRE=Fogo Tremulante (ReSTIR)
-option.PHOTONICS_RESTIR_FLICKER_FIRE.comment=Fontes de luz de fogo irão tremular. §c[*]§r Esta opção só funciona com o modo de iluminação ReSTIR.
+option.PHOTONICS_RESTIR_FLICKER_FIRE.comment=Fontes de luz de fogo vão tremular. §c[*]§r Esta opção só funciona com o modo de iluminação ReSTIR.
 value.PHOTONICS_RESTIR_FLICKER_FIRE.0=Desligado
 
 option.PHOTONICS_VANILLA_LIGHT_FALLBACK=Luz Vanilla de Reserva
@@ -2955,7 +2957,7 @@ option.PIXELATED_SHADOWS_MODE.comment=Altera a forma como as sombras pixeladas s
 value.PIXELATED_SHADOWS_MODE.0=Automático
 
 option.PANINI_PROJECTION=Projeção Panini
-option.PANINI_PROJECTION.comment=Enables Panini Projection, which is a type of projection that reduces distortion at the edges of the screen, especially when using a high field of view (FOV). §e[-]§r Can make the image look stretched in the center, or blurrier overall.
+option.PANINI_PROJECTION.comment=Ativa a Projeção Panini, sendo um tipo de projeção que reduz a distorção nas bordas da tela, especialmente ao usar um campo de visão (FOV) alto. §e[-]§r Pode fazer com que a imagem pareça esticada no centro ou fique mais borrada geralmente
 value.PANINI_PROJECTION.0=DESLIGADO
 
 value.BLACK_HOLE.0=DESLIGADO
@@ -3007,3 +3009,4 @@ option.BLACK_HOLE_LATITUDE_BIAS.comment=Altera a posição de latitude do buraco
 option.BLACK_HOLE_STREAK=Rastro horizontal
 option.BLACK_HOLE_STREAK.comment=Adiciona uma faixa horizontal do disco de acreção ao redor do buraco negro.
 value.BLACK_HOLE_STREAK.0=Desligado
+

@@ -10,7 +10,7 @@ vec4 sampleBlurFilteredReflection(vec4 centerCol, vec3 nViewPos, float dither, f
 
     #ifdef SMOOTHNESS_AFFECTED_REF_BLUR
         vec3 texture6 = texelFetch(colortex6, texelCoord, 0).rgb;
-        float smoothnessD = texture6.r;
+        float smoothnessD = ApplyReflectionRoughnessMult(texture6.r);
         texelSize *= 1.0 - 0.75 * pow2(pow2(pow2(smoothnessD)));
     #endif
 

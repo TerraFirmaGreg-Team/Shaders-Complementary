@@ -20,12 +20,21 @@ else {
         reflectMult = 1.0;
         color.rgb = vec3(0.75, 0.8, 0.85);
 
-        translucentMultCalculated = true;
-        translucentMult.a = 0.0;
+        //translucentMultCalculated = true;
+        //translucentMult.a = 0.0;
 
         color.a = max(color.a, GLASS_OPACITY);
 
         DoTranslucentTweaks(color, fresnelM, reflectMult, lViewPos);
+
+        #ifdef RAIN_PUDDLES
+            float dither = texture2DLod(noisetex, gl_FragCoord.xy / 128.0, 0.0).b;
+            #ifdef TAA
+                dither = fract(dither + goldenRatio * mod(float(frameCounter), 3600.0));
+            #endif
+
+            if (dither > eyeBrightnessM2 * 1.1 - 0.05) discard;
+        #endif
     #else
         discard;
     #endif

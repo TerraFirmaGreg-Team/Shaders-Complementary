@@ -26,6 +26,10 @@
     #include "/photonics/photonics.glsl"
 #endif
 
+#if defined BETTER_LABPBR_POM_PUDDLES_INTERNAL && defined POM
+    #define BETTER_LABPBR_POM_PUDDLES_ACTIVE
+#endif
+
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
 
@@ -96,8 +100,8 @@ float NdotU = dot(normal, upVec);
 float geoNdotU = NdotU;
 float NdotUmax0 = max(NdotU, 0.0);
 float SdotU = dot(sunVec, upVec);
-float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
-float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
+float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
 float sunVisibility2 = sunVisibility * sunVisibility;
 float shadowTimeVar1 = abs(sunVisibility - 0.5) * 2.0;
 float shadowTimeVar2 = shadowTimeVar1 * shadowTimeVar1;
@@ -196,6 +200,14 @@ void DoOceanBlockTweaks(inout float smoothnessD) {
     #include "/lib/materials/materialMethods/customEmission.glsl"
 #endif
 
+#ifdef PUDDLE_VOXELIZATION
+    #include "/lib/voxelization/puddleVoxelization.glsl"
+#endif
+
+#if RAIN_PUDDLES >= 1 || defined BETTER_LABPBR_POM_PUDDLES_ACTIVE
+    #include "/lib/materials/materialMethods/rainPuddles.glsl"
+#endif
+
 #ifdef CUSTOM_PBR
     #include "/lib/materials/materialHandling/customMaterials.glsl"
 #endif
@@ -206,10 +218,6 @@ void DoOceanBlockTweaks(inout float smoothnessD) {
 
 #if ANISOTROPIC_FILTER > 0
     #include "/lib/materials/materialMethods/anisotropicFiltering.glsl"
-#endif
-
-#ifdef PUDDLE_VOXELIZATION
-    #include "/lib/voxelization/puddleVoxelization.glsl"
 #endif
 
 #ifdef ACT_GROUND_LEAVES_FIX
@@ -311,8 +319,9 @@ void main() {
 
     float smoothnessD = 0.0, materialMask = 0.0;
 
-    #if !defined POM || !defined POM_ALLOW_CUTOUT
-        if (color.a <= 0.00001) discard; // 6WIR4HT23
+    #if (!defined POM || !defined POM_ALLOW_CUTOUT) && (MC_VERSION < 260300 || !defined DO_PIXELATION_EFFECTS)
+        // 6WIR4HT23
+        if (color.a <= 0.00001) discard;
     #endif
 
     vec3 colorP = color.rgb;
@@ -403,7 +412,7 @@ void main() {
     #endif
 
     #if RAIN_PUDDLES >= 1 && defined OVERWORLD
-        float puddleLightFactor = max0(lmCoord.y * 32.0 - 31.0) * clamp((1.0 - 1.15 * lmCoord.x) * 10.0, 0.0, 1.0);
+        float puddleLightFactor = GetPuddleLightFactor(lmCoord);
         float puddleNormalFactor = pow2(max0(NdotUmax0 - 0.5) * 2.0);
         float puddleMixer = puddleLightFactor * inRainy * puddleNormalFactor;
         #if RAIN_PUDDLES < 3
@@ -412,49 +421,20 @@ void main() {
             float wetnessM = 1.0;
         #endif
         #ifdef PUDDLE_VOXELIZATION
-            vec3 voxelPos = SceneToPuddleVoxel(playerPos);
-            vec3 voxel_sample_pos = clamp01(voxelPos / vec3(puddle_voxelVolumeSize));
-            if (CheckInsidePuddleVoxelVolume(voxelPos)) {
-                noPuddles += texture2D(puddle_sampler, voxel_sample_pos.xz).r;
-            }
+            noPuddles += GetPuddleVoxelBlock(playerPos);
         #endif
         if (pow2(pow2(wetnessM)) * puddleMixer - noPuddles > 0.00001) {
-            vec2 worldPosXZ = playerPos.xz + cameraPosition.xz;
-            vec2 puddleWind = vec2(frameTimeCounter) * 0.03;
-            #if WATER_STYLE == 1
-                vec2 puddlePosNormal = floor(worldPosXZ * 16.0) * 0.0625;
-            #else
-                vec2 puddlePosNormal = worldPosXZ;
-            #endif
-
-            puddlePosNormal *= 0.1;
-            vec2 pNormalCoord1 = puddlePosNormal + vec2(puddleWind.x, puddleWind.y);
-            vec2 pNormalCoord2 = puddlePosNormal + vec2(puddleWind.x * -1.5, puddleWind.y * -1.0);
-            vec3 pNormalNoise1 = texture2DLod(noisetex, pNormalCoord1, 0.0).rgb;
-            vec3 pNormalNoise2 = texture2DLod(noisetex, pNormalCoord2, 0.0).rgb;
-            float pNormalMult = 0.03;
-
-            vec3 puddleNormal = vec3((pNormalNoise1.xy + pNormalNoise2.xy - vec2(1.0)) * pNormalMult, 1.0);
-            puddleNormal = clamp(normalize(puddleNormal * tbnMatrix), vec3(-1.0), vec3(1.0));
-            puddleNormal = normalize(mix(geoNormal, puddleNormal, rainFactor));
+            vec2 puddlePosNormal = GetPuddlePos(playerPos.xz + cameraPosition.xz);
+            vec3 puddleNormal = GetPuddleNormal(puddlePosNormal);
 
             #if RAIN_PUDDLES == 1 || RAIN_PUDDLES == 3
-                vec2 puddlePosForm = puddlePosNormal * 0.05;
-                float pFormNoise  = texture2DLod(noisetex, puddlePosForm, 0.0).b        * 3.0;
-                      pFormNoise += texture2DLod(noisetex, puddlePosForm * 0.5, 0.0).b  * 5.0;
-                      pFormNoise += texture2DLod(noisetex, puddlePosForm * 0.25, 0.0).b * 8.0;
-                      pFormNoise *= sqrt1(wetnessM) * 0.5625 + 0.4375;
-                      pFormNoise  = clamp(pFormNoise - 7.0, 0.0, 1.0);
+                float pFormNoise = GetPuddleFormNoise(puddlePosNormal, wetnessM);
             #else
                 float pFormNoise = wetnessM;
             #endif
             puddleMixer *= pFormNoise;
 
-            float puddleSmoothnessG = 0.7 - rainFactor * 0.3;
-            float puddleHighlight = (1.5 - subsurfaceMode * 0.6 * invNoonFactor);
-            smoothnessG = mix(smoothnessG, puddleSmoothnessG, puddleMixer);
-            highlightMult = mix(highlightMult, puddleHighlight, puddleMixer);
-            smoothnessD = mix(smoothnessD, 1.0, sqrt1(puddleMixer));
+            ApplyPuddleSpecular(smoothnessG, smoothnessD, highlightMult, puddleMixer, subsurfaceMode);
             normalM = normalize(mix(normalM, puddleNormal, sqrt1(puddleMixer) * 0.98));
         } else puddleMixer = 0.0;
     #endif
@@ -472,6 +452,8 @@ void main() {
         if (newDither > fog) discard;
 
         fog *= fog;
+
+        if (!BLOCK_LAVA_DEFINE) // skip lava because that is emissive on dh chunks as well
         emission *= fog;
     #endif
 
@@ -523,9 +505,7 @@ void main() {
         #endif
     #endif
 
-    #ifdef IPBR
-        color.rgb += maRecolor;
-    #endif
+    color.rgb += maRecolor;
 
     #if RAIN_PUDDLES >= 1 && BLOCK_REFLECT_QUALITY == 1 && defined OVERWORLD
         // Adding low quality sky reflection to puddles if Block Reflection Quality is Low
@@ -584,7 +564,7 @@ void main() {
 
         #ifdef SS_BLOCKLIGHT
             /* DRAWBUFFERS:0649 */
-            gl_FragData[3] = vec4(lightAlbedo, 0.0);
+            gl_FragData[3] = vec4(lightAlbedo, 1.0);
         #endif
 
         #ifdef PHOTONICS_LIGHTING
@@ -595,7 +575,7 @@ void main() {
         #endif
     #elif defined SS_BLOCKLIGHT
         /* DRAWBUFFERS:069 */
-        gl_FragData[2] = vec4(lightAlbedo, 0.0);
+        gl_FragData[2] = vec4(lightAlbedo, 1.0);
     #elif defined PHOTONICS_LIGHTING
         /* RENDERTARGETS:0,6,4,10,11,20 */
         gl_FragData[2] = vec4(mat3(gbufferModelViewInverse) * normalM, clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0);
@@ -798,7 +778,8 @@ void main() {
     #endif
 
     #ifdef IRIS_FEATURE_FADE_VARIABLE
-        chunkFade = mc_chunkFade;
+        // Iris sets mc_chunkFade to -1 in unknown pipelines
+        chunkFade = mc_chunkFade < 0.0 ? 1.0 : mc_chunkFade;
     #endif
 }
 

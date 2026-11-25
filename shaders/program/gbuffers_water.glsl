@@ -70,8 +70,8 @@ vec3 sunVec = GetSunVector();
 float NdotU = dot(normal, upVec);
 float NdotUmax0 = max(NdotU, 0.0);
 float SdotU = dot(sunVec, upVec);
-float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
-float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
+float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
 float sunVisibility2 = sunVisibility * sunVisibility;
 float shadowTimeVar1 = abs(sunVisibility - 0.5) * 2.0;
 float shadowTimeVar2 = shadowTimeVar1 * shadowTimeVar1;
@@ -270,6 +270,10 @@ void main() {
     bool isFoliage = false;
     vec3 dhColor = vec3(1.0);
 
+    #ifdef PHYSICS_OCEAN_V3
+        PhysicsOceanData ocean = physics_oceanFragment();
+    #endif
+
     #include "/lib/materials/materialHandling/translucentMaterials.glsl"
 
     #if defined WATER_REFRACTION && SELECT_OUTLINE == 4
@@ -363,7 +367,6 @@ void main() {
                                         depthtex1, dither, skyLightFactor, fresnel,
                                         smoothnessG, geoNormal, color.rgb, shadowMult, highlightMult, enderDragonDead, texelOffset);
         color.rgb = mix(color.rgb, reflection.rgb, fresnelM);
-
     #else
         fresnelM = 0.0;
         vec4 reflection = vec4(0.0);
@@ -397,17 +400,19 @@ void main() {
         color.a *= fog;
     #endif
 
-    #ifdef ENTITIES_ARE_LIGHT
-        SSBLAlpha = 0.0;
+    #if (DETAIL_QUALITY >= 3 && WATER_REFRACTION_DEFINE == -1) || WATER_REFRACTION_DEFINE == 1 || (WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS_INTERNAL > 0) || defined BETTER_LABPBR_REFRACTIONS_INTERNAL
+        const float translucentMarker = 1.0;
+    #else
+        const float translucentMarker = 0.0;
     #endif
 
     /* DRAWBUFFERS:036 */
     gl_FragData[0] = color;
     gl_FragData[1] = vec4(1.0 - translucentMult.rgb, translucentMult.a);
-    gl_FragData[2] = vec4(1.0, materialMask, skyLightFactor, lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission));
+    gl_FragData[2] = vec4(translucentMarker, materialMask, skyLightFactor, lmCoord.x + clamp01(purkinjeOverwrite) + clamp01(emission));
 
-    // supposed to be " #if defined WATER_REFRACTION || (WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS_INTERNAL  > 0) " but Optifine bad
-    #if DETAIL_QUALITY >= 3 || (WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS_INTERNAL > 0) || defined SS_BLOCKLIGHT || defined BETTER_LABPBR_REFRACTIONS_INTERNAL
+    // supposed to be " #if defined WATER_REFRACTION || (WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS_INTERNAL > 0) " but Optifine bad
+    #if (DETAIL_QUALITY >= 3 && WATER_REFRACTION_DEFINE == -1) || WATER_REFRACTION_DEFINE == 1 || (WATER_REFLECT_QUALITY > 0 && WORLD_SPACE_REFLECTIONS_INTERNAL > 0) || defined SS_BLOCKLIGHT || defined BETTER_LABPBR_REFRACTIONS_INTERNAL
         #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0 || defined BETTER_LABPBR_REFRACTIONS_INTERNAL
             #ifdef SS_BLOCKLIGHT
                 /* DRAWBUFFERS:036489 */
@@ -501,6 +506,12 @@ attribute vec4 at_tangent;
 
 //Program//
 void main() {
+    vec4 glVertexM = gl_Vertex;
+
+    #ifdef PHYSICS_OCEAN_V3
+        glVertexM = physics_oceanVertex(gl_Vertex);
+    #endif
+
     texCoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
     #ifdef ATLAS_ROTATION
         texCoord += texCoord * float(hash33(mod(cameraPosition * 0.1, vec3(100.0))));
@@ -531,7 +542,7 @@ void main() {
         tangent.z, binormal.z, normal.z
     );
 
-    viewVector = tbnMatrix * (gl_ModelViewMatrix * gl_Vertex).xyz;
+    viewVector = tbnMatrix * (gl_ModelViewMatrix * glVertexM).xyz;
 
     #if ANISOTROPIC_FILTER == 0 || !defined ANISOTROPIC_FILTER_ON_TRANSLUCENTS
         vec2 midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
@@ -547,7 +558,7 @@ void main() {
         vTexCoordAM.xy  = min(texCoord, midCoord - texMinMidCoord);
     #endif
 
-    vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
+    vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * glVertexM;
     playerPos = position.xyz;
 
     #ifdef WAVING_WATER_VERTEX
@@ -584,7 +595,8 @@ void main() {
     #endif
 
     #ifdef IRIS_FEATURE_FADE_VARIABLE
-        chunkFade = mc_chunkFade;
+        // Iris sets mc_chunkFade to -1 in unknown pipelines
+        chunkFade = mc_chunkFade < 0.0 ? 1.0 : mc_chunkFade;
     #endif
 
     #if MC_VERSION >= 260100

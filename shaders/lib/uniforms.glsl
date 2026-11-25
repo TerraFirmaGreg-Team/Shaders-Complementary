@@ -99,6 +99,7 @@ uniform sampler2D colortex8;
 uniform sampler2D colortex12;
 uniform sampler2D colortex13;
 uniform sampler2D colortex14;
+uniform sampler2D colortex15;
 
 #if defined SS_BLOCKLIGHT || defined PHOTONICS_LIGHTING
 uniform sampler2D colortex9;
@@ -121,6 +122,12 @@ uniform sampler2D normals;
 uniform sampler2D noisetex;
 uniform sampler2D specular;
 uniform sampler2D tex;
+
+// MC 26.1 only: Sodium terrain/translucent bind an isamplerBuffer to unit 2, same as Iris does with lightmap. Non-Windows drivers reject the draw.
+#if defined MC_OS_WINDOWS || MC_VERSION < 260100 || MC_VERSION >= 260200 || !(defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER)
+    #define LIGHTMAP_SAMPLER_SAFE
+    uniform sampler2D lightmap;
+#endif
 
 #if (defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000009) && defined FINAL
 uniform sampler2D epWatermark;
@@ -198,6 +205,10 @@ uniform vec3 previousCameraPositionFract;
     uniform usampler2D puddle_sampler;
 #endif
 
+#ifdef SKY_HEIGHT_INTERNAL
+    uniform usampler2D skyheight_sampler;
+#endif
+
 #if WORLD_SPACE_REFLECTIONS_INTERNAL > 0
     uniform sampler2D textureAtlas;
 
@@ -247,6 +258,7 @@ uniform float inSoulValley = 0.0;
 uniform float inWarpedForest = 0.0;
 uniform float inPaleGarden = 0.0;
 uniform float inSulfurCaves = 0.0;
+uniform float inIceCaves = 0.0;
 uniform float isSneaking = 1.0;
 uniform float isSprinting = 0.0;
 uniform float inLushCave = 0.0;
@@ -262,11 +274,13 @@ uniform float eyeBrightnessXM;
 uniform float eyeBrightnessXM2;
 uniform float waterAltitude = 61.9;
 uniform float inJungle = 0.0;
+uniform float inDappledForest = 0.0;
 uniform float thunderFactor = 0.0;
 uniform float worldTimeSmooth;
 uniform float worldAgeSmooth;
+uniform float isCurrentBiomeModded = 0.0;
 #ifdef EUPHORIA_PATCHES_UNIFORMS
-    uniform bool euphoriaPatchesIsDayAdvancing = true;
+    uniform float euphoriaPatchesFrozenTimeOffset = 0.0;
     uniform int euphoriaPatchesCurrentDayMillis = -1;
 
     uniform int euphoriaPatchesCurrentSeasonTick;
@@ -274,8 +288,26 @@ uniform float worldAgeSmooth;
     uniform int euphoriaPatchesTotalSeasonDuration;
 #endif
 
+#if defined EUPHORIA_PATCHES_MACE_WAVE_STATE_UNIFORM && MC_VERSION >= 12100
+    // Mace smash waves, block position of each wave and x = progress (-1 = unused), y = strength of wave 0, zw the same for wave 1
+    #ifdef IS_IRIS
+        uniform ivec3 euphoriaPatchesMaceWavePos0;
+        uniform ivec3 euphoriaPatchesMaceWavePos1;
+    #else
+        // OptiFine has no ivec3 and uploads an ivec4 with w = 0, always read these with .xyz
+        uniform ivec4 euphoriaPatchesMaceWavePos0;
+        uniform ivec4 euphoriaPatchesMaceWavePos1;
+    #endif
+    uniform vec4 euphoriaPatchesMaceWaveState = vec4(-1.0, 0.0, -1.0, 0.0);
+#endif
+
+#ifdef EUPHORIA_PATCHES_CLOUD_ALPHA_UNIFORM
+    uniform float euphoriaPatchesCloudAlpha = 1.0;
+#endif
+
 uniform vec2 viewSize;
 uniform vec2 texelSize;
+
 
 //  _____   ____   _____    _____    _____      ____   __   _____    __    __   _____       ___    _____    ____    ___
 // |_   _| |  __| |  __ \  |  __ \  /  _  \    |  __| |__| |  __ \  |  \  /  | /  _  \     //_/\  |//__/\  |//__|  //_/\

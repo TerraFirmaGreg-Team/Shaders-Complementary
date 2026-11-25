@@ -36,5 +36,7 @@
 #define MCWIND_STALKS
 #define MCWIND_LILY_PAD
 #define MCWIND_PENDANTS
+#ifdef MCWIND_VINES
+#endif
 
 #endif

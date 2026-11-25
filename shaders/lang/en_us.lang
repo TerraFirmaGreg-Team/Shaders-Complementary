@@ -5,7 +5,7 @@ Contribute=Contribute to the official translations here: https://www.euphoriapat
 option.LANG_FILE_HEADER=Translation files by the Community - The translation may be outdated. SpacEagle17 cannot guarantee their accuracy.
 option.TRANSLATORS=Translated by: Insert your name(s) here
 
-shaderDescription=§cComplementary Shaders r5.9§r + §dEuphoria Patches 1.10.0§r\nComplementary add-on by SpacEagle17 extending it with many more unique optional features and settings.\nDev versions: §dwww.euphoriapatches.com/support§r
+shaderDescription=§cComplementary Shaders r5.10§r + §dEuphoria Patches 1.11.2§r\nComplementary add-on by SpacEagle17 extending it with many more unique optional features and settings.\nDev versions: §dwww.euphoriapatches.com/support§r
 
 #Profiles
 profile.POTATO=Performance: §aPotato
@@ -97,7 +97,7 @@ option.info17=Beta Version: SpacEagle17 Patreon
 value.info17.0=
 option.info17.comment=You can support SpacEagle17 on Patreon or Ko-Fi and access exclusive development versions. §d§l§neuphoriapatches.com/support
 
-option.info18=For Complementary r5.9
+option.info18=For Complementary r5.10
 value.info18.0=
 option.info18.comment=Thank you for Installing Euphoria Patches :)
 
@@ -407,6 +407,7 @@ option.LIGHTSHAFT_NOON_I=Light Shaft Noon Multiplier
 option.LIGHTSHAFT_SUNSET_I=Light Shaft Sunset Multiplier
 option.LIGHTSHAFT_NIGHT_I=Light Shaft Night Multiplier
 option.LIGHTSHAFT_RAIN_I=Light Shaft Rain Multiplier
+option.LIGHTSHAFT_WATER_I=Light Shaft Underwater Mult
 
 option.LIGHTSHAFT_SUNSET_SATURATION=Light Shaft Sunset Color
 option.LIGHTSHAFT_SUNSET_SATURATION.comment=Adjusts the extra color saturation given to the color of light shafts at sunrise and sunset times. Higher values are going to produce a red-ish orange, while lower values are going to shift it towards yellow.
@@ -556,6 +557,12 @@ value.WATER_CAUSTIC_STYLE_DEFINE.-1=Same as Water
 value.WATER_CAUSTIC_STYLE_DEFINE.1=Reimagined
 value.WATER_CAUSTIC_STYLE_DEFINE.3=Unbound
 
+option.WATER_REFRACTION_DEFINE=Water Refraction
+option.WATER_REFRACTION_DEFINE.comment=Adds water refraction effect for water and nether portals.
+value.WATER_REFRACTION_DEFINE.-1=§aSet By DQ
+value.WATER_REFRACTION_DEFINE.0=§aOFF
+value.WATER_REFRACTION_DEFINE.1=§cON
+
 option.WATER_REFRACTION_INTENSITY=Water Refraction Intensity §e[*]§r
 option.WATER_REFRACTION_INTENSITY.comment=Adjusts the intensity of water refraction and underwater distortion. §e[*]§r This setting only fully works when Detail Quality is set to "High", or else it will only affect the subtle underwater distortion.
 
@@ -698,6 +705,9 @@ option.PIXELATED_BLOCKLIGHT.comment=Makes the lighting cast by light source bloc
 option.PIXELATED_AO=Pixelated Edge Shadows
 option.PIXELATED_AO.comment=Makes Minecraft's vanilla ambient occlusion look pixelated.
 
+option.PIXELATED_CLOUD_SHADOWS=Pixelated Cloud Shadows §e[*]§r
+option.PIXELATED_CLOUD_SHADOWS.comment=Makes cloud shadows more pixelated than regular pixel shadows. §e[*]§r Unlike other pixelation settings, this one does not respect the "Pixelation Scale" setting. §e[*]§r Cloud Shadows setting must be enabled in cloud settings for this feature to work.
+
 option.PIXEL_SCALE=Pixelation Scale
 option.PIXEL_SCALE.comment=Scaling done on the textures resolution.
 value.PIXEL_SCALE.-2=0.25x
@@ -739,6 +749,9 @@ value.BLOOM_STRENGTH.0.25=130% §c[-]
 value.BLOOM_STRENGTH.0.28=150% §c[-]
 value.BLOOM_STRENGTH.0.32=180% §c[-]
 value.BLOOM_STRENGTH.10.00=§cInsane
+
+option.BLOOM_SMOOTHING=Bloom Smoothing §e[*]§r
+option.BLOOM_SMOOTHING.comment=Smooths the bloom changes over a period of time to reduce flickering. §e[*]§r Bloom smoothing can cause TAA-like trailing artifacts.
 
 option.IMAGE_SHARPENING=Image Sharpening
 option.IMAGE_SHARPENING.comment=Makes the image sharper using a filter. §c[-]§r Too much sharpening might cause visual artifacts like aliasing, flickering, noise, and subtle brightness changes.
@@ -815,7 +828,7 @@ option.MOTION_BLURRING_STRENGTH.comment=Adjusts the intensity of motion blur.
 
 option.WORLD_BLUR=§eWorld Blur§r
 option.WORLD_BLUR.comment=Enables world blurring. Distance Blur: Blur gets applied like fog, depending on the distance from the camera. Depth of Field: Blurring happens depending on the focus point of the camera. §c[-]§r This effect can severely impact performance.
-value.WORLD_BLUR.0=§aOFF
+value.WORLD_BLUR.-1=§aOFF
 value.WORLD_BLUR.1=§cDistance Blur
 value.WORLD_BLUR.2=§cDepth of Field
 
@@ -864,7 +877,7 @@ option.IPBR_COMPAT_MODE_DEFINE.comment=Changes how some IPBR+ features are calcu
 option.IPBR_PARTICLE_FEATURES=IPBR+ Particle Features
 option.IPBR_PARTICLE_FEATURES.comment=Enables several features for particles, including things like glowing lava particles and better-colored water particles.
 
-option.FANCY_GLASS=Improved Glass
+option.FANCY_GLASS=Improved Glass §c[-]§r
 option.FANCY_GLASS.comment=Improves the regular glass by adding a translucent layer to it. §c[-]§r Does not work on older Iris versions. §e[*]§r RP Support option must be set to Integrated PBR+.
 
 option.GREEN_SCREEN_LIME=Green Screen Lime Blocks
@@ -1093,11 +1106,21 @@ option.WAVING_LILY_PAD.comment=Adds movement to lily pads and frogspawn to simul
 option.WAVING_WATER_VERTEX=Waving Water Height
 option.WAVING_WATER_VERTEX.comment=Adds movement to water position to simulate wind. §e[*]§r This option is not related to the "Water Wave Strength" setting.
 
+option.WATER_NOISE_COLORING=Waving Water Brightness
+option.WATER_NOISE_COLORING.comment=Adds slight color variance to oceans, making them look wavier. §e[*]§r "Set By DQ" means that this setting is determined by "Detail Quality" in Performance Settings unless you change it.
+value.WATER_NOISE_COLORING.-1=§aSet By DQ
+value.WATER_NOISE_COLORING.0=§aOFF
+value.WATER_NOISE_COLORING.1=§cON
+
 option.WAVING_RAIN=Waving Rain/Snow Texture
 option.WAVING_RAIN.comment=Adds movement to falling rain and snow textures to make it look more dynamic.
 
-option.SPECIAL_PORTAL_EFFECTS=Special Portal Effects
-option.SPECIAL_PORTAL_EFFECTS.comment=Adds special animations and emission to Nether Portals, End Portals, and End Gateways.
+option.SPECIAL_PORTAL_EFFECT=Special Portal Effects
+option.SPECIAL_PORTAL_EFFECT.comment=Adds special animations and emission to Nether Portals, End Portals, and End Gateways.
+value.SPECIAL_PORTAL_EFFECT.0=OFF
+value.SPECIAL_PORTAL_EFFECT.1=End Portal
+value.SPECIAL_PORTAL_EFFECT.2=Nether Portal
+value.SPECIAL_PORTAL_EFFECT.3=Full
 
 option.REFLECTION_RES=§eReflection Resolution§r
 option.REFLECTION_RES.comment=Changes the resolution of PBR reflections on blocks (and the world-space reflections if you have that setting enabled) to gain performance. §c[-]§r "Full" resolution reflections can impact performance way more than expected in some situations. §e[*]§r This feature does not work on Optifine.
@@ -1194,6 +1217,9 @@ option.COLORED_LIGHT_FOG.comment=Adds volumetric blocklight fog to the scene, mo
 
 option.COLORED_LIGHT_FOG_I=Light Fog Intensity
 option.COLORED_LIGHT_FOG_I.comment=Determines the brightness of the Colored Light Fog.
+
+option.COLORED_DYNAMIC_LIGHTING=§eColored Dynamic Lighting [*]§r
+option.COLORED_DYNAMIC_LIGHTING.comment=Allows dynamic light sources, like dropped torch items on the ground, to cast colored lighting. §e[*]§r This feature only works if "Advanced Color Tracing" and "Entity Shadows" (for regular entities) are enabled in Performance Settings. §c[-]§r This effect can impact performance.
 
 option.LIGHT_COLOR_MULTS=§eLighting Color Multipliers
 option.LIGHT_COLOR_MULTS.comment=Enables customization of lighting colors that are seen on all surfaces.
@@ -1376,6 +1402,8 @@ screen.END_ROD_SETTINGS=End Rod
 screen.END_ROD_SETTINGS.comment=Settings that relate to end rods.
 screen.FOLIAGE_SETTINGS=Foliage
 screen.FOLIAGE_SETTINGS.comment=Settings that relate to foliage.
+screen.SSS_SETTINGS=Subsurface Scattering
+screen.SSS_SETTINGS.comment=Settings that relate to Subsurface Scattering, aka light shining through leaves, plants and other translucent materials.
 screen.PORTAL_SETTINGS=Portal Settings
 screen.PORTAL_SETTINGS.comment=Settings that relate to portals.
 screen.MISC_SETTINGS=Miscellaneous
@@ -1420,6 +1448,8 @@ screen.FUN=Fun
 screen.FUN.comment=Let's have some fun.
 screen.WORLD_CURVATURE_SETTINGS=World Curvature
 screen.WORLD_CURVATURE_SETTINGS.comment=Settings that relate to World Curvature.
+screen.SHOCKWAVE_SETTINGS=Shockwave Settings
+screen.SHOCKWAVE_SETTINGS.comment=Settings that relate to Shockwaves.
 screen.RANDOM_BLOCKLIGHT_SETTINGS=Random Blocklight
 screen.RANDOM_BLOCKLIGHT_SETTINGS.comment=Settings that relate to Random Blocklight.
 
@@ -1427,7 +1457,7 @@ screen.POPULAR_SETTINGS=§dPopular Settings
 screen.POPULAR_SETTINGS.comment=These are some of the most popular settings in Euphoria Patches. Apart from Advanced Colored Tracing (which is needed for a lot of effects), all options in here are exclusive to Euphoria Patches and cannot be found in the Original Complementary Shaderpack.
 screen.POPULAR_SETTINGS_2=Page 2
 screen.POPULAR_SETTINGS_3=Page 3
-screen.EP_VERSION=Euphoria Patches §d1.10.0
+screen.EP_VERSION=Euphoria Patches §d1.11.2
 screen.EP_VERSION.comment=§bYou can support SpacEagle17 on Patreon or Ko-Fi and get new Exclusive Beta Versions. §r§d§l§neuphoriapatches.com/support
 
 screen.MODDED_SETTINGS=Modded Settings
@@ -1600,8 +1630,14 @@ option.CLOUD_LIGHT_MULTIPLIER.comment=Multiplies the brightness the lighting sid
 option.CLOUD_NIGHT_LIGHT_MULTIPLIER=Cloud Night Light Multiplier
 option.CLOUD_NIGHT_LIGHT_MULTIPLIER.comment=Multiplies the brightness the lighting side of the clouds receives during the night.
 
+option.CLOUD_SUNSET_LIGHT_MULTIPLIER=Cloud Sunrise/Sunset Light Multiplier
+option.CLOUD_SUNSET_LIGHT_MULTIPLIER.comment=Multiplies the brightness the lighting side of the clouds receives during sunrise and sunset.
+
 option.CLOUD_AMBIENT_MULTIPLIER=Cloud Ambient Light Multiplier
 option.CLOUD_AMBIENT_MULTIPLIER.comment=Multiplies the brightness of the ambient light side of the clouds.
+
+option.CLOUD_SUNSET_AMBIENT_MULTIPLIER=Cloud Sunrise/Sunset Ambient Light Multiplier
+option.CLOUD_SUNSET_AMBIENT_MULTIPLIER.comment=Multiplies the brightness of the ambient light side of the clouds during sunrise and sunset.
 
 option.CLOUD_NIGHT_AMBIENT_MULTIPLIER=Cloud Night Ambient Light Multiplier
 option.CLOUD_NIGHT_AMBIENT_MULTIPLIER.comment=Multiplies the brightness of the ambient light side of the clouds during the night.
@@ -2044,9 +2080,6 @@ option.SILHOUETTE_BRIGHTNESS=Silhouette Brightness
 option.RAIN_ATMOSPHERE=Epic Thunderstorm
 option.RAIN_ATMOSPHERE.comment=Improves thunderstorms significantly when a lightning bolt strikes. §e[*]§r Works much better with Iris
 
-option.BLUE_SCREEN=Blue Screen
-option.BLUE_SCREEN.comment=Turns "Blue Concrete", "Blue Wool", and "Blue Carpet" into blue screens for video editing. Tip 1: Turn off "Bloom" option to improve separation. Tip 2: Put lights under blue carpets for lighting. Tip 3: You can turn off Anti-Aliasing (FXAA) and set Detail Quality to Potato in Performance Settings to disable all filtering and get pixel-perfect separation.
-
 option.MIRROR_DIMENSION=Mirror Dimension
 option.MIRROR_DIMENSION.comment=You have learned the art of magic and are brave enough to enter the mirror dimension.
 
@@ -2058,7 +2091,7 @@ option.END_CURVATURE_SIZE=End Curvature Size
 option.LAVA_VARIATION=Lava Preset
 option.LAVA_VARIATION.comment=Hot presets in your area. Choose Now!
 value.LAVA_VARIATION.0=Complementary
-value.LAVA_VARIATION.1=Adaptive Noise (Recommended)
+value.LAVA_VARIATION.1=Adaptive (Recommended)
 value.LAVA_VARIATION.2=Blushing Hotness
 value.LAVA_VARIATION.3=Molten Cheese
 value.LAVA_VARIATION.4=Dark Islands
@@ -2334,18 +2367,19 @@ option.NETHER_NOISE.comment=Makes the Nether sky above the Nether roof more inte
 value.NETHER_NOISE.0=OFF
 value.NETHER_NOISE.1=ON
 
-option.MCBL_MAIN_DEFINE=Euphoria Colored Lighting
-option.MCBL_MAIN_DEFINE.comment=Enables multi-colored blocklight. Set to to ACT + Screen-Space to use the screen-space system alongside Advanced Colored Tracing. ACT + SSBL + Dynamic Lighting Support can produce incorrect results in modded environments - should only be used in vanilla with a dynamic lighting mod. §e[*]§rOnly works on 1.16.5 and above or on Angelica.
+option.MCBL_MAIN_DEFINE=Screenspace Colored Lighting
+option.MCBL_MAIN_DEFINE.comment=Enables Euphoria Patches exclusive screenspace colored lighting. Set to to On + ACT to use the screen-space system alongside Advanced Colored Tracing. This also works on OptiFine and Mac unlike ACT. §e[*]§rOnly works on 1.16.5 and above or on Angelica.
 value.MCBL_MAIN_DEFINE.0=OFF
-value.MCBL_MAIN_DEFINE.1=Screen-Space
-value.MCBL_MAIN_DEFINE.2=ACT + Screen-Space
-value.MCBL_MAIN_DEFINE.3=ACT + SSBL + Dynamic Lighting Support
+value.MCBL_MAIN_DEFINE.1=On
+value.MCBL_MAIN_DEFINE.2=On + ACT
 
 option.MCBL_INFLUENCE=Multi-Colored Blocklight Influence
 option.MCBL_INFLUENCE.comment=Controls how much the multi-colored blocklight affects the default blocklight color.
 
 option.SSS_SNOW_ICE=Snow and Ice SSS
 option.SSS_SNOW_ICE.comment=Adds subsurface scattering to snow and ice blocks.
+option.SSS_HONEYCOMB=Honeycomb Block SSS
+option.SSS_HONEYCOMB.comment=Adds subsurface scattering to honeycomb blocks.
 
 option.BEDROCK_NOISE=Bedrock Noise
 option.BEDROCK_NOISE.comment=Adds a noise effect below bedrock in the Nether and Overworld.
@@ -2603,6 +2637,12 @@ option.SSS_STRENGTH=Subsurface Scattering
 value.SSS_STRENGTH.0=OFF
 value.SSS_STRENGTH.1=ON
 
+option.SKYLIGHT_SSS=Skylight Subsurface Scatter
+option.SKYLIGHT_SSS.comment=Lets leaves, plants and other translucent materials glow from skylight passing through them, most visible when looking up at them from below. This is always on when "Improved LabPBR" has "Subsurface Scattering Support" enabled. §e[*]§r This setting only works if "Subsurface Scattering" is on and in the Overworld.
+
+option.BLOCKLIGHT_SSS=Blocklight Subsurface Scatter
+option.BLOCKLIGHT_SSS.comment=Lets leaves, plants and other translucent materials glow from block light sources behind them, slightly tinted by the light's color. This is always on when "Improved LabPBR" has "Subsurface Scattering Support" enabled. §e[*]§r This setting only works if "Subsurface Scattering" and "Colored Lighting" are on.
+
 option.PIXEL_WATER=Procedural Pixel Water
 option.PIXEL_WATER.comment=Generated procedural pixelated water texture.
 value.PIXEL_WATER.0=OFF
@@ -2632,11 +2672,15 @@ value.SUN_MOON_IPBR.1=Sun Only
 value.SUN_MOON_IPBR.2=Moon Only
 value.SUN_MOON_IPBR.3=Sun and Moon
 
-option.DAYLIGHT_STARS=Daylight Stars
-option.DAYLIGHT_STARS.comment=Enables Stars during the day
+option.DAYLIGHT_STARS_AMOUNT=Daylight Stars
+option.DAYLIGHT_STARS_AMOUNT.comment=How visible stars are during the day. 0% hides them, 100% shows them at full brightness.
+suffix.DAYLIGHT_STARS_AMOUNT=\%
 
 option.FROZEN_TIME=Frozen Time
 option.FROZEN_TIME.comment=Freezes shader animation time, shader effects which rely on frame based animation will be frozen and thus allowing for good comparison screenshots.
+
+option.USE_SYNCED_TIME=Use Synced Time
+option.USE_SYNCED_TIME.comment=Fetures such as clouds, nebula and others will be synced across players by using the game ticks.
 
 option.DARKER_DEPTH_OCEANS=Deeper Darker Oceans
 option.DARKER_DEPTH_OCEANS.comment=Light decreases with depth of the Ocean
@@ -2654,6 +2698,9 @@ option.BEACON_BEAM_EMISSION.comment=Change the emission strength of the beacon b
 
 option.PINKER_CHERRY_LEAVES=Pinker Cherry Leaves
 
+option.DISCARD_FOLIAGE_SHADOW=Remove Foliage Shadow
+option.DISCARD_FOLIAGE_SHADOW.comment=Prevents foliage such as grass, flowers, saplings, crops and similar plants from casting a shadow. §c[-]§r This effect does NOT improve performance and is only a visual change, in fact technically it decreases performance by a super small amount.
+
 option.LIGHTMAP_CURVES=Lightmap Curves
 option.LIGHTMAP_CURVES.comment=Change the lightmap curves of the world.
 option.UPPER_LIGHTMAP_CURVE=Upper Lightmap Curve
@@ -2669,7 +2716,10 @@ option.SHOCKWAVE=Shockwave
 value.SHOCKWAVE.0=OFF
 value.SHOCKWAVE.1=Circle
 value.SHOCKWAVE.2=Square
-option.SHOCKWAVE.comment=Crouch and find out!
+option.SHOCKWAVE.comment=Use the Mace and find out!
+
+option.SHOCKWAVE_CROUCHING=Crouching
+option.SHOCKWAVE_CROUCHING.comment=Also activates the shockwave when crouching. Auto enabled before 1.21, because the Mace did not exist yet.
 
 option.STAR_LAYER_OW=Star Layer
 option.STAR_LAYER_OW.comment=Adds additional stars to the current stars, larger or smaller ones
@@ -2812,13 +2862,14 @@ option.ACT_ORE_INTENSITY=ACT Ore Intensity
 option.ACT_ORE_INTENSITY.comment=Change the ACT light intensity of ores.
 value.ACT_ORE_INTENSITY.0.0=OFF
 
-option.ENTITIES_ARE_LIGHT=Entities Are Light
-
 option.WATER_CAUSTIC_STRENGTH=Water Caustic Strength
 option.WATER_CAUSTIC_STRENGTH.comment=Change the strength of the caustic effect in water.
 
-option.ROUGHNESS_MULTIPLIER=Roughness Mask
-option.ROUGHNESS_MULTIPLIER.comment=Change where materials are rough.
+option.REFLECTION_ROUGHNESS_MULT=Roughness Multiplier
+option.REFLECTION_ROUGHNESS_MULT.comment=Multiplies how rough materials are. Above 1.0 is rougher, below 1.0 is smoother.
+
+option.REFLECTION_MIRRORNESS=Mirrorness
+option.REFLECTION_MIRRORNESS.comment=How strongly materials reflect, independent of the roughness multiplier. Above 1.0 makes rough surfaces more mirror-like, below 1.0 less reflective.
 
 option.ROUGHNESS_INTENSITY=Roughness Intensity
 option.ROUGHNESS_INTENSITY.comment=Change the roughness of the materials and make the more or less shiny.
@@ -2844,8 +2895,14 @@ suffix.BETTER_LABPBR_REFRACTIONS=%
 option.BETTER_LABPBR_POROSITY=Porosity Support
 option.BETTER_LABPBR_POROSITY.comment=Makes rain-exposed LabPBR materials darken based on their porosity, and gain a reflective wet sheen. §e[*]§r This setting only works if "RP Support" is set to LabPBR
 
+option.BETTER_LABPBR_POM_PUDDLES=POM Rain Puddles
+option.BETTER_LABPBR_POM_PUDDLES.comment=Makes rain fill in the holes of blocks that have POM §e[*]§r This setting only works if "RP Support" is set to LabPBR and "Parallax Occlusion Mapping" is enabled.
+
 option.BETTER_LABPBR_AO=Material AO Support
 option.BETTER_LABPBR_AO.comment=Darkens direct lighting based on the material ambient occlusion baked into the LabPBR normal texture. §e[*]§r This setting only works if "RP Support" is set to LabPBR
+
+option.BETTER_LABPBR_SSS=Subsurface Scattering
+option.BETTER_LABPBR_SSS.comment=Lets materials light up from behind based on the subsurface scattering value stored in the LabPBR specular texture. Works on blocks, translucent blocks, and on entities if "Entity Shadows" is enabled and on block entities if it's set to "Full". §e[*]§r This setting only works if "RP Support" is set to LabPBR and "Real-Time Shadows" is set to Low or higher.
 
 option.SHADOW_SATURATION=Shadow Saturation
 option.SHADOW_SATURATION.comment=Change the saturation of the shadows and light shafts. §e[*]§r This setting only works if "Real-Time Shadows" is set to Low or higher.
@@ -3138,7 +3195,7 @@ option.PANINI_PROJECTION.comment=Enables Panini Projection, which is a type of p
 value.PANINI_PROJECTION.0=OFF
 
 option.BLACK_HOLE=Black Hole
-option.BLACK_HOLE.comment=Adds a black hole to the skybox in the End. Its position is controlled by the Black Hole Position settings
+option.BLACK_HOLE.comment=Adds a black hole to the skybox in the End. This slider changes the brightness of the black hole. Its position is controlled by the Black Hole Position settings
 value.BLACK_HOLE.0=OFF
 
 option.BLACK_HOLE_SHAPE=Black Hole Shape
@@ -3192,3 +3249,13 @@ option.BLACK_HOLE_LATITUDE_BIAS.comment=Changes the bias of the black hole's lat
 option.BLACK_HOLE_STREAK=Horizontal Streak
 option.BLACK_HOLE_STREAK.comment=Adds a horizontal accretion-disk streak to the black hole.
 value.BLACK_HOLE_STREAK.0=OFF
+
+option.REFLECTIVE_HORSES=Glistening Horses
+option.REFLECTIVE_HORSES.comment=Every kid loves a shiny horse! A horse which is not shiny is a sad horse.
+
+option.MODDED_FOG_SUPPORT=Modded Fog Support
+option.MODDED_FOG_SUPPORT.comment=Adds support for modded fogs, it should not do anything if a mod does not add a custom fog.
+
+option.ENTITY_SHADOW_DISTANCE=§4§lEntity Shadow Distance
+option.ENTITY_SHADOW_DISTANCE.comment=Multiplier for the entity shadow distance in the Overworld and End. §c[-]§r This has a rather high performance (FPS) impact when higher than default values are used.
+value.ENTITY_SHADOW_DISTANCE.0.125=Default (0.125)

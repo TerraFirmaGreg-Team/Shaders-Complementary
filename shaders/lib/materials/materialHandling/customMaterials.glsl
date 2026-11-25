@@ -22,6 +22,20 @@
     }
 #endif
 
+#ifdef BETTER_LABPBR_POM_PUDDLES_ACTIVE
+    float GetPomPuddleLevel() {
+        float puddleMixer = GetPuddleLightFactor(lmCoord) * inRainy * pow2(max0(geoNdotU - 0.5) * 2.0);
+        float noPuddles = 0.0;
+        #ifdef PUDDLE_VOXELIZATION
+            noPuddles = GetPuddleVoxelBlock(vertexPos);
+        #endif
+        if (pow2(pow2(wetnessDynamic)) * puddleMixer - noPuddles <= 0.00001) return 0.0;
+
+        // The height up to where the puddle fills the POM
+        return 0.965 * sqrt(sqrt(puddleMixer * wetnessDynamic));
+    }
+#endif
+
 void GetCustomMaterials(inout vec4 color, inout vec3 normalM, inout vec2 lmCoordM, inout float NdotU, inout vec3 shadowMult, inout float smoothnessG, inout float smoothnessD, inout float highlightMult, inout float emission, inout float materialMask, inout float materialAO, vec3 viewPos, float lViewPos) {
     vec2 texCoordM = texCoord;
 
@@ -32,20 +46,27 @@ void GetCustomMaterials(inout vec4 color, inout vec3 normalM, inout vec2 lmCoord
         vec4 normalMap;
         bool skipPom = false;
 
+        #ifdef BETTER_LABPBR_POM_PUDDLES_ACTIVE
+            vec2 pomPuddlePos = GetPuddlePos(vertexPos.xz + cameraPosition.xz);
+            float pomPuddleLevel = GetPomPuddleLevel(), pomPuddle = 0.0;
+        #else
+            float pomPuddleLevel = 0.0;
+        #endif
+
+        #ifdef GBUFFERS_ENTITIES
+            if (entityId == 50128 || entityId == 50132) skipPom = true; // Item Frame, Glow Item Frame
+        #endif
+        #ifdef GBUFFERS_BLOCK
+            if (blockEntityId == 5004) skipPom = true; // Signs
+        #endif
+        #ifdef GBUFFERS_HAND
+            if (heldItemId == 40004 || heldItemId2 == 40004) skipPom = true; // Filled Map
+        #endif
+
         if (!skipPom) {
             texCoordM = vTexCoord.xy * vTexCoordAM.zw + vTexCoordAM.xy;
 
             parallaxFade = pow2(lViewPos / POM_DISTANCE);
-            #ifdef GBUFFERS_ENTITIES
-                if (entityId == 50008) parallaxFade = 1.1; // Item Frame, Glow Item Frame
-            #endif
-            #ifdef GBUFFERS_BLOCK
-                if (blockEntityId == 5004) parallaxFade = 1.1; // Signs
-            #endif
-            #ifdef GBUFFERS_HAND
-                if (heldItemId == 40004 || heldItemId2 == 40004) parallaxFade = 1.1; // Filled Map
-            #endif
-
             parallaxTraceCoordDepth = vec3(texCoordM, 1.0);
             parallaxLocalCoord = vTexCoord.st;
 
@@ -58,7 +79,7 @@ void GetCustomMaterials(inout vec4 color, inout vec3 normalM, inout vec2 lmCoord
                     dither = fract(dither + goldenRatio * mod(float(frameCounter), 3600.0));
                 #endif
 
-                parallaxLocalCoord = GetParallaxCoord(parallaxFade, dither, texCoordM, parallaxTexDepth, parallaxTraceCoordDepth);
+                parallaxLocalCoord = GetParallaxCoord(parallaxFade, dither, pomPuddleLevel, texCoordM, parallaxTexDepth, parallaxTraceCoordDepth);
 
                 normalMap = textureGrad(normals, texCoordM, dcdx, dcdy);
                 color = textureGrad(tex, texCoordM, dcdx, dcdy);
@@ -68,8 +89,12 @@ void GetCustomMaterials(inout vec4 color, inout vec3 normalM, inout vec2 lmCoord
                     color *= glColor;
                 #endif
 
-                shadowMult *= GetParallaxShadow(parallaxFade, dither, normalMap.a, parallaxLocalCoord, lightVec, tbnMatrix);
+                shadowMult *= GetParallaxShadow(parallaxFade, dither, max(normalMap.a, pomPuddleLevel), parallaxLocalCoord, lightVec, tbnMatrix);
             }
+
+            #ifdef BETTER_LABPBR_POM_PUDDLES_ACTIVE
+                pomPuddle = clamp01((pomPuddleLevel - normalMap.a) * 100.0);
+            #endif
         }
     #endif
 
@@ -110,6 +135,14 @@ void GetCustomMaterials(inout vec4 color, inout vec3 normalM, inout vec2 lmCoord
 
         NdotU = dot(normalM, upVec);
         NdotUmax0 = max0(NdotU);
+    #endif
+
+    #ifdef BETTER_LABPBR_POM_PUDDLES_ACTIVE
+        if (pomPuddle > 0.0) {
+            normalM = normalize(mix(normalM, GetPuddleNormal(pomPuddlePos), pomPuddle));
+            NdotU = dot(normalM, upVec);
+            NdotUmax0 = max0(NdotU);
+        }
     #endif
 
     #if DIRECTIONAL_BLOCKLIGHT > 0
@@ -169,7 +202,25 @@ void GetCustomMaterials(inout vec4 color, inout vec3 normalM, inout vec2 lmCoord
         #ifdef BETTER_LABPBR_POROSITY_INTERNAL
             // Blue channel: 0-64 = porosity
             float porosity = specularMap.b <= 64.0 * OSIEBCA ? specularMap.b * (255.0 / 64.0) : 0.0;
+            #ifdef BETTER_LABPBR_POM_PUDDLES_ACTIVE
+                float pomWetBand = 1.0 - pomPuddleLevel;
+                float pomWet = pomPuddleLevel > 0.0 ? clamp01((pomPuddleLevel + pomWetBand - normalMap.a) / pomWetBand) : 0.0;
+                porosity = mix(porosity, max(porosity, 0.4), pomWet); // Hardcoded fallback for those packs that don't have porosity, but do have POM
+            #endif
             ApplyLabPBRPorosity(color, smoothnessG, smoothnessD, materialMask, porosity);
+        #endif
+
+        #ifdef BETTER_LABPBR_POM_PUDDLES_ACTIVE
+            ApplyPuddleSpecular(smoothnessG, smoothnessD, highlightMult, pomPuddle, 0);
+            materialMask = mix(materialMask, 0.02 * OSIEBCA * 214.0, pomPuddle); // Water f0
+        #endif
+    #endif
+
+    #ifdef BETTER_LABPBR_SSS_ACTIVE
+        // Blue channel: 65-255 = subsurface scattering
+        labPBRSubsurface = clamp01((specularMap.b - 65.0 * OSIEBCA) / (190.0 * OSIEBCA));
+        #ifdef GBUFFERS_WATER
+            if (mat == 32000) labPBRSubsurface = 0.0; // water
         #endif
     #endif
 }

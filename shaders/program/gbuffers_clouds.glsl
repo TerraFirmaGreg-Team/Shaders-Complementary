@@ -26,8 +26,8 @@
 //Common Variables//
 #if CLOUD_STYLE_DEFINE == 50
     float SdotU = dot(sunVec, upVec);
-    float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
-    float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+    float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
+    float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
     float sunVisibility2 = sunVisibility * sunVisibility;
 #endif
 
@@ -36,7 +36,12 @@
 //Includes//
 #if CLOUD_STYLE_DEFINE == 50
     #include "/lib/colors/skyColors.glsl"
+    #include "/lib/colors/lightAndAmbientColors.glsl"
     #include "/lib/util/spaceConversion.glsl"
+
+    #ifdef OVERWORLD
+        #include "/lib/colors/cloudColors.glsl"
+    #endif
 
     #if defined TAA && (defined BORDER_FOG || RAINBOW_CLOUD != 0 || defined AURORA_INFLUENCE || defined VOXY)
         #include "/lib/antialiasing/jitter.glsl"
@@ -63,9 +68,11 @@ void main() {
     #if CLOUD_STYLE_DEFINE != 50
         discard;
     #else
+        if (isEyeInWater != 0) discard; // Fixes vanilla clouds peaking from underwater with lower render distances
+
         vec4 color = texture2D(tex, texCoord) * vec4(vec3(1.0), glColor.a);
 
-        color.rgb *= 0.9 + 0.25 * dot(upVec, normal) - 0.1 * abs(dot(northVec, normal)) - rainFactor * 0.2;
+        color.rgb *= 1.0 + 0.15 * dot(upVec, normal) - 0.1 * abs(dot(northVec, normal)) - rainFactor * 0.2;
 
         vec4 translucentMult = vec4(mix(vec3(0.666), color.rgb * (1.0 - pow2(pow2(color.a))), color.a), 1.0);
 
@@ -96,6 +103,7 @@ void main() {
                 #else
                     float cloudDistance = 2000.0;
                 #endif
+                cloudDistance *= min(CLOUD_RENDER_DISTANCE, 1.0);
 
                 cloudDistance = clamp((cloudDistance - xzMaxDistance) / cloudDistance, 0.0, 1.0);
 
@@ -112,20 +120,19 @@ void main() {
         color.a *= min1(CLOUD_TRANSPARENCY);
 
         #ifdef OVERWORLD
-            vec3 cloudLight = mix(vec3(0.8, 1.6, 1.5) * sqrt1(nightFactor), mix(dayDownSkyColor, dayMiddleSkyColor, 0.1), sunFactor);
+            float NdotU = dot(upVec, normal);
+
+            color.rgb *= cloudLightColor * (min1(NdotU + 1.0) * 0.15 + 0.15) + 1.25 * cloudAmbientColor;
+
+
             #if RAINBOW_CLOUD != 0
                 vec3 wpos = normalize((gbufferModelViewInverse * vec4(viewPos, 1.0)).xyz);
                 wpos /= (abs(wpos.y) + length(wpos.xz));
 
-                cloudLight *= getRainbowColor(wpos.xz * rainbowCloudDistribution * 0.3, 0.05);
+                color.rgb *= getRainbowColor(wpos.xz * rainbowCloudDistribution * 0.3, 0.05);
             #endif
             #ifdef AURORA_INFLUENCE
                 color.rgb = getAuroraAmbientColor(color.rgb, viewPos, 0.096, AURORA_CLOUD_INFLUENCE_INTENSITY, 0.7);
-            #endif
-            color.rgb *= sqrt(cloudLight) * (1.2 + 0.4 * noonFactor * invRainFactor);
-
-            #if CLOUD_R != 100 || CLOUD_G != 100 || CLOUD_B != 100
-                color.rgb *= vec3(CLOUD_R, CLOUD_G, CLOUD_B) * 0.01;
             #endif
             #ifdef ATM_COLOR_MULTS
                 color.rgb *= sqrt(GetAtmColorMult()); // C72380KD - Reduced atmColorMult impact on things
@@ -133,6 +140,10 @@ void main() {
             #ifdef MOON_PHASE_INF_ATMOSPHERE
                 color.rgb *= moonPhaseInfluence;
             #endif
+        #endif
+
+        #if CLOUD_R != 100 || CLOUD_G != 100 || CLOUD_B != 100
+            color.rgb *= vec3(CLOUD_R, CLOUD_G, CLOUD_B) * 0.01;
         #endif
 
         #ifdef COLOR_CODED_PROGRAMS

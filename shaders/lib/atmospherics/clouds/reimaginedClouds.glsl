@@ -94,7 +94,7 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
         float cloudMult = 1.0;
         if (lTracePosXZ > distanceThreshold) break;
         if (lTracePos > lViewPosM) {
-            if (skyFade < 0.7) continue;
+            if (skyFade < 0.7) break;
             else cloudMult = skyMult0;
         }
 
@@ -214,7 +214,7 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
             vec3 cloudSkyColor = GetSky(VdotU, VdotS, dither, isEyeInWater == 0, false, isCustomSky, false);
             #ifdef SAVE_SKYBOX_DATA
                 if (isCustomSky) {
-                    vec3 averageSkyColor = texelFetch(colortex14, texelCoord, 0).rgb;
+                    vec3 averageSkyColor = texelFetch(colortex15, texelCoord, 0).rgb;
                     cloudSkyColor = mix(cloudSkyColor, averageSkyColor, cloudFogFactor);
                 }
             #endif

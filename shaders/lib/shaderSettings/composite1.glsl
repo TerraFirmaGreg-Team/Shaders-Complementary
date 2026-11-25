@@ -4,6 +4,10 @@
 #include "/lib/shaderSettings/worldMotionBlur.glsl"
 
 #define RAINBOWS 1 //[0 1 3]
+#if defined DIMENSION_SPACE || defined DIMENSION_CAVE_VOID
+    #undef RAINBOWS
+    #define RAINBOWS 0
+#endif
 
 
 // Euphoria Patches Settings

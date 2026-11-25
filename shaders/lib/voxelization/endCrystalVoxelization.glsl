@@ -1,6 +1,7 @@
 layout(r32i) uniform iimage2D endcrystal_img;
 
 void UpdateEndCrystalMap(vec3 pos) {
+    pos += cameraPositionBestFract; // Stops that stupid crystal flicker which happens sometimes
     int packedPos = int(pos.x + 512.5) + (int(pos.y + 512.5) << 10) + (int(pos.z + 512.5) << 20);
     for (int k = 0; k < 20; k++) {
         int registeredPos = imageAtomicCompSwap(endcrystal_img, ivec2(k, 0), 0, packedPos);

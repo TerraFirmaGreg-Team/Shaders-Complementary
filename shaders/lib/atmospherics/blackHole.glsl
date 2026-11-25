@@ -84,18 +84,6 @@ float SampleBlackHoleTurbulence(float diskAngle, float diskDist, float ringCount
     return pow3(clamp01(GetBlackHoleTurbulence(turbulenceCoord)));
 }
 
-void GetOrthonormalBasis(vec3 n, out vec3 b1, out vec3 b2) {
-    if (abs(n.x) < 1e-3 && abs(n.z) < 1e-3) {
-        b1 = vec3(1.0, 0.0, 0.0);
-        b2 = cross(b1, n);
-        return;
-    }
-
-    float horizontalAngle = atan(n.z, n.x);
-    b1 = vec3(-sin(horizontalAngle), 0.0, cos(horizontalAngle));
-    b2 = cross(b1, n);
-}
-
 struct BlackHoleGeometry {
     vec3 rayDir;
     vec3 sunDir;

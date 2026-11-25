@@ -3,9 +3,9 @@
 Contribute=Зробіть внесок до офіційного перекладу тут https://www.euphoriapatches.com/lang — Не змінюйте це посилення
 
 option.LANG_FILE_HEADER=Файли перекладу від спільноти — переклад може бути застарілим. SpacEagle17 не може гарантувати його точність.
-option.TRANSLATORS=Переклад від: Starman
+option.TRANSLATORS=Перекладачі: Starman
 
-shaderDescription=§cComplementary Shaders r5.9§r + §dEuphoria Patches 1.10.0§r\nДоповнення до Complementary від SpacEagle17, що розширює функціонал завдяки численним унікальним функціям і налаштуванням.\nВерсії для розробників: §dwww.euphoriapatches.com/support§r
+shaderDescription=§cComplementary Shaders r5.10§r + §dEuphoria Patches 1.11.2§r\nДоповнення до Complementary від SpacEagle17, що розширює функціонал завдяки численним унікальним функціям і налаштуванням.\nВерсії для розробників: §dwww.euphoriapatches.com/support§r
 
 #Profiles
 profile.POTATO=Продуктив.: §aКартопля
@@ -97,12 +97,12 @@ option.info17=Бета-версія: SpacEagle17 Patreon
 value.info17.0=
 option.info17.comment=Ви можете підтримати SpacEagle17 на Patreon або Ko-Fi й отримати версію для розробників. §l§neuphoriapatches.com/support.
 
-option.info18=Для Complementary r5.9
+option.info18=Для Complementary r5.10
 value.info18.0=
 option.info18.comment=Дякую за встановлення Euphoria Patches :).
 
 option.info19=§aНОВЕ ОНОВЛЕННЯ
-value.info19.0=§cX.Y.Z §r—>§a X.Y.Z
+value.info19.0=§cX.Y.Z §r->§a X.Y.Z
 option.info19.comment=Нова версія EuphoriaPatcher доступна. Завантажити: https://euphoriapatches.com/download.
 
 option.info20=
@@ -556,6 +556,10 @@ value.WATER_CAUSTIC_STYLE_DEFINE.-1=Як і вода
 value.WATER_CAUSTIC_STYLE_DEFINE.1=Переосмислений
 value.WATER_CAUSTIC_STYLE_DEFINE.3=Непов'язаний
 
+value.WATER_REFRACTION_DEFINE.-1=§aУстан. ЯД
+value.WATER_REFRACTION_DEFINE.0=§aВИМК.
+value.WATER_REFRACTION_DEFINE.1=§cУВІМК.
+
 option.WATER_REFRACTION_INTENSITY=Інтенсивність заломлення води §e[*]§r
 option.WATER_REFRACTION_INTENSITY.comment=Керує інтенсивність заломлення води та спотворення зображення під водою. §e[*]§r Повністю працює лише тоді, коли якість деталей висока, інакше він ледве спотворюватиме зображення під водою.
 
@@ -815,7 +819,7 @@ option.MOTION_BLURRING_STRENGTH.comment=Керує силою розмиття �
 
 option.WORLD_BLUR=§eРозмиття світу§r
 option.WORLD_BLUR.comment=Умикає розмивання світу. Розмиття на відстані: розмиття наноситься як туман залежно від відстані від камери. Глибина різкости: розмиття відбувається залежно від точки фокусування камери. §c[-]§r Цей ефект може серйозно вплинути на продуктивність.
-value.WORLD_BLUR.0=§aВИМК.
+value.WORLD_BLUR.-1=§aВИМК.
 value.WORLD_BLUR.1=§cРозмиття на відстані
 value.WORLD_BLUR.2=§cГлибина різкости
 
@@ -864,7 +868,7 @@ option.IPBR_COMPAT_MODE_DEFINE.comment=Змінює спосіб обчисле�
 option.IPBR_PARTICLE_FEATURES=Функції частинок IPBR+
 option.IPBR_PARTICLE_FEATURES.comment=Умикає кілька функцій для частинок, зокрема частинки лави, що світяться, і частинки води з кращим кольором.
 
-option.FANCY_GLASS=Покращене скло
+option.FANCY_GLASS=Покращене скло §c[-]§r
 option.FANCY_GLASS.comment=Покращує скло, додаючи до нього напівпрозорий шар. §c[-]§r Не працює на Iris через помилку Sodium. §e[*]§r Підтримка ПР має бути «Integrated PBR+».
 
 option.GREEN_SCREEN_LIME=Зелений екран
@@ -1093,11 +1097,21 @@ option.WAVING_LILY_PAD.comment=Додає коливання для лататт
 option.WAVING_WATER_VERTEX=Висота коливання води
 option.WAVING_WATER_VERTEX.comment=Додає коливання для води, щоб імітувати вітер. §e[*]§r Це не пов'язано із «Сила хвилі в воді».
 
+option.WATER_NOISE_COLORING=Яскравість хвиль води
+option.WATER_NOISE_COLORING.comment=Додає незначні варіації кольору океанам, завдяки чому вони виглядають більш хвилястими. §e[*]§r «Устан. ЯД» означає, що цей параметр визначається якістю деталей у розділі налаштувань продуктивности, доки ви не зміните його самостійно.
+value.WATER_NOISE_COLORING.-1=§aУстан. ЯД
+value.WATER_NOISE_COLORING.0=§aВИМК.
+value.WATER_NOISE_COLORING.1=§cУВІМК.
+
 option.WAVING_RAIN=Коливання дощу і снігу
 option.WAVING_RAIN.comment=Додає коливання для дощу та снігу, щоб зробити їх більш динамічними.
 
-option.SPECIAL_PORTAL_EFFECTS=Спеціальні ефекти порталу
-option.SPECIAL_PORTAL_EFFECTS.comment=Додає спеціальні анімації та випромінювання до порталів Незеру, Енду і воріт Енду.
+option.SPECIAL_PORTAL_EFFECT=Спеціальні ефекти порталу
+option.SPECIAL_PORTAL_EFFECT.comment=Додає спеціальні анімації та випромінювання до порталів Незеру, Енду і воріт Енду.
+value.SPECIAL_PORTAL_EFFECT.0=УВІМК.
+value.SPECIAL_PORTAL_EFFECT.1=Портал Енду
+value.SPECIAL_PORTAL_EFFECT.2=Портал Незеру
+value.SPECIAL_PORTAL_EFFECT.3=Повний
 
 option.REFLECTION_RES=§eРоздільність відблисків§r
 option.REFLECTION_RES.comment=Змінює роздільність відблисків PBR на блоках (а також відблисків простору світу, якщо ввімкнено) для підвищення продуктивности. §c[-]§r Відблиски з повною роздільністю в певних ситуаціях можуть суттєвіше впливати на продуктивність, ніж очікувалося. §e[*]§r Не працює з Optifine.
@@ -1376,6 +1390,7 @@ screen.END_ROD_SETTINGS=Стрижень Енду
 screen.END_ROD_SETTINGS.comment=Налаштування, які стосуються стрижня Енду.
 screen.FOLIAGE_SETTINGS=Рослинність
 screen.FOLIAGE_SETTINGS.comment=Налаштування, які стосуються рослинности.
+screen.SSS_SETTINGS=Підповерхневе розсіювання
 screen.PORTAL_SETTINGS=Портал
 screen.PORTAL_SETTINGS.comment=Налаштування, які стосуються порталу.
 screen.MISC_SETTINGS=Різне
@@ -1420,6 +1435,8 @@ screen.FUN=Забава
 screen.FUN.comment=Давай розважимося :D.
 screen.WORLD_CURVATURE_SETTINGS=Кривина світу
 screen.WORLD_CURVATURE_SETTINGS.comment=Налаштування, які стосуються кривини світу.
+screen.SHOCKWAVE_SETTINGS=Налаштування ударної хвилі
+screen.SHOCKWAVE_SETTINGS.comment=Налаштування, які стосуються ударної хвилі.
 screen.RANDOM_BLOCKLIGHT_SETTINGS=Випадкове світло блоків
 screen.RANDOM_BLOCKLIGHT_SETTINGS.comment=Параметри, які стосуються випадкового світла блоків.
 
@@ -1427,7 +1444,7 @@ screen.POPULAR_SETTINGS=§dПопулярні налаштування
 screen.POPULAR_SETTINGS.comment=Це деякі з найпопулярніших налаштувань в Euphoria Patches. Окрім розширеного кольорового трасування (яке потрібне для багатьох ефектів), усі параметри тут є ексклюзивними для Euphoria Patches, і їх неможливо знайти в оригінальному пакеті шейдерів Complementary.
 screen.POPULAR_SETTINGS_2=Сторінка 2
 screen.POPULAR_SETTINGS_3=Сторінка 3
-screen.EP_VERSION=Euphoria Patches §d1.10.0
+screen.EP_VERSION=Euphoria Patches §d1.11.2
 screen.EP_VERSION.comment=§bВи можете підтримати SpacEagle17 на Patreon або Ko-Fi і отримати за це нові ексклюзивні бета-збірки. §r§d§l§neuphoriapatches.com/support.
 
 screen.MODDED_SETTINGS=Модифіковані налаштування
@@ -2044,9 +2061,6 @@ option.SILHOUETTE_BRIGHTNESS=Яскравість силуету
 option.RAIN_ATMOSPHERE=Епічна гроза
 option.RAIN_ATMOSPHERE.comment=Значно покращує грозу, коли вдаряє блискавка. §e[*]§r Набагато краще працює з Iris.
 
-option.BLUE_SCREEN=Синій екран
-option.BLUE_SCREEN.comment=Перетворює сині бетон, вовну і килим на сині екрани для редагування відео. Порада 1: вимкніть «Світіння», щоб покращити розділення. Порада 2: для освітлення встановіть джерела світла під синіми килимами. Порада 3: ви можете вимкнути згладжування (ШНЗ) і встановити якість деталей на «Картопля» в налаштуваннях продуктивности, щоб вимкнути всі фільтри та отримати ідеальне розділення пікселів.
-
 option.MIRROR_DIMENSION=Дзеркальний вимір
 option.MIRROR_DIMENSION.comment=Ви навчилися мистецтва магії й досить сміливі, щоб увійти в дзеркальний вимір.
 
@@ -2058,7 +2072,7 @@ option.END_CURVATURE_SIZE=Розмір викривлення Енду
 option.LAVA_VARIATION=Пресети лави
 option.LAVA_VARIATION.comment=Гарячі пресети в вашому регіоні. Виберіть зараз!
 value.LAVA_VARIATION.0=Complementary
-value.LAVA_VARIATION.1=Адаптивний шум (раджу)
+value.LAVA_VARIATION.1=Адаптивна (краще)
 value.LAVA_VARIATION.2=Рум'яна гарячість
 value.LAVA_VARIATION.3=Розтоплений сир
 value.LAVA_VARIATION.4=Темні острови
@@ -2334,12 +2348,11 @@ option.NETHER_NOISE.comment=Робить небо Незеру над стеле
 value.NETHER_NOISE.0=УВІМК.
 value.NETHER_NOISE.1=ВИМК.
 
-option.MCBL_MAIN_DEFINE=Кольорове освітлення Euphoria
-option.MCBL_MAIN_DEFINE.comment=Умикає багатокольорові джерела світла. Установіть РКТ + простір екрана, щоб використовувати систему простору екрана разом із РКТ. ACT + SSBL + підтримка динамічного світла може викликати некоректні результати у модових середовищах — слід використовувати лише у стандартній грі з модом динамічного світла. §e[*]§r Лише 1.16.5 і вище або на Angelica.
+option.MCBL_MAIN_DEFINE=Кольорове світло простору екрана
+option.MCBL_MAIN_DEFINE.comment=Активує ексклюзивне для Euphoria Patches кольорове освітлення у просторі екрана.«УВІМК. + РТК», щоб використовувати цю систему разом з розширеним трасуванням кольорів. На відміну від РТК, ця функція також працює з OptiFine та на macOS. §e[*]§r Лише 1.16.5+, а також у середовищі Angelica.
 value.MCBL_MAIN_DEFINE.0=ВИМК.
-value.MCBL_MAIN_DEFINE.1=Простір екрана
-value.MCBL_MAIN_DEFINE.2=РКТ + простір екрана
-value.MCBL_MAIN_DEFINE.3=ACT + SSBL + підтримка динамічного світла
+value.MCBL_MAIN_DEFINE.1=УВІМК.
+value.MCBL_MAIN_DEFINE.2=УВІМК. + РТК
 
 option.MCBL_INFLUENCE=Вплив багатокол. джерел світла
 option.MCBL_INFLUENCE.comment=Керує тим, наскільки різнокольорове світло впливає на колір блока усталено.
@@ -2632,8 +2645,7 @@ value.SUN_MOON_IPBR.1=Сонце
 value.SUN_MOON_IPBR.2=Місяць
 value.SUN_MOON_IPBR.3=Сонце й Місяць
 
-option.DAYLIGHT_STARS=Денні зірки
-option.DAYLIGHT_STARS.comment=Умикає зірки вдень.
+option.DAYLIGHT_STARS_AMOUNT=Денні зірки
 
 option.FROZEN_TIME=Стоп-час
 option.FROZEN_TIME.comment=Зупиняє час анімації та ефекти шейдерів, які покладаються на анімацію на основі кадрів, будуть зупинені, що дозволить створювати хороші знімки екрана для порівняння.
@@ -2654,6 +2666,9 @@ option.BEACON_BEAM_EMISSION.comment=Змінює силу сяяння пром�
 
 option.PINKER_CHERRY_LEAVES=Рожевіше вишневе листя
 
+option.DISCARD_FOLIAGE_SHADOW=Видалили тінь рослинности
+option.DISCARD_FOLIAGE_SHADOW.comment=Запобігає відкиданню тіні рослинністю, як-от травою, квітами, паростками, урожаєм тощо. §c[-]§r НЕ покращує продуктивність і є суто візуальною зміною; насправді, з технічного погляду, він навіть незначно знижує продуктивність.
+
 option.LIGHTMAP_CURVES=Криві мапи світла
 option.LIGHTMAP_CURVES.comment=Змінює криві мапи світла світу.
 option.UPPER_LIGHTMAP_CURVE=Верхня крива мапи світла
@@ -2669,7 +2684,10 @@ option.SHOCKWAVE=Ударна хвиля
 value.SHOCKWAVE.0=ВИМК.
 value.SHOCKWAVE.1=Кругла
 value.SHOCKWAVE.2=Квадратна
-option.SHOCKWAVE.comment=Присядь і дізнайся!
+option.SHOCKWAVE.comment=Скористайся булавою — і дізнаєтеся!
+
+option.SHOCKWAVE_CROUCHING=Крадькома
+option.SHOCKWAVE_CROUCHING.comment=Також активує ударну хвилю крадькома. До версії 1.21 ця функція була ввімкнена автоматично, оскільки булави тоді ще не існувало.
 
 option.STAR_LAYER_OW=Шар зірок
 option.STAR_LAYER_OW.comment=Додає додаткові зірки до поточних зірок, на більших або менших шарах.
@@ -2846,6 +2864,8 @@ option.BETTER_LABPBR_POROSITY.comment=Змушує матеріали LabPBR, н
 
 option.BETTER_LABPBR_AO=Підтримка матеріалів НО
 option.BETTER_LABPBR_AO.comment=Затемнює пряме освітлення на основі матеріалах навколишньої оклюзії, запечених у текстурі нерівностей LabPBR. §e[*]§r Працює лише тоді, коли підтримка LabPBR.
+
+option.BETTER_LABPBR_SSS=Підповерхневе розсіювання
 
 option.SHADOW_SATURATION=Насиченість тіні
 option.SHADOW_SATURATION.comment=Змінює насиченість тіней і світлових потоків. §e[*]§r Цей параметр працює, лише якщо для «Тіні в реальному часі» встановлено значення «Низько» або вище.
@@ -3138,7 +3158,7 @@ option.PANINI_PROJECTION.comment=Умикає проєкцію Паніні, я�
 value.PANINI_PROJECTION.0=ВИМК.
 
 option.BLACK_HOLE=Чорна діра
-option.BLACK_HOLE.comment=Додає чорну діру до неба в Енду. Її положення визначається налаштуваннями позиції чорної діри.
+option.BLACK_HOLE.comment=Додає чорну діру до неба в Енді. Цей повзунок змінює яскравість чорної діри. Позиція керується налаштуваннями позиції чорної діри.
 value.BLACK_HOLE.0=ВИМК
 
 option.BLACK_HOLE_SHAPE=Форма чорної діри
@@ -3192,3 +3212,10 @@ option.BLACK_HOLE_LATITUDE_BIAS.comment=Змінює зміщення широт
 option.BLACK_HOLE_STREAK=Горизонтальна смуга
 option.BLACK_HOLE_STREAK.comment=Додає до чорної діри горизонтальну смугу акреційного диска.
 value.BLACK_HOLE_STREAK.0=УВІМК.
+
+option.REFLECTIVE_HORSES=Блискучі коні
+option.REFLECTIVE_HORSES.comment=Кожна дитина любить блискучого коня! Кінь, який не блищить — це сумний кінь.
+
+option.MODDED_FOG_SUPPORT=Підтримка туману модів
+option.MODDED_FOG_SUPPORT.comment=Додає підтримку до туманів з модів, це не повинно нічого робити, якщо немає мода, який додає власний туман.
+

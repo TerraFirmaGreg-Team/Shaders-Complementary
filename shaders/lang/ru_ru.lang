@@ -5,7 +5,7 @@ Contribute=Участвуйте в официальных переводах з�
 option.LANG_FILE_HEADER=Перевод выполнен сообществом. Может устареть. SpacEagle17 не может это гарантировать.
 option.TRANSLATORS=Перевод от Folox_ (Nikita), mpustovoi и Slava_vas(MPLOC)
 
-shaderDescription=§cComplementary Shaders r5.9§r + §dEuphoria Patches 1.10.0§r\nДополнение для Complementary от SpacEagle17 с множеством уникальных дополнительных функций и настроек.\nВерсии в разработке: §dwww.euphoriapatches.com/support§r
+shaderDescription=§cComplementary Shaders r5.10§r + §dEuphoria Patches 1.11.2§r\nДополнение для Complementary от SpacEagle17 с множеством уникальных дополнительных функций и настроек.\nВерсии в разработке: §dwww.euphoriapatches.com/support§r
 
 #Profiles
 profile.POTATO=Предустановка: §aкартошка
@@ -97,12 +97,12 @@ option.info17=Бета-версии: Patreon SpacEagle17
 value.info17.0=
 option.info17.comment=Доступ к эксклюзивным версиям через поддержку: §d§l§neuphoriapatches.com/support
 
-option.info18=Для Complementary r5.9
+option.info18=Для Complementary r5.10
 value.info18.0=
 option.info18.comment=Спасибо за установку Euphoria Patches :)
 
 option.info19=§aНОВОЕ ОБНОВЛЕНИЕ
-value.info19.0=§cX.Y.Z §r—>§a X.Y.Z
+value.info19.0=§cX.Y.Z §r->§a X.Y.Z
 option.info19.comment=Доступна новая версия мода Euphoria Patcher. Скачайте: https://euphoriapatches.com/download.
 
 option.info20=
@@ -407,6 +407,7 @@ option.LIGHTSHAFT_NOON_I=Полуденный множитель световы�
 option.LIGHTSHAFT_SUNSET_I=Вечерний множитель световых лучей
 option.LIGHTSHAFT_NIGHT_I=Ночной множитель световых лучей
 option.LIGHTSHAFT_RAIN_I=Дождевой множитель световых лучей
+option.LIGHTSHAFT_WATER_I=Подводн. множ. световых лучей
 
 option.LIGHTSHAFT_SUNSET_SATURATION=Цвет лучей на закате
 option.LIGHTSHAFT_SUNSET_SATURATION.comment=Регулирует дополнительную насыщенность цвета солнечных лучей на рассвете и закате. Более высокие значения дают красновато-оранжевый оттенок, а низкие — смещают цвет в сторону жёлтого.
@@ -556,6 +557,12 @@ value.WATER_CAUSTIC_STYLE_DEFINE.-1=Как у воды
 value.WATER_CAUSTIC_STYLE_DEFINE.1=Reimagined
 value.WATER_CAUSTIC_STYLE_DEFINE.3=Unbound
 
+option.WATER_REFRACTION_DEFINE=Преломление воды
+option.WATER_REFRACTION_DEFINE.comment=Добавляет эффект преломления для водны порталов Незера.
+value.WATER_REFRACTION_DEFINE.-1=§aПо качеству деталей
+value.WATER_REFRACTION_DEFINE.0=§aНет
+value.WATER_REFRACTION_DEFINE.1=§cДа
+
 option.WATER_REFRACTION_INTENSITY=Интенсивность рефракции воды §e[*]§r
 option.WATER_REFRACTION_INTENSITY.comment=Регулирует силу преломления света и искажений под водой. §e[*]§r Полноценно работает только при «Качестве деталей» — «Высокое», а иначе повлияет только на едва заметные подводные искажения.
 
@@ -698,6 +705,9 @@ option.PIXELATED_BLOCKLIGHT.comment=Пикселизирует освещени�
 option.PIXELATED_AO=Пиксельное затенение
 option.PIXELATED_AO.comment=Делает ванильное затенение краёв пиксельным.
 
+option.PIXELATED_CLOUD_SHADOWS=Пиксельные тени облаков §e[*]§r
+option.PIXELATED_CLOUD_SHADOWS.comment=Делает тени от облаков более пиксельными, чем обычные пиксельные тени. §e[*]§r В отличие от других настроек пикселизации, эта настройка не учитывает «Уровень пикселизации». §e[*]§rЧтобы эта функция работала, в настройках облаков должны быть включены «Тени от облаков».
+
 option.PIXEL_SCALE=Уровень пикселизации
 option.PIXEL_SCALE.comment=Определяет степень увеличения текстур.
 value.PIXEL_SCALE.-2=0.25×
@@ -740,6 +750,9 @@ value.BLOOM_STRENGTH.0.28=150% §c[-]
 value.BLOOM_STRENGTH.0.32=180% §c[-]
 value.BLOOM_STRENGTH.10.00=§cБезумное
 
+option.BLOOM_SMOOTHING=Сглаживание свечения §e[*]§r
+option.BLOOM_SMOOTHING.comment=Сглаживает изменения уровня свечения в течение определённого периода времени, чтобы снизить мерцание. §e[*]§r Может привести к появлению остаточных артефактов, подобных временному сглаживанию (TAA).
+
 option.IMAGE_SHARPENING=Резкость изображения
 option.IMAGE_SHARPENING.comment=Повышает резкость через фильтр. §c[-]§r Может вызывать артефакты, такие как сглаживание, мерцание, шум и незначительные изменения яркости.
 value.IMAGE_SHARPENING.0=Нет
@@ -765,7 +778,7 @@ value.LENSFLARE_MODE.4=§cСолнце и луна — квадрат
 option.LENSFLARE_I=Яркость бликов
 option.LENSFLARE_I.comment=Регулирует силу эффекта бликов.
 
-option.TAA_DEFINE=§eФильтр TAA§r
+option.TAA_DEFINE=§eВременной фильтр§r
 option.TAA_DEFINE.comment=Включает временное сглаживание (TAA), которое уменьшает зернистость и повышает производительность за счёт снижения количества выборок в тяжёлых эффектах и устраняет ступенчатость при правильных настройках. §c[-]§r: Отключение приведёт к ухудшению производительности и качества эффектов, но при очень низких настройках шейдеров производительность может повыситься.
 value.TAA_DEFINE.-1=§aПо качеству деталей
 value.TAA_DEFINE.0=§cНет [-]
@@ -815,7 +828,7 @@ option.MOTION_BLURRING_STRENGTH.comment=Регулирует интенсивн�
 
 option.WORLD_BLUR=§eРазмытие мира§r
 option.WORLD_BLUR.comment=Включает размытие мира. По расстоянию: применяется подобно туману, по удалённости от камеры. Глубина резкости: размытие вне фокуса. §c[-]§r Сильно снижает производительность.
-value.WORLD_BLUR.0=§aНет
+value.WORLD_BLUR.-1=§aНет
 value.WORLD_BLUR.1=§cПо расстоянию
 value.WORLD_BLUR.2=§cГлубина резкости
 
@@ -864,7 +877,7 @@ option.IPBR_COMPAT_MODE_DEFINE.comment=Делает функции встрое�
 option.IPBR_PARTICLE_FEATURES=Особенности частиц встр. PBR+
 option.IPBR_PARTICLE_FEATURES.comment=Добавляет свечение частицам лавы и улучшает цвет частиц воды.
 
-option.FANCY_GLASS=Улучшенное стекло
+option.FANCY_GLASS=Улучшенное стекло §c[-]§r
 option.FANCY_GLASS.comment=Добавляет полупрозрачный слой к обычному стеклу. §c[-]§r Не работает в старых версиях Iris. §e[*]§r Требуется режим «Поддержка наборов ресурсов»: встроенный PBR+.
 
 option.GREEN_SCREEN_LIME=Лаймовый хромакей
@@ -1014,7 +1027,7 @@ value.POM.false=Нет
 value.POM.true=Да §c[-]
 
 option.POM_DEPTH=Глубина ОПО
-option.POM_DEPTH.comment=Регулирует глубину 3D-эффекта отображения параллаксной окклюзии. §e[*]§r Параметр «Поддержки наборов ресурсов» должен быть установлен в labPBR или seuspbr при наличии соответствующего набора ресурсов.
+option.POM_DEPTH.comment=Регулирует глубину объёмного эффекта отображения параллаксной окклюзии. §e[*]§r Параметр «Поддержки наборов ресурсов» должен быть установлен в labPBR или seuspbr при наличии соответствующего набора ресурсов.
 
 option.POM_QUALITY=§eКачество ОПО§r
 option.POM_QUALITY.comment=Точность деталей отображения параллаксной окклюзии. §c[-]§r Значения выше 200 сильно снижают производительность. §e[*]§r Значения ниже 100 приведут к переключению режима освещения ОПО на «Плавный». §e[*]§r Параметр «Поддержки наборов ресурсов» должен быть установлен в labPBR или seuspbr при наличии соответствующего набора ресурсов.
@@ -1069,7 +1082,7 @@ value.WAVING_I.2.00=2.00 §c[-]
 value.WAVING_I.50.0=§cБезумная
 
 option.NO_WAVING_INDOORS=Без колыхания в помещениях
-option.NO_WAVING_INDOORS.comment=Отключает колыхания в закрытых зонах используя уровень освещения неба. §c[-]§r Может конфликтовать с некоторыми модами или наборами ресурсов.
+option.NO_WAVING_INDOORS.comment=Отключает колыхания в закрытых зонах используя уровень дневного света. §c[-]§r Может конфликтовать с некоторыми модами или наборами ресурсов.
 
 option.WAVING_I_RAIN_MULT=§eМножитель колыхания при дожде§r
 option.WAVING_I_RAIN_MULT.comment=Усиливает колыхания во время дождя. §c[-]§r Слишком большая интенсивность колыхания может привести к пересечению колышащихся блоков с другими. §c[-]§r Значения выше 100% снижают FPS.
@@ -1090,14 +1103,24 @@ option.WAVING_LAVA.comment=Постоянное движение лавы. §e[*
 option.WAVING_LILY_PAD=Колыхание кувшинок §c[-]§r
 option.WAVING_LILY_PAD.comment=Анимация кувшинок и икры лягушек на воде. §c[-]§r Приводит к тому, что кувшинки на залитых водой блоках становятся невидимыми.
 
-option.WAVING_WATER_VERTEX=Колебание уровня воды
+option.WAVING_WATER_VERTEX=Уровень волнения воды
 option.WAVING_WATER_VERTEX.comment=Добавляет волны на поверхности воды для симуляции ветра. §e[*]§r Не связано с параметром «Силы волн».
+
+option.WATER_NOISE_COLORING=Яркость волнения воды
+option.WATER_NOISE_COLORING.comment=Добавляет океанам небольшие цветовые различия, делая их более волнистыми. §e[*]§r «По качеству деталей» означает, что этот параметр определяется «Качеством деталей» в «Настройках производительности», пока вы его не измените.
+value.WATER_NOISE_COLORING.-1=§aПо качеству деталей
+value.WATER_NOISE_COLORING.0=§aНет
+value.WATER_NOISE_COLORING.1=§cДа
 
 option.WAVING_RAIN=Колыхание дождя и снега
 option.WAVING_RAIN.comment=Добавляет движение к текстурам дождя и снега для придания им динамичности.
 
-option.SPECIAL_PORTAL_EFFECTS=Особые эффекты порталов
-option.SPECIAL_PORTAL_EFFECTS.comment=Добавляет анимации и свечение порталам в Незер, Энд и вратам Энда.
+option.SPECIAL_PORTAL_EFFECT=Особые эффекты порталов
+option.SPECIAL_PORTAL_EFFECT.comment=Добавляет анимации и свечение порталам Незера, Энда и вратам Энда.
+value.SPECIAL_PORTAL_EFFECT.0=Нет
+value.SPECIAL_PORTAL_EFFECT.1=Портал Энда
+value.SPECIAL_PORTAL_EFFECT.2=Портал Незера
+value.SPECIAL_PORTAL_EFFECT.3=Все
 
 option.REFLECTION_RES=§eОтражения с половинным разрешением§r
 option.REFLECTION_RES.comment=Отображает PBR-отражения на блоках (и отражения в мировом пространстве, если они включены) в половинном разрешении для повышения производительности. §c[-]§r В некоторых ситуациях отражения с 'полным' разрешением могут повлиять на производительность гораздо сильнее, чем ожидается. §e[*]§r Эта функция не работает в Optifine.
@@ -1194,6 +1217,9 @@ option.COLORED_LIGHT_FOG.comment=Добавляет объёмный туман 
 
 option.COLORED_LIGHT_FOG_I=Яркость светового тумана
 option.COLORED_LIGHT_FOG_I.comment=Интенсивность цветного тумана.
+
+option.COLORED_DYNAMIC_LIGHTING=§eЦветное динамическое освещение [*]§r
+option.COLORED_DYNAMIC_LIGHTING.comment=Позволяет динамическим источникам света, таким как упавшие на землю факела и иные источники света, создавать цветное освещение. §e[*]§r Работает только, если «Продвинутая цветовая трассировка» и «Тени сущностей» (для обычных существ) включены в «Настройках производительности» и поддерживаются вашей системой. §c[-]§r Влияет на производительность.
 
 option.LIGHT_COLOR_MULTS=§eМножители цвета освещения
 option.LIGHT_COLOR_MULTS.comment=Настройка цветов освещения на поверхностях.
@@ -1376,6 +1402,8 @@ screen.END_ROD_SETTINGS=Стержень Энда
 screen.END_ROD_SETTINGS.comment=Параметры стержней Энда.
 screen.FOLIAGE_SETTINGS=Растительность
 screen.FOLIAGE_SETTINGS.comment=Настройки листвы и травы.
+screen.SSS_SETTINGS=Подповерхностное рассеивание
+screen.SSS_SETTINGS.comment=Настройки, связанные с подповерхностным рассеиванием, то есть светом, проникающим сквозь листья, растения и другие полупрозрачные материалы.
 screen.PORTAL_SETTINGS=Порталы
 screen.PORTAL_SETTINGS.comment=Параметры порталов.
 screen.MISC_SETTINGS=Разное
@@ -1420,6 +1448,8 @@ screen.FUN=Развлечения
 screen.FUN.comment=Весёлые настройки.
 screen.WORLD_CURVATURE_SETTINGS=Кривизна мира
 screen.WORLD_CURVATURE_SETTINGS.comment=Эффект искривления игрового мира.
+screen.SHOCKWAVE_SETTINGS=Настройки ударной волны
+screen.SHOCKWAVE_SETTINGS.comment=Параметры ударных волн.
 screen.RANDOM_BLOCKLIGHT_SETTINGS=Случайный блочный свет
 screen.RANDOM_BLOCKLIGHT_SETTINGS.comment=Случайные цветовые вариации блочного освещения.
 
@@ -1427,7 +1457,7 @@ screen.POPULAR_SETTINGS=§dПопулярные настройки
 screen.POPULAR_SETTINGS.comment=Это одни из самых популярных настроек в Euphoria Patches. За исключением «Продвинутой цветовой трассировки» (необходимой для многих эффектов), все эти опции являются эксклюзивными для Euphoria Patches и не могут быть найдены в оригинальных шейдерах Complementary.
 screen.POPULAR_SETTINGS_2=Страница 2
 screen.POPULAR_SETTINGS_3=Страница 3
-screen.EP_VERSION=Euphoria Patches §d1.10.0
+screen.EP_VERSION=Euphoria Patches §d1.11.2
 screen.EP_VERSION.comment=§bПоддержите SpacEagle17 на Patreon/Ko-Fi для доступа к бета-версиям. §r§d§l§neuphoriapatches.com/support
 
 screen.MODDED_SETTINGS=Настройки модов
@@ -1600,8 +1630,14 @@ option.CLOUD_LIGHT_MULTIPLIER.comment=Увеличивает яркость ос
 option.CLOUD_NIGHT_LIGHT_MULTIPLIER=Множитель ночной освещённости облаков
 option.CLOUD_NIGHT_LIGHT_MULTIPLIER.comment=Увеличивает яркость освещённой стороны облаков в ночное время.
 
+option.CLOUD_SUNSET_LIGHT_MULTIPLIER=Множитель света восхода и заката в облаках
+option.CLOUD_SUNSET_LIGHT_MULTIPLIER.comment=Увеличивает яркость освещённой стороны облаков во время восхода и захода солнца.
+
 option.CLOUD_AMBIENT_MULTIPLIER=Множитель рассеянного света в облаках
 option.CLOUD_AMBIENT_MULTIPLIER.comment=Увеличивает яркость освещённой рассеянным светом стороны облаков.
+
+option.CLOUD_SUNSET_AMBIENT_MULTIPLIER=Множитель рассеянного света восхода и заката в облаках
+option.CLOUD_SUNSET_AMBIENT_MULTIPLIER.comment=Увеличивает яркость освещённой рассеянным светом стороны облаков во время восхода и захода солнца.
 
 option.CLOUD_NIGHT_AMBIENT_MULTIPLIER=Множитель ночного рассеянного света в облаках
 option.CLOUD_NIGHT_AMBIENT_MULTIPLIER.comment=Увеличивает яркость освещённой рассеянным светом стороны облаков в ночное время.
@@ -2044,9 +2080,6 @@ option.SILHOUETTE_BRIGHTNESS=Яркость силуэтов
 option.RAIN_ATMOSPHERE=Эпическая гроза
 option.RAIN_ATMOSPHERE.comment=Улучшает эффекты при ударе молний в грозу. §e[*]§r Лучше работает с Iris.
 
-option.BLUE_SCREEN=Синий экран
-option.BLUE_SCREEN.comment=Превращает синие блоки (бетон, шерсть, ковёр) в зелёный фон для монтажа. Совет 1: отключите свечение (bloom) для чёткости. Совет 2: расположите источники света под коврами. Совет 3: отключите сглаживание (FXAA) и установите качество детализации на «Картошку» в настройках производительности, чтобы отключить всю фильтрацию и добиться идеального разделения по пикселям.
-
 option.MIRROR_DIMENSION=Зеркальное измерение
 option.MIRROR_DIMENSION.comment=Магический эффект отражённого мира.
 
@@ -2058,7 +2091,7 @@ option.END_CURVATURE_SIZE=Кривизна Энда
 option.LAVA_VARIATION=Предустановка лавы
 option.LAVA_VARIATION.comment=Выберите стиль лавы.
 value.LAVA_VARIATION.0=Complementary
-value.LAVA_VARIATION.1=Адаптивный шум (рекомендуется)
+value.LAVA_VARIATION.1=Адаптивная (рекомендуется)
 value.LAVA_VARIATION.2=Пылающий румянец
 value.LAVA_VARIATION.3=Расплавленный сыр
 value.LAVA_VARIATION.4=Тёмные острова
@@ -2079,7 +2112,7 @@ option.LAVA_NOISE_AMOUNT=Количество шума лавы
 option.LAVA_NOISE_AMOUNT.comment=Плотность шумовых узоров.
 
 option.LAVA_EDGE_EFFECT=Эффект границы лавы
-option.LAVA_EDGE_EFFECT.comment=Добавляет контур при контакте с блоками. §e[*]§r Работают только, если «Продвинутая цветовая трассировка» включена в «Настройках производительности» и поддерживается вашей системой.
+option.LAVA_EDGE_EFFECT.comment=Добавляет контур при контакте с блоками. §e[*]§r Работает только, если «Продвинутая цветовая трассировка» включена в «Настройках производительности» и поддерживается вашей системой.
 value.LAVA_EDGE_EFFECT.0=Нет
 value.LAVA_EDGE_EFFECT.1=Светлый контур
 value.LAVA_EDGE_EFFECT.2=Тёмный контур
@@ -2283,7 +2316,7 @@ option.MELTING_RADIUS.comment=Радиус, в котором снег тает 
 option.SNOW_TRANSPARENCY=Прозрачность снега
 option.SNOW_TRANSPARENCY.comment=Настройка прозрачности снега.
 
-option.SSS_SEASON_SNOW=Подповерхностное рассеивание снега
+option.SSS_SEASON_SNOW=ПпР сезонного снега
 option.SSS_SEASON_SNOW.comment=Добавляет подповерхностное рассеивание к снегу из времён года.
 
 option.WINTER_GREEN_AMOUNT=Количество зелени зимой
@@ -2334,18 +2367,19 @@ option.NETHER_NOISE.comment=Добавляет визуальный шум к н
 value.NETHER_NOISE.0=Нет
 value.NETHER_NOISE.1=Да
 
-option.MCBL_MAIN_DEFINE=Цветное освещение Euphoria
-option.MCBL_MAIN_DEFINE.comment=Включает многоцветное блоковое освещение. Режим «ПЦТ + экранное пространство» сочетает метод с «Продвинутой цветовой трассировкой». §e[*]§r Работает только на 1.16.5+ или с Angelica.
+option.MCBL_MAIN_DEFINE=Экранное цветное освещение
+option.MCBL_MAIN_DEFINE.comment=Включает собственное цветное освещение экранного пространства из Euphoria Patches. Установите значение «Да с ПЦТ», чтобы использовать систему экранного пространства наряду с «Продвинутой цветовой трассировкой». Также работает на OptiFine и Mac, в отличие от самой ПЦТ. §e[*]§Работает только на версиях 1.16.5 и выше или на Angelica.
 value.MCBL_MAIN_DEFINE.0=Нет
-value.MCBL_MAIN_DEFINE.1=Экранное пространство
-value.MCBL_MAIN_DEFINE.2=ПЦТ + экранное пространство
-value.MCBL_MAIN_DEFINE.3=ПЦТ + экр. пр. + дин. освещ.
+value.MCBL_MAIN_DEFINE.1=Да
+value.MCBL_MAIN_DEFINE.2=Да с ПЦТ
 
 option.MCBL_INFLUENCE=Влияние многоцветного блочного освещения
 option.MCBL_INFLUENCE.comment=Регулирует влияние многоцветного блочного освещения на стандартный блочный свет.
 
 option.SSS_SNOW_ICE=ПпР снега и льда
-option.SSS_SNOW_ICE.comment=Добавляет подповерхностное рассеивание (SSS) для снега и льда.
+option.SSS_SNOW_ICE.comment=Добавляет подповерхностное рассеивание (ПпР) для снега и льда.
+option.SSS_HONEYCOMB=ПпР блока пчелиных сот
+option.SSS_HONEYCOMB.comment=Добавляет подповерхностное рассеивание (ПпР) для блоков пчелиных сот.
 
 option.BEDROCK_NOISE=Шум бедрока
 option.BEDROCK_NOISE.comment=Добавляет эффект шума под бедроком в Незере и обычном мире.
@@ -2603,6 +2637,12 @@ option.SSS_STRENGTH=Подповерхностное рассеивание
 value.SSS_STRENGTH.0=Нет
 value.SSS_STRENGTH.1=Да
 
+option.SKYLIGHT_SSS=Подповерхностное рассеивание дневного света
+option.SKYLIGHT_SSS.comment=Позволяет листьям, растениям и другим полупрозрачным материалам светиться при прохождении через них дневного света, что особенно заметно, если смотреть на них снизу вверх. Эта функция всегда активна, если в «Улучшенном LabPBR» включена «Поддержка подповерхностного рассеивания». §e[*]§r Эта настройка работает только, если включено «Подповерхностное рассеяние» и только в обычном мире.
+
+option.BLOCKLIGHT_SSS=Подповерхностное рассеивание блочного света
+option.BLOCKLIGHT_SSS.comment=Позволяет листьям, растениям и другим полупрозрачным материалам светиться от скрытых за ними источников блочного света, слегка затеняя их цвет. Эта функция всегда активна, если в «Улучшенном LabPBR» включена «Поддержка подповерхностного рассеивания». §e[*]§r Эта настройка работает только, если включены «Подповерхностное рассеяние» и «Цветное освещение».
+
 option.PIXEL_WATER=Пиксельная вода
 option.PIXEL_WATER.comment=Генерирует процедурную пиксельную текстуру воды.
 value.PIXEL_WATER.0=Нет
@@ -2632,11 +2672,15 @@ value.SUN_MOON_IPBR.1=Только солнце
 value.SUN_MOON_IPBR.2=Только луна
 value.SUN_MOON_IPBR.3=Солнце и луна
 
-option.DAYLIGHT_STARS=Дневные звёзды
-option.DAYLIGHT_STARS.comment=Показывает звёзды в дневное время.
+option.DAYLIGHT_STARS_AMOUNT=Дневные звёзды
+option.DAYLIGHT_STARS_AMOUNT.comment=Насколько хорошо днём видны звёзды. Отключены при 0%, видны с полной яркостью при 100%.
+suffix.DAYLIGHT_STARS_AMOUNT=%
 
 option.FROZEN_TIME=Замёрзшее время
 option.FROZEN_TIME.comment=Замораживает время анимации шейдера. Шейдерные эффекты, основанные на покадровой анимации, будут заморожены, что позволит получить хорошие снимки для сравнения.
+
+option.USE_SYNCED_TIME=Синхронизированное время
+option.USE_SYNCED_TIME.comment=Такие объекты, как облака, туманность и другие, будут синхронизироваться между игроками с помощью игровых тактов.
 
 option.DARKER_DEPTH_OCEANS=Тёмные глубины океанов
 option.DARKER_DEPTH_OCEANS.comment=Свет уменьшается с глубиной океана.
@@ -2654,6 +2698,9 @@ option.BEACON_BEAM_EMISSION.comment=Настройка силы свечения
 
 option.PINKER_CHERRY_LEAVES=Розовейшие вишнёвые листья
 
+option.DISCARD_FOLIAGE_SHADOW=Убрать тень растительности
+option.DISCARD_FOLIAGE_SHADOW.comment=Не позволяет растительности, такой как трава, цветы, саженцы, культуры и подобные растения, отбрасывать тень. §c[-]§r Этот эффект НЕ повышает производительность и является лишь визуальным изменением. На самом деле технически он снижает производительность на очень незначительную величину.
+
 option.LIGHTMAP_CURVES=Кривые карты освещения
 option.LIGHTMAP_CURVES.comment=Изменяет кривые карты овсещения мира.
 option.UPPER_LIGHTMAP_CURVE=Верхняя кривая карты освещения
@@ -2669,7 +2716,10 @@ option.SHOCKWAVE=Ударная волна
 value.SHOCKWAVE.0=Нет
 value.SHOCKWAVE.1=Круг
 value.SHOCKWAVE.2=Квадрат
-option.SHOCKWAVE.comment=Присядьте и узнаете!
+option.SHOCKWAVE.comment=Используйте булаву и узнайте!
+
+option.SHOCKWAVE_CROUCHING=Крадучись
+option.SHOCKWAVE_CROUCHING.comment=Также активирует ударную волну крадучись. Автоматически активировано на версиях до 1.21, на которых булавы ещё не существовало.
 
 option.STAR_LAYER_OW=Слой звёзд
 option.STAR_LAYER_OW.comment=Добавляет дополнительные звёзды к текущим.
@@ -2812,13 +2862,8 @@ option.ACT_ORE_INTENSITY=Яркость руд ПЦТ
 option.ACT_ORE_INTENSITY.comment=Настраивает силу свечения руд при «Продвинутой цветовой трассировке».
 value.ACT_ORE_INTENSITY.0.0=Нет
 
-option.ENTITIES_ARE_LIGHT=Сущности как источники света
-
 option.WATER_CAUSTIC_STRENGTH=Интенсивность каустики воды
 option.WATER_CAUSTIC_STRENGTH.comment=Сила эффекта преломления света в воде.
-
-option.ROUGHNESS_MULTIPLIER=Множитель шероховатости
-option.ROUGHNESS_MULTIPLIER.comment=Настройка шероховатости материалов.
 
 option.ROUGHNESS_INTENSITY=Интенсивность шероховатости
 option.ROUGHNESS_INTENSITY.comment=Шероховатость материалов для большего или меньшего блеска.
@@ -2844,8 +2889,14 @@ suffix.BETTER_LABPBR_REFRACTIONS=%
 option.BETTER_LABPBR_POROSITY=Поддержка пористости
 option.BETTER_LABPBR_POROSITY.comment=Материалы LabPBR, подвергшиеся воздействию дождя, темнеют в зависимости от своей пористости и приобретают зеркальный блеск. §e[*]§r Требует установки «Поддержки наборов ресурсов» на LabPBR.
 
+option.BETTER_LABPBR_POM_PUDDLES=ОПО дождевых луж
+option.BETTER_LABPBR_POM_PUDDLES.comment=Заставляет дождь заполнять отверстия в блоках, имеющих объёмное отображение параллаксной окклюзии (ОПО) §e[*]§r Параметр «Поддержки наборов ресурсов» должен быть установлен в labPBR и в настройках должно быть включено «Отображение параллаксной окклюзии».
+
 option.BETTER_LABPBR_AO=Поддержка ОЗ материалов
 option.BETTER_LABPBR_AO.comment=Уменьшает интенсивность прямого освещения в зависимости от окружающего затенения материала, встроенного в текстуру нормалей LabPBR. §e[*]§r Требует установки «Поддержки наборов ресурсов» на LabPBR.
+
+option.BETTER_LABPBR_SSS=Подповерхностное рассеивание
+option.BETTER_LABPBR_SSS.comment=Позволяет материалам подсвечиваться сзади на основе значения подповерхностного рассеяния, сохраненного в зеркальной текстуре LabPBR. Работает с блоками, полупрозрачными блоками и сущностями, если включена функция «Тени сущностей», и с блочными сущностями, если установлено значение «Полностью». §e[*]§r Этот параметр работает только, если для параметра «Поддержка наборов ресурсов» установлено значение LabPBR, а для параметра «Тени в реальном времени» — низкое или более высокое качество.
 
 option.SHADOW_SATURATION=Насыщенность теней
 option.SHADOW_SATURATION.comment=Настройка насыщенности теней и световых лучей. §e[*]§r Требует «Тени в реальном времени» уровня «Низкий» или выше.
@@ -3125,7 +3176,7 @@ value.MCWIND_NETHER_FOG.1=Да
 option.MCWIND_NETHER_FOG.comment=Управляет штормом и дымкой Незера через ветровое поле WindLink, а не по фиксированной прокрутке. §e[*]§r Эта функция работает только при установленном моде WindLink.
 
 option.PIXELATED_SHADOWS_MODE=Режим пиксельных теней
-option.PIXELATED_SHADOWS_MODE.comment=Изменяет способ отображения пиксельных теней. По умолчанию используется автоматическое разрешение, которое лучше всего подходит для большинства случаев, а ручное разрешение следует использовать только в том случае, если используемые наборы ресурсов имеют несоответствующее разрешение текстур. §e[*]§r Для работы этой опции необходимо включить пиксельные тени.
+option.PIXELATED_SHADOWS_MODE.comment=Изменяет способ отображения пиксельных теней. По умолчанию используется автоматическое разрешение, которое лучше всего подходит для большинства случаев, а ручное разрешение следует использовать только, если используемые наборы ресурсов имеют несоответствующее разрешение текстур. §e[*]§r Для работы этой опции необходимо включить пиксельные тени.
 value.PIXELATED_SHADOWS_MODE.0=Автоматически
 value.PIXELATED_SHADOWS_MODE.8=Ручной 8×
 value.PIXELATED_SHADOWS_MODE.16=Ручной 16×
@@ -3138,7 +3189,7 @@ option.PANINI_PROJECTION.comment=Позволяет использовать п�
 value.PANINI_PROJECTION.0=Нет
 
 option.BLACK_HOLE=Чёрная дыра
-option.BLACK_HOLE.comment=Добавляет чёрную дыру на небосвод в Энде. Её положение задаётся настройками «Положение чёрной дыры».
+option.BLACK_HOLE.comment=Добавляет чёрную дыру на небосвод Энда. Этот ползунок регулирует яркость чёрной дыры. Её положение регулируется настройками «Положение чёрной дыры».
 value.BLACK_HOLE.0=Нет
 
 option.BLACK_HOLE_SHAPE=Форма чёрной дыры
@@ -3192,3 +3243,13 @@ option.BLACK_HOLE_LATITUDE_BIAS.comment=Изменяет смещение шир
 option.BLACK_HOLE_STREAK=Горизонтальная полоса
 option.BLACK_HOLE_STREAK.comment=Добавляет горизонтальную полосу аккреционного диска к чёрной дыре.
 value.BLACK_HOLE_STREAK.0=Нет
+
+option.REFLECTIVE_HORSES=Сверкающие лошадки
+option.REFLECTIVE_HORSES.comment=Каждый ребёнок любит блестящих лошадок! Ведь лошадь, которая не блестит, — грустная лошадь.
+
+option.MODDED_FOG_SUPPORT=Поддержка тумана из модов
+option.MODDED_FOG_SUPPORT.comment=Добавляет поддержку туманов из модов. Эта настройка ни на что не влияет, если мод не добавляет собственный эффект тумана.
+
+option.ENTITY_SHADOW_DISTANCE=§4§lДальность теней сущностей
+option.ENTITY_SHADOW_DISTANCE.comment=Множитель для дальности теней в обычном мире и в Энде. §c[-]§r Оказывает достаточно высокое влияние на производительность (FPS), если используются значения, превышающие значения по умолчанию.
+value.ENTITY_SHADOW_DISTANCE.0.125=По умолчанию (0.125)

@@ -33,18 +33,33 @@ in vec4 glColor;
 void main() {
     vec4 color = texture2D(tex, texCoord) * glColor;
 
-    #ifdef INTENSE_DEEP_DARK
-        if (color.b > 0.1 && color.r < 0.5) { // Warden
-            color.rgb = mix(color.rgb, color.rgb + 0.3, darknessFactor);
+    #ifdef IS_IRIS
+        color.rgb = pow1_5(color.rgb);
+
+        if (entityId == 50008) { // Enderman
+            color.rgb += vec3(0.1);
+            color.rgb *= vec3(3.0, 1.5, 3.0);
+        } else if (entityId == 50152) { // Warden
+            #ifdef INTENSE_DEEP_DARK
+                color.rgb += mix(0.0, 0.3, darknessFactor);
+            #endif
+            color.rgb *= 1.5 + 3.0 * color.g;
         }
+    #else
+        #ifdef INTENSE_DEEP_DARK
+            if (color.b > 0.1 && color.r < 0.5) { // Warden
+                color.rgb += mix(0.0, 0.3, darknessFactor);
+            }
+        #endif
+
+        color.rgb = pow1_5(color.rgb) * (
+            1.5
+            + vec3(4.1, 3.0, 4.1) * (0.8 + 0.5 * color.g) * max0(color.r * color.b - color.g) // Tweak for Enderman
+            + 5.0 * max0(color.g * color.b - color.r) // Tweak for Warden
+            - 0.5 * sqrt(color.r * color.g * color.b) // Tweak for Breeze
+            - vec3(0.0, 0.7, 0.7) * max0(color.r * color.g - color.b) // Tweak for Copper Golem
+        );
     #endif
-    color.rgb = pow1_5(color.rgb) * (
-        1.5
-        + vec3(4.1, 3.0, 4.1) * max0(color.r * color.b - color.g) // Tweak for Enderman
-        + 5.0 * max0(color.g * color.b - color.r) // Tweak for Warden
-        - 0.5 * sqrt(color.r * color.g * color.b) // Tweak for Breeze
-        - vec3(0.0, 0.7, 0.7) * max0(color.r * color.g - color.b) // Tweak for Copper Golem
-    );
 
     #ifdef COLOR_CODED_PROGRAMS
         ColorCodeProgram(color, -1);
@@ -52,12 +67,7 @@ void main() {
 
     /* DRAWBUFFERS:06 */
     gl_FragData[0] = color;
-    gl_FragData[1] = vec4(0, 0, 0, 1);
-
-    #ifdef ENTITIES_ARE_LIGHT
-        /* DRAWBUFFERS:069 */
-        gl_FragData[2] = vec4(1.0);
-    #endif
+    gl_FragData[1] = vec4(0, 0, 0, mix(color.a, 1.0, sqrt4(eyeBrightness.x / 240.0)));
 }
 
 #endif
@@ -109,6 +119,11 @@ void main() {
             DoWaveEverything(position.xyz);
         #endif
         gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
+    #endif
+
+    #ifdef IS_IRIS
+        // Some mods draw hand stuff in eyes to make it emissive, creates z-fighting :/
+        if (renderStage == MC_RENDER_STAGE_HAND_SOLID || renderStage == MC_RENDER_STAGE_HAND_TRANSLUCENT) gl_Position.z -= 0.0001;
     #endif
 }
 

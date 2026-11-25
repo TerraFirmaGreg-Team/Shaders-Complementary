@@ -1,3 +1,16 @@
+#ifdef MCWIND_INTERNAL
+    if (blockEntityId == MCW_MAT_HANGING_SIGN) {
+        noSmoothLighting = true;
+
+        if (glColor.r + glColor.g + glColor.b <= 2.99 || lmCoord.x > 0.999) {
+            #include "/lib/materials/specificMaterials/others/signText.glsl"
+        }
+
+        #ifdef COATED_TEXTURES
+            noiseFactor = 0.66;
+        #endif
+    } else
+#endif
 if (blockEntityId < 5028) {
     if (blockEntityId < 5012) {
         if (blockEntityId < 5004) {
@@ -74,7 +87,7 @@ if (blockEntityId < 5028) {
                 }
                 overlayNoiseIntensity = 0.3;
             } else /*if (blockEntityId == 5024)*/ { // End Portal, End Gateway
-                #ifdef SPECIAL_PORTAL_EFFECTS
+                #if SPECIAL_PORTAL_EFFECT == 1 || SPECIAL_PORTAL_EFFECT == 3
                     #include "/lib/materials/specificMaterials/others/endPortalEffect.glsl"
                 #endif
                 overlayNoiseIntensity = 0.0;
@@ -115,6 +128,9 @@ if (blockEntityId < 5028) {
             if (blockEntityId == 5052) { //
 
             } else if (blockEntityId == 10548) { // Enchanting Table:Book
+                #ifdef GBUFFERS_BLOCK
+                    blockEntityHandled = true; // Keeps the terrain materials from replacing this
+                #endif
                 smoothnessG = pow2(color.g) * 0.35;
 
                 if (color.b < 0.0001 && color.r > color.g) {

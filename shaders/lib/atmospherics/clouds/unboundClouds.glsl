@@ -54,6 +54,11 @@ float GetVoxelCloudVariation(vec3 cloudTracePos, float pixelStep) {
     vec3 voxelCoord = floor(cloudTracePos / pixelStep + 0.5);
     return fract(sin(dot(voxelCoord, vec3(12.9898, 78.233, 37.719))) * 43758.5453);
 }
+
+// All octaves share one world-space voxel grid, so the octave sum is constant inside a voxel
+const vec3 pixelatedNoCachedVoxel = vec3(1e9);
+vec3 pixelatedCachedVoxel = pixelatedNoCachedVoxel;
+float pixelatedCachedNoise = 0.0;
 #endif
 
 
@@ -130,6 +135,16 @@ float GetCloudNoise(vec3 tracePos, int cloudAltitude, float lTracePosXZ, float c
         tracePosM.xz = tracePosM.zx;
     #endif
 
+    #if PIXELATED_UNBOUND_CLOUDS > 0
+        vec3 voxelCell = floor((tracePosM - vec3(0.0, 0.0, wind)) / pixelStepM);
+        bool voxelCached = voxelCell == pixelatedCachedVoxel;
+        if (voxelCached) {
+            sampleCount = 0;
+            noise = pixelatedCachedNoise;
+            total = 1.0;
+        }
+    #endif
+
     for (int i = 0; i < sampleCount; i++) {
         vec3 windOffset = vec3(0.0, 0.0, wind);
         #if PIXELATED_UNBOUND_CLOUDS > 0
@@ -155,6 +170,12 @@ float GetCloudNoise(vec3 tracePos, int cloudAltitude, float lTracePosXZ, float c
         #endif
         currentPersist *= persistance;
     }
+    #if PIXELATED_UNBOUND_CLOUDS > 0
+        if (!voxelCached) {
+            pixelatedCachedVoxel = voxelCell;
+            pixelatedCachedNoise = noise / total;
+        }
+    #endif
     noise = pow2(noise / total);
 
     #define CLOUD_BASE_ADD 0.8
@@ -199,6 +220,14 @@ float GetCloudNoise(vec3 tracePos, int cloudAltitude, float lTracePosXZ, float c
 
 vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float cloudLinearDepth, float skyFade, float skyMult0, vec3 cameraPos, vec3 nPlayerPos, float lViewPosM, float VdotS, float VdotU, float dither, vec3 sunVec, vec3 viewPos) {
     vec4 volumetricClouds = vec4(0.0);
+
+    #if PIXELATED_UNBOUND_CLOUDS > 0
+        pixelatedCachedVoxel = pixelatedNoCachedVoxel; // layers use different scales
+        // GetSky is constant along the ray, so it is computed on the first hit only
+        bool cloudSkyCached = false;
+        bool cachedIsCustomSky = false;
+        vec3 cachedCloudSkyColor = vec3(0.0);
+    #endif
 
     #ifdef DOUBLE_UNBOUND_CLOUDS
     float L1cloudStretch = cloudStretch;
@@ -290,7 +319,11 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
         float cloudMult = 1.0;
         if (lTracePosXZ > distanceThreshold) break;
         if (lTracePos > lViewPosM) {
-            if (skyFade < 0.7) continue;
+            #if CLOUD_QUALITY == 1 && defined DEFERRED1
+                if (skyFade < 0.7) continue; // First hit can lower tracePos.y
+            #else
+                if (skyFade < 0.7) break;
+            #endif
             else cloudMult = skyMult0;
         }
 
@@ -327,7 +360,11 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
             vec3 cloudTracePos = tracePos;
         #endif
 
-        float cloudNoise = GetCloudNoise(tracePos, cloudAltitude, lTracePosXZ, cloudPlayerPos.y);
+        #if PIXELATED_UNBOUND_CLOUDS > 0
+            float cloudNoise = GetCloudNoise(vec3(tracePos.x, cloudTracePos.y, tracePos.z), cloudAltitude, lTracePosXZ, cloudTracePos.y - cameraPos.y);
+        #else
+            float cloudNoise = GetCloudNoise(tracePos, cloudAltitude, lTracePosXZ, cloudPlayerPos.y);
+        #endif
 
         if (cloudNoise > 0.00001) {
             #if defined DOUBLE_UNBOUND_CLOUDS
@@ -484,10 +521,19 @@ vec4 GetVolumetricClouds(int cloudAltitude, float distanceThreshold, inout float
             cloudFogFactor = mix(1.0, cloudFogFactor, skyFadeM);
 
             bool isCustomSky;
-            vec3 cloudSkyColor = GetSky(VdotU, VdotS, dither, isEyeInWater == 0, false, isCustomSky, false);
+            #if PIXELATED_UNBOUND_CLOUDS > 0
+                if (!cloudSkyCached) {
+                    cachedCloudSkyColor = GetSky(VdotU, VdotS, dither, isEyeInWater == 0, false, cachedIsCustomSky, false);
+                    cloudSkyCached = true;
+                }
+                isCustomSky = cachedIsCustomSky;
+                vec3 cloudSkyColor = cachedCloudSkyColor;
+            #else
+                vec3 cloudSkyColor = GetSky(VdotU, VdotS, dither, isEyeInWater == 0, false, isCustomSky, false);
+            #endif
             #ifdef SAVE_SKYBOX_DATA
                 if (isCustomSky) {
-                    vec3 averageSkyColor = texelFetch(colortex14, texelCoord, 0).rgb;
+                    vec3 averageSkyColor = texelFetch(colortex15, texelCoord, 0).rgb;
                     cloudSkyColor = mix(cloudSkyColor, averageSkyColor, cloudFogFactor);
                 }
             #endif

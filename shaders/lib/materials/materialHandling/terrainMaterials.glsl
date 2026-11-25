@@ -7,8 +7,9 @@
     #endif
 #endif
 
+vec3 maRecolor = vec3(0.0);
+
 #ifdef IPBR
-    vec3 maRecolor = vec3(0.0);
     #include "/lib/materials/materialHandling/terrainIPBR.glsl"
 
     #ifdef REFLECTIVE_WORLD
@@ -50,9 +51,8 @@
         #if defined GBUFFERS_TERRAIN || defined VOXY_PATCH
             DoFoliageColorTweaks(color.rgb, shadowMult, snowMinNdotU, viewPos, nViewPos, lViewPos, dither);
         #endif
-    } else if (mat == 10068 || mat == 10070) { // Lava
+    } else if (BLOCK_LAVA_DEFINE) { // Lava
         vec3 previousLavaColor = color.rgb;
-        if (emission < 1.0) emission = max(2.0, emission);
         #ifdef SOUL_SAND_VALLEY_OVERHAUL_INTERNAL
             color.rgb = changeColorFunction(color.rgb, 3.0, colorSoul, inSoulValley);
         #endif
@@ -64,7 +64,7 @@
             #include "/lib/materials/specificMaterials/terrain/lavaNoise.glsl"
             color.rgb = lavaNoiseColor;
         #else
-            if (LAVA_TEMPERATURE != 0.0) color.rgb += LAVA_TEMPERATURE * 0.3;
+            if (LAVA_TEMPERATURE != 0.0) maRecolor += LAVA_TEMPERATURE * 0.5 - 0.2;
         #endif
         vec3 maxLavaColor = max(previousLavaColor, lavaNoiseColor);
         vec3 minLavaColor = min(previousLavaColor, lavaNoiseColor);
@@ -93,6 +93,9 @@
     else if (lmCoord.x > 0.99999) lmCoordM.x = 0.95;
 #endif
 
+#ifdef DISCARD_FOLIAGE_SHADOW
+    if (mat == 10003 || mat == 10005 || mat == 10015 || mat == 10017 || mat == 10019 || mat == 10021 || mat == 10023 || mat == 10029 || mat == 10031) shadowMult *= mix(0.45, 0.8, noonFactor);
+#endif
 
 if (mat == 10572) { // Dragon Egg
     overlayNoiseIntensity = 0.0;

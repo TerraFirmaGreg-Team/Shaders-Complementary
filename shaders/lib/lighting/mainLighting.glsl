@@ -1,5 +1,6 @@
 #include "/lib/shaderSettings/mainLighting.glsl"
 #include "/lib/shaderSettings/cloudsAndLighting.glsl"
+
 #ifdef AURORA_INFLUENCE
     #include "/lib/atmospherics/auroraBorealis.glsl"
 #endif
@@ -8,9 +9,28 @@
 #include "/lib/colors/lightAndAmbientColors.glsl"
 #include "/lib/lighting/ggx.glsl"
 #include "/lib/lighting/minimumLighting.glsl"
+#include "/lib/lighting/smoothLighting.glsl"
 
 #if SHADOW_QUALITY > -1 && (defined OVERWORLD || defined END) && !defined DH_TERRAIN && !defined DH_WATER && !defined VOXY_PATCH
     #include "/lib/lighting/shadowSampling.glsl"
+#endif
+
+#ifdef BETTER_LABPBR_SSS_INTERNAL
+    float labPBRSubsurface = 0.0; // Set by GetCustomMaterials
+
+    #if SSS_STRENGTH > 0 && SHADOW_QUALITY > -1 && !defined DH_TERRAIN && !defined DH_WATER && !defined VOXY_PATCH
+        #if defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER || (defined GBUFFERS_ENTITIES && ENTITY_SHADOW >= 1) || (defined GBUFFERS_BLOCK && ENTITY_SHADOW == 2)
+            #define BETTER_LABPBR_SSS_ACTIVE
+        #endif
+    #endif
+#endif
+
+#if defined SKYLIGHT_SSS_INTERNAL && SSS_STRENGTH > 0 && defined OVERWORLD && (defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER || defined GBUFFERS_BLOCK)
+    #define SKYLIGHT_SSS_ACTIVE
+#endif
+
+#if defined BLOCKLIGHT_SSS_INTERNAL && SSS_STRENGTH > 0 && (defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER || defined GBUFFERS_BLOCK || defined GBUFFERS_ENTITIES)
+    #define BLOCKLIGHT_SSS_ACTIVE
 #endif
 
 #if HELD_LIGHTING_MODE >= 1
@@ -37,6 +57,18 @@
     #include "/lib/voxelization/lightVoxelization.glsl"
 #endif
 
+#ifdef SKY_HEIGHT_INTERNAL
+    #include "/lib/voxelization/skyHeightVoxelization.glsl"
+#endif
+
+#ifdef SKYLIGHT_SSS_ACTIVE
+    #include "/lib/lighting/skylightSSS.glsl"
+#endif
+
+#ifdef BLOCKLIGHT_SSS_ACTIVE
+    #include "/lib/lighting/blocklightSSS.glsl"
+#endif
+
 #if DRAGON_DEATH_EFFECT_INTERNAL > 0
     #define ENDCRYSTAL_SAMPLER_DEFINE
     uniform isampler2D endcrystal_sampler;
@@ -46,7 +78,34 @@
     #include "/lib/shaderSettings/photonics.glsl"
 #endif
 
-vec3 highlightColor = normalize(pow(lightColor, vec3(0.37))) * (0.3 + 1.5 * sunVisibility2) * (1.0 - 0.85 * rainFactor);
+#if defined DIRECTIONAL_LIGHTMAP_NORMALS && (defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER || defined GBUFFERS_BLOCK)
+    #define DIRECTIONAL_BLOCKLIGHT_NORMALS
+
+    // Dot of the surface normal with the direction a light value grows towards, from its screen space gradient
+    float GetLightGradientDot(float lightValue, vec3 viewPos, vec3 playerPos, vec3 worldGeoNormal, vec3 normalM) {
+        #ifdef USE_FINE_DERIVATIVES
+            vec2 dFdBlock = vec2(dFdxFine(lightValue), dFdyFine(lightValue)); // Get higher precision derivatives when available
+            vec3 blockLightDir = dFdxFine(viewPos) * dFdBlock.x + dFdyFine(viewPos) * dFdBlock.y;
+        #else
+            vec2 dFdBlock = vec2(dFdx(lightValue), dFdy(lightValue));
+            vec3 blockLightDir = dFdx(viewPos) * dFdBlock.x + dFdy(viewPos) * dFdBlock.y;
+        #endif
+
+        if (length(blockLightDir) < 1e-9) {
+            vec3 blockCenterPos = floor(playerPos + cameraPosition + 0.001 * worldGeoNormal) - cameraPosition + 0.5; // + 0.001 fixes percision issues
+            blockLightDir = blockCenterPos - worldGeoNormal * dot(worldGeoNormal, blockCenterPos - playerPos) - playerPos;
+            blockLightDir = mat3(gbufferModelView) * blockLightDir;
+        }
+        return dot(normalize(blockLightDir), normalM);
+    }
+#endif
+
+#ifdef MODDED_MOON_DEFINE
+    float moonHighlightMult = sunVisibility2;
+#else
+    float moonHighlightMult = 1.0;
+#endif
+vec3 highlightColor = normalize(pow(lightColor, vec3(0.37))) * (0.3 + 1.5 * sunVisibility2) * (1.0 - 0.85 * rainFactor) * moonHighlightMult;
 
 //Lighting//
 void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 viewPos, float lViewPos, vec3 geoNormal, vec3 normalM, float dither,
@@ -193,6 +252,9 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     #if SSS_STRENGTH == 0
         subsurfaceMode = 0;
     #endif
+    #if defined BETTER_LABPBR_SSS_ACTIVE && !defined NETHER
+        if (labPBRSubsurface > 0.0 && subsurfaceMode == 3) subsurfaceMode = 0; // Modes 1 and 2 stack with the labPBR value, mode 3 is replaced by it
+    #endif
 
     #ifdef OVERWORLD
         float skyLightShadowMult = pow2(pow2(lightmapY2));
@@ -227,6 +289,10 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
             }
 
             subsurfaceMode = 0;
+        #endif
+        #ifdef DIMENSION_SPACE_AIRLESS
+            float NdotLmax0Spec = max0(NdotL); // Unsmoothed, for the specular highlight
+            if (NdotL > 0.0) NdotL = smoothstep(0.0, 0.3, NdotL);
         #endif
         float NdotLmax0 = max0(NdotL);
         float NdotLM = NdotLmax0 * 0.9999;
@@ -293,7 +359,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
                             } else {
                                 float centerFactor = max(glColor.a, lightmapYM);
 
-                                #if defined PERPENDICULAR_TWEAKS && SHADOW_QUALITY >= 2
+                                #if defined PERPENDICULAR_TWEAKS && SHADOW_QUALITY >= 2 && !defined DIMENSION_SPACE_AIRLESS
                                     // Fake Variable Penumbra Shadows
                                     // Making centerFactor also work in daylight if AO gradient is facing towards sun
                                     if (geoNdotU > 0.99) {
@@ -414,9 +480,14 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
                     }
                 }
             #else
-                #if SHADOW_QUALITY == -1 || !defined VOXY_PATCH
-                    shadowMult *= skyLightShadowMult;
-                #else
+                shadowMult *= skyLightShadowMult;
+
+                #if SHADOW_QUALITY > -1 && defined DH_TERRAIN
+                    if (subsurfaceMode == 1) shadowMult *= 0.6 + 0.3 * pow2(noonFactor);
+                    else if (subsurfaceMode == 2) shadowMult *= NdotL * 0.4999 + 0.5;
+                #endif
+
+                #if SHADOW_QUALITY > -1 && defined VOXY_OPAQUE
                     // Screenspace shadows rendered in deferred1 of previous frame for Voxy
                     // Previous frame reprojection from Chocapic13
                     vec3 screenSpaceShadowPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
@@ -445,9 +516,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
 
                             shadowMult *= mix(baseLeafShadowMult, NdotU, extraLeafShadeMix);
                         }
-                        shadowMult *= screenSpaceShadowSample * skyLightShadowMult;
-                    } else {
-                        shadowMult *= skyLightShadowMult;
+                        shadowMult *= screenSpaceShadowSample;
                     }
                 #endif
             #endif
@@ -457,10 +526,42 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
             #endif
 
             #ifdef CLOUD_SHADOWS
-                shadowMult *= GetCloudShadow(playerPos);
+                #if defined DO_PIXELATION_EFFECTS && defined PIXELATED_SHADOWS
+                    shadowMult *= GetCloudShadow(playerPosPixelated, worldGeoNormal);
+                #else
+                    shadowMult *= GetCloudShadow(playerPos, worldGeoNormal);
+                #endif
             #endif
 
             shadowMult *= max(NdotLM * shadowTime, 0.0);
+
+            #ifdef BETTER_LABPBR_SSS_ACTIVE
+                float labSSSFade = smoothstep(0.0, 16.0, shadowDistance * 0.9166667 - lViewPos);
+                #ifdef GBUFFERS_ENTITIES
+                    #ifndef END
+                        float labEntityFadeEnd = shadowDistance * ENTITY_SHADOW_DISTANCE + 2.0;
+                    #else
+                        float labEntityFadeEnd = shadowDistance + 2.0;
+                    #endif
+                    labSSSFade *= 1.0 - smoothstep(labEntityFadeEnd * 0.8, labEntityFadeEnd, max(length(playerPos.xz), abs(playerPos.y)));
+                #endif
+                if (labPBRSubsurface > 0.0 && labSSSFade > 0.0) {
+                    vec3 labSSSAlbedoTint = normalize(color.rgb + 0.00001) * 1.2;
+                    float VdotL = dot(nViewPos, lightVec);
+
+                    subsurfaceHighlight = pow(max0(VdotL), 10.0) * float(isEyeInWater == 0) * 0.6 * labPBRSubsurface * labSSSFade;
+                    subsurfaceColor *= labSSSAlbedoTint;
+
+                    vec3 labSSSMissing = 1.0 - min(shadowMult, vec3(1.0));
+                    if (maxOf(labSSSMissing) > 0.001) {
+                        vec3 labSSSShadow = GetLabPBRSubsurfaceShadow(playerPos, labPBRSubsurface, lightmap.y);
+                        float labSSSScatter = pow(VdotL * 0.5 + 0.5, 16.0) * invRainFactor; // Brighter when looking towards the light through the material
+                        vec3 labSSSTint = mix(mix(labSSSAlbedoTint, vec3(1.0), labSSSShadow), vec3(2.5), labSSSScatter);
+
+                        shadowMult += labSSSTint * labSSSShadow * sqrt(labPBRSubsurface) * skyLightShadowMult * shadowTime * labSSSFade * labSSSMissing; // Strength based on how much in the shadow, so lit areas are unchanged
+                    }
+                }
+            #endif
         }
         #ifdef GBUFFERS_WATER
             else { // Low Quality Water
@@ -475,36 +576,21 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     #endif
 
     // Blocklight
-    float lightmapXM = 0.0;
+    float lightmapXM;
     #if defined LIGHTMAP_CURVES && !defined GBUFFERS_TEXTURED
         if (!noSmoothLighting || oldSubsurfaceMode > 0 && !isLightSource) {
-            float lx4 = pow2(pow2(lightmap.x));
-            float lx8 = pow2(lx4);
-            float vsBrightFactor = 2.8 - 0.6 * vsBrightness + XLIGHT_CURVE;
-
-            float transitionFactor = ((UPPER_LIGHTMAP_CURVE * 0.1 + 0.9) - 1.0) *
-                                    mix(1.0, 10.0, float(int(max(0.0, UPPER_LIGHTMAP_CURVE - 0.01))));
-
-            float transitions = (pow2(lx8) * (10 - vsBrightness) * 2 +
-                            lx8 * (2.8 + XLIGHT_CURVE - vsBrightness) * 0.8 +
-                            lx4 * (2.8 + XLIGHT_CURVE - vsBrightness * 0.7)) * transitionFactor;
-
-            float lightmapXMSteep = max(0.0, pow2(pow2(lightmap.x * lightmap.x)) * vsBrightFactor + transitions);
-            float lightmapXMCalm = lightmap.x * (2.8 - XLIGHT_CURVE + 0.6 * vsBrightness) * LOWER_LIGHTMAP_CURVE;
-            lightmapXM = pow(lightmapXMSteep + lightmapXMCalm, 2.25);
+            lightmapXM = GetTweakedSmoothLightmap(lightmap.x);
         } else {
             float xLightCurveM = XLIGHT_CURVE > 0.999 ? XLIGHT_CURVE : sqrt2(XLIGHT_CURVE);
             lightmapXM = pow(lightmap.x, 3.0 * xLightCurveM * pow2(UPPER_LIGHTMAP_CURVE)) * 10.0 * UPPER_LIGHTMAP_CURVE * (UPPER_LIGHTMAP_CURVE * 0.7 + 0.3);
         }
     #else
         if (!noSmoothLighting) {
-            float lightmapXMSteep = pow2(pow2(lightmap.x * lightmap.x)) * (2.8 - 0.6 * vsBrightness + XLIGHT_CURVE);
-            float lightmapXMCalm = lightmap.x * (2.8 + 0.6 * vsBrightness - XLIGHT_CURVE);
-            lightmapXM = pow(lightmapXMSteep + lightmapXMCalm, 2.25);
+            lightmapXM = GetTweakedSmoothLightmap(lightmap.x);
         } else {
-        float xLightCurveM = XLIGHT_CURVE > 0.999 ? XLIGHT_CURVE : sqrt2(XLIGHT_CURVE);
-        lightmapXM = pow(lightmap.x, 3.0 * xLightCurveM) * 10.0;
-    }
+            float xLightCurveM = XLIGHT_CURVE > 0.999 ? XLIGHT_CURVE : sqrt2(XLIGHT_CURVE);
+            lightmapXM = pow(lightmap.x, 3.0 * xLightCurveM) * 10.0;
+        }
     #endif
 
     float daylightFactor = lightmapYM * invRainFactor * sunVisibility;
@@ -514,31 +600,13 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         lightmapXM *= 1.5 - 0.5 * daylightFactor; // Brighter lit particles
     #endif
 
-    #if defined DIRECTIONAL_LIGHTMAP_NORMALS && (defined GBUFFERS_TERRAIN || defined GBUFFERS_WATER || defined GBUFFERS_BLOCK)
-        if (oldLightmap.x > 0.035 && mat != 32008) { // very specific value, do not change
-            float lightmapDir = lightmapXM;
-            #ifdef USE_FINE_DERIVATIVES
-                vec2 dFdBlock = vec2(dFdxFine(oldLightmap.x), dFdyFine(oldLightmap.x)); // Get higher precision derivatives when available
-            #else
-                vec2 dFdBlock = vec2(dFdx(oldLightmap.x), dFdy(oldLightmap.x));
-            #endif
-            vec3 blockLightDir = vec3(0.0);
+    #ifdef DIRECTIONAL_BLOCKLIGHT_NORMALS
+        // Kept separate from lightmapXM so the ACT light can use its own direction
+        float blockDirMult = 1.0;
+        if (oldLightmap.x > 0.035 && mat != 32008) { // very specific value, do not change, and exclude Glass
+            float dotNormal = GetLightGradientDot(oldLightmap.x, viewPos, playerPos, worldGeoNormal, normalM);
 
-            if (length(dFdBlock) < 1e-6) {
-                vec3 blockCenterPos = floor(playerPos + cameraPosition + 0.001 * worldGeoNormal) - cameraPosition + 0.5; // + 0.001 fixes percision issues
-                blockLightDir = blockCenterPos - worldGeoNormal * dot(worldGeoNormal, blockCenterPos - playerPos) - playerPos;
-                blockLightDir = mat3(gbufferModelView) * blockLightDir;
-            } else {
-                #ifdef USE_FINE_DERIVATIVES
-                    blockLightDir = dFdxFine(viewPos) * dFdBlock.x + dFdyFine(viewPos) * dFdBlock.y; // Get higher precision derivatives when available
-                #else
-                    blockLightDir = dFdx(viewPos) * dFdBlock.x + dFdy(viewPos) * dFdBlock.y;
-                #endif
-            }
-            float dotNormal = dot(normalize(blockLightDir), normalM);
-
-            lightmapDir *= pow(dotNormal + 1.0, DIRECTIONAL_LIGHTMAP_NORMALS_BLOCK_STRENGTH_NEW + 0.25);
-            lightmapXM = mix(lightmapXM, lightmapDir, 0.01 * max0(100.0 - lViewPos));
+            blockDirMult = mix(1.0, pow(dotNormal + 1.0, DIRECTIONAL_LIGHTMAP_NORMALS_BLOCK_STRENGTH_NEW + 0.25), 0.01 * max0(100.0 - lViewPos));
         }
     #endif
 
@@ -554,7 +622,11 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         blocklightCol = vec3(RandR, RandG, RandB) * 0.875;
     #endif
 
-    vec3 blockLighting = lightmapXM * blocklightCol;
+    #ifdef DIRECTIONAL_BLOCKLIGHT_NORMALS
+        vec3 blockLighting = lightmapXM * blockDirMult * blocklightCol;
+    #else
+        vec3 blockLighting = lightmapXM * blocklightCol;
+    #endif
 
     #if defined PHOTONICS_LIGHTING && !defined GBUFFERS_WATER && !defined GBUFFERS_HAND && PHOTONICS_MAX_LIGHTS > 0
         // Keep a small vanilla fallback near camera so scenes do not go black if RT energy is weak.
@@ -582,7 +654,22 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
             lightVolume = GetLightVolume(voxelPosM);
             lightVolume = sqrt(lightVolume);
             specialLighting = lightVolume.rgb;
+
+            #ifdef COLORED_DYNAMIC_LIGHTING
+                lightVolume.a = min1(lightVolume.a); // Some entities can get a bit intense
+            #endif
         }
+
+        float actDirMult = 1.0;
+        #ifdef DIRECTIONAL_BLOCKLIGHT_NORMALS
+            actDirMult = blockDirMult;
+            #ifdef ACT_CORNER_LEAK_FIX // Without it the light volume is too quantized to differentiate, so ACT keeps the vanilla direction
+                // Vanilla blocklight already applies its direction, so the volume's own gradient only fills in where vanilla has no light
+                float volumeDirMult = pow(GetLightGradientDot(GetLuminance(lightVolume.rgb), viewPos, playerPos, worldGeoNormal, normalM) + 1.0, DIRECTIONAL_LIGHTMAP_NORMALS_BLOCK_STRENGTH_NEW + 0.25);
+                volumeDirMult = mix(1.0, volumeDirMult, 0.01 * max0(100.0 - lViewPos));
+                actDirMult = mix(volumeDirMult, blockDirMult, smoothstep(0.035, 0.07, oldLightmap.x));
+            #endif
+        #endif
 
         // Add extra articial light for blocks that request it
         lightmapXM = max(lightmapXM, mix(lightmapXM, 10.0, lightVolume.a));
@@ -590,8 +677,8 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
 
         purkinjeOverwrite += 17.0 * lightVolume.a;
 
-        // Color Balance
-        specialLighting = lightmapXM * 0.13 * DoLuminanceCorrection(specialLighting + blocklightCol * 0.05);
+        // Color Balance / consistencyCB72412HF
+        specialLighting = lightmapXM * actDirMult * 0.13 * DoLuminanceCorrection(specialLighting + blocklightCol * 0.05);
 
         // Add some extra non-contrasty detail
         AddSpecialLightDetail(specialLighting, color.rgb, emission);
@@ -614,6 +701,10 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         //if (heldItemId != 40000 || heldItemId2 == 40000) // Hold spider eye to see vanilla lighting
         blockLighting = mix(specialLighting, blockLighting, blocklightDecider);
         //if (heldItemId2 == 40000 && heldItemId != 40000) blockLighting = lightVolume.rgb; // Hold spider eye to see light volume
+    #endif
+
+    #ifdef DIRECTIONAL_BLOCKLIGHT_NORMALS
+        lightmapXM *= blockDirMult;
     #endif
 
     #if defined END && END_CENTER_LIGHTING > 0 && MC_VERSION >= 10900 && defined END_CENTER_LIGHTING_AFFECT_BLOCKLIGHT && (defined GBUFFERS_BLOCK || defined GBUFFERS_ENTITIES || defined GBUFFERS_TERRAIN || defined GBUFFERS_HAND) && !defined VOXY_PATCH
@@ -644,7 +735,11 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
             blockLighting *= 0.5;
             heldLighting *= 2.0;
         #endif
+
+        blockLighting = sqrt(pow2(blockLighting) + heldLighting);
     #endif
+
+    purkinjeOverwrite += maxOf(blockLighting);
 
     vec3 minLighting = GetMinimumLighting(lightmapYM, playerPos);
     vec3 shadowLightMult = shadowMult;
@@ -674,7 +769,7 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
         #endif
 
         if (isEyeInWater != 1) {
-            float lxFactor = (sunVisibility2 * 0.4 + (0.6 - 0.6 * pow2(invNoonFactor))) * (6.0 - 5.0 * rainFactor);
+            float lxFactor = (sunVisibility2 * 0.4 + (0.6 - 0.6 * invNoonFactor2)) * (6.0 - 5.0 * rainFactor);
             lxFactor *= lightmapY2 + lightmapY2 * 2.0 * pow2(shadowMultFloat);
             lxFactor = max0(lxFactor - emission * 1000000.0);
             blockLighting *= pow(lightmapXM / 60.0 + 0.001, 0.09 * lxFactor);
@@ -761,12 +856,36 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     #endif
 
     vec3 sceneLighting = lightColorM * shadowLightMult + ambientColorM * ambientMult;
-    float dotSceneLighting = dot(sceneLighting, sceneLighting);
 
-    #if HELD_LIGHTING_MODE >= 1
-        blockLighting = sqrt(pow2(blockLighting) + heldLighting);
+    #if defined SKYLIGHT_SSS_ACTIVE || defined BLOCKLIGHT_SSS_ACTIVE
+        float sssAmount = oldSubsurfaceMode == 2 ? 0.8 : oldSubsurfaceMode == 1 || oldSubsurfaceMode == 3  ? 0.6 : 0.0;
+        #ifdef BETTER_LABPBR_SSS_ACTIVE
+            sssAmount = max(sssAmount, labPBRSubsurface);
+        #endif
     #endif
 
+    #ifdef SKYLIGHT_SSS_ACTIVE
+        vec3 skySSSLight = vec3(0.0);
+        float skySSSLightning = 0.0;
+        #ifdef RAIN_ATMOSPHERE
+            skySSSLightning = lightningFadeOutExp * isLightningActive();
+        #endif
+
+        if (sssAmount > 0.0) skySSSLight = GetSkylightSSS(playerPos, worldGeoNormal, nViewPos, color.rgb, lightmap.y, sssAmount, skySSSLightning);
+    #endif
+
+    #ifdef BLOCKLIGHT_SSS_ACTIVE
+        vec3 blockSSSLight = vec3(0.0);
+        if (sssAmount > 0.0 && emission < 0.01) {
+            blockSSSLight =GetBlocklightSSS(playerPos, worldGeoNormal, color.rgb, sssAmount) * (1.0 - blocklightDecider) * XLIGHT_I;
+            #ifdef OVERWORLD
+                blockSSSLight *= 1.0 - 0.66 * daylightFactor;
+                blockSSSLight *= 1.0 - 0.7 * inLushCave; // Glow berries make everything too bright otherwise
+            #endif
+        }
+    #endif
+
+    float dotSceneLighting = dot(sceneLighting, sceneLighting);
     blockLighting *= XLIGHT_I;
 
     #if defined BLOCKLIGHT_CAUSTICS && (defined GBUFFERS_BLOCK || defined GBUFFERS_ENTITIES || defined GBUFFERS_TERRAIN || defined GBUFFERS_HAND)
@@ -835,34 +954,46 @@ void DoLighting(inout vec4 color, inout vec3 shadowMult, vec3 playerPos, vec3 vi
     // Light Highlight
     vec3 lightHighlight = vec3(0.0);
     #ifdef LIGHT_HIGHLIGHT
-        #ifdef BETTER_LABPBR_REFLECTIONS_INTERNAL
-            float maxMetalHighlightTint = maxOf(metalHighlightTint);
-            bool isHardCodedMetal = maxMetalHighlightTint < 0.999;
-            float highlightF0 = isHardCodedMetal ? maxMetalHighlightTint : 0.05;
-            highlightMult = isHardCodedMetal ? 1.0 : highlightMult;
-        #else
-            float highlightF0 = 0.05;
-        #endif
-        float specularHighlight = GGX(normalM, nViewPos, lightVec, NdotLmax0, smoothnessG, highlightF0);
+        if (shadowMult.r + shadowMult.g + shadowMult.b > 0.0) {
+            #ifdef BETTER_LABPBR_REFLECTIONS_INTERNAL
+                float maxMetalHighlightTint = maxOf(metalHighlightTint);
+                bool isHardCodedMetal = maxMetalHighlightTint < 0.999;
+                float highlightF0 = isHardCodedMetal ? maxMetalHighlightTint : 0.05;
+                highlightMult = isHardCodedMetal ? 1.0 : highlightMult;
+            #else
+                float highlightF0 = 0.05;
+            #endif
+            #ifdef DIMENSION_SPACE_AIRLESS
+                float specularHighlight = GGX(normalM, nViewPos, lightVec, NdotLmax0Spec, smoothnessG, highlightF0) * NdotLmax0Spec / max(NdotLmax0, 0.0001);
+            #else
+                float specularHighlight = GGX(normalM, nViewPos, lightVec, NdotLmax0, smoothnessG, highlightF0);
+            #endif
 
-        specularHighlight *= highlightMult;
+            specularHighlight *= highlightMult;
 
-        lightHighlight = isEyeInWater != 1 ? shadowMult : pow(shadowMult, vec3(0.25)) * 0.35;
-        lightHighlight *= (subsurfaceHighlight * subsurfaceColor + specularHighlight * metalHighlightTint) * highlightColor;
+            lightHighlight = isEyeInWater != 1 ? shadowMult : pow(shadowMult, vec3(0.25)) * 0.35;
+            lightHighlight *= (subsurfaceHighlight * subsurfaceColor + specularHighlight * metalHighlightTint) * highlightColor;
 
-        #ifdef LIGHT_COLOR_MULTS
-            lightHighlight *= lightColorMult;
-        #endif
-        #ifdef MOON_PHASE_INF_REFLECTION
-            lightHighlight *= pow2(moonPhaseInfluence);
-        #endif
-        #if BLOOD_MOON > 0
-            lightHighlight *= mix(vec3(1.0), vec3(1.0, 0.1294, 0.1294), getBloodMoon(sunVisibility));
-        #endif
+            #ifdef LIGHT_COLOR_MULTS
+                lightHighlight *= lightColorMult;
+            #endif
+            #ifdef MOON_PHASE_INF_REFLECTION
+                lightHighlight *= pow2(moonPhaseInfluence);
+            #endif
+            #if BLOOD_MOON > 0
+                lightHighlight *= mix(vec3(1.0), vec3(1.0, 0.1294, 0.1294), getBloodMoon(sunVisibility));
+            #endif
+        }
     #endif
 
     // Mix Colors
-    vec3 finalDiffuse = pow2(directionShade * vanillaAO) * (blockLighting + pow2(sceneLighting) + minLighting) + pow2(emission);
+    vec3 finalDiffuse = pow2(directionShade * vanillaAO) * (blockLighting  + pow2(sceneLighting) + minLighting) + pow2(emission);
+    #ifdef SKYLIGHT_SSS_ACTIVE
+        finalDiffuse += pow2(skySSSLight);
+    #endif
+    #ifdef BLOCKLIGHT_SSS_ACTIVE
+        finalDiffuse += pow2(blockSSSLight);
+    #endif
     finalDiffuse = sqrt(max(finalDiffuse, vec3(0.0))); // sqrt() for a bit more realistic light mix, max() to prevent NaNs
 
     // Apply Lighting

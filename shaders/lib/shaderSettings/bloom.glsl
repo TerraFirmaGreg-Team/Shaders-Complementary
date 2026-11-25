@@ -10,4 +10,10 @@
     #undef BLOOM_FOG
 #endif
 
+//#define BLOOM_SMOOTHING
+
+#if defined MC_OS_MAC || MC_VERSION < 11605
+    #undef BLOOM_SMOOTHING
+#endif
+
 #endif

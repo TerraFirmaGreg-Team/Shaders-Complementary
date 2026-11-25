@@ -133,9 +133,11 @@
         emission = mix(emission, 5.0, edge);
     }
 #endif
+
+#ifdef WATER_REFRACTION
+    materialMask = OSIEBCA * 241.0; // Water Refraction
+#endif
+
 #if defined NETHER && defined BIOME_COLORED_NETHER_PORTALS
     color.rgb = normalize(netherColor) * GetLuminance(color.rgb) * 2.5;
 #endif
-
-// color.rgb = vec3(0.0);
-// emission = 0;

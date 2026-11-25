@@ -22,5 +22,8 @@
 #define BORDER_FOG_DISTANCE_END 3 //[1 2 3 6 10 50 100 500 1000]
 #define BORDER_FOG_DENSITY_END 1.00 //[0.10 0.20 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00]
 
+#define MODDED_FOG_SUPPORT // Honour vanilla fog pulled in closer than the render distance by a mod or a dimension, thanks to krooked590
+#ifdef MODDED_FOG_SUPPORT
+#endif
 
 #endif

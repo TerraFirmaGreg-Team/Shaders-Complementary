@@ -8,6 +8,7 @@
 #include "/lib/shaderSettings/enderStars.glsl"
 #include "/lib/shaderSettings/enderNebula.glsl"
 #include "/lib/shaderSettings/deferred1.glsl"
+#include "/lib/shaderSettings/reflectionRoughness.glsl"
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
 #ifdef FRAGMENT_SHADER
@@ -21,12 +22,11 @@ flat in vec3 upVec, sunVec, eastVec;
 #endif
 
 //Pipeline Constants//
-const bool colortex0MipmapEnabled = true;
 
 //Common Variables//
 float SdotU = dot(sunVec, upVec);
-float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
-float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
+float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
 float sunVisibility2 = sunVisibility * sunVisibility;
 float shadowTimeVar1 = abs(sunVisibility - 0.5) * 2.0;
 float shadowTimeVar2 = shadowTimeVar1 * shadowTimeVar1;
@@ -56,7 +56,7 @@ float GetLinearDepth(float depth) {
 }
 
 float GetLinearDepth(float depth, float far, float near) {
-    return (2.0 * near) / (far + near - depth * (far - near));
+    return (2.0 * near) / (far + near - depth * farMinusNear);
 }
 
 float CalculateLinearDepth(float depth_sample, float near_plane, float far_plane) {
@@ -180,18 +180,20 @@ float CalculateLinearDepth(float depth_sample, float near_plane, float far_plane
                     tracePos -= nViewPos * 1.5; // Tweak to imitate shadow bias
             #endif
 
+            vec4 clipPos = projection * vec4(tracePos.xyz, 1.0);
+            vec4 clipStep = projection * vec4(traceStep, 0.0);
+
             for (int i = 0; i < 32; i++) {
-                vec4 pos = projection * vec4(tracePos.xyz, 1.0);
-                pos = pos / pos.w * 0.5 + 0.5;
+                vec4 pos = clipPos / clipPos.w * 0.5 + 0.5;
 
                 if (pos.x < 0.0 || pos.x > 1.0 || pos.y < 0.0 || pos.y > 1.0) break;
 
                 #ifdef VOXY
-                    traceZ = texture2D(depthtex0, pos.xy).r;
+                    // traceZ = texture2D(depthtex0, pos.xy).r;
 
-                    if (traceZ < 1.0) {
-                        zDelta = -tracePos.z - GetLinearDepth(traceZ, gbufferProjectionInverse);
-                    } else
+                    // if (traceZ < 1.0) {
+                    //     zDelta = -tracePos.z - GetLinearDepth(traceZ, gbufferProjectionInverse);
+                    // } else
                 #endif
                 {
                     traceZ = texture2D(depthtex, pos.xy).r;
@@ -200,6 +202,7 @@ float CalculateLinearDepth(float depth_sample, float near_plane, float far_plane
 
                 shadow *= 1.0 - smoothstep(0.0, 0.01, zDelta) * smoothstep(5.0, 4.0, zDelta);
                 tracePos += traceStep;
+                clipPos += clipStep;
             }
 
             return shadow;
@@ -231,12 +234,42 @@ float CalculateLinearDepth(float depth_sample, float near_plane, float far_plane
     #include "/lib/atmospherics/netherNoise.glsl"
 #endif
 
-#ifdef BEDROCK_NOISE
+#if defined BEDROCK_NOISE || defined DIMENSION_SPACE
     #include "/lib/atmospherics/stars.glsl"
 #endif
 
 #if NIGHT_NEBULAE == 1
     #include "/lib/atmospherics/nightNebula.glsl"
+#endif
+
+#ifdef DIMENSION_SPACE
+    vec3 GetSpaceStars(vec3 viewPos, float VdotU, float VdotS) {
+        vec3 stars = vec3(0.0);
+        #if STAR_BRIGHTNESS != 3
+            vec2 starCoord = GetStarCoord(viewPos, 0.5);
+            stars = GetStars(starCoord, VdotU, VdotS, 1.0, 0.0);
+            #if STAR_LAYER_OW == 1 || STAR_LAYER_OW == 3
+                stars = max(stars, GetStars(starCoord, VdotU, VdotS, 0.66, 0.0));
+            #endif
+            #if STAR_LAYER_OW == 2 || STAR_LAYER_OW == 3
+                stars = max(stars, GetStars(starCoord, VdotU, VdotS, 2.2, 0.45));
+            #endif
+            #ifdef CAVE_FOG
+                stars *= 1.0 - GetCaveFactor();
+            #endif
+        #endif
+        return stars;
+    }
+#endif
+
+#if defined DIMENSION_SPACE && defined BORDER_FOG
+    vec3 GetSpaceBorderFogSky(vec3 viewPos, float VdotU, float VdotS) {
+        vec3 skyStuff = GetSpaceStars(viewPos, VdotU, VdotS);
+        #if NIGHT_NEBULAE == 1
+            skyStuff += GetNightNebula(viewPos, VdotU, VdotS);
+        #endif
+        return skyStuff;
+    }
 #endif
 
 #ifdef VL_CLOUDS_ACTIVE
@@ -384,6 +417,10 @@ void main() {
 
     float VdotU = dot(nViewPos, upVec);
     float VdotS = dot(nViewPos, sunVec);
+    #if defined MODDED_FOG_SUPPORT && defined OVERWORLD
+        // How close the modded fog is, 300 is a magic number
+        float skyFogCloseness = clamp((300.0 - gl_Fog.end) / 300.0, 0.0, 1.0);
+    #endif
     float skyFade = 0.0;
     vec3 waterRefColor = vec3(0.0);
     vec3 auroraBorealis = vec3(0.0);
@@ -461,9 +498,10 @@ void main() {
         color.rgb *= ssao;
 
         #ifdef PBR_REFLECTIONS
+            float smoothnessMirror = ApplyReflectionMirrorness(smoothnessD);
             #if WORLD_SPACE_REFLECTIONS_INTERNAL == -1 && !defined END
                 // Way steeper fresnel falloff on SSR-only mode to hide SSR limitation and gain performance
-                float fresnelFactor = (1.0 - smoothnessD) * 0.7 * (1.0 - isHardcodedMetal); // On Hardcoded metals we use the full fresnel value
+                float fresnelFactor = (1.0 - smoothnessMirror) * 0.7 * (1.0 - isHardcodedMetal); // On Hardcoded metals we use the full fresnel value
                 fresnelM = max(fresnel - fresnelFactor, 0.0) / (1.0 - fresnelFactor);
             #else
                 fresnelM = mix(fresnel * 0.7 + 0.3, fresnel, isHardcodedMetal);
@@ -475,7 +513,7 @@ void main() {
             #else
                 fresnelM = mix(pow2(fresnelM), fresnelM * 0.75 + 0.25, intenseFresnel);
             #endif
-            fresnelM = fresnelM * sqrt1(smoothnessD) - dither * 0.01;
+            fresnelM = fresnelM * sqrt1(smoothnessMirror) - dither * 0.01;
         #endif
 
         #ifdef IRIS_FEATURE_FADE_VARIABLE
@@ -484,6 +522,9 @@ void main() {
 
         waterRefColor = color.rgb;
         DoFog(color, skyFade, lViewPos, playerPos, VdotU, VdotS, dither, false, 0.0);
+        #if defined DIMENSION_SPACE && defined BORDER_FOG
+            if (skyFade > 0.01) color.rgb += pow4(skyFade) * GetSpaceBorderFogSky(viewPos.xyz, VdotU, VdotS);
+        #endif
     } else {
         #if defined DISTANT_HORIZONS || defined VOXY
             #ifdef DISTANT_HORIZONS
@@ -527,6 +568,9 @@ void main() {
                 waterRefColor = color.rgb;
 
                 DoFog(color, skyFade, lViewPos, playerPos, VdotU, VdotS, dither, false, 0.0);
+                #if defined DIMENSION_SPACE && defined BORDER_FOG
+                    if (skyFade > 0.01) color.rgb += pow4(skyFade) * GetSpaceBorderFogSky(viewPos.xyz, VdotU, VdotS);
+                #endif
             } else
         #endif
         { // Sky
@@ -537,9 +581,21 @@ void main() {
                     auroraBorealis = GetAuroraBorealis(viewPos.xyz, VdotU, dither);
                     color.rgb += auroraBorealis;
                 #endif
+                float skyObjectVisibility = 1.0;
+                #ifdef DIMENSION_SPACE
+                    if (materialMaskInt >= 1 && materialMaskInt <= 64) skyObjectVisibility = 1.0 - float(materialMaskInt - 1) / 63.0;
+                    color.rgb += GetSpaceStars(viewPos.xyz, VdotU, VdotS) * skyObjectVisibility * (1.0 - maxBlindnessDarkness);
+                #endif
                 #if NIGHT_NEBULAE == 1
-                    nightNebula += GetNightNebula(viewPos.xyz, VdotU, VdotS);
+                    nightNebula += GetNightNebula(viewPos.xyz, VdotU, VdotS) * skyObjectVisibility;
                     color.rgb += nightNebula;
+                #endif
+                #ifdef MODDED_FOG_SUPPORT // the sky lies past any fog end
+                    float skyFogVdotUmax0M = mix(1.0 - pow(max(VdotU, 0.0), 0.75), 1.0, skyFogCloseness);
+                    color.rgb = mix(color.rgb, fogColor, GetModdedFogStrength() * skyFogVdotUmax0M);
+                #endif
+                #ifdef FOG_COLORED_HORIZON // For twilight forest sky blending
+                    color.rgb = mix(color.rgb, fogColor, 1.0 - smoothstep(0.02, 0.4, VdotU));
                 #endif
             #endif
             #ifdef NETHER
@@ -618,6 +674,15 @@ void main() {
             clouds = GetClouds(cloudLinearDepth, skyFade, vec3(0.0), playerPos, viewPos.xyz,
                                lViewPos, VdotS, VdotU, dither, auroraBorealis, nightNebula, sunVec);
 
+            #ifdef CAVE_FOG
+                clouds.a *= 1.0 - GetCaveFactor();
+            #endif
+
+            #if defined MODDED_FOG_SUPPORT && defined OVERWORLD // fog the clouds like the sky
+                // Floor fades from 0.33 toward full coverage as the fog gets closer
+                float cloudFogVdotUmax0M = mix(mix(0.33, 1.0, skyFogCloseness), 1.0, 1.0 - pow(max(VdotU, 0.0), 0.75));
+                clouds.rgb = mix(clouds.rgb, fogColor, GetModdedFogStrength() * cloudFogVdotUmax0M);
+            #endif
             color = mix(color, vec4(clouds.rgb, 0.0), clouds.a);
         }
     #endif

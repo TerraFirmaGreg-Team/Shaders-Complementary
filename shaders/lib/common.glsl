@@ -38,6 +38,9 @@
         #define COLORED_LIGHTING_INTERNAL COLORED_LIGHTING
         #if COLORED_LIGHTING_INTERNAL > 0
             #define COLORED_LIGHT_FOG
+            #if ENTITY_SHADOW >= 1
+                #define COLORED_DYNAMIC_LIGHTING
+            #endif
             #define COLORED_LIGHT_FOG_I 0.65 //[0.15 0.20 0.25 0.30 0.35 0.40 0.45 0.50 0.55 0.60 0.65 0.70 0.75 0.80 0.85 0.90 0.95 1.00 1.05 1.10 1.15 1.20 1.25 1.30 1.35 1.40 1.45 1.50]
 
             #if WORLD_SPACE_REFLECTIONS > 0
@@ -70,6 +73,7 @@
 
     #define WATER_STYLE_DEFINE -1 //[-1 1 2 3]
     #define WATER_CAUSTIC_STYLE_DEFINE -1 //[-1 1 3]
+    #define WATER_REFRACTION_DEFINE -1 //[-1 0 1]
     #define WATER_REFRACTION_INTENSITY 2.0 //[0.0 0.2 0.4 0.6 0.8 1.0 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0]
     #define WATER_FOG_MULT 100 //[25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 110 120 130 140 150 160 170 180 190 200 220 240 260 280 300 325 350 375 400 425 450 475 500 550 600 650 700 750 800 850 900]
     #define WATERCOLOR_MODE 3 //[3 2 0]
@@ -108,8 +112,6 @@
 
     #define END_BEAM_INTENSITY 1.00 //[0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.80 2.00 2.20 2.40 2.60 2.80 3.00]
     #define END_STAR_INTENSITY 1.00 //[0.00 0.05 0.10 0.15 0.20 0.25 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.80 2.00 2.20 2.40 2.60 2.80 3.00]
-    #define END_BEAM_CENTER_ALT 68 //[-240 -236 -232 -228 -224 -220 -216 -212 -208 -204 -200 -196 -192 -188 -184 -180 -176 -172 -168 -164 -160 -156 -152 -148 -144 -140 -136 -132 -128 -124 -120 -116 -112 -108 -104 -100 -96 -92 -88 -84 -80 -76 -72 -68 -64 -60 -56 -52 -48 -44 -40 -36 -32 -28 -24 -20 -16 -12 -8 -4 0 4 8 12 16 20 22 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 100 104 108 112 116 120 124 128 132 136 140 144 148 152 156 160 164 168 172 176 180 184 188 192 196 200 204 208 212 216 220 224 228 232 236 240 244 248 252 256 260 264 268 272 276 280 284 288 292 296 300]
-    #define END_BEAM_HEIGHT 1.00 //[0.10 0.15 0.20 0.25 0.30 0.40 0.50 0.60 0.70 0.80 0.90 1.00 1.10 1.20 1.30 1.40 1.50 1.60 1.80 2.00]
     #define END_FLASHES
 
     #define BORDER_FOG
@@ -151,7 +153,7 @@
 
     #define WAVING_RAIN
 
-    #define SPECIAL_PORTAL_EFFECTS
+    #define SPECIAL_PORTAL_EFFECT 3 //[0 1 2 3]
     #define REFLECTION_RES 0.5 //[1.0 0.5]
 
     #define SUN_ANGLE -1 //[-1 0 -20 -30 -40 -50 -60 60 50 40 30 20]
@@ -186,6 +188,7 @@
     //#define PIXELATED_SHADOWS
     //#define PIXELATED_BLOCKLIGHT
     //#define PIXELATED_AO
+    //#define PIXELATED_CLOUD_SHADOWS
     #define PIXEL_SCALE 1 //[-2 -1 1 2 3 4 5]
 
     //#define LIGHT_COLOR_MULTS
@@ -289,7 +292,7 @@
     //#define ATLAS_ROTATION
 
     #define SEASONS 0 //[0 1 2 3 4 5] 0 = off, 1 = cycling, 2 = summer, 3 = autumn, 4 = winter, 5 = spring
-    #ifndef OVERWORLD
+    #if !defined OVERWORLD || defined DIMENSION_SPACE || defined DIMENSION_CAVE_VOID
         #undef SEASONS
         #define SEASONS 0
     #endif
@@ -298,8 +301,6 @@
     #define SEASON_COLOR_DESATURATION 0.3 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
     #define SEASON_START 3 //[0 1 2 3]
     #define LEAVES_ON_GROUND
-
-    #define TFG_REALISTIC_MOON_TOGGLE
 
     #if defined LEAVES_ON_GROUND && COLORED_LIGHTING_INTERNAL > 0 && SEASONS > 0
         #define ACT_GROUND_LEAVES_FIX
@@ -311,15 +312,13 @@
     //#define MOSS_NOISE
     //#define SAND_NOISE
 
-    //#define ENTITIES_ARE_LIGHT
-
     //#define MULTICOLORED_BLOCKLIGHT // Kept for legacy reasons
     #ifdef MULTICOLORED_BLOCKLIGHT
         #define SSBL_OVERRIDE
     #endif
-    #define MCBL_MAIN_DEFINE 0 //[0 1 2 3]
-    #if COLORED_LIGHTING_INTERNAL == 0 || MCBL_MAIN_DEFINE > 1 || defined ENTITIES_ARE_LIGHT
-        #if (MCBL_MAIN_DEFINE >= 1 || defined SSBL_OVERRIDE || defined ENTITIES_ARE_LIGHT) && (MC_VERSION >= 11604 || defined IS_IRIS || defined IS_ANGELICA)
+    #define MCBL_MAIN_DEFINE 0 //[0 1 2]
+    #if COLORED_LIGHTING_INTERNAL == 0 || MCBL_MAIN_DEFINE > 1
+        #if (MCBL_MAIN_DEFINE >= 1 || defined SSBL_OVERRIDE) && (MC_VERSION >= 11604 || defined IS_IRIS || defined IS_ANGELICA)
             #define SS_BLOCKLIGHT
         #else
             #undef SS_BLOCKLIGHT
@@ -330,6 +329,9 @@
     #ifdef PHOTONICS_LIGHTING
         #undef SS_BLOCKLIGHT
     #endif
+
+    #define TFG_REALISTIC_MOON_TOGGLE
+
 
     //#define RANDOM_BLOCKLIGHT
     #if MCBL_MAIN_DEFINE > 0
@@ -385,6 +387,8 @@
     #define RAIN_TEX_OPACITY_MULTIPLIER 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
     #define SNOW_TEX_OPACITY_MULTIPLIER 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0]
 
+    #define USE_SYNCED_TIME
+
     #define CUSTOM_SKY_SUPPORT_SLIDER 10 //[0 1 2 3 4 5 6 7 8 9 10]
     #define SAVE_SKYBOX_DATA_OVERRIDE
     #ifdef SAVE_SKYBOX_DATA_OVERRIDE
@@ -395,11 +399,23 @@
         #define MCWIND_INTERNAL
     #endif
 
+    #ifdef MCWIND
+        #define isSign(id) ((id) == 5004 || (id) == MCW_MAT_HANGING_SIGN)
+    #else
+        #define isSign(id) ((id) == 5004)
+    #endif
+
+    #ifdef MCWIND_INTERNAL
+        #define MCWIND_SIGN_SWAY
+    #endif
+
     // #define BETTER_LABPBR
     #define BETTER_LABPBR_REFLECTIONS
     #define BETTER_LABPBR_REFRACTIONS 100 //[0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100]
     #define BETTER_LABPBR_POROSITY
     #define BETTER_LABPBR_AO
+    #define BETTER_LABPBR_SSS
+    #define BETTER_LABPBR_POM_PUDDLES
     #if defined BETTER_LABPBR && RP_MODE == 3 && defined BETTER_LABPBR_REFLECTIONS
         #define BETTER_LABPBR_REFLECTIONS_INTERNAL
     #endif
@@ -409,9 +425,34 @@
     #if defined BETTER_LABPBR && RP_MODE == 3 && defined BETTER_LABPBR_POROSITY && defined OVERWORLD
         #define BETTER_LABPBR_POROSITY_INTERNAL
     #endif
+    #if defined BETTER_LABPBR && RP_MODE == 3 && defined BETTER_LABPBR_POM_PUDDLES && defined OVERWORLD
+        #define BETTER_LABPBR_POM_PUDDLES_INTERNAL
+    #endif
     #if defined BETTER_LABPBR && RP_MODE == 3 && defined BETTER_LABPBR_AO
         #define BETTER_LABPBR_AO_INTERNAL
     #endif
+    #if defined BETTER_LABPBR && RP_MODE == 3 && defined BETTER_LABPBR_SSS && (defined OVERWORLD || defined END || defined NETHER)
+        #define BETTER_LABPBR_SSS_INTERNAL
+    #endif
+
+    //#define SKYLIGHT_SSS
+    #ifdef SKYLIGHT_SSS
+    #endif
+    #if defined SKYLIGHT_SSS || defined BETTER_LABPBR_SSS_INTERNAL
+        #define SKYLIGHT_SSS_INTERNAL
+        #if defined OVERWORLD && COLORED_LIGHTING_INTERNAL > 0
+            #define SKY_HEIGHT_INTERNAL
+        #endif
+    #endif
+
+    //#define BLOCKLIGHT_SSS
+    #ifdef BLOCKLIGHT_SSS
+    #endif
+    #if (defined BLOCKLIGHT_SSS || defined BETTER_LABPBR_SSS_INTERNAL) && COLORED_LIGHTING_INTERNAL > 0
+        #define BLOCKLIGHT_SSS_INTERNAL
+    #endif
+
+    #define ENTITY_SHADOW_DISTANCE 0.125 //[0.000 0.005 0.010 0.015 0.020 0.025 0.030 0.035 0.040 0.045 0.050 0.055 0.060 0.065 0.070 0.075 0.080 0.085 0.090 0.095 0.100 0.105 0.110 0.115 0.120 0.125 0.130 0.135 0.140 0.145 0.150 0.155 0.160 0.165 0.170 0.175 0.180 0.185 0.190 0.195 0.200 0.205 0.210 0.215 0.220 0.225 0.230 0.235 0.240 0.245 0.250 0.255 0.260 0.265 0.270 0.275 0.280 0.285 0.290 0.295 0.300 0.305 0.310 0.315 0.320 0.325 0.330 0.335 0.340 0.345 0.350 0.355 0.360 0.365 0.370 0.375 0.380 0.385 0.390 0.395 0.400 0.405 0.410 0.415 0.420 0.425 0.430 0.435 0.440 0.445 0.450 0.455 0.460 0.465 0.470 0.475 0.480 0.485 0.490 0.495 0.500 0.505 0.510 0.515 0.520 0.525 0.530 0.535 0.540 0.545 0.550 0.555 0.560 0.565 0.570 0.575 0.580 0.585 0.590 0.595 0.600 0.605 0.610 0.615 0.620 0.625 0.630 0.635 0.640 0.645 0.650 0.655 0.660 0.665 0.670 0.675 0.680 0.685 0.690 0.695 0.700 0.705 0.710 0.715 0.720 0.725 0.730 0.735 0.740 0.745 0.750 0.755 0.760 0.765 0.770 0.775 0.780 0.785 0.790 0.795 0.800 0.805 0.810 0.815 0.820 0.825 0.830 0.835 0.840 0.845 0.850 0.855 0.860 0.865 0.870 0.875 0.880 0.885 0.890 0.895 0.900 0.905 0.910 0.915 0.920 0.925 0.930 0.935 0.940 0.945 0.950 0.955 0.960 0.965 0.970 0.975 0.980 0.985 0.990 0.995 1.000]
 
 //Internal Settings//
     #define SIDE_SHADOWING
@@ -429,6 +470,9 @@
 
     #if MC_VERSION >= 260200
         #define SULFUR_CAVE_FOG
+    #endif
+    #if MC_VERSION >= 260400
+        #define ICE_CAVE_FOG
     #endif
 
     #include "/lib/misc/myFile.glsl"
@@ -464,15 +508,7 @@
         #define SUN_MOON_STYLE_DEFAULT 2
         #define CLOUD_STYLE_DEFAULT 3
         #define RAINBOW_STYLE_DEFAULT 4
-    #elif SHADER_STYLE == 5
-        #define WATER_STYLE_DEFAULT 3
-        //#define WATER_CAUSTIC_STYLE_DEFAULT 3
-        #define AURORA_STYLE_DEFAULT 2
-        #define SUN_MOON_STYLE_DEFAULT 2
-        #define CLOUD_STYLE_DEFAULT 3
-        #define RAINBOW_STYLE_DEFAULT 4
     #endif
-
     #if WATER_STYLE_DEFINE == -1
         #define WATER_STYLE WATER_STYLE_DEFAULT
     #else
@@ -502,6 +538,14 @@
         #define RAINBOW_STYLE RAINBOW_STYLE_DEFAULT
     #else
         #define RAINBOW_STYLE RAINBOW_STYLE_DEFINE
+    #endif
+    #if defined DIMENSION_SPACE || defined DIMENSION_CAVE_VOID
+        #include "/lib/moddedDimensions.glsl"
+    #endif
+    #ifdef CELESTIAL_BOTH_HEMISPHERES
+        #define CELESTIAL_BOTH_HEMISPHERES_INTERNAL
+    #elif defined DIMENSION_SPACE_AIRLESS
+        #define CELESTIAL_BOTH_HEMISPHERES_INTERNAL
     #endif
     // Thanks to SpacEagle17 and isuewo for the sun angle handling
     #ifdef END
@@ -615,6 +659,9 @@
             #define SKY_EFFECT_REFLECTION_OPAQUE
         #endif
     #endif
+    #if WATER_REFRACTION_DEFINE == 1
+        #define WATER_REFRACTION
+    #endif
 
     #if DETAIL_QUALITY == 0 // Potato
         #if LEAF_SHADOW_OPTIMISATION_DEFINE == -1
@@ -624,17 +671,21 @@
         #define LOW_QUALITY_NETHER_STORM
         #define LOW_QUALITY_MOTION_BLUR
         #define LOW_QUALITY_WATER_MATERIAL
+        // disable all usages of "entityLinearDepth"
     #endif
     #if DETAIL_QUALITY >= 2 // Medium
         #if TAA_DEFINE == -1
             #define TAA
         #endif
+        #define HAND_TRANSPARENCY_FIX
     #endif
     #if DETAIL_QUALITY >= 3 // High
         #if SKY_EFFECT_REFLECTION_DEFINE == -1
             #define SKY_EFFECT_REFLECTION_TRANSLUCENT
         #endif
-        #define WATER_REFRACTION
+        #if WATER_REFRACTION_DEFINE == -1
+            #define WATER_REFRACTION
+        #endif
         #define HQ_NIGHT_NEBULA
         #define CONNECTED_GLASS_CORNER_FIX
         #define ACT_CORNER_LEAK_FIX
@@ -705,6 +756,9 @@
 
     #if defined GBUFFERS_HAND || defined GBUFFERS_ENTITIES
         #undef SNOWY_WORLD
+        #undef DISTANT_LIGHT_BOKEH
+    #endif
+    #ifdef GBUFFERS_BLOCK
         #undef DISTANT_LIGHT_BOKEH
     #endif
     #if defined GBUFFERS_TEXTURED || defined GBUFFERS_BASIC || defined GBUFFERS_VOXELS
@@ -870,10 +924,20 @@
     #endif
     #ifdef BETTER_LABPBR_AO
     #endif
+    #ifdef BETTER_LABPBR_SSS
+    #endif
+    #ifdef BETTER_LABPBR_POM_PUDDLES
+    #endif
+    #ifdef USE_SYNCED_TIME
+    #endif
 
 //Very Common Stuff//
     #ifndef VOXY_PATCH
         #include "/lib/uniforms.glsl"
+    #else
+        #ifndef EUPHORIA_PATCHES_IS_CURRENT_BIOME_MODDED_UNIFORM
+            float isCurrentBiomeModded = 0.0;
+        #endif
     #endif
     #include "/lib/materials/materialHandling/materialDefines.glsl"
 
@@ -908,12 +972,19 @@
     #endif
 
     const float shadowMapBias = 1.0 - 25.6 / shadowDistance;
-    float noonFactor = sqrt(max(sin(timeAngle*6.28318530718),0.0));
-    float nightFactor = max(sin(timeAngle*(-6.28318530718)),0.0);
+    float noonFactorRaw = max(sin(timeAngle * 6.28318530718), 0.0);
+    float noonFactor = sqrt(noonFactorRaw);
+    float nightFactor = max(sin(timeAngle * (-6.28318530718)), 0.0);
     float invNightFactor = 1.0 - nightFactor;
     float altitudeVisibility = 0.0;
 
-    float cloudHeightM = isnan(cloudHeight) ? 192.0 : cloudHeight; // iris returns "nan" if there are no clouds
+    float cloudHeightM = isnan(cloudHeight) ? 192.0 : cloudHeight;
+    #ifdef EUPHORIA_PATCHES_CLOUD_ALPHA_UNIFORM
+        bool areCloudsDisabled = isnan(cloudHeight) || euphoriaPatchesCloudAlpha <= 0.0;
+    #else
+        bool areCloudsDisabled = isnan(cloudHeight); // iris returns "nan" if there are no cloud
+    #endif
+
     float cloudHeightOffset = cloudHeightM - 192.0
         #if defined DISTANT_HORIZONS || defined VOXY
             //+ 64.0
@@ -960,13 +1031,13 @@
     float nightVisionWithAddedSupport = screenBrightness > 1.0 ? 1.0 : nightVision; // Add support for fullbright mods
     #define nightVision nightVisionWithAddedSupport
 
-    #ifdef FROZEN_TIME
+    #if defined FROZEN_TIME || !defined USE_SYNCED_TIME
         float syncedTime = frameTimeCounter;
         float syncedTimeDynamic = frameTimeCounter;
     #else
         float syncedTime = (worldAgeSmooth + 5.0 * 24000.0) * 0.05;
         #if !defined DAYLIGHT_CYCLE_FROZEN && defined EUPHORIA_PATCHES_UNIFORMS
-            float syncedTimeDynamic = bool(euphoriaPatchesIsDayAdvancing) ? syncedTime : frameTimeCounter;
+            float syncedTimeDynamic = syncedTime + euphoriaPatchesFrozenTimeOffset;
         #else
             float syncedTimeDynamic = syncedTime;
         #endif
@@ -1056,8 +1127,6 @@
             100 to 199: Exact copy of deferredMaterials but toned down reflection handling for entities
                 materialMask += OSIEBCA * 100.0; // Entity Reflection Handling
             200 to 240: Random checks
-                OSIEBCA * 238.0 = Has Custom Sky
-                OSIEBCA * 239.0 = Blue Screen Blue Blocks
                 OSIEBCA * 240.0 = Green Screen Lime Blocks
         seuspbr:
             0 to 240: Increasing metalness
@@ -1065,13 +1134,17 @@
             0 to 229: Increasing f0
             230 to 240: Consistent metalness with still increasing f0
     241 to 255 - PBR Independant:
-        OSIEBCA * 241.0 = Water
+        OSIEBCA * 241.0 = Water Refraction
+        OSIEBCA * 242.0 = Has Custom Sky
 
         OSIEBCA * 251.0 = No SSAO, Reduce Reflection
         OSIEBCA * 252.0 = Versatile Selection Outline
         OSIEBCA * 253.0 = Reduced Edge TAA (Leaves)
         OSIEBCA * 254.0 = No SSAO, No TAA, Reduce Reflection
         OSIEBCA * 255.0 = *Unused as 1.0 is the clear color*
+
+    Overlap: on sky pixels (z0 == 1.0) 1 to 64 is not a material but sun/planet coverage in space dimensions
+        OSIEBCA * (1.0 + coverage * 63.0), written by gbuffers_skytextured, read in deferred1
     */
 
 // 62 75 74 20 74 68 4F 73 65 20 77 68 6F 20 68 6F 70 65 20 69 6E 20 74 68 65 20 6C 69 6D 69 4E 61 6C 0A 77 69 6C 6C 20 72 65 6E 65 77 20 74 68 65 69 72 20 73 54 72 65 6E 67 74 48 2E 0A 74 68 65 79 20 77 69 6C 6C 20 73 6F 41 72 20 6F 6E 20 65 6C 79 54 72 61 73 20 6C 69 6B 65 20 70 68 61 6E 74 6F 6D 73 3B 0A 74 68 65 79 20 77 69 6C 6C 20 72 75 6E 20 61 6E 44 20 6E 6F 74 20 67 72 6F 77 20 77 65 41 72 79 2C 0A 74 68 65 59 20 77 69 6C 6C 20 77 61 6C 6B 20 61 6E 64 20 6E 6F 74 20 62 65 20 66 61 69 6E 74 2E

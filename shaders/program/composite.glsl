@@ -5,8 +5,7 @@
 
 //Common//
 #include "/lib/common.glsl"
-#define ROUGHNESS_MULTIPLIER 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0 8.5 9.0 9.5 10.0]
-#define ROUGHNESS_INTENSITY 1.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 2.5 3.0 3.5 4.0 4.5 5.0 5.5 6.0 6.5 7.0 7.5 8.0 8.5 9.0 9.5 10.0]
+#include "/lib/shaderSettings/reflectionRoughness.glsl"
 #define REFLECTION_RESPONSIVENESS 0.0 //[0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0]
 
 //////////Fragment Shader//////////Fragment Shader//////////Fragment Shader//////////
@@ -21,6 +20,7 @@ in vec3 sunVec;
 #endif
 
 //Pipeline Constants//
+const bool colortex5MipmapEnabled = true;
 
 //Common Variables//
 vec3 upVec = normalize(gbufferModelView[1].xyz);
@@ -32,8 +32,8 @@ vec3 northVec = normalize(gbufferModelView[2].xyz);
     vec3 lightVec = sunVec;
 #endif
 float SdotU = dot(sunVec, upVec);
-float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
-float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
+float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
 float sunVisibility2 = sunVisibility * sunVisibility;
 float shadowTimeVar1 = abs(sunVisibility - 0.5) * 2.0;
 float shadowTimeVar2 = shadowTimeVar1 * shadowTimeVar1;
@@ -116,7 +116,7 @@ void main() {
 
         int materialMaskInt = int(texture6.g * 255.1);
         float skyLightFactor = texture6.b;
-        float smoothnessD = texture6.r;
+        float smoothnessD = ApplyReflectionRoughnessMult(texture6.r);
         float fresnelM = texture4.a;
         float intenseFresnel = 0.0;
         float isHardcodedMetal = 0.0;
@@ -139,9 +139,10 @@ void main() {
             #else
                 float noiseMult = 0.3;
             #endif
+            float smoothnessDM = smoothnessD;
             #ifdef PBR_REFLECTIONS
                 bool opaqueSurface = z0 == z1;
-                float minBlendFactor = (0.035 + REFLECTION_RESPONSIVENESS * 0.075) + (0.09 + REFLECTION_RESPONSIVENESS * 0.05) * pow2(pow2(pow2(smoothnessD)));
+                float minBlendFactor = (0.035 + REFLECTION_RESPONSIVENESS * 0.075) + (0.09 + REFLECTION_RESPONSIVENESS * 0.05) * pow2(pow2(pow2(smoothnessDM)));
 
                 if (entityOrParticle) {
                     noiseMult *= 0.125;
@@ -149,7 +150,6 @@ void main() {
                     if (!opaqueSurface) reflectColor = vec3(0.0);
                 }
             #endif
-            float smoothnessDM = smoothnessD * ROUGHNESS_MULTIPLIER;
             noiseMult *= pow2(1.0 - smoothnessDM) * ROUGHNESS_INTENSITY;
 
             vec2 roughCoord = gl_FragCoord.xy / 128.0;

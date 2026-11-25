@@ -19,6 +19,13 @@ vec3 GetMinimumLighting(float lightmapYM, vec3 playerPos) {
         vec3 minLighting = vec3(0.0);
     #endif
 
+    #ifdef LIGHTMAP_SAMPLER_SAFE
+    if (isCurrentBiomeModded > 0.001) {
+        vec3 moddedAmbient = texture2D(lightmap, vec2(1.0 / 32.0)).rgb * (1.0 - lightmapYM) * (1.0 - nightVision);
+        minLighting = mix(minLighting, pow2(moddedAmbient), isCurrentBiomeModded);
+    }
+    #endif
+
     minLighting += nightVision * vec3(0.5, 0.5, 0.75);
 
     return max(minLighting, vec3(0.0));

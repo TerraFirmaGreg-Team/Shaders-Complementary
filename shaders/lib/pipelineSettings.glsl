@@ -9,6 +9,8 @@ const int colortex6Format = RGBA8;          //smoothnessD & materialMask & skyLi
 const int colortex7Format = RGBA16F;        //(cloud/water map on gbuffer) | reflection temporal image (rgb) & previous depth
 const int colortex8Format = RGBA16F;        //SSR results for WSR, topmost translucent opacity
 const int colortex12Format = RGBA8;         //Improved Rain
+const int colortex13Format = RGBA8;         //Current SkyTexture Color in rgb, Alpha channel for Entity linear depth for vl blending
+const int colortex14Format = RGB16;         //Bloom Smoothing
 #ifdef PHOTONICS_LIGHTING
 const int colortex9Format  = RGBA16F;       // Photonics indirect result (reused from SS colored light slot)
 const int colortex10Format = RGBA8;         // Photonics albedo cache (reused from SS colored light slot)
@@ -33,7 +35,8 @@ const bool colortex6Clear = true;
 const bool colortex7Clear = false;
 
 const bool colortex12Clear = true;
-
+const bool colortex13Clear = true;
+const bool colortex14Clear = false;
 const bool colortex9Clear = true;
 #ifdef PHOTONICS_LIGHTING
 const bool colortex10Clear = true;
@@ -46,10 +49,11 @@ const bool colortex19Clear = false;
 
 const bool shadowHardwareFiltering = true;
 const float shadowDistanceRenderMul = 1.0;
-#if END_CRYSTAL_VORTEX_INTERNAL == 0 && DRAGON_DEATH_EFFECT_INTERNAL == 0
-    const float entityShadowDistanceMul = 0.125; // Iris feature
+
+#ifndef END
+    const float entityShadowDistanceMul = ENTITY_SHADOW_DISTANCE;
 #else
-    const float entityShadowDistanceMul = 1.0; // Iris feature
+    const float entityShadowDistanceMul = 1.0;
 #endif
 
 const float drynessHalflife = 300.0;

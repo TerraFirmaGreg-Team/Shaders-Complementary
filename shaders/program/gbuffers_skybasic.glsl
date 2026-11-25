@@ -33,8 +33,8 @@ flat in vec4 glColor;
 
 //Common Variables//
 float SdotU = dot(sunVec, upVec);
-float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
-float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
+float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
 float sunVisibility2 = sunVisibility * sunVisibility;
 float shadowTimeVar1 = abs(sunVisibility - 0.5) * 2.0;
 float shadowTimeVar2 = shadowTimeVar1 * shadowTimeVar1;
@@ -90,6 +90,7 @@ const int doSimpleTonemap = 15;
 //Program//
 void main() {
     vec4 color = vec4(glColor.rgb, 1.0);
+    vec4 colorP = color;
     float alphaColor = glColor.a;
 
     #ifdef OVERWORLD
@@ -115,13 +116,16 @@ void main() {
         float dither = Bayer8(gl_FragCoord.xy);
 
         bool isCustomSky;
-        color.rgb = GetSky(VdotU, VdotS, dither, true, false, isCustomSky, false);
+        #ifndef DIMENSION_CAVE_VOID
+            color.rgb = GetSky(VdotU, VdotS, dither, true, false, isCustomSky, false);
+            if (isCustomSky) color.rgb = colorP.rgb;
+        #endif
         #if defined CUSTOM_SKY_MOD_SUPPORT && MC_VERSION >= 11605
             float mixAlphaFactor = alphaColor;
-            #ifdef EUPHORIA_PATCHES_IS_CAELUM_INSTALLED
+            #if defined EUPHORIA_PATCHES_IS_CAELUM_INSTALLED || defined EUPHORIA_PATCHES_IS_SPYGLASS_ASTRONOMY_INSTALLED
                 mixAlphaFactor = 1.0;
             #endif
-            if (alphaColor < 1.0 && alphaColor > 0.0 && renderStage != MC_RENDER_STAGE_SKY) color.rgb = mix(color.rgb, glColor.rgb * alphaColor, mixAlphaFactor);
+            if (alphaColor < 1.0 && alphaColor > 0.0 && renderStage != MC_RENDER_STAGE_SKY && renderStage != MC_RENDER_STAGE_CUSTOM_SKY) color.rgb = mix(color.rgb, glColor.rgb * alphaColor, mixAlphaFactor);
         #endif
 
         #ifdef ATM_COLOR_MULTS
@@ -133,23 +137,29 @@ void main() {
 
         vec2 starCoord = GetStarCoord(viewPos.xyz, 0.5);
         #if STAR_BRIGHTNESS != 3
-            vec3 starColor = GetStars(starCoord, VdotU, VdotS, 1.0, 0.0);
+            vec3 starColor = vec3(0.0);
+            #ifndef DIMENSION_SPACE
+                starColor = GetStars(starCoord, VdotU, VdotS, 1.0, 0.0);
 
-            #define ADD_STAR_LAYER_OW1 (STAR_LAYER_OW == 1 || STAR_LAYER_OW == 3)
-            #define ADD_STAR_LAYER_OW2 (STAR_LAYER_OW == 2 || STAR_LAYER_OW == 3)
+                #define ADD_STAR_LAYER_OW1 (STAR_LAYER_OW == 1 || STAR_LAYER_OW == 3)
+                #define ADD_STAR_LAYER_OW2 (STAR_LAYER_OW == 2 || STAR_LAYER_OW == 3)
 
-            #if ADD_STAR_LAYER_OW1
-                starColor = max(starColor, GetStars(starCoord, VdotU, VdotS, 0.66, 0.0));
+                #if ADD_STAR_LAYER_OW1
+                    starColor = max(starColor, GetStars(starCoord, VdotU, VdotS, 0.66, 0.0));
+                #endif
+
+                #if ADD_STAR_LAYER_OW2
+                    starColor = max(starColor, GetStars(starCoord, VdotU, VdotS, 2.2, 0.45));
+                #endif
             #endif
 
-            #if ADD_STAR_LAYER_OW2
-                starColor = max(starColor, GetStars(starCoord, VdotU, VdotS, 2.2, 0.45));
+            #ifdef SHOOTING_STARS_INTERNAL
+                starColor += GetShootingStars(starCoord, VdotU, VdotS);
             #endif
-
+            #ifdef CAVE_FOG
+                starColor *= 1.0 - GetCaveFactor();
+            #endif
             color.rgb += starColor;
-            #ifdef SHOOTING_STARS
-                color.rgb += GetShootingStars(starCoord, VdotU, VdotS);
-            #endif
         #endif
 
         #if SUN_MOON_STYLE >= 2
@@ -167,6 +177,11 @@ void main() {
                 float moonPhaseFactor1 = 2.2;
                 float moonPhaseFactor2 = 1000.0;
             #endif
+            #ifdef MODDED_MARS_SUNSET
+                const float marsSunSize = 0.55;
+                sunSizeFactor1 = 1.0 - (1.0 - sunSizeFactor1) * pow2(marsSunSize);
+                sunSizeFactor2 /= pow2(marsSunSize);
+            #endif
             if (absVdotS > sunSizeFactor1) {
                 float sunMoonMixer = sqrt1(sunSizeFactor2 * (absVdotS - sunSizeFactor1));
 
@@ -183,10 +198,14 @@ void main() {
                         sunMoonMixer *= 1.0 - 0.65 * GetCaveFactor();
                     #endif
                     float sunBrightness = 25.0;
-                    if (tonemap == ACESTonemap) color.rgb = mix(color.rgb, vec3(1.0, 0.698, 0.5451) * sunBrightness, sunMoonMixer);
-                    else
-                    color.rgb = mix(color.rgb, vec3(0.9, 0.5, 0.3) * sunBrightness, sunMoonMixer);
-                } else {
+                    vec3 sunDiscColor = tonemap == ACESTonemap ? vec3(1.0, 0.698, 0.5451) : vec3(0.9, 0.5, 0.3);
+                    #ifdef MODDED_MARS_SUNSET
+                        sunDiscColor = mix(sunDiscColor, MARS_SUNSET_SUN_COLOR * 0.5, invNoonFactor2);
+                    #endif
+                    color.rgb = mix(color.rgb, sunDiscColor * sunBrightness, sunMoonMixer);
+                }
+                #if !(defined MODDED_MOON_DEFINE || defined MODDED_MARS_SUNSET)
+                else {
                     float horizonFactor = GetHorizonFactor(-SdotU);
                     sunMoonMixer = max0(sunMoonMixer - 0.25) * 1.33333 * horizonFactor;
 
@@ -199,14 +218,8 @@ void main() {
                         float xOffset = dot(nViewPos, moonRight);
                         float yOffset = dot(nViewPos, moonUp);
 
-                        #ifdef MC_GL_VENDOR_NVIDIA
-                            const float scale = sqrt(1.0 - pow2(sunSizeFactor1));
-                            const float optimScale = 1.0 / scale;
-                        #else
-                            float optimScale = 14.1509827; // fixes crash on non nvidia gpu's
-                        #endif
-
-                        vec2 customMoonUV = vec2(xOffset, yOffset) * optimScale;
+                        float scale = sqrt(1.0 - pow2(sunSizeFactor1));
+                        vec2 customMoonUV = vec2(xOffset, yOffset) / scale;
                              customMoonUV = customMoonUV * 0.5 + 0.5;
 
                         vec4 customMoon = vec4(1.0);
@@ -222,9 +235,8 @@ void main() {
                     float moonNoise = texture2DLod(noisetex, starCoord, 0.0).g
                                     + texture2DLod(noisetex, starCoord * 2.5, 0.0).g * 0.7
                                     + texture2DLod(noisetex, starCoord * 5.0, 0.0).g * 0.5;
-
                     moonNoise = max0(moonNoise - 0.75) * 1.7;
-                    
+
                     #if BLOOD_MOON > 0
                         moonColor = mix(moonColor, vec3(0.4588, 0.149, 0.149) * 1.5, getBloodMoon(sunVisibility));
                     #endif
@@ -256,6 +268,7 @@ void main() {
 
                     color.rgb = mix(color.rgb, moonColor, sunMoonMixer);
                 }
+                #endif
             }
         #endif
     #endif

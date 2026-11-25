@@ -10,6 +10,15 @@
         const ivec3 voxelVolumeSize = ivec3(COLORED_LIGHTING_INTERNAL, 512 * 0.5, COLORED_LIGHTING_INTERNAL);
     #endif
 
+    #ifdef COLORED_DYNAMIC_LIGHTING
+        // Dropped item lights are stored in the voxel as lightId + ITEM_LIGHT_VOXEL_OFFSET (item id 2 -> 4098)
+        // Real IDs never reach 4096, so shadowcomp can tell "came from an item" by the value alone
+        #define ITEM_LIGHT_VOXEL_OFFSET 4096u
+
+        // Light emitting entities are stored in the voxel as lightId + ENTITY_LIGHT_VOXEL_OFFSET (entity id 2 -> 8194)
+        #define ENTITY_LIGHT_VOXEL_OFFSET 8192u
+    #endif
+
     float effectiveACTdistance = min(float(COLORED_LIGHTING_INTERNAL), shadowDistance * 2.0);
 
     vec3 transform(mat4 m, vec3 pos) {
@@ -110,6 +119,17 @@
         return lightVolume;
     }
 
+    /* Value ranges of the voxel volume (r16ui). Keep them apart, shadowcomp.glsl and heldLighting.glsl rely on it:
+    0                                                 Air
+    1                                                 Solid block
+    2 - 199                                           Light sources, so every light ID returned by GetVoxelIDs must stay in here
+    200 - 4095 (255 is bedrock)                       Tints and other special IDs, GetVoxelIDs must never return 4096 or more
+    ITEM_LIGHT_VOXEL_OFFSET + 2..199 (4098 - 4295)    Item light, a light source ID plus the offset
+    4296 - 8191                                       unused
+    ENTITY_LIGHT_VOXEL_OFFSET + 2..199 (8194 - 8391)  Entity light, a light source ID plus the offset
+    8392 - 32767                                      unused
+    Bit 15 (32768)                                    Colorwheel geometry flag, the ID is stored in the lower 15 bits
+    */
     int GetVoxelIDs(int mat) {
         /* These return IDs must be consistent across the following files:
         "lightVoxelization.glsl", "blocklightColors.glsl", "item.properties"
@@ -121,7 +141,7 @@
                     if (mat < 10228) {
                         if (mat < 10076) {
                             if (mat == 10056) return  14; // Lava Cauldron
-                            if (mat == 10068 || mat == 10070) return  13; // Lava
+                            if (BLOCK_LAVA_DEFINE) return  13; // Lava
                             if (mat == 10072) return   5; // Fire
                         } else {
                             if (mat == 10076) return  27; // Soul Fire
@@ -137,7 +157,7 @@
                             if (mat == 10252) return  52; // Ancient Debris
                             #endif
                             #if defined GLOWING_RAW_BLOCKS && defined DO_IPBR_LIGHTS
-                            if (mat == 10268) return 43; // Raw Iron Block
+                            if (mat == 10268) return 192; // Raw Iron Block
                             #endif
                             #if defined GLOWING_ORE_IRON && defined DO_IPBR_LIGHTS
                             if (mat == 10272) return  43; // Iron Ore
@@ -147,14 +167,14 @@
                             if (mat == 10276) return  43; // Deepslate Iron Ore
                             #endif
                             #if defined GLOWING_RAW_BLOCKS && defined DO_IPBR_LIGHTS
-                            if (mat == 10280) return 45; // Raw Coper Block
+                            if (mat == 10280) return 194; // Raw Copper Block
                             #endif
                             #if defined GLOWING_ORE_COPPER && defined DO_IPBR_LIGHTS
                             if (mat == 10284) return  45; // Copper Ore
                             if (mat == 10288) return  45; // Deepslate Copper Ore
                             #endif
                             #if defined GLOWING_RAW_BLOCKS && defined DO_IPBR_LIGHTS
-                            if (mat == 10296) return 44; // Raw Gold Block
+                            if (mat == 10296) return 193; // Raw Gold Block
                             #endif
                         }
                     }
@@ -179,7 +199,7 @@
                             #endif
                             if (mat == 10332) return  36; // Amethyst Cluster, Amethyst Buds
                             #if defined GLOWING_EMERALD_BLOCK && defined DO_IPBR_LIGHTS
-                            if (mat == 10336) return 47; // Emerald Block
+                            if (mat == 10336) return 191; // Emerald Block
                             #endif
                         }
                     } else {
@@ -311,6 +331,8 @@
                             #ifdef DO_IPBR_LIGHTS
                             if (mat == 10708) return  53; // Spawner
                             if (mat == 10736) return  64; // Structure Block, Jigsaw Block, Test Block, Test Instance Block
+                            if (mat == 10768) return 190; // Torchflower
+                            if (mat == 10772) return 190; // Potted Torchflower
                             #endif
                         } else {
                             #ifdef DO_IPBR_LIGHTS
@@ -371,9 +393,10 @@
                                     if (mat < 21002) {
                                         if (mat == 10980) return 81; // Potted Open Eyeblossom
                                         if (abs(mat - 10986) <= 2) return 84; // Copper Torch, Copper Lantern
-                                        if (mat == 21000) return 97; // White Modded Blocks
+                                        if (mat == 11012) return  97; // Ice Crystal
+                                        if (mat == 21000) return 196; // White Modded Blocks
                                     } else {
-                                        if (mat == 21002) return 43; // Brown Modded Blocks
+                                        if (mat == 21002) return 195; // Brown Modded Blocks
                                         if (mat == 21004) return 70; // Red Modded Blocks
                                         if (mat == 21006) return 71; // Orange Modded Blocks
                                         if (mat == 21008) return 72; // Yellow Modded Blocks
@@ -395,8 +418,8 @@
                             } else {
                                 if (mat < 21038) {
                                     if (mat < 21032) {
-                                        if (mat == 21026) return 97; // White Emissive Blocks
-                                        if (mat == 21028) return 43; // Brown Emissive Blocks
+                                        if (mat == 21026) return 196; // White Emissive Blocks
+                                        if (mat == 21028) return 195; // Brown Emissive Blocks
                                         if (mat == 21030) return 70; // Red Emissive Blocks
                                     } else {
                                         if (mat == 21032) return 71; // Orange Emissive Blocks
@@ -442,6 +465,18 @@
     }
 
     #if defined SHADOW && defined VERTEX_SHADER
+        bool SituationalOreLightOff(int lightId) {
+            #ifdef SITUATIONAL_ORES
+                // The light IDs of the unlit redstone ore (32), the ores (43 - 52) and the raw blocks (192 - 194), the emerald block (191) is not situational
+                if (lightId == 32 || uint(lightId - 43) <= 9u || uint(lightId - 192) <= 2u) {
+                    float sunVisibilityVertex = clamp(dot(GetSunVector(), normalize(gbufferModelView[1].xyz)) + 0.0625, 0.0, 0.125) / 0.125;
+                    float skyLightCheckVertex = pow2(1.0 - min1(lmCoord.y * 2.9 * sunVisibilityVertex));
+                    return skyLightCheckVertex < 0.5;
+                }
+            #endif
+            return false;
+        }
+
         void UpdateVoxelMap(int mat) {
             if (mat == 32000 // Water
                 || mat < 30000 && mat % 2 == 1 // Non-solid terrain
@@ -466,18 +501,10 @@
                 }
             #endif
 
-            #if defined GBUFFERS_COLORWHEEL || defined SHADOW_COLORWHEEL
-                bool isEligible = true;
-            #else
-                bool isEligible = any(equal(ivec4(renderStage), ivec4(
-                    MC_RENDER_STAGE_TERRAIN_SOLID,
-                    MC_RENDER_STAGE_TERRAIN_TRANSLUCENT,
-                    MC_RENDER_STAGE_TERRAIN_CUTOUT,
-                    MC_RENDER_STAGE_TERRAIN_CUTOUT_MIPPED)));
-            #endif
-
-            if (isEligible && CheckInsideVoxelVolume(voxelPos)) {
+            if (CheckInsideVoxelVolume(voxelPos)) {
                 int voxelData = GetVoxelIDs(mat);
+
+                if (SituationalOreLightOff(voxelData)) return;
 
                 #if defined GBUFFERS_COLORWHEEL || defined SHADOW_COLORWHEEL
                     voxelData = voxelData | 32768;

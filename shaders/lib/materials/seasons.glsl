@@ -30,9 +30,13 @@
 #ifndef GBUFFERS_HAND
     vec3 oldColor = color.rgb; // Needed for entities
 
-    float paleGardenDetector = 1.0;
+    float noSeasonsBiomeMask = 1.0;
     #if MC_VERSION >= 12104
-        paleGardenDetector -= inPaleGarden;
+        noSeasonsBiomeMask -= inPaleGarden;
+    #endif
+
+    #if MC_VERSION >= 260300
+        noSeasonsBiomeMask -= inDappledForest;
     #endif
 
     #if SEASONS != 2 && SEASONS != 5
@@ -196,7 +200,7 @@
 
                             leafVariable *= leafDecider;
 
-                            autumnColor *= mix(vec3(1.0), leafFloorColor, leafVariable * overlayNoiseIntensity * autumnOnlyForests * paleGardenDetector);
+                            autumnColor *= mix(vec3(1.0), leafFloorColor, leafVariable * overlayNoiseIntensity * autumnOnlyForests * noSeasonsBiomeMask);
                         }
                     #endif
                 }
@@ -204,7 +208,7 @@
             #endif
 
             #ifndef GBUFFERS_ENTITIES
-                autumnColor *= mix(vec3(1.0), vec3(1.0, 0.7, 0.5), autumnTime * 0.7 * autumnOnlyForests * AUTUMN_STRENGTH * paleGardenDetector);
+                autumnColor *= mix(vec3(1.0), vec3(1.0, 0.7, 0.5), autumnTime * 0.7 * autumnOnlyForests * AUTUMN_STRENGTH * noSeasonsBiomeMask);
             #endif
         }
     #endif
@@ -344,7 +348,7 @@
 
                 // final mix
                 winterColor = mix(winterColor, snowColor, snowVariable * overlayNoiseIntensity);
-                winterAlpha = mix(color.a, 1.0, clamp(overlayNoiseTransparentOverwrite * snowVariable, 0.0, 1.0));
+                winterAlpha = color.a == 0.0 ? 0.0 : mix(color.a, 1.0, clamp(overlayNoiseTransparentOverwrite * snowVariable, 0.0, 1.0));
                 color.a = mix(color.a, winterAlpha, winterTime * overlayNoiseIntensity);
             #endif
         }
@@ -477,7 +481,7 @@
             #ifdef DISABLE_SPRING_IN_DRY_BIOMES
                 dryBiome = 1.0 - inDry;
             #endif
-            springColor = mix(color.rgb, springColor, springTime * dryBiome * paleGardenDetector);
+            springColor = mix(color.rgb, springColor, springTime * dryBiome * noSeasonsBiomeMask);
         }
     #endif
 

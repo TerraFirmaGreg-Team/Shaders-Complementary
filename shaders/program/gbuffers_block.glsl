@@ -31,9 +31,10 @@ in vec3 atMidBlock;
 
 in vec4 glColor;
 
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0
+#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0 || defined IPBR && defined IS_IRIS
     in vec2 signMidCoordPos;
     flat in vec2 absMidCoordPos;
+    flat in vec2 midCoord;
 #endif
 
 #ifdef ACT_GROUND_LEAVES_FIX
@@ -57,11 +58,12 @@ in vec4 glColor;
 //Pipeline Constants//
 
 //Common Variables//
+float skyLightCheck = 0.0;
 float NdotU = dot(normal, upVec);
 float NdotUmax0 = max(NdotU, 0.0);
 float SdotU = dot(sunVec, upVec);
-float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) / 0.75 : clamp(SdotU + 0.03125, 0.0, 0.0625) / 0.0625;
-float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+float sunFactor = SdotU < 0.0 ? clamp(SdotU + 0.375, 0.0, 0.75) * 1.33333 : clamp(SdotU + 0.03125, 0.0, 0.0625) * 16.0;
+float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
 float sunVisibility2 = sunVisibility * sunVisibility;
 float shadowTimeVar1 = abs(sunVisibility - 0.5) * 2.0;
 float shadowTimeVar2 = shadowTimeVar1 * shadowTimeVar1;
@@ -142,6 +144,8 @@ float shadowTime = shadowTimeVar2 * shadowTimeVar2;
 
 //Program//
 void main() {
+    skyLightCheck = pow2(1.0 - min1(lmCoord.y * 2.9 * sunVisibility));
+
     vec3 screenPos = vec3(gl_FragCoord.xy / vec2(viewWidth, viewHeight), gl_FragCoord.z);
     #ifdef TAA
         vec3 viewPos = ScreenToView(vec3(TAAJitter(screenPos.xy, -0.5), screenPos.z));
@@ -172,6 +176,12 @@ void main() {
     float sandNoiseIntensity = 1.0;
     float mossNoiseIntensity = 1.0;
     float overlayNoiseTransparentOverwrite = 0.0;
+    float overlayNoiseEmission = 1.0;
+    float overlayNoiseAlpha = 1.0;
+    vec3 maRecolor = vec3(0.0);
+    bool blockEntityHandled = false;
+    bool centerShadowBias = false;
+    float noPuddles = 0.0, snowFactor = 1.0, snowMinNdotU = 0.0;
     float IPBRMult = 1.0;
     int subsurfaceMode = 0;
     bool isFoliage = false;
@@ -210,7 +220,20 @@ void main() {
     }
 
     #ifdef IPBR
-        #include "/lib/materials/materialHandling/blockEntityIPBR.glsl"
+        #ifdef IS_IRIS
+            if (currentRenderedItemId != 0) {
+                #include "/lib/materials/materialHandling/irisIPBR.glsl"
+            } else
+        #endif
+        {
+            #include "/lib/materials/materialHandling/blockEntityIPBR.glsl"
+
+            // Give it the terrain material handling if it wasn't handled by the blockEntityIPBR.glsl
+            if (!blockEntityHandled && blockEntityId > 9999 && blockEntityId < 30000) {
+                int mat = blockEntityId;
+                #include "/lib/materials/materialHandling/terrainIPBR.glsl"
+            }
+        }
 
         #if IPBR_EMISSIVE_MODE != 1
             emission = GetCustomEmissionForIPBR(color, glColor, emission);
@@ -221,11 +244,11 @@ void main() {
         #endif
 
         if (blockEntityId == 5024) { // End Portal, End Gateway
-            #ifdef SPECIAL_PORTAL_EFFECTS
+            #if SPECIAL_PORTAL_EFFECT == 1 || SPECIAL_PORTAL_EFFECT == 3
                 #include "/lib/materials/specificMaterials/others/endPortalEffect.glsl"
             #endif
             overlayNoiseIntensity = 0.0;
-        } else if (blockEntityId == 5004) { // Signs
+        } else if (isSign(blockEntityId)) { // Signs
             noSmoothLighting = true;
             if (glColor.r + glColor.g + glColor.b <= 2.99 || lmCoord.x > 0.999) { // Sign Text
                 #include "/lib/materials/specificMaterials/others/signText.glsl"
@@ -296,14 +319,23 @@ void main() {
         color.rgb *= mix(materialAO, 1.0, lightExposureM);
     #endif
 
+    #ifdef IPBR
+        color.rgb += maRecolor;
+    #endif
+
     #ifdef SS_BLOCKLIGHT
         vec3 lightAlbedo = normalize(color.rgb) * min1(emission);
 
-        if (blockEntityId == 5004) lightAlbedo = vec3(0.0); // fix glowing sign text affecting blocklight color
+        if (isSign(blockEntityId)) lightAlbedo = vec3(0.0); // fix glowing sign text affecting blocklight color
     #endif
 
-    vec3 translucentMult = mix(vec3(0.666), color.rgb * (1.0 - pow2(pow2(color.a))), color.a);
     skyLightFactor = GetSkyLightFactor(lmCoordM, shadowMult);
+
+    #if !defined IRIS_FEATURE_ENTITY_TRANSLUCENT || defined GBUFFERS_BLOCK_TRANSLUCENT
+        vec3 translucentMult = mix(vec3(0.666), color.rgb * (1.0 - pow2(pow2(color.a))), color.a);
+    #else
+        vec3 translucentMult = vec3(1.0);
+    #endif
 
     #ifdef COLOR_CODED_PROGRAMS
         ColorCodeProgram(color, blockEntityId);
@@ -336,6 +368,11 @@ void main() {
         #endif
     #endif
 
+    float reflectNormalAlpha = 1.0;
+    #ifndef GBUFFERS_BLOCK_TRANSLUCENT
+        reflectNormalAlpha = clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0;
+    #endif
+
     /* DRAWBUFFERS:036 */
     gl_FragData[0] = color;
     gl_FragData[1] = vec4(1.0 - translucentMult, 1.0);
@@ -343,11 +380,11 @@ void main() {
 
     #if BLOCK_REFLECT_QUALITY >= 2 && RP_MODE >= 1 || WORLD_SPACE_REFLECTIONS > 0
         /* DRAWBUFFERS:0364 */
-        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0);
+        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, reflectNormalAlpha);
 
         #ifdef SS_BLOCKLIGHT
             /* DRAWBUFFERS:03649 */
-            gl_FragData[4] = vec4(lightAlbedo, 0.0);
+            gl_FragData[4] = vec4(lightAlbedo, 1.0);
         #endif
 
         #ifdef PHOTONICS_LIGHTING
@@ -358,10 +395,10 @@ void main() {
         #endif
     #elif defined SS_BLOCKLIGHT
         /* DRAWBUFFERS:0369 */
-        gl_FragData[3] = vec4(lightAlbedo, 0.0);
+        gl_FragData[3] = vec4(lightAlbedo, 1.0);
     #elif defined PHOTONICS_LIGHTING
         /* RENDERTARGETS:0,3,6,4,10,11,20 */
-        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, clamp(maxOf(rawAlbedoM), 0.02, 0.99) * 2.0 - 1.0);
+        gl_FragData[3] = vec4(mat3(gbufferModelViewInverse) * normalM, reflectNormalAlpha);
         gl_FragData[4] = phAlbedoOut;
         gl_FragData[5] = vec4(playerPosDelta, 1.0);
         gl_FragData[6] = vec4(normalize((gbufferModelViewInverse * vec4(normal, 0.0f)).xyz), 1.0);
@@ -392,9 +429,10 @@ out vec4 glColor;
 //     flat out ivec2 pixelTexSize;
 // #endif
 
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0
+#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0 || defined IPBR && defined IS_IRIS
     out vec2 signMidCoordPos;
     flat out vec2 absMidCoordPos;
+    flat out vec2 midCoord;
 #endif
 
 #if defined GENERATED_NORMALS || defined CUSTOM_PBR
@@ -408,7 +446,7 @@ out vec4 glColor;
 #endif
 
 //Attributes//
-#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0
+#if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0 || defined IPBR && defined IS_IRIS
     attribute vec4 mc_midTexCoord;
 #endif
 
@@ -428,7 +466,7 @@ attribute vec4 mc_Entity;
     #include "/lib/antialiasing/jitter.glsl"
 #endif
 
-#ifdef WAVE_EVERYTHING
+#if defined WAVE_EVERYTHING || defined MCWIND_SIGN_SWAY
     #include "/lib/materials/materialMethods/wavingBlocks.glsl"
 #endif
 
@@ -476,8 +514,10 @@ void main() {
             float fractWorldPosY = fract((gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex).y + cameraPosition.y);
             if (fractWorldPosY > 0.56 && 0.57 > fractWorldPosY) gl_Position.z -= 0.0001;
         }
+    #endif
 
-        vec2 midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
+    #if defined GENERATED_NORMALS || defined COATED_TEXTURES || defined POM || SHOCKWAVE > 0 || defined IPBR && defined IS_IRIS
+        midCoord = (gl_TextureMatrix[0] * mc_midTexCoord).st;
         vec2 texMinMidCoord = texCoord - midCoord;
         signMidCoordPos = sign(texMinMidCoord);
         absMidCoordPos  = abs(texMinMidCoord);
@@ -507,7 +547,7 @@ void main() {
         vTexCoordAM.xy  = min(texCoord, midCoord - texMinMidCoord);
     #endif
 
-    #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE || defined WAVE_EVERYTHING
+    #if defined MIRROR_DIMENSION || defined WORLD_CURVATURE || defined WAVE_EVERYTHING || defined MCWIND_SIGN_SWAY
         vec4 position = gbufferModelViewInverse * gl_ModelViewMatrix * gl_Vertex;
         #ifdef MIRROR_DIMENSION
             doMirrorDimension(position);
@@ -517,6 +557,15 @@ void main() {
         #endif
         #ifdef WAVE_EVERYTHING
             DoWaveEverything(position.xyz);
+        #endif
+        #if defined MCWIND_SIGN_SWAY && defined MCWIND_PENDANTS
+            if (blockEntityId == MCW_MAT_HANGING_SIGN) {
+                vec3 mcwWorldPos = position.xyz + cameraPosition;
+                vec3 mcwBlockCenter = floor(mcwWorldPos) + 0.5;
+                if (mcw_hasOccupancy()) {
+                    position.xyz += mcw_pendantSwing(mcwWorldPos, mcwBlockCenter);
+                }
+            }
         #endif
         gl_Position = gl_ProjectionMatrix * gbufferModelView * position;
     #endif

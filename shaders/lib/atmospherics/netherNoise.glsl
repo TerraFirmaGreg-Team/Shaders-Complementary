@@ -1,6 +1,9 @@
 #include "/lib/shaderSettings/netherFog.glsl"
 
 #ifdef MCWIND_NETHER_FOG_INTERNAL
+    #define MCW_MOTION_OFF
+    #define MCW_WEATHER_OFF
+    #define MCW_IMPULSE_OFF
     #include "/mcwind/mcwind.glsl"
     #include "/lib/atmospherics/netherWind.glsl"
 #endif

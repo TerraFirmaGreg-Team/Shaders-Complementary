@@ -309,10 +309,6 @@ void beginTextM(int textSize, vec2 offset) {
     #include "/lib/misc/potato.glsl"
 #endif
 
-#ifdef ENTITIES_ARE_LIGHT
-    #include "/lib/misc/worldOutline.glsl"
-#endif
-
 #include "/lib/misc/pixelCraft.glsl"
 #include "/lib/misc/endCreditsBackground.glsl"
 
@@ -359,9 +355,9 @@ void main() {
             texCoordM += getUnderwaterDistortion(texCoord, 0.00035);
     #endif
 
-    #if LETTERBOXING > 0 && defined EXCLUDE_ENTITIES || defined BAD_APPLE || DELTARUNE_BATTLE_BACKGROUND == 2 || defined ENTITIES_ARE_LIGHT || NETHER_HEAT_DISTORTION > 0 && defined NETHER
+    #if LETTERBOXING > 0 && defined EXCLUDE_ENTITIES || defined BAD_APPLE || DELTARUNE_BATTLE_BACKGROUND == 2 || NETHER_HEAT_DISTORTION > 0 && defined NETHER
         vec4 texture6 = texelFetch(colortex6, texelCoord, 0);
-        #if defined ENTITIES_ARE_LIGHT || NETHER_HEAT_DISTORTION > 0 && defined NETHER
+        #if NETHER_HEAT_DISTORTION > 0 && defined NETHER
             float z0 = GetLinearDepth(texelFetch(depthtex0, texelCoord, 0).r);
         #endif
     #endif
@@ -489,12 +485,6 @@ void main() {
     for (int i = 0; i < 8; i++) {
         color = max(color, texelFetch(colortex3, texelCoord + boxOffsets[i], 0).rgb);
     }*/
-
-    #ifdef ENTITIES_ARE_LIGHT
-        vec4 texture10 = texture2D(colortex10, texCoordM);
-        color = texture10.a * mix(vec3(1.0), texture10.rgb, texture6.a);
-        DoWorldOutline(color, z0, vec3(1.0), 0.0, 1.0);
-    #endif
 
     #if WATERMARK > 0 && (defined IS_IRIS || defined IS_ANGELICA && ANGELICA_VERSION >= 20000009)
         #if WATERMARK < 4

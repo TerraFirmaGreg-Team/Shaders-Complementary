@@ -1,7 +1,7 @@
 #ifndef INCLUDE_MOON_PHASE_INF
     #define INCLUDE_MOON_PHASE_INF
 
-    #ifdef OVERWORLD
+    #if defined OVERWORLD && !defined DIMENSION_SPACE && !defined DIMENSION_CAVE_VOID
         #if SUN_MOON_STYLE == 1
             float moonPhaseFactor = abs(moonPhase - 4.0) * 0.25;
 

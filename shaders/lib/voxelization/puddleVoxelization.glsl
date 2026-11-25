@@ -18,9 +18,17 @@ bool CheckInsidePuddleVoxelVolume(vec3 voxelPos) {
 	return clamp01(voxelPos) == voxelPos;
 }
 
+#ifndef SHADOW
+    float GetPuddleVoxelBlock(vec3 scenePos) {
+        vec3 voxelPos = SceneToPuddleVoxel(scenePos);
+        if (!CheckInsidePuddleVoxelVolume(voxelPos)) return 0.0;
+        ivec2 puddlePos = clamp(ivec2(voxelPos.xz), ivec2(0), puddle_voxelVolumeSize.xz - 1);
+        return float(texelFetch(puddle_sampler, puddlePos, 0).r);
+    }
+#endif
+
 #if defined SHADOW && defined VERTEX_SHADER
     void UpdatePuddleVoxelMap(int mat) {
-        if (renderStage != MC_RENDER_STAGE_TERRAIN_TRANSLUCENT) return;
         if (mat == 32000) return; // Water
 
         vec3 model_pos = gl_Vertex.xyz + at_midBlock.xyz / 64.0;
@@ -29,7 +37,7 @@ bool CheckInsidePuddleVoxelVolume(vec3 voxelPos) {
         vec3 voxelPos = SceneToPuddleVoxel(scenePos);
 
         if (CheckInsidePuddleVoxelVolume(voxelPos))
-            if (scenePos.y >= -3.5)
+            if (scenePos.y >= -1.5)
             imageStore(puddle_img, ivec2(voxelPos.xz), uvec4(10u, 0u, 0u, 0u));
     }
 #endif

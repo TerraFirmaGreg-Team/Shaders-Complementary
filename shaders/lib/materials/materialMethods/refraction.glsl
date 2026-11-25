@@ -112,6 +112,9 @@ vec2 DoRefraction(inout vec3 color, inout float z0, inout float z1, vec3 viewPos
         if (z0check == z1check) return texCoordM;
         if ((z0check <= 0.56) != isHand) return texCoordM; // Don't let the sample cross the hand/world boundary
 
+        // Don't pull in things in front of the glass
+        if (!isHand && texture2D(colortex6, newCoord).r < 0.999) return texCoordM;
+
         color = texture2D(colortex0, newCoord).rgb;
         z0 = z0check;
         z1 = z1check;

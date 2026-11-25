@@ -41,7 +41,7 @@ void main() {
 
     /* DRAWBUFFERS:06 */
     gl_FragData[0] = color;
-    gl_FragData[1] = vec4(texelFetch(colortex6, texelCoord, 0).rgb, 1.0);
+    gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);
 }
 
 #endif

@@ -9,6 +9,7 @@
 #define MAT_GROUNDED_FOLIAGE (mat == 10003 || mat == 10005 || mat == 10029 || mat == 10025) // Grounded Foliage
 #define MAT_UPPER_LAYER_FOLIAGE (mat == 10021 || mat == 10023 || mat == 10027) // Upper Layer Foliage
 #define MAT_LEAVES (mat == 10007 || mat == 10009 || mat == 10011) // Leaves
+#define MAT_SNOW_LAYER (mat == 10953)
 #define MAT_VINE_WALL (mat == 11009 || mat == 10544) // Vine, Glow Lichen
 #define MAT_VINE_CEILING (mat == 10923 || mat == 10629 || mat == 10632) // Pale Hanging Moss, Cave Vines
 #define MAT_WEEPING_VINES (mat == 10884 || mat == 10885) // Weeping Vines - hangs from the block above, like MAT_VINE_CEILING
@@ -23,7 +24,7 @@
     #define MAT_GROUNDED_FOLIAGE_EXTRA (mat == 10769 || mat == 10976) // Torchflower, Open Eye Blossom
 #endif
 
-#if defined MCWIND_INTERNAL && (defined GBUFFERS_TERRAIN || defined SHADOW)
+#if defined MCWIND_INTERNAL && (defined GBUFFERS_TERRAIN || defined SHADOW || defined GBUFFERS_BLOCK)
 
     #define MCW_CAVE_CALM 0.75 // How calm the wind is in caves
 
@@ -32,10 +33,61 @@
     #define MCW_PENDANT_RADIUS (mix(0.018, 0.42, smoothstep(1.0, 9.0, float(arm)))) // Amount of movement in lanterns
     #define MCW_PENDULUM // Makes the lanterns swing like a pendulum instead
 
+    #define MCW_IMPULSE_OFF
+    #define MCW_CALM_SMOOTH
+    #ifdef GBUFFERS_BLOCK
+        // Only the pendant/hanging-sign swing is needed in this stage - the vine, floater, volume and
+        // portal families would otherwise compile in unused just because this file got included here.
+        #define MCW_VINE_OFF
+        #define MCW_FLOATER_OFF
+        #define MCW_VOLUME_OFF
+        #define MCW_PORTAL_OFF
+    #endif
+
     #include "/mcwind/mcwind.glsl"
+
+    // mcw_leafWeld samples one cell's wood-distance value, which pops at the seam between two leaf
+    // blocks whose distance-to-trunk differs. Bilinearly blending the four neighboring cell centers
+    // smooths that transition instead of letting it snap. MCW_WELD_SINGLE opts back into the cheaper
+    // single-sample read if a pack would rather pay one texture read than four.
+    float Weld_MCWIND(vec3 p) {
+    #ifdef MCW_WELD_SINGLE
+        return mcw_leafWeld(p, p);
+    #endif
+        vec2 g = p.xz - 0.5;
+        vec2 b = floor(g);
+        vec2 f = g - b;
+        vec3 c00 = vec3(b.x + 0.5, p.y, b.y + 0.5);
+        vec3 c10 = vec3(b.x + 1.5, p.y, b.y + 0.5);
+        vec3 c01 = vec3(b.x + 0.5, p.y, b.y + 1.5);
+        vec3 c11 = vec3(b.x + 1.5, p.y, b.y + 1.5);
+        return mix(mix(mcw_leafWeld(c00, c00), mcw_leafWeld(c10, c10), f.x),
+                   mix(mcw_leafWeld(c01, c01), mcw_leafWeld(c11, c11), f.x), f.y);
+    }
+
+    #define MAT_HANGING_SIGN (mat == MCW_MAT_HANGING_SIGN)
+
+#ifndef MCW_DOWNWASH_PRESS
+#define MCW_DOWNWASH_PRESS 0.55
+#endif
+#ifndef MCW_DOWNWASH_SPLAY
+#define MCW_DOWNWASH_SPLAY 0.35
+#endif
+
+#ifdef MCW_WAVE_LOD
+    #define MCW_LOD_SKIP if (mcwFade <= 0.0) return true;
+    #define MCW_LOD_BLEND playerPos = mix(mcwStart, playerPos, mcwFade);
+#else
+    #define MCW_LOD_SKIP
+    #define MCW_LOD_BLEND
+#endif
 
 bool DoWave_MCWIND(inout vec3 playerPos, vec3 worldPos, int mat) {
     vec3 blockCenter = worldPos + clamp(at_midBlock.xyz / 64.0, -2.0, 2.0);
+    #ifdef MCW_WAVE_LOD
+        float mcwFade = mcw_waveFade(blockCenter, cameraPosition);
+        vec3 mcwStart = playerPos;
+    #endif
 
     #ifdef MCWIND_FOLIAGE
         if (MAT_GROUNDED_FOLIAGE
@@ -44,37 +96,84 @@ bool DoWave_MCWIND(inout vec3 playerPos, vec3 worldPos, int mat) {
                 || mat == 10972 // Firefly Bush
             #endif
         ) {
+            MCW_LOD_SKIP
             float h = mcw_grassHeight(worldPos, blockCenter, 0.0);
             playerPos.xz += mcw_grassPush(blockCenter, h);
+            playerPos.xz += mcw_draftPush(blockCenter, cameraPosition, h);
+            float dn = mcw_draftDown(blockCenter, cameraPosition);
+            if (dn > 0.0) {
+                playerPos.y -= dn * h * MCW_DOWNWASH_PRESS;
+                vec2 out2 = worldPos.xz - blockCenter.xz;
+                float ol = length(out2);
+                if (ol > 1.0e-4) {
+                    playerPos.xz += (out2 / ol) * dn * h * MCW_DOWNWASH_SPLAY;
+                }
+            }
+            MCW_LOD_BLEND
             return true;
         }
 
         if (MAT_UPPER_LAYER_FOLIAGE) {
+            MCW_LOD_SKIP
             float h = mcw_grassHeight(worldPos, blockCenter, 1.0);
             playerPos.xz += mcw_grassPush(blockCenter, h);
+            playerPos.xz += mcw_draftPush(blockCenter, cameraPosition, h);
+            float dn = mcw_draftDown(blockCenter, cameraPosition);
+            if (dn > 0.0) {
+                playerPos.y -= dn * h * MCW_DOWNWASH_PRESS;
+                vec2 out2 = worldPos.xz - blockCenter.xz;
+                float ol = length(out2);
+                if (ol > 1.0e-4) {
+                    playerPos.xz += (out2 / ol) * dn * h * MCW_DOWNWASH_SPLAY;
+                }
+            }
+            MCW_LOD_BLEND
             return true;
         }
     #endif
 
     #ifdef MCWIND_LEAVES
         if (MAT_LEAVES) {
-            float weld = mcw_leafWeld(worldPos, blockCenter);
+            MCW_LOD_SKIP
+            float weld = Weld_MCWIND(worldPos);
             playerPos += mcw_leafSway(worldPos, blockCenter, weld);
+            MCW_LOD_BLEND
+            return true;
+        }
+
+        if (MAT_SNOW_LAYER) {
+            MCW_LOD_SKIP
+            // A snow layer sitting directly on a leaf canopy should ride the leaf's own sway rather
+            // than stand still above it. mcw_readCanopy publishes the leaf surface height per column;
+            // if the block right below this snow matches that height, anchor the snow to the SAME
+            // sway calculation the leaf underneath it uses.
+            float supportY = floor(blockCenter.y) - 1.0;
+            vec3 leafCenter = vec3(floor(blockCenter.x) + 0.5, supportY + 0.5, floor(blockCenter.z) + 0.5);
+            mcw_Canopy canopy = mcw_readCanopy(leafCenter.xz);
+            if (canopy.known && abs(supportY - canopy.y) < 0.1) {
+                vec3 snowAnchor = vec3(worldPos.x, leafCenter.y, worldPos.z);
+                float weld = Weld_MCWIND(snowAnchor);
+                playerPos += mcw_leafSway(snowAnchor, leafCenter, weld);
+            }
+            MCW_LOD_BLEND
             return true;
         }
     #endif
 
-    #ifdef MCWIND_VINES
+    #if defined MCWIND_VINES && !defined MCW_VINE_OFF
         if ((MAT_VINE_CEILING || MAT_WEEPING_VINES) && mcw_hasOccupancy()) {
-            float weld = mcw_leafWeld(worldPos, blockCenter);
+            MCW_LOD_SKIP
+            float weld = Weld_MCWIND(worldPos);
             vec3 delta = mcw_leafSway(worldPos, blockCenter, weld);
             delta.xz += mcw_vineSwing(worldPos, blockCenter, weld);
             playerPos += mcw_vineDrop(delta, worldPos, blockCenter);
+            MCW_LOD_BLEND
             return true;
         }
 
         if (MAT_VINE_WALL && mcw_hasOccupancy()) {
-            float weld = mcw_leafWeld(worldPos, blockCenter);
+            MCW_LOD_SKIP
+            float weld = Weld_MCWIND(worldPos);
             vec3 delta = mcw_leafSway(worldPos, blockCenter, weld);
             delta.xz += mcw_vineSwing(worldPos, blockCenter, weld);
 
@@ -85,47 +184,58 @@ bool DoWave_MCWIND(inout vec3 playerPos, vec3 worldPos, int mat) {
             #endif
 
             playerPos += mcw_vineMotion(delta, worldPos, blockCenter, worldFaceNormal);
+            MCW_LOD_BLEND
             return true;
         }
 
         if (MAT_TWISTING_VINES && mcw_hasOccupancy()) {
-            float weld = mcw_leafWeld(worldPos, blockCenter);
+            MCW_LOD_SKIP
+            float weld = Weld_MCWIND(worldPos);
             vec3 delta = mcw_leafSway(worldPos, blockCenter, weld);
             delta.xz += mcw_vineSwing(worldPos, blockCenter, weld);
             playerPos += mcw_vineRise(delta, worldPos, blockCenter);
+            MCW_LOD_BLEND
             return true;
         }
     #endif
 
     #ifdef MCWIND_PENDANTS
-        if (MAT_PENDANT && mcw_hasOccupancy()) {
+        if ((MAT_PENDANT || MAT_HANGING_SIGN) && mcw_hasOccupancy()) {
+            MCW_LOD_SKIP
             playerPos += mcw_pendantSwing(worldPos, blockCenter);
+            MCW_LOD_BLEND
             return true;
         }
     #endif
 
     #ifdef MCWIND_FIRE
         if (MAT_FIRE || MAT_CAMPFIRE_LIT) {
+            MCW_LOD_SKIP
             // Wooden base should not sway lol
             bool base = MAT_CAMPFIRE_LIT ? abs(clamp(at_midBlock.y / 64.0, -2.0, 2.0)) > 0.5 : fract(worldPos.y + 0.21) > 0.26;
             float topWeight = base ? 1.0 : 0.0;
             playerPos += mcw_fireLean(blockCenter, topWeight);
+            MCW_LOD_BLEND
             return true;
         }
     #endif
 
     #ifdef MCWIND_STALKS
         if (MAT_STALK) {
+            MCW_LOD_SKIP
             float groundY = mcw_groundHeight(blockCenter, cameraPosition);
             playerPos.xz += mcw_stalkSway(worldPos, blockCenter, groundY);
+            MCW_LOD_BLEND
             return true;
         }
     #endif
 
     #ifdef MCWIND_LILY_PAD
         if (MAT_LILY_PAD) {
+            MCW_LOD_SKIP
             float phase = mcw_hash(floor(blockCenter.xz)) * 6.28318531;
             playerPos.y += sin(mcw_windPhase * 1.6 + phase) * 0.02 * (0.4 + 0.6 * mcw_windMag(blockCenter));
+            MCW_LOD_BLEND
             return true;
         }
     #endif
@@ -343,7 +453,7 @@ void DoWave(inout vec3 playerPos, int mat) {
         #endif
 
         #ifdef WAVING_LAVA
-            if (mat == 10068 || mat == 10070) { // Lava
+            if (BLOCK_LAVA_DEFINE) { // Lava
                 DoWave_Lava(playerPos.xyz, worldPos);
 
                 #ifdef GBUFFERS_TERRAIN

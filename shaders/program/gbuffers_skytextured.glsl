@@ -30,7 +30,7 @@ flat in vec4 glColor;
 //Common Variables//
 #ifdef OVERWORLD
     float SdotU = dot(sunVec, upVec);
-    float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) / 0.125;
+    float sunVisibility = clamp(SdotU + 0.0625, 0.0, 0.125) * 8.0;
     float sunVisibility2 = sunVisibility * sunVisibility;
 #endif
 
@@ -77,11 +77,12 @@ void main() {
         vec2 tSize = textureSize(tex, 0);
         vec4 color = texture2D(tex, texCoord);
         color.rgb *= max0(glColor.rgb);
+        vec4 colorP = color;
         #ifdef SAVE_SKYBOX_DATA
             if (renderStage == MC_RENDER_STAGE_SUNSET || renderStage == MC_RENDER_STAGE_CUSTOM_SKY || renderStage == MC_RENDER_STAGE_SKY) {
                 skyColor = color * glColor.a;
                 hasCustomSky = int(step(0.5, textureSize(tex, 0).x));
-                materialMask = OSIEBCA * 238.0 * hasCustomSky;
+                materialMask = OSIEBCA * 242.0 * hasCustomSky;
                 averageSkyColor = averageSkyColorM;
             }
         #endif
@@ -129,6 +130,10 @@ void main() {
         #endif
 
         if (isSun || isMoon) {
+            #ifdef DIMENSION_CAVE_VOID
+                discard;
+            #endif
+
             #if SUN_MOON_STYLE >= 2 && IRIS_VERSION >= 10814
                 discard;
             #endif
@@ -144,11 +149,20 @@ void main() {
 
                 #if SUN_MOON_IPBR == 1 || SUN_MOON_IPBR == 3
                 if (isSun) {
-                    float sunBrightness = 4.5;
-                    color.rgb = vec3(pow(dot(color.rgb, color.rgb) * 0.45, 6.0 - 5.0 * rainFactor));
-                    if (tonemap == ACESTonemap) color.rgb *= mix(vec3(1.0, 0.6275, 0.4549) * 1.2, vec3(0.35), rainFactor * 0.75) * sunBrightness * 0.5;
-                    else color.rgb *= mix(vec3(1.1, 0.55, 0.0), vec3(0.35), rainFactor * 0.75) * sunBrightness; // all other tonemaps
-                    color.rgb *= 0.25 + 0.75 * sunVisibility2 + 0.5 * noonFactor;
+                    #ifdef DIMENSION_SPACE
+                        color.rgb = vec3(pow(dot(color.rgb, color.rgb) * 0.46, 2.0));
+                        vec3 sunDiscColor = vec3(1.0, 0.698, 0.2471);
+                        #ifdef MODDED_MARS_SUNSET
+                            sunDiscColor = mix(sunDiscColor, MARS_SUNSET_SUN_COLOR, invNoonFactor2);
+                        #endif
+                        color.rgb *= sunDiscColor * 3.5 * sunVisibility2 * max(0.15, pow4(color.a));
+                    #else
+                        float sunBrightness = 4.5;
+                        color.rgb = vec3(pow(dot(color.rgb, color.rgb) * 0.45, 6.0 - 5.0 * rainFactor));
+                        if (tonemap == ACESTonemap) color.rgb *= mix(vec3(1.0, 0.6275, 0.4549) * 1.2, vec3(0.35), rainFactor * 0.75) * sunBrightness * 0.5;
+                        else color.rgb *= mix(vec3(1.1, 0.55, 0.0), vec3(0.35), rainFactor * 0.75) * sunBrightness; // all other tonemaps
+                        color.rgb *= 0.25 + 0.75 * sunVisibility2 + 0.5 * noonFactor;
+                    #endif
                 }
                 #endif
 
@@ -159,8 +173,8 @@ void main() {
                     color.rgb *= smoothstep1(min1(length(color.rgb))) * 1.3;
 
                     #if BLOOD_MOON > 0
-                        float luminance = GetLuminance(color.rgb);
-                        color.rgb = mix(color.rgb, pow2(luminance) * vec3(0.702, 0.0, 0.0) * 1.7, getBloodMoon(sunVisibility));
+                        float luminance = GetLuminance(colorP.rgb);
+                        color.rgb = mix(color.rgb,  pow1_5(luminance) * vec3(0.702, 0.0, 0.0) * 1.7, getBloodMoon(sunVisibility));
                     #endif
 
                     // float pixelGlareFactor = 1 - step(0.09,luminance);
@@ -232,12 +246,25 @@ void main() {
         ColorCodeProgram(color, -1);
     #endif
 
+    float colortex6Weight = 1.0; // Alpha weight for the colortex6 blend, 0 keeps the old value
+    #ifdef DIMENSION_SPACE
+        if (materialMask == 0.0) {
+            // Sun/planet coverage for the stars in deferred1, see common.glsl
+            materialMask = (1.0 + round(clamp01(color.a) * 63.0)) * OSIEBCA;
+            colortex6Weight = step(0.5, color.a); // Soft glows must not lower a planet's coverage
+        }
+    #endif
+
     #ifdef SAVE_SKYBOX_DATA
-        /* RENDERTARGETS:0,6,13,14 */
+        /* RENDERTARGETS:0,6,13,15 */
         gl_FragData[0] = color;
-        gl_FragData[1] = vec4(0.0, materialMask, 0.0, 0.0);
+        gl_FragData[1] = vec4(0.0, materialMask, 0.0, colortex6Weight);
         gl_FragData[2] = skyColor;
         gl_FragData[3] = averageSkyColor;
+    #elif defined DIMENSION_SPACE
+        /* DRAWBUFFERS:06 */
+        gl_FragData[0] = color;
+        gl_FragData[1] = vec4(0.0, materialMask, 0.0, colortex6Weight);
     #else
         /* DRAWBUFFERS:0 */
         gl_FragData[0] = color;

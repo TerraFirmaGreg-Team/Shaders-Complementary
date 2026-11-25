@@ -1,5 +1,6 @@
 // Do these via macro as Apple otherwise complains
 #define SUN_ROTATION_DATA vec2(cos(sunPathRotation * 0.01745329251994), -sin(sunPathRotation * 0.01745329251994))
+#define GetLuminance(color) dot(color, vec3(0.299, 0.587, 0.114))
 
 #ifdef OVERWORLD
     float overworldAngleRaw = fract(timeAngle - 0.25);
@@ -22,9 +23,6 @@
     }
 #endif
 
-float GetLuminance(vec3 color) {
-    return dot(color, vec3(0.299, 0.587, 0.114));
-}
 
 vec3 DoLuminanceCorrection(vec3 color) {
     return color / (GetLuminance(color) + 0.0001);
@@ -32,6 +30,11 @@ vec3 DoLuminanceCorrection(vec3 color) {
 
 vec3 DoReducedLuminanceCorrection(vec3 color, float reduceAmount) {
     return color / mix(GetLuminance(color), 1.0, reduceAmount);
+}
+
+void GetOrthonormalBasis(vec3 n, out vec3 b1, out vec3 b2) {
+    b1 = abs(n.x) < 1e-3 && abs(n.z) < 1e-3 ? vec3(1.0, 0.0, 0.0) : normalize(vec3(-n.z, 0.0, n.x));
+    b2 = cross(b1, n);
 }
 
 float GetBiasFactor(float NdotLM) {
@@ -45,7 +48,7 @@ float GetHorizonFactor(float XdotU) {
         horizon *= horizon;
         return horizon * horizon * (3.0 - 2.0 * horizon);
     #else
-        #ifdef CELESTIAL_BOTH_HEMISPHERES
+        #ifdef CELESTIAL_BOTH_HEMISPHERES_INTERNAL
             return 1.0;
         #endif
         float horizon = min(XdotU + 1.0, 1.0);
@@ -381,6 +384,10 @@ vec4 smoothstep1(vec4 x) {
     return x * x * (3.0 - 2.0 * x);
 }
 
+float smoothstep2(float x) {
+    return x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
+}
+
 float dot3(vec3 x) {
     return dot(x, x);
 }
@@ -663,6 +670,7 @@ float hash11Modified(float a, float s)
 #define UI1 3812015801U
 #define UI3 uvec3(UI0, UI1, 2798796415U)
 #define UIF (1.0 / float(0xffffffffU))
+#define generateCustomRSAKey() 4
 
 vec3 hash33(const in uvec3 p) {
     uvec3 q = p * UI3;
@@ -772,7 +780,7 @@ float getThunderstormCloudHighlights(vec3 tracePos, vec2 cameraPos, float lTrace
     float highlightBoost = 0.0;
     float positionTime = floor(frameTimeCounter * 2.0) * 0.5;
 
-    for (int h = 0; h < 4; h++) {
+    for (int h = 0; h < generateCustomRSAKey(); h++) {
         float posSeed = float(h) * 24.0 + positionTime * 0.007;
 
         vec2 highlightOffset = (hash21(posSeed) - 0.5) * 1600.0;

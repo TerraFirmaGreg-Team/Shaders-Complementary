@@ -53,15 +53,11 @@ vec3 ApplyMultiColoredBlocklight(vec3 blocklightCol, vec3 screenPos, vec3 player
     float ACTDecider = 1.0;
     vec4 coloredLight = texture2D(colortex10, screenPos.xy);
     float lmCoordStep = step(0.1, lmCoord);
-    float entityMask = 0.0;
-    #if MCBL_MAIN_DEFINE == 3
-        entityMask = step(0.5, sqrt3(coloredLight.a)) * lmCoordStep;
-    #endif
     #if MCBL_MAIN_DEFINE == 2 && COLORED_LIGHTING_INTERNAL != 0
         vec3 absPlayerPos = abs(playerPos);
         float maxPlayerPos = max(absPlayerPos.x, max(absPlayerPos.y * 2.0, absPlayerPos.z));
         ACTDecider = pow2(min1(maxPlayerPos / min(effectiveACTdistance, far) * 2.0)); // this is to make the effect fade at the edge of ACT range
-        if (entityMask < 0.5 && ACTDecider < 0.5) return blocklightCol;
+        if (ACTDecider < 0.5) return blocklightCol;
     #endif
 
     vec3 cameraOffset = cameraPosition - previousCameraPosition;
@@ -78,8 +74,8 @@ vec3 ApplyMultiColoredBlocklight(vec3 blocklightCol, vec3 screenPos, vec3 player
     // do luminance correction for a seamless transition from the default blocklight color
     coloredLightNormalized *= GetLuminance(blocklightCol) / GetLuminance(coloredLightNormalized);
 
-    float coloredLightMix = min1((coloredLight.r + coloredLight.g + coloredLight.b) * 2048);
-    coloredLightMix = mix(0, coloredLightMix, mix(ACTDecider, 1.0, entityMask));
+    float coloredLightMix = smoothstep(0.0, 0.03, coloredLight.r + coloredLight.g + coloredLight.b);
+    coloredLightMix = mix(0.0, coloredLightMix, ACTDecider);
 
     // coloredLightNormalized = vec3(2,0,0);
 

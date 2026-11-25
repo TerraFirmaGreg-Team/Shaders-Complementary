@@ -4,10 +4,10 @@
     #define SUN_GLARE_AMOUNT 10 // [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30]
     #define MOON_GLARE_AMOUNT 10 // [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30]
 
-    #include "/lib/shaderSettings/skySettings.glsl"
-
     #include "/lib/colors/lightAndAmbientColors.glsl"
     #include "/lib/colors/skyColors.glsl"
+
+    #include "/lib/shaderSettings/skySettings.glsl"
 
     #ifdef CAVE_FOG
         #include "/lib/atmospherics/fog/caveFactor.glsl"
@@ -18,7 +18,7 @@
         #ifdef SAVE_SKYBOX_DATA
             vec4 skyColor = texelFetch(colortex13, texelCoord, 0);
             int hasCustomSky = int(texelFetch(colortex6, texelCoord, 0).g * 255.1);
-            if (hasCustomSky == 238 || skyColor.rgb != vec3(0.0)) {
+            if (hasCustomSky == 242 || skyColor.rgb != vec3(0.0)) {
                 isCustomSky = true;
                 return skyColor.rgb;
             }
@@ -37,6 +37,10 @@
             }
         #endif
 
+        #ifdef DIMENSION_CAVE_VOID
+            return max(skyColor, fogColor);
+        #endif
+
         // Prepare variables
         float nightFactorSqrt2 = sqrt2(nightFactor);
         float nightFactorM = sqrt2(nightFactorSqrt2) * 0.4;
@@ -50,7 +54,7 @@
 
         // Prepare colors
         float aroundMoonSkyFactor = 1.0;
-        #ifndef EUPHORIA_PATCHES_IS_SPACE_MOD_INSTALLED
+        #if !defined EUPHORIA_PATCHES_IS_SPACE_MOD_INSTALLED && !defined DIMENSION_SPACE
             aroundMoonSkyFactor = 1.5 - 0.5 * nightFactorSqrt2 + nightFactorM * VdotSM3 * 1.5;
         #endif
         vec3 upColor = mix(nightUpSkyColor * aroundMoonSkyFactor, dayUpSkyColor, sunFactor);
@@ -69,6 +73,9 @@
             float VdotUM2 = pow2(1.0 - abs(VdotU));
                   VdotUM2 = VdotUM2 * VdotUM2 * (3.0 - 2.0 * VdotUM2);
                   VdotUM2 *= (0.7 - nightFactorM + VdotSM1 * (0.3 + nightFactorM)) * invNoonFactor * sunFactor;
+            #ifdef MODDED_MARS_SUNSET
+                VdotUM2 *= (1.0 - smoothstep(0.0, MARS_SUNSET_GLOW_HEIGHT, abs(VdotU))) * VdotSM1; // Keep the glow around the sun
+            #endif
             finalSky = mix(finalSky, sunsetDownSkyColorP * (1.0 + VdotSM1 * 0.3), VdotUM2 * invRainFactor);
 
             // Add sky ground with fake light scattering
@@ -76,6 +83,9 @@
                   VdotUM3 = smoothstep1(VdotUM3);
             vec3 scatteredGroundMixer = vec3(VdotUM3 * VdotUM3, sqrt1(VdotUM3), sqrt3(VdotUM3));
                  scatteredGroundMixer = mix(vec3(VdotUM3), scatteredGroundMixer, 0.75 - 0.5 * rainFactor);
+            #ifdef MODDED_MARS_SUNSET
+                scatteredGroundMixer = vec3(VdotUM3);
+            #endif
             finalSky = mix(finalSky, downColor, scatteredGroundMixer * scatteredGroundMixerMult);
         //
 
@@ -88,7 +98,7 @@
             finalSky = mix(finalSky * 3.0, waterFogColor, VdotUmax0M);
 
         // Sun/Moon Glare
-        #if (SUN_GLARE_AMOUNT > 0 || MOON_GLARE_AMOUNT > 0) && !defined EUPHORIA_PATCHES_IS_SPACE_MOD_INSTALLED
+        #if (SUN_GLARE_AMOUNT > 0 || MOON_GLARE_AMOUNT > 0) && !defined EUPHORIA_PATCHES_IS_SPACE_MOD_INSTALLED && !defined DIMENSION_SPACE
             if (doGlare) {
                 if (0.0 < VdotSML) {
                     float glareScatter = 3.0 * (2.0 - clamp01(VdotS * 1000.0));
@@ -151,6 +161,10 @@
     #endif
 
     vec3 GetLowQualitySky(float VdotU, float VdotS, float dither, bool doGlare, bool doGround) {
+        #ifdef DIMENSION_CAVE_VOID
+            return max(skyColor, fogColor);
+        #endif
+
         // Prepare variables
         float VdotUmax0 = max(VdotU, 0.0);
         float VdotUmax0M = 1.0 - pow2(VdotUmax0);
@@ -168,6 +182,9 @@
             // Add sunset color
             float VdotUM2 = pow2(1.0 - abs(VdotU));
                   VdotUM2 *= invNoonFactor * sunFactor * (0.8 + 0.2 * VdotS);
+            #ifdef MODDED_MARS_SUNSET
+                VdotUM2 *= (1.0 - smoothstep(0.0, MARS_SUNSET_GLOW_HEIGHT, abs(VdotU))) * pow2(max(VdotS, 0.0));
+            #endif
             finalSky = mix(finalSky, sunsetDownSkyColorP * (shadowTime * 0.6 + 0.2), VdotUM2 * invRainFactor);
         //
 

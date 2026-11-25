@@ -31,7 +31,7 @@ vec2 view = vec2(viewWidth, viewHeight);
         return vec2(cos(n), sin(n)) * x;
     }
 
-    vec4 GetMultiColoredBlocklight(vec4 lightAlbedo, vec2 coord, float z, float dither) {
+    vec4 GetMultiColoredBlocklight(vec3 lightAlbedo, vec2 coord, float z, float dither) {
         vec3 cameraOffset = cameraPosition - previousCameraPosition;
         cameraOffset *= float(z * 2.0 - 1.0 > 0.56);
 
@@ -42,26 +42,30 @@ vec2 view = vec2(viewWidth, viewHeight);
         float fovScale = gbufferProjection[1][1] / 1.37373871;
 
         vec2 blurstr = vec2(1.0 / (viewWidth / viewHeight), 1.0) * fovScale / distScale;
-        vec4 previousColoredLight = vec4(0.0);
-
-        float mask = clamp(2.0 - 2.0 * max(abs(prevCoord.x - 0.5), abs(prevCoord.y - 0.5)), 0.0, 1.0);
+        float mask = clamp01(2.0 - 2.0 * max(abs(prevCoord.x - 0.5), abs(prevCoord.y - 0.5)));
 
         vec2 offset = OffsetDist(dither) * blurstr;
 
-        vec2 sampleZPos = coord + offset;
-        float sampleZ0 = texture2D(depthtex0, sampleZPos).r;
-        float sampleZ1 = texture2D(depthtex1, sampleZPos).r;
-        float linearSampleZ = GetLinearDepth(sampleZ1 >= 1.0 ? sampleZ0 : sampleZ1);
+        vec4 historySample = texture2D(colortex10, prevCoord.xy + offset);
 
-        float sampleWeight = clamp(abs(lz - linearSampleZ) * far / 16.0, 0.0, 1.0);
+        // 16 blocks is about the reach of a light
+        float sampleWeight = clamp01(abs(lz * far - historySample.a) / 16.0);
         sampleWeight = 1.0 - sampleWeight * sampleWeight;
 
-        previousColoredLight += texture2D(colortex10, prevCoord.xy + offset) * sampleWeight;
+        vec3 previousColoredLight = historySample.rgb * sampleWeight;
         previousColoredLight *= previousColoredLight * mask;
         lightAlbedo = clamp01(lightAlbedo);
         if (lightAlbedo.g + lightAlbedo.b < 0.05) lightAlbedo.r *= 0.45; // red color reduction to prevent redstone from overpowering everything
 
-        return sqrt(max(vec4(0.0), mix(previousColoredLight, lightAlbedo * lightAlbedo / clamp(previousColoredLight.r + previousColoredLight.g + previousColoredLight.b, 0.01, 1.0), 0.01)));
+        // make consistent via frameTime so fps don't matter
+        float frameScale = clamp(frameTime * 120.0, 0.05, 8.0);
+        float lightBlendRate = 1.0 - pow(0.99, frameScale);
+
+        vec3 newColoredLight = sqrt(max(vec3(0.0), mix(previousColoredLight, lightAlbedo * lightAlbedo / clamp(previousColoredLight.r + previousColoredLight.g + previousColoredLight.b, 0.01, 1.0), lightBlendRate)));
+
+        // Kill faint tails so they stop lingering
+        newColoredLight *= pow(smoothstep(0.003, 0.012, newColoredLight.r + newColoredLight.g + newColoredLight.b), frameScale);
+        return vec4(newColoredLight, lz * far);
     }
 #endif
 
@@ -76,27 +80,17 @@ void main() {
         float z0 = texelFetch(depthtex0, texelCoord, 0).r;
         float z = texture2D(depthtex1, texCoord).x;
         float dither;
-        vec4 screenPos = vec4(texCoord, z0, 1.0);
-        vec4 viewPos = gbufferProjectionInverse * (screenPos * 2.0 - 1.0);
-        viewPos /= viewPos.w;
     #endif
 
     // SS_BLOCKLIGHT code
     #ifdef SS_BLOCKLIGHT
-        vec4 lightAlbedo = texture2D(colortex9, texCoord);
+        vec3 lightAlbedo = texture2D(colortex9, texCoord).rgb;
+        // length is emission, prevent weaker emission from affecting MCBL too much
+        lightAlbedo *= smoothstep(0.1, 0.3, length(lightAlbedo));
 
         dither = texture2DLod(noisetex, texCoord * view / 128.0, 0.0).b;
         #ifdef TAA
             dither = fract(dither + goldenRatio * mod(float(frameCounter), 3600.0));
-        #endif
-
-        #ifdef ENTITIES_ARE_LIGHT
-            int heldBlockLight = 0;
-            heldBlockLight = (viewPos.x > 0.0 ^^ isRightHanded) ? heldBlockLightValue2 : heldBlockLightValue;
-
-            if (heldBlockLight > 0) {
-                lightAlbedo.a *= 30;
-            }
         #endif
 
         float lightZ = z >= 1.0 ? z0 : z;
@@ -106,7 +100,7 @@ void main() {
     #ifdef SS_BLOCKLIGHT
         /* RENDERTARGETS: 0,10 */
         gl_FragData[0] = vec4(color, 1.0);
-        gl_FragData[1] = vec4(coloredLight);
+        gl_FragData[1] = coloredLight;
     #else
         /* DRAWBUFFERS:0 */
         gl_FragData[0] = vec4(color, 1.0);
